@@ -1,23 +1,30 @@
 import ctaImg from "@/assets/glamping-person-deck.jpg";
+import ScrollReveal from "./ScrollReveal";
 
 const CTASection = () => {
   return (
-    <section className="relative py-24 md:py-32 overflow-hidden">
-      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${ctaImg})` }} />
-      <div className="absolute inset-0" style={{ background: "linear-gradient(to right, hsla(30,10%,10%,0.75), hsla(30,10%,10%,0.4))" }} />
+    <section className="relative py-28 md:py-36 overflow-hidden">
+      <div className="absolute inset-0 bg-cover bg-center bg-fixed" style={{ backgroundImage: `url(${ctaImg})` }} />
+      <div className="absolute inset-0 bg-gradient-to-r from-foreground/80 via-foreground/60 to-foreground/30" />
       <div className="relative z-10 container max-w-2xl">
-        <h2 className="font-serif text-3xl md:text-5xl font-bold text-primary-foreground mb-6 leading-tight">
-          Redo för en oförglömlig upplevelse?
-        </h2>
-        <p className="text-primary-foreground/80 text-lg mb-8">
-          Boka din glamping-vistelse vid Göta kanal idag. Begränsat antal platser – säkra din plats nu.
-        </p>
-        <a
-          href="#boka"
-          className="inline-block bg-accent text-accent-foreground px-10 py-4 rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity"
-        >
-          Boka nu →
-        </a>
+        <ScrollReveal>
+          <p className="text-accent font-sans text-sm tracking-[0.2em] uppercase mb-4 font-semibold">
+            Begränsat antal platser
+          </p>
+          <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 leading-tight">
+            Redo för en
+            <span className="block italic font-normal">oförglömlig natt?</span>
+          </h2>
+          <p className="text-primary-foreground/70 text-lg mb-10 leading-relaxed">
+            Boka din glamping-vistelse vid Göta kanal idag. Våra tält fylls snabbt under säsongen.
+          </p>
+          <a
+            href="#boka"
+            className="inline-block bg-accent text-accent-foreground px-12 py-4 rounded-full text-lg font-semibold hover:scale-105 transition-transform shadow-xl"
+          >
+            Boka nu →
+          </a>
+        </ScrollReveal>
       </div>
     </section>
   );

@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import ScrollReveal from "./ScrollReveal";
 
 const faqs = [
   {
@@ -8,7 +9,7 @@ const faqs = [
   },
   {
     q: "Vad ingår i priset?",
-    a: "I priset ingår städning, bäddade sängar, sänglinne, handdukar, el, fläkt, minikylskåp, gasolvärmare, kaffe, te och en flaska vatten. Det finns även möjlighet att laga mat.",
+    a: "I priset ingår städning, bäddade sängar, sänglinne, handdukar, el, fläkt, minikylskåp, gasolvärmare, kaffe, te och en flaska vatten.",
   },
   {
     q: "Finns det toaletter och dusch?",
@@ -16,7 +17,7 @@ const faqs = [
   },
   {
     q: "Finns det matmöjligheter i närheten?",
-    a: "Ja! Ni kan laga mat vid ert tält eller besöka restauranger och caféer i närheten. Vi erbjuder även frukost via Bostället som tillval vid bokning.",
+    a: "Ja! Besök restauranger och caféer i närheten. Vi erbjuder även frukost via Bostället som tillval vid bokning.",
   },
   {
     q: "Kan barn bo hos er?",
@@ -24,7 +25,7 @@ const faqs = [
   },
   {
     q: "Får vi ta med husdjur?",
-    a: "Ja, i tält nummer tre är husdjur välkomna mot en husdjursavgift.",
+    a: "Ja, i tältet Lugnets Yta är husdjur välkomna mot en husdjursavgift.",
   },
   {
     q: "Vilka bokningsvillkor gäller?",
@@ -36,41 +37,46 @@ const FAQSection = () => {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="py-20 md:py-28" style={{ background: "var(--section-gradient)" }}>
+    <section id="faq" className="py-24 md:py-32" style={{ background: "var(--section-gradient)" }}>
       <div className="container max-w-3xl">
-        <div className="text-center mb-16">
-          <p className="text-accent font-sans text-sm tracking-[0.2em] uppercase mb-3 font-semibold">
-            FAQ
-          </p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-            Frågor & svar
-          </h2>
-        </div>
+        <ScrollReveal>
+          <div className="text-center mb-16">
+            <p className="text-accent font-sans text-sm tracking-[0.2em] uppercase mb-3 font-semibold">
+              FAQ
+            </p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+              Frågor & svar
+            </h2>
+          </div>
+        </ScrollReveal>
 
         <div className="space-y-3">
           {faqs.map((faq, i) => (
-            <div
-              key={i}
-              className="bg-card rounded-xl border border-border/50 overflow-hidden"
-            >
-              <button
-                onClick={() => setOpenIdx(openIdx === i ? null : i)}
-                className="w-full flex items-center justify-between p-5 text-left"
-              >
-                <span className="font-serif text-lg font-semibold text-foreground pr-4">{faq.q}</span>
-                <ChevronDown
-                  className={`text-muted-foreground shrink-0 transition-transform duration-300 ${
-                    openIdx === i ? "rotate-180" : ""
+            <ScrollReveal key={i} delay={i * 60}>
+              <div className="bg-card rounded-2xl border border-border/50 overflow-hidden hover:shadow-md transition-shadow">
+                <button
+                  onClick={() => setOpenIdx(openIdx === i ? null : i)}
+                  className="w-full flex items-center justify-between p-6 text-left"
+                >
+                  <span className="font-serif text-lg font-semibold text-foreground pr-4">{faq.q}</span>
+                  <ChevronDown
+                    className={`text-accent shrink-0 transition-transform duration-300 ${
+                      openIdx === i ? "rotate-180" : ""
+                    }`}
+                    size={20}
+                  />
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${
+                    openIdx === i ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
                   }`}
-                  size={20}
-                />
-              </button>
-              {openIdx === i && (
-                <div className="px-5 pb-5">
-                  <p className="text-muted-foreground leading-relaxed">{faq.a}</p>
+                >
+                  <div className="px-6 pb-6">
+                    <p className="text-muted-foreground leading-relaxed">{faq.a}</p>
+                  </div>
                 </div>
-              )}
-            </div>
+              </div>
+            </ScrollReveal>
           ))}
         </div>
       </div>

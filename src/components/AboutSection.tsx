@@ -1,5 +1,7 @@
 import { Bed, Thermometer, ShowerHead, Plug, Snowflake, ParkingCircle } from "lucide-react";
 import aboutImg from "@/assets/glamping-exterior-deck.jpg";
+import aboutImg2 from "@/assets/glamping-interior-cozy.jpg";
+import ScrollReveal from "./ScrollReveal";
 
 const features = [
   { icon: Bed, label: "Bekväma dubbelsängar" },
@@ -12,50 +14,59 @@ const features = [
 
 const AboutSection = () => {
   return (
-    <section id="om-oss" className="py-20 md:py-28" style={{ background: "var(--section-gradient)" }}>
+    <section id="om-oss" className="py-24 md:py-32 overflow-hidden" style={{ background: "var(--section-gradient)" }}>
       <div className="container">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div className="order-2 lg:order-1">
-            <p className="text-accent font-sans text-sm tracking-[0.2em] uppercase mb-3 font-semibold">
-              Om oss
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          <ScrollReveal className="order-2 lg:order-1">
+            <p className="text-accent font-sans text-sm tracking-[0.2em] uppercase mb-4 font-semibold">
+              Om upplevelsen
             </p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6 leading-tight">
-              Välkommen till Bergs Slussar Glamping
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 leading-tight">
+              Där natur möter
+              <span className="block italic font-normal text-accent">komfort</span>
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-              Välkommen till en unik och varm upplevelse! Våra ombonade glampingtält står uppställda i naturskön
-              omgivning precis vid Göta kanal i Berg, strax utanför Linköping.
+              Våra ombonade glampingtält står i naturskön omgivning precis vid Göta kanal i Berg,
+              strax utanför Linköping. En unik och varm upplevelse.
             </p>
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              Med bekväma dubbelsängar, möjlighet till extra bäddar, värme och kylskåp får du en avkopplande vistelse.
-              Njut av närheten till naturen på ett annorlunda och ombonat sätt. Slappna av framför solnedgången
-              och låt fåglarnas kvitter på morgonen förgylla din dag.
+            <p className="text-muted-foreground leading-relaxed mb-10">
+              Med bekväma dubbelsängar, värme och kylskåp får du en avkopplande vistelse.
+              Slappna av framför solnedgången och låt fåglarnas kvitter förgylla din morgon.
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {features.map((f) => (
-                <div key={f.label} className="flex items-center gap-3 bg-card rounded-lg p-3 border border-border/50">
-                  <f.icon className="text-primary shrink-0" size={20} />
-                  <span className="text-sm font-medium text-foreground">{f.label}</span>
-                </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {features.map((f, i) => (
+                <ScrollReveal key={f.label} delay={i * 60}>
+                  <div className="flex items-center gap-3 bg-card rounded-xl p-3.5 border border-border/50 hover:shadow-md transition-shadow">
+                    <f.icon className="text-primary shrink-0" size={18} />
+                    <span className="text-sm font-medium text-foreground">{f.label}</span>
+                  </div>
+                </ScrollReveal>
               ))}
             </div>
-          </div>
+          </ScrollReveal>
 
-          <div className="order-1 lg:order-2">
+          <ScrollReveal className="order-1 lg:order-2" delay={200}>
             <div className="relative">
               <img
                 src={aboutImg}
                 alt="Glamping tält med utemöbler vid Göta kanal"
-                className="rounded-2xl shadow-xl w-full object-cover aspect-[4/5]"
+                className="rounded-3xl shadow-2xl w-full object-cover aspect-[4/5]"
                 loading="lazy"
               />
-              <div className="absolute -bottom-6 -left-6 bg-primary text-primary-foreground p-5 rounded-xl shadow-lg hidden md:block">
-                <p className="font-serif text-2xl font-bold">5+</p>
-                <p className="text-sm opacity-80">års erfarenhet</p>
+              {/* Overlapping second image */}
+              <div className="absolute -bottom-8 -left-8 w-2/5 hidden md:block">
+                <img
+                  src={aboutImg2}
+                  alt="Mysig inredning i glampingtält"
+                  className="rounded-2xl shadow-xl border-4 border-background object-cover aspect-square"
+                  loading="lazy"
+                />
               </div>
+              {/* Decorative accent */}
+              <div className="absolute -top-4 -right-4 w-24 h-24 border-2 border-accent/30 rounded-3xl -z-10" />
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>
