@@ -8,7 +8,6 @@ const navLinks = [
   { label: "Galleri", href: "#galleri" },
   { label: "Aktiviteter", href: "#aktiviteter" },
   { label: "FAQ", href: "#faq" },
-  { label: "Hantera bokning", href: "#hantera-bokning" },
   { label: "Kontakt", href: "#kontakt" },
 ];
 
@@ -27,27 +26,27 @@ const Navbar = () => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
           ? "bg-background/95 backdrop-blur-md shadow-sm py-3"
-          : "bg-transparent py-5"
+          : "bg-transparent py-6"
       }`}
     >
       <div className="container flex items-center justify-between">
         <a href="#" className="font-serif text-xl md:text-2xl font-bold tracking-tight">
-          <span className={scrolled ? "text-primary" : "text-primary-foreground"}>
+          <span className={scrolled ? "text-foreground" : "text-primary-foreground"}>
             Bergs Slussar
           </span>
-          <span className={`block text-xs font-sans font-normal tracking-[0.25em] uppercase ${scrolled ? "text-muted-foreground" : "text-primary-foreground/70"}`}>
-            Glamping
+          <span className={`block text-[10px] font-sans font-medium tracking-[0.35em] uppercase ${scrolled ? "text-accent" : "text-primary-foreground/60"}`}>
+            Glamping vid Göta Kanal
           </span>
         </a>
 
         {/* Desktop nav */}
-        <div className="hidden lg:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-6">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium transition-colors hover:opacity-80 ${
-                scrolled ? "text-foreground" : "text-primary-foreground"
+              className={`text-sm font-medium transition-all hover:opacity-80 ${
+                scrolled ? "text-foreground" : "text-primary-foreground/90"
               }`}
             >
               {link.label}
@@ -55,7 +54,7 @@ const Navbar = () => {
           ))}
           <a
             href="#boka"
-            className="bg-accent text-accent-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
+            className="bg-accent text-accent-foreground px-6 py-2.5 rounded-full text-sm font-semibold hover:scale-105 transition-transform shadow-sm"
           >
             Boka nu
           </a>
@@ -87,7 +86,7 @@ const Navbar = () => {
             <a
               href="#boka"
               onClick={() => setMenuOpen(false)}
-              className="bg-accent text-accent-foreground px-5 py-3 rounded-lg text-center font-semibold mt-2"
+              className="bg-accent text-accent-foreground px-5 py-3.5 rounded-full text-center font-semibold mt-2"
             >
               Boka nu
             </a>
