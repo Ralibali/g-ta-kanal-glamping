@@ -1,3 +1,5 @@
+import { Mail } from "lucide-react";
+
 const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground py-16">
@@ -7,7 +9,7 @@ const Footer = () => {
             <p className="font-serif text-2xl font-bold mb-2">Bergs Slussar</p>
             <p className="text-xs tracking-[0.25em] uppercase opacity-60 mb-4">Glamping</p>
             <p className="text-sm opacity-70 leading-relaxed">
-              En unik glamping-upplevelse vid Göta kanal i Berg, strax utanför Linköping.
+              En unik glamping-upplevelse vid Göta kanal i Berg, strax utanför Linköping. Natur, komfort och avkoppling.
             </p>
           </div>
 
@@ -17,6 +19,7 @@ const Footer = () => {
               <a href="#om-oss" className="hover:opacity-100 transition-opacity">Om oss</a>
               <a href="#talten" className="hover:opacity-100 transition-opacity">Tälten</a>
               <a href="#boka" className="hover:opacity-100 transition-opacity">Boka</a>
+              <a href="#hantera-bokning" className="hover:opacity-100 transition-opacity">Hantera bokning</a>
               <a href="#galleri" className="hover:opacity-100 transition-opacity">Galleri</a>
               <a href="#faq" className="hover:opacity-100 transition-opacity">FAQ</a>
             </div>
@@ -24,15 +27,20 @@ const Footer = () => {
 
           <div>
             <p className="font-semibold mb-4">Kontakt</p>
-            <div className="flex flex-col gap-2 text-sm opacity-70">
+            <div className="flex flex-col gap-3 text-sm opacity-70">
               <p>Bergs Slussar, Vreta Kloster</p>
               <p>Linköping, Sverige</p>
-              <a href="https://www.instagram.com/bergsslussar.glamping/" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">
-                Instagram
+              <a href="mailto:info@auroramedia.se" className="hover:opacity-100 flex items-center gap-2">
+                <Mail size={14} /> info@auroramedia.se
               </a>
-              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">
-                Facebook
-              </a>
+              <div className="flex gap-4 mt-1">
+                <a href="https://www.instagram.com/bergsslussar.glamping/" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">
+                  Instagram
+                </a>
+                <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-100">
+                  Facebook
+                </a>
+              </div>
             </div>
           </div>
         </div>

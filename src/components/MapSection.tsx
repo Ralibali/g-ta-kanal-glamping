@@ -1,3 +1,6 @@
+import ConstructionNotice from "@/components/ConstructionNotice";
+import { Mail } from "lucide-react";
+
 const MapSection = () => {
   return (
     <section id="kontakt" className="py-20 md:py-28 bg-background">
@@ -21,12 +24,10 @@ const MapSection = () => {
                 <p className="text-muted-foreground">Bergs Slussar, Vreta Kloster, Linköping</p>
               </div>
               <div>
-                <p className="font-semibold text-foreground">Kontakt</p>
-                <p className="text-muted-foreground">
-                  <a href="https://goglampingsweden.se" className="text-accent hover:underline">
-                    goglampingsweden.se
-                  </a>
-                </p>
+                <p className="font-semibold text-foreground">E-post</p>
+                <a href="mailto:info@auroramedia.se" className="text-accent hover:underline flex items-center gap-2">
+                  <Mail size={14} /> info@auroramedia.se
+                </a>
               </div>
               <div>
                 <p className="font-semibold text-foreground">Sociala medier</p>
@@ -39,6 +40,10 @@ const MapSection = () => {
                   </a>
                 </div>
               </div>
+            </div>
+
+            <div className="mb-8">
+              <ConstructionNotice />
             </div>
 
             <a
