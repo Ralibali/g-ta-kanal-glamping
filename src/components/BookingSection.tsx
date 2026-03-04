@@ -33,17 +33,17 @@ const BookingSection = () => {
           className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]"
         />
 
-        <p className="text-center mt-6 text-primary-foreground/50 text-sm">
-          Har du redan en bokning?{" "}
+        <div className="text-center mt-8">
           <a
-            href="https://goglampingsweden.se/hantera-din-bokning-nedan/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-primary-foreground/80"
+            href="#hantera-bokning"
+            className="inline-block border-2 border-primary-foreground/40 text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary-foreground/10 transition-colors"
           >
-            Hantera din bokning här
+            Hantera din bokning
           </a>
-        </p>
+          <p className="text-primary-foreground/40 text-sm mt-3">
+            Ändra, avboka eller se detaljer för en befintlig bokning
+          </p>
+        </div>
       </div>
     </section>
   );

@@ -8,6 +8,7 @@ const navLinks = [
   { label: "Galleri", href: "#galleri" },
   { label: "Aktiviteter", href: "#aktiviteter" },
   { label: "FAQ", href: "#faq" },
+  { label: "Hantera bokning", href: "#hantera-bokning" },
   { label: "Kontakt", href: "#kontakt" },
 ];
 

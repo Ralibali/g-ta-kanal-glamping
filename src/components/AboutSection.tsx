@@ -1,13 +1,13 @@
-import { Bed, Thermometer, UtensilsCrossed, ShowerHead, Plug, Snowflake } from "lucide-react";
+import { Bed, Thermometer, ShowerHead, Plug, Snowflake, ParkingCircle } from "lucide-react";
 import aboutImg from "@/assets/glamping-exterior-deck.jpg";
 
 const features = [
   { icon: Bed, label: "Bekväma dubbelsängar" },
   { icon: Thermometer, label: "Värme i tältet" },
   { icon: Snowflake, label: "Minikylskåp" },
-  { icon: UtensilsCrossed, label: "Kök & matlagning" },
   { icon: ShowerHead, label: "Dusch & toalett" },
   { icon: Plug, label: "El & laddning" },
+  { icon: ParkingCircle, label: "Parkering nära" },
 ];
 
 const AboutSection = () => {
