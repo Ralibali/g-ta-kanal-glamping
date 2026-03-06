@@ -275,31 +275,25 @@ const CheckIn = () => {
               </ul>
             </div>
 
-            {/* Late checkout upsell */}
-            <div className="bg-accent/10 border border-accent/30 rounded-xl p-5 text-left mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="text-accent" size={18} />
-                <p className="text-sm font-semibold text-foreground">Vill du sova lite längre?</p>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                Köp till <strong className="text-foreground">sen utcheckning till kl. 12:00</strong> för bara 400 kr. Swisha beloppet och skicka ett SMS så fixar vi resten!
+            {/* Late checkout option */}
+            <div className="bg-muted/50 rounded-xl p-5 text-left mb-6">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                💤 Vill du checka ut lite senare? Du kan förlänga till <strong className="text-foreground">kl. 12:00</strong> för 400 kr. Swisha och meddela oss – så är det fixat.
               </p>
-              <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
                 <a
                   href="https://app.swish.nu/1/p/sw/?token=0722254993&amt=400&msg=Sen%20utcheckning&edit=msg,amt"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-accent text-accent-foreground py-3 rounded-xl font-semibold hover:scale-[1.02] transition-transform text-sm"
+                  className="flex items-center justify-center gap-2 border border-border text-foreground py-2.5 px-4 rounded-lg font-medium hover:bg-muted transition-colors text-sm"
                 >
-                  <Gift size={16} />
-                  Köp sen utcheckning – 400 kr
+                  Swisha
                 </a>
                 <a
                   href={`sms:0722254993?body=${encodeURIComponent(`Hej! Jag har swishat 400 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[tentId].name}`)}`}
-                  className="flex items-center justify-center gap-2 border border-accent/40 text-foreground py-3 rounded-xl font-medium hover:bg-accent/5 transition-colors text-sm"
+                  className="flex items-center justify-center gap-2 border border-border text-foreground py-2.5 px-4 rounded-lg font-medium hover:bg-muted transition-colors text-sm"
                 >
-                  <MessageCircle size={16} />
-                  Skicka bekräftelse-SMS
+                  Meddela oss
                 </a>
               </div>
             </div>
