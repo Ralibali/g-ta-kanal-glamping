@@ -292,7 +292,7 @@ const CheckIn = () => {
                   className="flex items-center justify-center gap-2 bg-accent text-accent-foreground py-3 rounded-xl font-semibold hover:scale-[1.02] transition-transform text-sm"
                 >
                   <Gift size={16} />
-                  Swisha 400 kr
+                  Köp sen utcheckning – 400 kr
                 </a>
                 <a
                   href={`sms:0722254993?body=${encodeURIComponent(`Hej! Jag har swishat 400 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[tentId].name}`)}`}
