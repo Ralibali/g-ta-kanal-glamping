@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const navLinks = [
   { label: "Om oss", href: "#om-oss" },
@@ -9,7 +10,7 @@ const navLinks = [
   { label: "Aktiviteter", href: "#aktiviteter" },
   { label: "FAQ", href: "#faq" },
   { label: "Kontakt", href: "#kontakt" },
-  { label: "Incheckning", href: "/checkin" },
+  { label: "Blogg", href: "/blogg" },
 ];
 
 const Navbar = () => {
@@ -42,17 +43,29 @@ const Navbar = () => {
 
         {/* Desktop nav */}
         <div className="hidden lg:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`text-sm font-medium transition-all hover:opacity-80 ${
-                scrolled ? "text-foreground" : "text-primary-foreground/90"
-              }`}
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.href.startsWith("/") ? (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={`text-sm font-medium transition-all hover:opacity-80 ${
+                  scrolled ? "text-foreground" : "text-primary-foreground/90"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-all hover:opacity-80 ${
+                  scrolled ? "text-foreground" : "text-primary-foreground/90"
+                }`}
+              >
+                {link.label}
+              </a>
+            )
+          )}
           <a
             href="#boka"
             className="bg-accent text-accent-foreground px-6 py-2.5 rounded-full text-sm font-semibold hover:scale-105 transition-transform shadow-sm"
@@ -74,16 +87,27 @@ const Navbar = () => {
       {menuOpen && (
         <div className="lg:hidden bg-background/98 backdrop-blur-md border-t border-border animate-fade-in">
           <div className="container py-6 flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="text-foreground text-lg font-medium py-2 border-b border-border/50"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.href.startsWith("/") ? (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-foreground text-lg font-medium py-2 border-b border-border/50"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-foreground text-lg font-medium py-2 border-b border-border/50"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
             <a
               href="#boka"
               onClick={() => setMenuOpen(false)}
