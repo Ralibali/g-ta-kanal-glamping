@@ -159,6 +159,9 @@ const CheckIn = () => {
                 Fortsätt
               </button>
             </form>
+            <p className="text-muted-foreground text-xs text-center mt-5">
+              Problem? <a href="sms:0722254993" className="text-accent font-semibold hover:underline">SMS:a Christoffer</a>
+            </p>
           </div>
         )}
 
