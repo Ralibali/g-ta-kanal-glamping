@@ -1,43 +1,30 @@
 import { Trees, Waves, Footprints, Ship } from "lucide-react";
 import activityImg from "@/assets/glamping-nature-kids.jpg";
 import ScrollReveal from "./ScrollReveal";
-
-const activities = [
-  {
-    icon: Trees,
-    title: "Naturen",
-    text: "Utforska vandringsleder och den frodiga grönskan runt Bergs Slussar, Ljungsbro och Stjärnorp.",
-  },
-  {
-    icon: Ship,
-    title: "Göta Kanal",
-    text: "Utforska kanalen med paddleboards! Glid fram över det lugna vattnet och upptäck skönheten.",
-  },
-  {
-    icon: Waves,
-    title: "Bad i Roxen",
-    text: "Klart och uppfriskande vatten. En underbar plats för avkoppling och ett uppfriskande dopp.",
-  },
-  {
-    icon: Footprints,
-    title: "Stjärnorpsravinen",
-    text: "Slingrande stigar och Stjärnorps slottsruin – som att kliva in i en sagobok.",
-  },
-];
+import { useLang } from "@/i18n/LanguageContext";
 
 const ActivitiesSection = () => {
+  const lang = useLang();
+
+  const activities = lang === "en" ? [
+    { icon: Trees, title: "Nature", text: "Explore hiking trails and the lush greenery around Bergs Slussar, Ljungsbro and Stjärnorp." },
+    { icon: Ship, title: "Göta Canal", text: "Explore the canal with paddleboards! Glide across the calm water and discover the beauty." },
+    { icon: Waves, title: "Swimming in Roxen", text: "Clear and refreshing water. A wonderful spot for relaxation and a refreshing dip." },
+    { icon: Footprints, title: "Stjärnorp Ravine", text: "Winding paths and Stjärnorp castle ruins – like stepping into a fairytale." },
+  ] : [
+    { icon: Trees, title: "Naturen", text: "Utforska vandringsleder och den frodiga grönskan runt Bergs Slussar, Ljungsbro och Stjärnorp." },
+    { icon: Ship, title: "Göta Kanal", text: "Utforska kanalen med paddleboards! Glid fram över det lugna vattnet och upptäck skönheten." },
+    { icon: Waves, title: "Bad i Roxen", text: "Klart och uppfriskande vatten. En underbar plats för avkoppling och ett uppfriskande dopp." },
+    { icon: Footprints, title: "Stjärnorpsravinen", text: "Slingrande stigar och Stjärnorps slottsruin – som att kliva in i en sagobok." },
+  ];
+
   return (
     <section id="aktiviteter" className="py-24 md:py-32 bg-background">
       <div className="container">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <ScrollReveal>
             <div className="relative">
-              <img
-                src={activityImg}
-                alt="Barn leker i naturen vid Göta kanal"
-                className="rounded-3xl shadow-2xl w-full object-cover aspect-[3/2]"
-                loading="lazy"
-              />
+              <img src={activityImg} alt="Children playing in nature by Göta Canal" className="rounded-3xl shadow-2xl w-full object-cover aspect-[3/2]" loading="lazy" />
               <div className="absolute -bottom-4 -right-4 w-32 h-32 border-2 border-accent/20 rounded-3xl -z-10" />
             </div>
           </ScrollReveal>
@@ -45,14 +32,18 @@ const ActivitiesSection = () => {
           <div>
             <ScrollReveal>
               <p className="text-accent font-sans text-sm tracking-[0.2em] uppercase mb-3 font-semibold">
-                Aktiviteter
+                {lang === "en" ? "Activities" : "Aktiviteter"}
               </p>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Aktiviteter nära Bergs Slussar
-                <span className="block italic font-normal text-accent">& Göta kanal</span>
+                {lang === "en" ? "Activities near Bergs Slussar" : "Aktiviteter nära Bergs Slussar"}
+                <span className="block italic font-normal text-accent">
+                  {lang === "en" ? "& Göta Canal" : "& Göta kanal"}
+                </span>
               </h2>
               <p className="text-muted-foreground mb-10">
-                Upplev Östergötlands natur. Camping, vandring och bad – allt inom räckhåll från ditt glamping-boende.
+                {lang === "en"
+                  ? "Experience the nature of Östergötland. Hiking, swimming and more – all within reach from your glamping tent."
+                  : "Upplev Östergötlands natur. Camping, vandring och bad – allt inom räckhåll från ditt glamping-boende."}
               </p>
             </ScrollReveal>
 
