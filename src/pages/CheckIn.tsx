@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin } from "lucide-react";
+import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, MessageCircle, Clock, Gift } from "lucide-react";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
 // Koppla bokningsnummer till tält: "sjobris", "naturkarnan" eller "lugnets"
