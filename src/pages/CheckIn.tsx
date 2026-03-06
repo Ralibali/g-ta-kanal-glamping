@@ -290,7 +290,7 @@ const CheckIn = () => {
                   Swisha 400 kr
                 </a>
                 <a
-                  href="sms:0722254993?body=Hej!%20Jag%20har%20swishat%20400%20kr%20f%C3%B6r%20sen%20utcheckning%20(kl%2012).%20Bokning%3A%20${encodeURIComponent(bookingNumber)}%20%2F%20${encodeURIComponent(TENT_INFO[tentId].name)}"
+                  href={`sms:0722254993?body=${encodeURIComponent(`Hej! Jag har swishat 400 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[tentId].name}`)}`}
                   className="flex items-center justify-center gap-2 border border-accent/40 text-foreground py-3 rounded-xl font-medium hover:bg-accent/5 transition-colors text-sm"
                 >
                   <MessageCircle size={16} />
