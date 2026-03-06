@@ -43,17 +43,29 @@ const Navbar = () => {
 
         {/* Desktop nav */}
         <div className="hidden lg:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`text-sm font-medium transition-all hover:opacity-80 ${
-                scrolled ? "text-foreground" : "text-primary-foreground/90"
-              }`}
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) =>
+            link.href.startsWith("/") ? (
+              <Link
+                key={link.href}
+                to={link.href}
+                className={`text-sm font-medium transition-all hover:opacity-80 ${
+                  scrolled ? "text-foreground" : "text-primary-foreground/90"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-all hover:opacity-80 ${
+                  scrolled ? "text-foreground" : "text-primary-foreground/90"
+                }`}
+              >
+                {link.label}
+              </a>
+            )
+          )}
           <a
             href="#boka"
             className="bg-accent text-accent-foreground px-6 py-2.5 rounded-full text-sm font-semibold hover:scale-105 transition-transform shadow-sm"
