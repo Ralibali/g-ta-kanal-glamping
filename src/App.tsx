@@ -18,6 +18,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <LanguageRedirect />
         <Routes>
           <Route path="/" element={<Index lang="sv" />} />
           <Route path="/en" element={<Index lang="en" />} />
