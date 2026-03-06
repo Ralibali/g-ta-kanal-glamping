@@ -35,6 +35,7 @@ const TERMS = [
   "Jag lämnar tältet i rimligt skick – städning ingår, men personliga tillhörigheter, skräp och matrester tas med vid utcheckning.",
   "Jag diskar mina egna kärl och bestick i servicehuset och lämnar köksytan ren efter användning.",
   "Rökning är inte tillåten i eller i närheten av tälten.",
+  "Jag visar hänsyn till medgäster, grannar och natur – och håller ljudnivån nere, särskilt kvällstid.",
   "Jag har läst och godkänner bokningsvillkoren.",
 ];
 
