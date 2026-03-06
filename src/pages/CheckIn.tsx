@@ -44,6 +44,7 @@ const CheckIn = () => {
   const [step, setStep] = useState<Step>("booking");
   const [bookingNumber, setBookingNumber] = useState("");
   const [error, setError] = useState("");
+  const [tentId, setTentId] = useState<TentId | null>(null);
   const [termsAccepted, setTermsAccepted] = useState<boolean[]>(
     TERMS.map(() => false)
   );
@@ -55,10 +56,12 @@ const CheckIn = () => {
       setError("Ange ditt bokningsnummer.");
       return;
     }
-    if (!VALID_BOOKINGS.includes(trimmed)) {
+    const matchedTent = VALID_BOOKINGS[trimmed];
+    if (!matchedTent) {
       setError("Bokningsnumret hittades inte. Kontrollera och försök igen.");
       return;
     }
+    setTentId(matchedTent);
     setError("");
     setStep("terms");
   };
