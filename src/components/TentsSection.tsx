@@ -8,11 +8,11 @@ const TentsSection = () => {
   const lang = useLang();
 
   const tents = lang === "en" ? [
-    { name: "Sjöbrisretreatet", image: tentImg1, description: "An oasis of comfort. Spacious double bed with soft pillows and premium bed linen. Also offers an extra bed.", extras: ["Double bed", "Extra bed"] },
+    { name: "Sjöbrisretreatet", image: tentImg1, description: "An oasis of comfort. Spacious double bed with soft pillows and premium bed linen. Also offers a sofa bed.", extras: ["Double bed", "Sofa bed"] },
     { name: "Naturkärnan", image: tentImg2, description: "Spacious double bed, high-quality linen and a sofa bed. Perfect for families seeking adventure.", extras: ["Double bed", "Sofa bed"] },
     { name: "Lugnets Yta", image: tentImg3, description: "Our cosiest tent where peace and harmony meet. Perfect for relaxation. Pets welcome.", extras: ["Double bed", "Pet-friendly"] },
   ] : [
-    { name: "Sjöbrisretreatet", image: tentImg1, description: "En oas av komfort. Rymlig dubbelsäng med mjuka kuddar och sänglinne av högsta kvalitet. Erbjuder även en extrabädd.", extras: ["Dubbelsäng", "Extrabädd"] },
+    { name: "Sjöbrisretreatet", image: tentImg1, description: "En oas av komfort. Rymlig dubbelsäng med mjuka kuddar och sänglinne av högsta kvalitet. Erbjuder även en bäddsoffa.", extras: ["Dubbelsäng", "Bäddsoffa"] },
     { name: "Naturkärnan", image: tentImg2, description: "Rymlig dubbelsäng, högkvalitativt sänglinne och en bäddsoffa. Perfekt för familjer som söker äventyr.", extras: ["Dubbelsäng", "Bäddsoffa"] },
     { name: "Lugnets Yta", image: tentImg3, description: "Vårt mysigaste tält där lugn och harmoni möts. Perfekt för dig som söker avkoppling. Husdjur välkomna.", extras: ["Dubbelsäng", "Husdjursvänligt"] },
   ];
