@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin } from "lucide-react";
+import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, MessageCircle, Clock, Gift } from "lucide-react";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
 // Koppla bokningsnummer till tält: "sjobris", "naturkarnan" eller "lugnets"
@@ -159,6 +159,9 @@ const CheckIn = () => {
                 Fortsätt
               </button>
             </form>
+            <p className="text-muted-foreground text-xs text-center mt-5">
+              Problem? <a href="sms:0722254993" className="text-accent font-semibold hover:underline">SMS:a Christoffer</a>
+            </p>
           </div>
         )}
 
@@ -269,9 +272,46 @@ const CheckIn = () => {
                 <li>• Incheckning från kl. 15:00</li>
                 <li>• Utcheckning senast kl. 10:00</li>
                 <li>• Diska i servicehuset (~150 m bort) och lämna köksytan ren</li>
-                <li>• Vid frågor, kontakta oss via e-post</li>
               </ul>
             </div>
+
+            {/* Late checkout upsell */}
+            <div className="bg-accent/10 border border-accent/30 rounded-xl p-5 text-left mb-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="text-accent" size={18} />
+                <p className="text-sm font-semibold text-foreground">Vill du sova lite längre?</p>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                Köp till <strong className="text-foreground">sen utcheckning till kl. 12:00</strong> för bara 400 kr. Swisha beloppet och skicka ett SMS så fixar vi resten!
+              </p>
+              <div className="flex flex-col gap-2">
+                <a
+                  href="swish://payment?data=%7B%22version%22%3A1%2C%22payee%22%3A%7B%22value%22%3A%220722254993%22%7D%2C%22amount%22%3A%7B%22value%22%3A400%7D%2C%22message%22%3A%7B%22value%22%3A%22Sen%20utcheckning%22%7D%7D"
+                  className="flex items-center justify-center gap-2 bg-accent text-accent-foreground py-3 rounded-xl font-semibold hover:scale-[1.02] transition-transform text-sm"
+                >
+                  <Gift size={16} />
+                  Swisha 400 kr
+                </a>
+                <a
+                  href={`sms:0722254993?body=${encodeURIComponent(`Hej! Jag har swishat 400 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[tentId].name}`)}`}
+                  className="flex items-center justify-center gap-2 border border-accent/40 text-foreground py-3 rounded-xl font-medium hover:bg-accent/5 transition-colors text-sm"
+                >
+                  <MessageCircle size={16} />
+                  Skicka bekräftelse-SMS
+                </a>
+              </div>
+            </div>
+
+            {/* Contact support */}
+            <div className="bg-muted rounded-xl p-4 mb-6">
+              <p className="text-sm text-muted-foreground text-center">
+                Fungerar något inte?{" "}
+                <a href="sms:0722254993" className="text-accent font-semibold hover:underline">
+                  Kontakta Christoffer via SMS
+                </a>
+              </p>
+            </div>
+
             <a
               href="/"
               className="inline-block text-accent hover:underline text-sm font-medium"
