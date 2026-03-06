@@ -22,6 +22,7 @@ const Footer = () => {
               <a href="#hantera-bokning" className="hover:opacity-100 transition-opacity">Hantera bokning</a>
               <a href="#galleri" className="hover:opacity-100 transition-opacity">Galleri</a>
               <a href="#faq" className="hover:opacity-100 transition-opacity">FAQ</a>
+              <a href="/checkin" className="hover:opacity-100 transition-opacity">Digital incheckning</a>
             </div>
           </div>
 
