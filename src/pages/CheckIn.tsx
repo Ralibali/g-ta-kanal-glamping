@@ -233,7 +233,7 @@ const CheckIn = () => {
         )}
 
         {/* Step 3: Lock code */}
-        {step === "code" && (
+        {step === "code" && tentId && (
           <div className="bg-card rounded-3xl p-8 shadow-2xl animate-fade-in text-center">
             <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="text-accent" size={36} />
@@ -241,7 +241,20 @@ const CheckIn = () => {
             <h2 className="font-serif text-2xl font-bold text-foreground mb-2">
               Incheckning klar!
             </h2>
-            <p className="text-muted-foreground text-sm mb-8">
+
+            {/* Tent info */}
+            <div className="bg-secondary rounded-xl p-5 mb-6 text-left">
+              <p className="text-sm font-semibold text-foreground mb-1">Ditt tält</p>
+              <p className="font-serif text-lg font-bold text-foreground">{TENT_INFO[tentId].name}</p>
+              <div className="flex items-start gap-2 mt-3">
+                <MapPin className="text-accent shrink-0 mt-0.5" size={16} />
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {TENT_INFO[tentId].directions}
+                </p>
+              </div>
+            </div>
+
+            <p className="text-muted-foreground text-sm mb-4">
               Din kod till låset:
             </p>
             <div className="bg-primary rounded-2xl py-8 px-6 mb-8">
@@ -254,7 +267,7 @@ const CheckIn = () => {
               <ul className="text-sm text-muted-foreground space-y-1.5">
                 <li>• Incheckning från kl. 15:00</li>
                 <li>• Utcheckning senast kl. 10:00</li>
-                <li>• Servicehuset finns ca 150 meter bort</li>
+                <li>• Diska i servicehuset (~150 m bort) och lämna köksytan ren</li>
                 <li>• Vid frågor, kontakta oss via e-post</li>
               </ul>
             </div>
