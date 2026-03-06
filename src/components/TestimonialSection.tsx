@@ -37,7 +37,7 @@ const TestimonialSection = () => {
                   </svg>
                 ))}
               </div>
-              <span className="font-bold text-foreground font-serif">4.9</span>
+              <span className="font-bold text-foreground font-serif">4.8</span>
               <span className="text-muted-foreground text-sm">Google</span>
             </div>
 
