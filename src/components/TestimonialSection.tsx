@@ -1,15 +1,20 @@
 import ScrollReveal from "./ScrollReveal";
+import { useLang } from "@/i18n/LanguageContext";
 
 const TestimonialSection = () => {
+  const lang = useLang();
+
   return (
     <section className="py-24 md:py-32 bg-secondary/50 overflow-hidden">
       <div className="container max-w-4xl text-center">
         <ScrollReveal>
           <p className="text-accent font-sans text-sm tracking-[0.2em] uppercase mb-6 font-semibold">
-            Vad gäster säger
+            {lang === "en" ? "What guests say" : "Vad gäster säger"}
           </p>
           <blockquote className="font-serif text-2xl md:text-4xl lg:text-5xl text-foreground leading-snug italic mb-8">
-            "En magisk upplevelse vid kanalen. Vi somnade till ljudet av naturen och vaknade till den vackraste soluppgången."
+            {lang === "en"
+              ? '"A magical experience by the canal. We fell asleep to the sounds of nature and woke up to the most beautiful sunrise."'
+              : '"En magisk upplevelse vid kanalen. Vi somnade till ljudet av naturen och vaknade till den vackraste soluppgången."'}
           </blockquote>
           <div className="flex items-center justify-center gap-1 mb-3">
             {[...Array(5)].map((_, i) => (
@@ -18,7 +23,9 @@ const TestimonialSection = () => {
               </svg>
             ))}
           </div>
-          <p className="text-muted-foreground text-sm">— Nöjd gäst via Google Reviews</p>
+          <p className="text-muted-foreground text-sm">
+            {lang === "en" ? "— Happy guest via Google Reviews" : "— Nöjd gäst via Google Reviews"}
+          </p>
         </ScrollReveal>
       </div>
     </section>
