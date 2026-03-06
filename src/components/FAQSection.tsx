@@ -4,28 +4,36 @@ import ScrollReveal from "./ScrollReveal";
 
 const faqs = [
   {
-    q: "Hur bokar vi en vistelse hos er?",
-    a: "Det är enkelt! Scrolla upp till bokningssektionen på sidan, välj datum och antal gäster, och följ instruktionerna.",
+    q: "Hur bokar vi glamping vid Bergs Slussar?",
+    a: "Det är enkelt! Scrolla upp till bokningssektionen på sidan, välj datum och antal gäster, och följ instruktionerna. Vi erbjuder glamping i Östergötland vid Göta kanal, strax utanför Linköping.",
   },
   {
-    q: "Vad ingår i priset?",
-    a: "I priset ingår städning, bäddade sängar, sänglinne, handdukar, el, fläkt, minikylskåp, gasolvärmare, kaffe, te och en flaska vatten.",
+    q: "Vad kostar glamping och vad ingår i priset?",
+    a: "I priset ingår städning, bäddade sängar, sänglinne, handdukar, el, fläkt, minikylskåp, gasolvärmare, kaffe, te och en flaska vatten. Se aktuella glamping priser i bokningswidgeten ovan.",
+  },
+  {
+    q: "Finns det parkering vid Bergs Slussar?",
+    a: "Ja, parkering finns på plats mot en liten avgift, bara en kort promenad från glampingtälten. Perfekt för dig som reser med bil till Bergs Slussar.",
   },
   {
     q: "Finns det toaletter och dusch?",
     a: "Ja, ett fräscht servicehus ligger cirka 150 meter från tälten med toaletter, duschar och skötrum.",
   },
   {
-    q: "Finns det matmöjligheter i närheten?",
-    a: "Ja! Besök restauranger och caféer i närheten. Vi erbjuder även frukost via Bostället som tillval vid bokning.",
+    q: "Finns det mat och café vid Bergs Slussar?",
+    a: "Ja! Det finns restauranger och caféer i närområdet kring Bergs Slussar. Vi erbjuder även frukost via Bostället som tillval vid bokning.",
   },
   {
-    q: "Kan barn bo hos er?",
-    a: "Självklart! Barn upp till 12 år har rabatterade priser och kan sova tillsammans med vuxna i dubbelsängen.",
+    q: "Kan barn bo i glampingtälten?",
+    a: "Självklart! Barn upp till 12 år har rabatterade priser och kan sova tillsammans med vuxna i dubbelsängen. Perfekt boende för familjer vid Göta kanal.",
   },
   {
     q: "Får vi ta med husdjur?",
     a: "Ja, i tältet Lugnets Yta är husdjur välkomna mot en husdjursavgift.",
+  },
+  {
+    q: "Hur långt är det från Linköping till Bergs Slussar?",
+    a: "Bergs Slussar ligger i Vreta Kloster, cirka 15 minuter med bil från centrala Linköping. Enkelt att nå som boende utmed Göta kanal.",
   },
   {
     q: "Vilka bokningsvillkor gäller?",
@@ -45,7 +53,7 @@ const FAQSection = () => {
               FAQ
             </p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-              Frågor & svar
+              Frågor & svar om glamping vid Bergs Slussar
             </h2>
           </div>
         </ScrollReveal>

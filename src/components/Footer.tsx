@@ -9,7 +9,7 @@ const Footer = () => {
             <p className="font-serif text-2xl font-bold mb-2">Bergs Slussar</p>
             <p className="text-xs tracking-[0.25em] uppercase opacity-60 mb-4">Glamping</p>
             <p className="text-sm opacity-70 leading-relaxed">
-              En unik glamping-upplevelse vid Göta kanal i Berg, strax utanför Linköping. Natur, komfort och avkoppling.
+              Glamping Sweden – unikt boende vid Göta kanal i Östergötland. Bergs Slussar, Vreta Kloster, nära Linköping. Natur, komfort och avkoppling.
             </p>
           </div>
 

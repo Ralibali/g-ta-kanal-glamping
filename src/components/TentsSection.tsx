@@ -37,10 +37,10 @@ const TentsSection = () => {
               Våra tält
             </p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              Tre unika upplevelser
+              Tre unika glampingtält vid Bergs Slussar
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
-              Alla med bekväma sängar, värme, kylskåp och el. Sänglinne, handdukar och städning ingår.
+              Vårt boende vid Göta kanal – alla tält med bekväma sängar, värme, kylskåp och el. Sänglinne, handdukar och städning ingår i priset.
             </p>
           </div>
         </ScrollReveal>

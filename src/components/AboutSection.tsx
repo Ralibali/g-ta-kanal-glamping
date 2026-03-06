@@ -22,16 +22,16 @@ const AboutSection = () => {
               Om upplevelsen
             </p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 leading-tight">
-              Där natur möter
-              <span className="block italic font-normal text-accent">komfort</span>
+              Glamping i Östergötland
+              <span className="block italic font-normal text-accent">– natur möter komfort</span>
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-              Våra ombonade glampingtält står i naturskön omgivning precis vid Göta kanal i Berg,
-              strax utanför Linköping. En unik och varm upplevelse.
+              Våra ombonade glampingtält erbjuder unikt boende vid Bergs Slussar och Göta kanal,
+              strax utanför Linköping i Vreta Kloster. Glamping Sweden på sitt bästa.
             </p>
             <p className="text-muted-foreground leading-relaxed mb-10">
               Med bekväma dubbelsängar, värme och kylskåp får du en avkopplande vistelse.
-              Slappna av framför solnedgången och låt fåglarnas kvitter förgylla din morgon.
+              Parkering finns i närheten. Slappna av framför solnedgången och låt fåglarnas kvitter förgylla din morgon.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">

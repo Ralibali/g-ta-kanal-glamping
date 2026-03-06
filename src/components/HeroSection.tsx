@@ -50,7 +50,7 @@ const HeroSection = () => {
           <span className="block italic font-normal text-primary-foreground/90">Bergs Slussar</span>
         </h1>
         <p className="text-primary-foreground/75 text-lg md:text-xl font-sans mb-12 max-w-xl mx-auto animate-fade-in-up leading-relaxed" style={{ animationDelay: "0.2s" }}>
-          Upplev naturen på ett lyxigt sätt. Ombonade tält vid Göta kanal med allt du behöver.
+          Lyxigt boende i Östergötland vid Göta kanal, nära Linköping. Ombonade glampingtält med allt du behöver.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
           <a
