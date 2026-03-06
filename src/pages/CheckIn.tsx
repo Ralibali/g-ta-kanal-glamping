@@ -286,7 +286,9 @@ const CheckIn = () => {
               </p>
               <div className="flex flex-col gap-2">
                 <a
-                  href="swish://payment?data=%7B%22version%22%3A1%2C%22payee%22%3A%7B%22value%22%3A%220722254993%22%7D%2C%22amount%22%3A%7B%22value%22%3A400%7D%2C%22message%22%3A%7B%22value%22%3A%22Sen%20utcheckning%22%7D%7D"
+                  href="https://app.swish.nu/1/p/sw/?token=0722254993&amt=400&msg=Sen%20utcheckning&edit=msg,amt"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 bg-accent text-accent-foreground py-3 rounded-xl font-semibold hover:scale-[1.02] transition-transform text-sm"
                 >
                   <Gift size={16} />
