@@ -10,14 +10,14 @@ import img7 from "@/assets/glamping-nature-kids.jpg";
 import img8 from "@/assets/glamping-interior-beds.jpg";
 
 const images = [
-  { src: img1, alt: "Mysig inredning i glampingtält", span: "col-span-1 row-span-2" },
-  { src: img2, alt: "Utemöbler på altanen", span: "col-span-1 row-span-1" },
-  { src: img3, alt: "Kvällsbelysning i tältet", span: "col-span-1 row-span-1" },
-  { src: img4, alt: "Utsikt över fälten", span: "col-span-2 row-span-1" },
-  { src: img5, alt: "Gäst på altanen", span: "col-span-1 row-span-1" },
-  { src: img6, alt: "Läsa i tältet", span: "col-span-1 row-span-1" },
-  { src: img7, alt: "Barn i naturen vid Göta kanal", span: "col-span-1 row-span-1" },
-  { src: img8, alt: "Sängar i glampingtält", span: "col-span-1 row-span-2" },
+  { src: img1, alt: "Mysig glamping inredning vid Bergs Slussar Östergötland", span: "col-span-1 row-span-2" },
+  { src: img2, alt: "Glamping tält med altan vid Göta kanal", span: "col-span-1 row-span-1" },
+  { src: img3, alt: "Kvällsbelysning glamping boende Bergs Slussar", span: "col-span-1 row-span-1" },
+  { src: img4, alt: "Utsikt över naturen vid glamping Linköping", span: "col-span-2 row-span-1" },
+  { src: img5, alt: "Gäst njuter av glamping vid Göta kanal Sweden", span: "col-span-1 row-span-1" },
+  { src: img6, alt: "Avkoppling i glampingtält Bergs Slussar boende", span: "col-span-1 row-span-1" },
+  { src: img7, alt: "Barn i naturen camping Göta kanal Östergötland", span: "col-span-1 row-span-1" },
+  { src: img8, alt: "Bekväma sängar glamping Sweden Bergs Slussar", span: "col-span-1 row-span-2" },
 ];
 
 const GallerySection = () => {

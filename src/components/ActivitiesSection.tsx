@@ -48,11 +48,11 @@ const ActivitiesSection = () => {
                 Aktiviteter
               </p>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                Kom närmare
-                <span className="block italic font-normal text-accent">naturen</span>
+                Aktiviteter nära Bergs Slussar
+                <span className="block italic font-normal text-accent">& Göta kanal</span>
               </h2>
               <p className="text-muted-foreground mb-10">
-                Ändra ditt sätt att resa. Ta en stund att uppskatta vardagens skönhet.
+                Upplev Östergötlands natur. Camping, vandring och bad – allt inom räckhåll från ditt glamping-boende.
               </p>
             </ScrollReveal>
 
