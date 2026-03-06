@@ -30,7 +30,7 @@ const SocialProofSection = () => {
               className="flex items-center gap-3 bg-primary-foreground/10 hover:bg-primary-foreground/15 transition-colors rounded-2xl px-6 py-4 backdrop-blur-sm border border-primary-foreground/10"
             >
               <div className="flex flex-col items-center">
-                <span className="text-3xl font-bold text-primary-foreground font-serif">4.9</span>
+                <span className="text-3xl font-bold text-primary-foreground font-serif">4.8</span>
                 <div className="flex gap-0.5 mt-1">
                   {[...Array(5)].map((_, i) => (
                     <svg key={i} className="w-3.5 h-3.5 text-accent" fill="currentColor" viewBox="0 0 20 20">
