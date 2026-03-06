@@ -10,7 +10,7 @@ const navLinks = [
   { label: "Aktiviteter", href: "#aktiviteter" },
   { label: "FAQ", href: "#faq" },
   { label: "Kontakt", href: "#kontakt" },
-  { label: "Incheckning", href: "/checkin" },
+  { label: "Blogg", href: "/blogg" },
 ];
 
 const Navbar = () => {
