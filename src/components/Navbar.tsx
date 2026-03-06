@@ -87,16 +87,27 @@ const Navbar = () => {
       {menuOpen && (
         <div className="lg:hidden bg-background/98 backdrop-blur-md border-t border-border animate-fade-in">
           <div className="container py-6 flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className="text-foreground text-lg font-medium py-2 border-b border-border/50"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.href.startsWith("/") ? (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-foreground text-lg font-medium py-2 border-b border-border/50"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-foreground text-lg font-medium py-2 border-b border-border/50"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
             <a
               href="#boka"
               onClick={() => setMenuOpen(false)}
