@@ -1,11 +1,30 @@
 import { useState } from "react";
-import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft } from "lucide-react";
+import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin } from "lucide-react";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
-// Lägg till/ta bort bokningsnummer här. Gästen måste ange ett av dessa.
-const VALID_BOOKINGS = [
-  "DEMO-1234", // Ta bort denna och lägg in riktiga bokningsnummer
-];
+// Koppla bokningsnummer till tält: "sjobris", "naturkarnan" eller "lugnets"
+type TentId = "sjobris" | "naturkarnan" | "lugnets";
+
+const VALID_BOOKINGS: Record<string, TentId> = {
+  "DEMO-1234": "sjobris",   // Ta bort dessa och lägg in riktiga
+  "DEMO-5678": "naturkarnan",
+  "DEMO-9012": "lugnets",
+};
+
+const TENT_INFO: Record<TentId, { name: string; directions: string }> = {
+  sjobris: {
+    name: "Sjöbrisretreatet",
+    directions: "Gå rakt fram från QR-koden – tältet ligger rakt upp framför dig.",
+  },
+  naturkarnan: {
+    name: "Naturkärnan",
+    directions: "Gå till vänster och följ stigen – tältet ligger längst bort till vänster.",
+  },
+  lugnets: {
+    name: "Lugnets Yta",
+    directions: "Gå rakt fram och ta sedan mitten – tältet ligger i mitten av de tre.",
+  },
+};
 
 // Låskod (samma för alla tält)
 const LOCK_CODE = "2018";
@@ -13,7 +32,8 @@ const LOCK_CODE = "2018";
 // ─── Villkor ─────────────────────────────────────────────────
 const TERMS = [
   "Jag förstår att incheckning sker från kl. 15:00 och utcheckning senast kl. 10:00.",
-  "Jag ansvarar för att lämna tältet i gott skick.",
+  "Jag lämnar tältet i rimligt skick – städning ingår, men personliga tillhörigheter, skräp och matrester tas med vid utcheckning.",
+  "Jag diskar mina egna kärl och bestick i servicehuset och lämnar köksytan ren efter användning.",
   "Rökning är inte tillåten i eller i närheten av tälten.",
   "Jag har läst och godkänner bokningsvillkoren.",
 ];
@@ -24,6 +44,7 @@ const CheckIn = () => {
   const [step, setStep] = useState<Step>("booking");
   const [bookingNumber, setBookingNumber] = useState("");
   const [error, setError] = useState("");
+  const [tentId, setTentId] = useState<TentId | null>(null);
   const [termsAccepted, setTermsAccepted] = useState<boolean[]>(
     TERMS.map(() => false)
   );
@@ -35,10 +56,12 @@ const CheckIn = () => {
       setError("Ange ditt bokningsnummer.");
       return;
     }
-    if (!VALID_BOOKINGS.includes(trimmed)) {
+    const matchedTent = VALID_BOOKINGS[trimmed];
+    if (!matchedTent) {
       setError("Bokningsnumret hittades inte. Kontrollera och försök igen.");
       return;
     }
+    setTentId(matchedTent);
     setError("");
     setStep("terms");
   };
@@ -210,7 +233,7 @@ const CheckIn = () => {
         )}
 
         {/* Step 3: Lock code */}
-        {step === "code" && (
+        {step === "code" && tentId && (
           <div className="bg-card rounded-3xl p-8 shadow-2xl animate-fade-in text-center">
             <div className="w-20 h-20 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="text-accent" size={36} />
@@ -218,7 +241,20 @@ const CheckIn = () => {
             <h2 className="font-serif text-2xl font-bold text-foreground mb-2">
               Incheckning klar!
             </h2>
-            <p className="text-muted-foreground text-sm mb-8">
+
+            {/* Tent info */}
+            <div className="bg-secondary rounded-xl p-5 mb-6 text-left">
+              <p className="text-sm font-semibold text-foreground mb-1">Ditt tält</p>
+              <p className="font-serif text-lg font-bold text-foreground">{TENT_INFO[tentId].name}</p>
+              <div className="flex items-start gap-2 mt-3">
+                <MapPin className="text-accent shrink-0 mt-0.5" size={16} />
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {TENT_INFO[tentId].directions}
+                </p>
+              </div>
+            </div>
+
+            <p className="text-muted-foreground text-sm mb-4">
               Din kod till låset:
             </p>
             <div className="bg-primary rounded-2xl py-8 px-6 mb-8">
@@ -231,7 +267,7 @@ const CheckIn = () => {
               <ul className="text-sm text-muted-foreground space-y-1.5">
                 <li>• Incheckning från kl. 15:00</li>
                 <li>• Utcheckning senast kl. 10:00</li>
-                <li>• Servicehuset finns ca 150 meter bort</li>
+                <li>• Diska i servicehuset (~150 m bort) och lämna köksytan ren</li>
                 <li>• Vid frågor, kontakta oss via e-post</li>
               </ul>
             </div>
