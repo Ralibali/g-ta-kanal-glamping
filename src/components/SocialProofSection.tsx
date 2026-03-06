@@ -1,14 +1,22 @@
 import { Star, Clock, ShieldCheck, Heart } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
-
-const usps = [
-  { icon: Star, title: "Allt ingår", text: "Sänglinne, handdukar, kaffe, te och städning – inga dolda kostnader." },
-  { icon: Clock, title: "Enkel avbokning", text: "Kostnadsfri avbokning upp till fem dagar före ankomst." },
-  { icon: ShieldCheck, title: "Tryggt & bekvämt", text: "El, värme, kylskåp och fräscht servicehus alldeles intill." },
-  { icon: Heart, title: "Unikt läge", text: "Direkt vid Göta kanal – njut av solnedgångar, fågelsång och lugn." },
-];
+import { useLang } from "@/i18n/LanguageContext";
 
 const SocialProofSection = () => {
+  const lang = useLang();
+
+  const usps = lang === "en" ? [
+    { icon: Star, title: "All inclusive", text: "Bed linen, towels, coffee, tea and cleaning – no hidden costs." },
+    { icon: Clock, title: "Easy cancellation", text: "Free cancellation up to five days before arrival." },
+    { icon: ShieldCheck, title: "Safe & comfortable", text: "Electricity, heating, fridge and a fresh service house nearby." },
+    { icon: Heart, title: "Unique location", text: "Right by Göta Canal – enjoy sunsets, birdsong and tranquility." },
+  ] : [
+    { icon: Star, title: "Allt ingår", text: "Sänglinne, handdukar, kaffe, te och städning – inga dolda kostnader." },
+    { icon: Clock, title: "Enkel avbokning", text: "Kostnadsfri avbokning upp till fem dagar före ankomst." },
+    { icon: ShieldCheck, title: "Tryggt & bekvämt", text: "El, värme, kylskåp och fräscht servicehus alldeles intill." },
+    { icon: Heart, title: "Unikt läge", text: "Direkt vid Göta kanal – njut av solnedgångar, fågelsång och lugn." },
+  ];
+
   return (
     <section className="py-20 bg-foreground">
       <div className="container">
