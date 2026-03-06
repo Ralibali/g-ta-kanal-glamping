@@ -12,10 +12,15 @@ import FAQSection from "@/components/FAQSection";
 import ManageBookingSection from "@/components/ManageBookingSection";
 import MapSection from "@/components/MapSection";
 import Footer from "@/components/Footer";
+import { LanguageProvider, type Lang } from "@/i18n/LanguageContext";
 
-const Index = () => {
+interface IndexProps {
+  lang?: Lang;
+}
+
+const Index = ({ lang = "sv" }: IndexProps) => {
   return (
-    <>
+    <LanguageProvider value={lang}>
       <Navbar />
       <main>
         <HeroSection />
@@ -32,7 +37,7 @@ const Index = () => {
         <MapSection />
       </main>
       <Footer />
-    </>
+    </LanguageProvider>
   );
 };
 
