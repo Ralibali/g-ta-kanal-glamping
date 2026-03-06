@@ -34,11 +34,9 @@ const Navbar = () => {
   }, []);
 
   const switchLang = () => {
-    if (lang === "sv") {
-      navigate("/en");
-    } else {
-      navigate("/");
-    }
+    const target = lang === "sv" ? "en" : "sv";
+    localStorage.setItem("lang-choice", target);
+    navigate(target === "en" ? "/en" : "/");
   };
 
   const otherLang: Lang = lang === "sv" ? "en" : "sv";
