@@ -1,11 +1,30 @@
 import { useState } from "react";
-import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft } from "lucide-react";
+import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin } from "lucide-react";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
-// Lägg till/ta bort bokningsnummer här. Gästen måste ange ett av dessa.
-const VALID_BOOKINGS = [
-  "DEMO-1234", // Ta bort denna och lägg in riktiga bokningsnummer
-];
+// Koppla bokningsnummer till tält: "sjobris", "naturkarnan" eller "lugnets"
+type TentId = "sjobris" | "naturkarnan" | "lugnets";
+
+const VALID_BOOKINGS: Record<string, TentId> = {
+  "DEMO-1234": "sjobris",   // Ta bort dessa och lägg in riktiga
+  "DEMO-5678": "naturkarnan",
+  "DEMO-9012": "lugnets",
+};
+
+const TENT_INFO: Record<TentId, { name: string; directions: string }> = {
+  sjobris: {
+    name: "Sjöbrisretreatet",
+    directions: "Gå rakt fram från QR-koden – tältet ligger rakt upp framför dig.",
+  },
+  naturkarnan: {
+    name: "Naturkärnan",
+    directions: "Gå till vänster och följ stigen – tältet ligger längst bort till vänster.",
+  },
+  lugnets: {
+    name: "Lugnets Yta",
+    directions: "Gå rakt fram och ta sedan mitten – tältet ligger i mitten av de tre.",
+  },
+};
 
 // Låskod (samma för alla tält)
 const LOCK_CODE = "2018";
@@ -13,7 +32,8 @@ const LOCK_CODE = "2018";
 // ─── Villkor ─────────────────────────────────────────────────
 const TERMS = [
   "Jag förstår att incheckning sker från kl. 15:00 och utcheckning senast kl. 10:00.",
-  "Jag ansvarar för att lämna tältet i gott skick.",
+  "Jag lämnar tältet i rimligt skick – städning ingår, men personliga tillhörigheter, skräp och matrester tas med vid utcheckning.",
+  "Jag diskar mina egna kärl och bestick i servicehuset och lämnar köksytan ren efter användning.",
   "Rökning är inte tillåten i eller i närheten av tälten.",
   "Jag har läst och godkänner bokningsvillkoren.",
 ];
