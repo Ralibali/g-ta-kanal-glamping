@@ -278,7 +278,7 @@ const CheckIn = () => {
             {/* Late checkout option */}
             <div className="bg-muted/50 rounded-xl p-5 text-left mb-6">
               <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                💤 Vill du checka ut lite senare? Du kan förlänga till <strong className="text-foreground">kl. 12:00</strong> för 400 kr. Swisha och meddela oss – så är det fixat.
+                ♡ Vill du checka ut lite senare? Du kan förlänga till <strong className="text-foreground">kl. 12:00</strong> för 400 kr. Swisha och meddela oss – så är det fixat.
               </p>
               <div className="flex gap-2">
                 <a
