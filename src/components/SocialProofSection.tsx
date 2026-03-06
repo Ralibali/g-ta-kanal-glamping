@@ -2,10 +2,10 @@ import { Star, Clock, ShieldCheck, Heart } from "lucide-react";
 import ScrollReveal from "./ScrollReveal";
 
 const usps = [
-  { icon: Star, title: "Allt ingår", text: "Sänglinne, handdukar, kaffe, te och städning." },
-  { icon: Clock, title: "Enkel avbokning", text: "Kostnadsfri avbokning upp till 5 dagar före." },
-  { icon: ShieldCheck, title: "Tryggt & bekvämt", text: "El, värme, kylskåp och servicehus intill." },
-  { icon: Heart, title: "Unikt läge", text: "Vid Göta kanal med solnedgångar och fågelsång." },
+  { icon: Star, title: "Allt ingår", text: "Sänglinne, handdukar, kaffe, te och städning – inga dolda kostnader." },
+  { icon: Clock, title: "Enkel avbokning", text: "Kostnadsfri avbokning upp till fem dagar före ankomst." },
+  { icon: ShieldCheck, title: "Tryggt & bekvämt", text: "El, värme, kylskåp och fräscht servicehus alldeles intill." },
+  { icon: Heart, title: "Unikt läge", text: "Direkt vid Göta kanal – njut av solnedgångar, fågelsång och lugn." },
 ];
 
 const SocialProofSection = () => {
