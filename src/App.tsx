@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LanguageRedirect from "./components/LanguageRedirect";
 import Index from "./pages/Index";
 import CheckIn from "./pages/CheckIn";
 import Blog from "./pages/Blog";
