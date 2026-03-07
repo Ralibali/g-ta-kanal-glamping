@@ -30,6 +30,9 @@ const FAQSection = () => {
     { q: "Får vi ta med husdjur?", a: "Ja, i tältet Lugnets Yta är husdjur välkomna mot en husdjursavgift." },
     { q: "Hur långt är det från Linköping till Bergs Slussar?", a: "Bergs Slussar ligger i Vreta Kloster, cirka 15 minuter med bil från centrala Linköping. Enkelt att nå som boende utmed Göta kanal." },
     { q: "Vilka bokningsvillkor gäller?", a: "Incheckning från kl. 15:00, utcheckning senast kl. 10:00. Kostnadsfri avbokning upp till 5 dagar före ankomst. Sen utcheckning till kl. 11:30 kan erbjudas mot 400 kr." },
+    { q: "Vad är glamping i Sverige?", a: "Glamping i Sverige innebär att sova nära naturen med riktig komfort – riktiga sängar, värme och mysig inredning. Hos oss vid Bergs Slussar vid Göta kanal kombinerar du lyxiga tält med Östergötlands vackra natur, vandring och kanalkultur." },
+    { q: "Varför välja glamping i Östergötland?", a: "Östergötland erbjuder en unik blandning av kultur och natur. Med Göta kanal, sjön Roxen, Ombergs ekopark och närheten till Linköping ger glamping i Östergötland dig oändliga upplevelser bara några steg från tältet." },
+    { q: "När är glampingsäsongen i Sverige?", a: "Vår glampingsäsong sträcker sig från maj till september. Sommaren är populärast, men sen vår och tidig höst erbjuder lugnare vistelser med vacker natur och färre besökare." },
   ];
 
   return (
