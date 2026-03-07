@@ -50,8 +50,8 @@ const HeroSection = () => {
         </h1>
         <p className="text-primary-foreground/75 text-lg md:text-xl font-sans mb-12 max-w-xl mx-auto animate-fade-in-up leading-relaxed" style={{ animationDelay: "0.2s" }}>
           {lang === "en"
-            ? "Luxury glamping in Sweden by Göta Canal, near Linköping. Cosy tents with everything you need."
-            : "Lyxigt boende i Östergötland vid Göta kanal, nära Linköping. Ombonade glampingtält med allt du behöver."}
+            ? "Cosy glamping in Sweden by Göta Canal, near Linköping. Peaceful tents with everything you need."
+            : "Mysigt boende i Östergötland vid Göta kanal, nära Linköping. Ombonade glampingtält med allt du behöver."}
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
           <a href="#boka" className="bg-accent text-accent-foreground px-10 py-4 rounded-full text-lg font-semibold hover:scale-105 transition-transform shadow-lg">
