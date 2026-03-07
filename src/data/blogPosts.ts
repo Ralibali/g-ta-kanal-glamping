@@ -30,7 +30,7 @@ export const blogPosts: BlogPost[] = [
     readTime: "4 min",
     heroImage: glampingSunset,
     metaDescription:
-      "Glamping vid Göta kanal i Östergötland. Lyxiga tält med dubbelsängar, värme och naturskön utsikt vid Bergs Slussar. Boka din glampingupplevelse idag.",
+      "Glamping vid Göta kanal i Östergötland. Mysiga tält med dubbelsängar, värme och naturskön utsikt vid Bergs Slussar. Boka din glampingupplevelse idag.",
     images: [glampingExterior, glampingInterior],
     content: `
 ## En ny sorts naturupplevelse
