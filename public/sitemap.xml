@@ -5,6 +5,8 @@
     <loc>https://goglampingsweden.se/</loc>
     <xhtml:link rel="alternate" hreflang="sv" href="https://goglampingsweden.se/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://goglampingsweden.se/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://goglampingsweden.se/" />
+    <lastmod>2025-06-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -12,26 +14,32 @@
     <loc>https://goglampingsweden.se/en</loc>
     <xhtml:link rel="alternate" hreflang="sv" href="https://goglampingsweden.se/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://goglampingsweden.se/en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://goglampingsweden.se/" />
+    <lastmod>2025-06-01</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://goglampingsweden.se/blogg</loc>
+    <lastmod>2025-06-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://goglampingsweden.se/blogg/glamping-vid-gota-kanal</loc>
+    <lastmod>2025-05-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://goglampingsweden.se/blogg/bergs-slussar-guide</loc>
+    <lastmod>2025-05-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://goglampingsweden.se/blogg/naturupplevelser-ostergotland</loc>
+    <lastmod>2025-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
