@@ -17,5 +17,6 @@ Allow: /
 User-agent: *
 Allow: /
 Disallow: /checkin
+Disallow: /admin
 
 Sitemap: https://goglampingsweden.se/sitemap.xml
