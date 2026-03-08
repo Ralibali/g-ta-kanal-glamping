@@ -6,6 +6,7 @@ Disallow: /admin
 User-agent: Bingbot
 Allow: /
 Disallow: /checkin
+Disallow: /admin
 
 User-agent: Twitterbot
 Allow: /
