@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import CheckIn from "./pages/CheckIn";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
