@@ -1,6 +1,7 @@
 User-agent: Googlebot
 Allow: /
 Disallow: /checkin
+Disallow: /admin
 
 User-agent: Bingbot
 Allow: /
