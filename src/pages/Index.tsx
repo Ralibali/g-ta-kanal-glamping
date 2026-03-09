@@ -37,6 +37,7 @@ const Index = ({ lang = "sv" }: IndexProps) => {
         <ManageBookingSection />
         <MapSection />
       </main>
+      <MobileBookingBar />
       <Footer />
     </LanguageProvider>
   );
