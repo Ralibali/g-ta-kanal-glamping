@@ -5,11 +5,11 @@ import { useLang } from "@/i18n/LanguageContext";
 
 const FAQSection = () => {
   const lang = useLang();
-  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [openIdx, setOpenIdx] = useState<number | null>(0); // Auto-open first question
 
   const faqs = lang === "en" ? [
-    { q: "How do I book glamping at Bergs Slussar?", a: "It's easy! Scroll up to the booking section, select dates and number of guests, and follow the instructions. We offer glamping in Sweden by Göta Canal, just outside Linköping." },
     { q: "What does glamping cost and what's included?", a: "The price includes cleaning, made beds, bed linen, towels, electricity, fan, mini fridge, gas heater, coffee, tea and a bottle of water. See current prices in the booking widget above." },
+    { q: "How do I book glamping at Bergs Slussar?", a: "It's easy! Scroll up to the booking section, select dates and number of guests, and follow the instructions. We offer glamping in Sweden by Göta Canal, just outside Linköping." },
     { q: "Is there parking at Bergs Slussar?", a: "Yes, parking is available on-site for a small fee, just a short walk from the glamping tents." },
     { q: "Are there toilets and showers?", a: "Yes, a fresh service house is located about 150 metres from the tents with toilets, showers and baby changing facilities." },
     { q: "Is there food and a café at Bergs Slussar?", a: "Yes! There are restaurants and cafés in the area around Bergs Slussar. We also offer breakfast via Bostället as an add-on when booking." },
@@ -21,8 +21,8 @@ const FAQSection = () => {
     { q: "Why choose glamping in Östergötland?", a: "Östergötland offers a unique mix of culture and nature. With Göta Canal, Lake Roxen, Omberg Ecopark and proximity to Linköping, glamping in Östergötland gives you endless experiences just steps from your tent." },
     { q: "When is glamping season in Sweden?", a: "Our glamping season runs from May to September. Summer is the most popular time, but late spring and early autumn offer quieter stays with beautiful nature and fewer visitors." },
   ] : [
-    { q: "Hur bokar vi glamping vid Bergs Slussar?", a: "Det är enkelt! Scrolla upp till bokningssektionen på sidan, välj datum och antal gäster, och följ instruktionerna. Vi erbjuder glamping i Östergötland vid Göta kanal, strax utanför Linköping." },
     { q: "Vad kostar glamping och vad ingår i priset?", a: "I priset ingår städning, bäddade sängar, sänglinne, handdukar, el, fläkt, minikylskåp, gasolvärmare, kaffe, te och en flaska vatten. Se aktuella glamping priser i bokningswidgeten ovan." },
+    { q: "Hur bokar vi glamping vid Bergs Slussar?", a: "Det är enkelt! Scrolla upp till bokningssektionen på sidan, välj datum och antal gäster, och följ instruktionerna. Vi erbjuder glamping i Östergötland vid Göta kanal, strax utanför Linköping." },
     { q: "Finns det parkering vid Bergs Slussar?", a: "Ja, parkering finns på plats mot en liten avgift, bara en kort promenad från glampingtälten. Perfekt för dig som reser med bil till Bergs Slussar." },
     { q: "Finns det toaletter och dusch?", a: "Ja, ett fräscht servicehus ligger cirka 150 meter från tälten med toaletter, duschar och skötrum." },
     { q: "Finns det mat och café vid Bergs Slussar?", a: "Ja! Det finns restauranger och caféer i närområdet kring Bergs Slussar. Vi erbjuder även frukost via Bostället som tillval vid bokning." },
