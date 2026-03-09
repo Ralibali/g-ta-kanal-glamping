@@ -12,6 +12,7 @@ import FAQSection from "@/components/FAQSection";
 import ManageBookingSection from "@/components/ManageBookingSection";
 import MapSection from "@/components/MapSection";
 import Footer from "@/components/Footer";
+import MobileBookingBar from "@/components/MobileBookingBar";
 import { LanguageProvider, type Lang } from "@/i18n/LanguageContext";
 
 interface IndexProps {
@@ -36,6 +37,7 @@ const Index = ({ lang = "sv" }: IndexProps) => {
         <ManageBookingSection />
         <MapSection />
       </main>
+      <MobileBookingBar />
       <Footer />
     </LanguageProvider>
   );
