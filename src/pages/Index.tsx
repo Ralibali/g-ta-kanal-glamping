@@ -28,10 +28,10 @@ const Index = ({ lang = "sv" }: IndexProps) => {
         <SocialProofSection />
         <AboutSection />
         <TentsSection />
-        <TestimonialSection />
-        <BookingSection />
         <GallerySection />
         <ActivitiesSection />
+        <TestimonialSection />
+        <BookingSection />
         <CTASection />
         <FAQSection />
         <ManageBookingSection />
