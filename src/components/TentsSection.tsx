@@ -8,13 +8,13 @@ const TentsSection = () => {
   const lang = useLang();
 
   const tents = lang === "en" ? [
-    { name: "Sjöbrisretreatet", image: tentImg1, description: "An oasis of comfort. Spacious double bed with soft pillows and premium bed linen. Also offers a sofa bed.", extras: ["Double bed", "Sofa bed"], price: "From 1 290 kr/night", guests: "Up to 4 guests" },
-    { name: "Naturkärnan", image: tentImg2, description: "Spacious double bed, high-quality linen and a sofa bed. Perfect for families seeking adventure.", extras: ["Double bed", "Sofa bed"], price: "From 1 290 kr/night", guests: "Up to 4 guests" },
-    { name: "Lugnets Yta", image: tentImg3, description: "Our cosiest tent where peace and harmony meet. Perfect for relaxation. Pets welcome.", extras: ["Double bed", "Pet-friendly"], price: "From 1 290 kr/night", guests: "Up to 2 guests" },
+    { name: "Sjöbrisretreatet", image: tentImg1, description: "An oasis of comfort. Spacious double bed with soft pillows and premium bed linen. Also offers a sofa bed.", extras: ["Double bed", "Sofa bed"], price: "From 700 kr/person", guests: "Up to 4 guests" },
+    { name: "Naturkärnan", image: tentImg2, description: "Spacious double bed, high-quality linen and a sofa bed. Perfect for families seeking adventure.", extras: ["Double bed", "Sofa bed"], price: "From 700 kr/person", guests: "Up to 4 guests" },
+    { name: "Lugnets Yta", image: tentImg3, description: "Our cosiest tent where peace and harmony meet. Perfect for relaxation. Pets welcome.", extras: ["Double bed", "Pet-friendly"], price: "From 700 kr/person", guests: "Up to 2 guests" },
   ] : [
-    { name: "Sjöbrisretreatet", image: tentImg1, description: "En oas av komfort. Rymlig dubbelsäng med mjuka kuddar och sänglinne av högsta kvalitet. Erbjuder även en bäddsoffa.", extras: ["Dubbelsäng", "Bäddsoffa"], price: "Från 1 290 kr/natt", guests: "Upp till 4 gäster" },
-    { name: "Naturkärnan", image: tentImg2, description: "Rymlig dubbelsäng, högkvalitativt sänglinne och en bäddsoffa. Perfekt för familjer som söker äventyr.", extras: ["Dubbelsäng", "Bäddsoffa"], price: "Från 1 290 kr/natt", guests: "Upp till 4 gäster" },
-    { name: "Lugnets Yta", image: tentImg3, description: "Vårt mysigaste tält där lugn och harmoni möts. Perfekt för dig som söker avkoppling. Husdjur välkomna.", extras: ["Dubbelsäng", "Husdjursvänligt"], price: "Från 1 290 kr/natt", guests: "Upp till 2 gäster" },
+    { name: "Sjöbrisretreatet", image: tentImg1, description: "En oas av komfort. Rymlig dubbelsäng med mjuka kuddar och sänglinne av högsta kvalitet. Erbjuder även en bäddsoffa.", extras: ["Dubbelsäng", "Bäddsoffa"], price: "Från 700 kr/person", guests: "Upp till 4 gäster" },
+    { name: "Naturkärnan", image: tentImg2, description: "Rymlig dubbelsäng, högkvalitativt sänglinne och en bäddsoffa. Perfekt för familjer som söker äventyr.", extras: ["Dubbelsäng", "Bäddsoffa"], price: "Från 700 kr/person", guests: "Upp till 4 gäster" },
+    { name: "Lugnets Yta", image: tentImg3, description: "Vårt mysigaste tält där lugn och harmoni möts. Perfekt för dig som söker avkoppling. Husdjur välkomna.", extras: ["Dubbelsäng", "Husdjursvänligt"], price: "Från 700 kr/person", guests: "Upp till 2 gäster" },
   ];
 
   return (
