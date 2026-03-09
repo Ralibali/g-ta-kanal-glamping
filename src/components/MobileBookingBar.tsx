@@ -31,7 +31,7 @@ const MobileBookingBar = () => {
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-xs text-muted-foreground font-medium">
-            {lang === "en" ? "From 1 290 kr/night" : "Från 1 290 kr/natt"}
+            {lang === "en" ? "From 700 kr/person" : "Från 700 kr/person"}
           </p>
           <p className="text-sm font-semibold text-foreground">
             {lang === "en" ? "Glamping by Göta Canal" : "Glamping vid Göta kanal"}
