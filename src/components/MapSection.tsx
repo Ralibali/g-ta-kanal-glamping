@@ -1,6 +1,6 @@
-import { Mail } from "lucide-react";
+import { motion } from "framer-motion";
+import { MapPin, Car, Bus, ExternalLink } from "lucide-react";
 import { useLang } from "@/i18n/LanguageContext";
-import ConstructionNotice from "@/components/ConstructionNotice";
 
 const MapSection = () => {
   const lang = useLang();
@@ -8,56 +8,94 @@ const MapSection = () => {
   return (
     <section id="kontakt" className="py-20 md:py-28 bg-background">
       <div className="container">
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          <div>
-            <p className="text-accent font-sans text-sm tracking-[0.2em] uppercase mb-3 font-semibold">
-              {lang === "en" ? "Find us" : "Hitta hit"}
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-              Bergs Slussar, Vreta Kloster
-            </h2>
-            <p className="text-muted-foreground mb-6 leading-relaxed">
-              {lang === "en"
-                ? "We are located right by Göta Canal in Berg, just outside Linköping. Parking is available on-site for a small fee, a short walk from the glamping."
-                : "Vi ligger precis vid Göta kanal i Berg, strax utanför Linköping. Parkering finns på plats mot en liten avgift, bara en kort promenad från glampingen."}
-            </p>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-14"
+        >
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+            {lang === "en" ? "How to find us" : "Hur du hittar hit"}
+          </h2>
+        </motion.div>
 
-            <div className="space-y-4 mb-8">
-              <div>
-                <p className="font-semibold text-foreground">{lang === "en" ? "Address" : "Adress"}</p>
-                <p className="text-muted-foreground">Bergs Slussar, Vreta Kloster, Linköping</p>
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="space-y-6 mb-8">
+              <div className="flex items-start gap-4">
+                <div className="shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <MapPin className="text-primary" size={20} />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">{lang === "en" ? "Address" : "Adress"}</p>
+                  <p className="text-muted-foreground">Oscars Slussar 2, Vreta Kloster</p>
+                  <p className="text-muted-foreground text-sm">
+                    {lang === "en" ? "(approx. 15 min from Linköping)" : "(ca 15 min från Linköping)"}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-semibold text-foreground">{lang === "en" ? "Email" : "E-post"}</p>
-                <a href="mailto:info@auroramedia.se" className="text-accent hover:underline flex items-center gap-2">
-                  <Mail size={14} /> info@auroramedia.se
-                </a>
+
+              <div className="flex items-start gap-4">
+                <div className="shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Car className="text-primary" size={20} />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">{lang === "en" ? "Parking" : "Parkering"}</p>
+                  <p className="text-muted-foreground">
+                    {lang === "en" ? "Available on-site, short walk to the tents." : "Finns på plats, kort promenad till tälten."}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-semibold text-foreground">{lang === "en" ? "Social media" : "Sociala medier"}</p>
-                <div className="flex gap-4 mt-1">
-                  <a href="https://www.instagram.com/bergsslussar.glamping/" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline text-sm">Instagram</a>
-                  <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline text-sm">Facebook</a>
+
+              <div className="flex items-start gap-4">
+                <div className="shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Bus className="text-primary" size={20} />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">{lang === "en" ? "Public transport" : "Kollektivtrafik"}</p>
+                  <p className="text-muted-foreground">
+                    {lang === "en" ? "Östgötatrafiken towards Berg/Ljungsbro" : "Östgötatrafiken mot Berg/Ljungsbro"}
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div className="mb-8">
-              <ConstructionNotice />
-            </div>
+            <motion.a
+              href="https://maps.google.com/?q=58.5357,15.5012"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold shadow-lg"
+            >
+              {lang === "en" ? "Open in Google Maps" : "Öppna i Google Maps"}
+              <ExternalLink size={16} />
+            </motion.a>
+          </motion.div>
 
-            <a href="#boka" className="inline-block bg-accent text-accent-foreground px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
-              {lang === "en" ? "Book your tent now" : "Boka ditt tält nu"}
-            </a>
-          </div>
-
-          <div className="rounded-2xl overflow-hidden shadow-xl">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="rounded-2xl overflow-hidden shadow-xl"
+          >
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2109.8!2d15.5012!3d58.5357!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46596f1c5c0b5b5b%3A0x4b5a2d5e5e5e5e5e!2sBergs%20slussar!5e0!3m2!1ssv!2sse!4v1"
-              width="100%" height="450" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+              src="https://maps.google.com/maps?q=58.5357,15.5012&z=14&output=embed"
+              width="100%"
+              height="350"
+              style={{ border: 0, borderRadius: "1rem" }}
+              allowFullScreen
+              loading="lazy"
               title={lang === "en" ? "Map to Bergs Slussar Glamping" : "Karta till Bergs Slussar Glamping"}
             />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
