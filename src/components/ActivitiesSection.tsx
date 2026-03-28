@@ -31,7 +31,7 @@ const ActivitiesSection = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            {lang === "en" ? "What to do at Bergs Slussar?" : "Vad gör du i Bergs Slussar?"}
+            {lang === "en" ? "What to do at Bergs Slussar?" : "Aktiviteter vid Göta kanal och Bergs Slussar"}
           </h2>
         </motion.div>
 

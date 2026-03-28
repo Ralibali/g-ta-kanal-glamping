@@ -48,7 +48,7 @@ const TentsSection = () => {
               <div className="overflow-hidden aspect-[4/3] relative">
                 <img
                   src={tent.image}
-                  alt={`Glamping tent ${tent.name} at Bergs Slussar`}
+                  alt={`Inredning i glamping-tält vid Bergs Slussar – dubbelsäng och ombonad miljö`}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                   loading="lazy"
                 />
