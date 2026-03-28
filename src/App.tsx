@@ -35,6 +35,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index lang="sv" />} />
           <Route path="/en" element={<Index lang="en" />} />
+          <Route path="/glamping-linkoping" element={<GlampingLinkoping />} />
+          <Route path="/glamping-gota-kanal" element={<GlampingGotaKanal />} />
+          <Route path="/glamping-ostergotland" element={<GlampingOstergotland />} />
           <Route path="/checkin" element={<CheckIn />} />
           <Route path="/blogg" element={<Blog />} />
           <Route path="/blogg/:slug" element={<BlogPost />} />
