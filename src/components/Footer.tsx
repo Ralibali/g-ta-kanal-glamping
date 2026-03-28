@@ -48,17 +48,17 @@ const Footer = () => {
                   href="https://www.instagram.com/bergsslussar.glamping/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors flex items-center gap-1.5"
+                  className="hover:text-white transition-colors"
                 >
-                  <Instagram size={16} /> Instagram
+                  Instagram
                 </a>
                 <a
                   href="https://www.facebook.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-white transition-colors flex items-center gap-1.5"
+                  className="hover:text-white transition-colors"
                 >
-                  <Facebook size={16} /> Facebook
+                  Facebook
                 </a>
               </div>
             </div>
