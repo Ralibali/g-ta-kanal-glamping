@@ -31,7 +31,7 @@ const TentsSection = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            {lang === "en" ? "Choose your tent" : "Välj ditt tält"}
+            {lang === "en" ? "Choose your tent" : "Välj ditt glamping-tält vid Göta kanal"}
           </h2>
         </motion.div>
 
