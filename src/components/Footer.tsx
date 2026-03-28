@@ -26,6 +26,9 @@ const Footer = () => {
               <a href="#aktiviteter" className="hover:text-white transition-colors">{lang === "en" ? "Activities" : "Aktiviteter"}</a>
               <a href="#kontakt" className="hover:text-white transition-colors">{lang === "en" ? "Find us" : "Hitta hit"}</a>
               <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+              <a href="/glamping-linkoping" className="hover:text-white transition-colors">Glamping nära Linköping</a>
+              <a href="/glamping-gota-kanal" className="hover:text-white transition-colors">Glamping vid Göta kanal</a>
+              <a href="/glamping-ostergotland" className="hover:text-white transition-colors">Glamping i Östergötland</a>
             </div>
           </div>
 

@@ -64,7 +64,7 @@ const AboutSection = () => {
             <div className="relative">
               <img src={aboutImg} alt="Utsikt över Göta kanal från Bergs Slussar Glamping i Östergötland" className="rounded-3xl shadow-2xl w-full object-cover aspect-[4/5]" loading="lazy" />
               <div className="absolute -bottom-8 -left-8 w-2/5 hidden md:block">
-                <img src={aboutImg2} alt="Cosy glamping tent interior" className="rounded-2xl shadow-xl border-4 border-background object-cover aspect-square" loading="lazy" />
+                <img src={aboutImg2} alt="Inredning i glamping-tält vid Bergs Slussar – dubbelsäng och ombonad miljö" className="rounded-2xl shadow-xl border-4 border-background object-cover aspect-square" loading="lazy" />
               </div>
               <div className="absolute -top-4 -right-4 w-24 h-24 border-2 border-accent/30 rounded-3xl -z-10" />
             </div>
