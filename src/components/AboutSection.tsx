@@ -62,7 +62,7 @@ const AboutSection = () => {
 
           <ScrollReveal className="order-1 lg:order-2" delay={200}>
             <div className="relative">
-              <img src={aboutImg} alt="Glamping tent with outdoor furniture by Göta Canal" className="rounded-3xl shadow-2xl w-full object-cover aspect-[4/5]" loading="lazy" />
+              <img src={aboutImg} alt="Utsikt över Göta kanal från Bergs Slussar Glamping i Östergötland" className="rounded-3xl shadow-2xl w-full object-cover aspect-[4/5]" loading="lazy" />
               <div className="absolute -bottom-8 -left-8 w-2/5 hidden md:block">
                 <img src={aboutImg2} alt="Cosy glamping tent interior" className="rounded-2xl shadow-xl border-4 border-background object-cover aspect-square" loading="lazy" />
               </div>
