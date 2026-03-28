@@ -36,7 +36,7 @@ const IncludedSection = () => {
           className="text-center mb-12"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            {lang === "en" ? "Always included in the price" : "Det här ingår alltid i priset"}
+            {lang === "en" ? "Always included in the price" : "Vad som ingår i glamping-priset"}
           </h2>
         </motion.div>
 

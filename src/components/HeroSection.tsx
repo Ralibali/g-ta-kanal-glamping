@@ -36,6 +36,8 @@ const HeroSection = () => {
         <div
           key={i}
           className="absolute inset-0 bg-cover bg-center transition-opacity duration-[2000ms]"
+          aria-label={i === 0 ? "Glamping tält vid Göta kanal, Bergs Slussar i Östergötland" : undefined}
+          role={i === 0 ? "img" : undefined}
           style={{
             backgroundImage: `url(${img})`,
             opacity: i === current ? 1 : 0,

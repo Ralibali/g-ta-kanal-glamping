@@ -31,7 +31,7 @@ const TentsSection = () => {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            {lang === "en" ? "Choose your tent" : "Välj ditt tält"}
+            {lang === "en" ? "Choose your tent" : "Välj ditt glamping-tält vid Göta kanal"}
           </h2>
         </motion.div>
 
@@ -48,7 +48,7 @@ const TentsSection = () => {
               <div className="overflow-hidden aspect-[4/3] relative">
                 <img
                   src={tent.image}
-                  alt={`Glamping tent ${tent.name} at Bergs Slussar`}
+                  alt={`Inredning i glamping-tält vid Bergs Slussar – dubbelsäng och ombonad miljö`}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                   loading="lazy"
                 />
