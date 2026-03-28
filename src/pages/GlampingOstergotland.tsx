@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MapPin, ArrowRight, Mountain, Waves, TreePine } from "lucide-react";
@@ -6,6 +7,11 @@ import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 
 const GlampingOstergotland = () => {
+  useEffect(() => {
+    document.title = "Glamping i Östergötland – Bergs Slussar vid Göta kanal";
+    document.querySelector('meta[name="description"]')?.setAttribute("content", "Boka glamping i Östergötland vid Bergs Slussar. Naturskön utsikt, ombonade tält och enkel transport från hela regionen.");
+  }, []);
+
   return (
     <LanguageProvider value="sv">
       <Navbar />
