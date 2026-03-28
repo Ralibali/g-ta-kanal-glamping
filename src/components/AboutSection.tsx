@@ -32,9 +32,9 @@ const AboutSection = () => {
               {lang === "en" ? "About the experience" : "Om upplevelsen"}
             </p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 leading-tight">
-              {lang === "en" ? "Glamping in Sweden" : "Glamping i Östergötland"}
+              {lang === "en" ? "Glamping in Sweden" : "Glamping nära Linköping"}
               <span className="block italic font-normal text-accent">
-                {lang === "en" ? "– nature meets comfort" : "– natur möter komfort"}
+                {lang === "en" ? "– nature meets comfort" : "– natur möter komfort vid Göta kanal"}
               </span>
             </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-6">
