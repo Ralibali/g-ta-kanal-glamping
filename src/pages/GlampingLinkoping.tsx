@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, MapPin, Car, Clock, ArrowRight } from "lucide-react";
@@ -6,6 +7,11 @@ import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 
 const GlampingLinkoping = () => {
+  useEffect(() => {
+    document.title = "Glamping nära Linköping – Bergs Slussar Glamping | Göta kanal";
+    document.querySelector('meta[name="description"]')?.setAttribute("content", "Glamping bara 15 minuter från Linköping vid Bergs Slussar och Göta kanal. Ombonade tält med alla bekvämligheter. Boka online!");
+  }, []);
+
   return (
     <LanguageProvider value="sv">
       <Navbar />

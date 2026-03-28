@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Waves, Footprints, Ship, ArrowRight } from "lucide-react";
@@ -6,6 +7,11 @@ import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 
 const GlampingGotaKanal = () => {
+  useEffect(() => {
+    document.title = "Glamping vid Göta kanal – Bergs Slussar, Östergötland";
+    document.querySelector('meta[name="description"]')?.setAttribute("content", "Upplev Göta kanal från ett glamping-tält vid Bergs Slussar. Boka din övernattning direkt vid kanalen i Östergötland.");
+  }, []);
+
   return (
     <LanguageProvider value="sv">
       <Navbar />
