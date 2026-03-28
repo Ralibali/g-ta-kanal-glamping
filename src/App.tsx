@@ -11,6 +11,9 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
+import GlampingLinkoping from "./pages/GlampingLinkoping";
+import GlampingGotaKanal from "./pages/GlampingGotaKanal";
+import GlampingOstergotland from "./pages/GlampingOstergotland";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
