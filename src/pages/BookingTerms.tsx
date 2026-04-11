@@ -46,6 +46,7 @@ const BookingTerms = () => {
             <li><strong className="text-foreground">Mindre än 3 dagar före ankomst:</strong> Ingen återbetalning, av samma skäl.</li>
             <li><strong className="text-foreground">Utebliven ankomst (no-show):</strong> Ingen återbetalning.</li>
             <li><strong className="text-foreground">Sjukdom/olycka:</strong> Kostnadsfri avbokning mot uppvisande av läkarintyg.</li>
+            <li><strong className="text-foreground">Avbokningsskydd:</strong> Köp avbokningsskydd för 399 kr vid bokning – då får du full återbetalning oavsett anledning, ända fram till ankomstdagen.</li>
             <li>Avbokning görs via e-post till <a href="mailto:hej@goglampingsweden.se" className="text-accent font-medium hover:underline">hej@goglampingsweden.se</a> eller via bokningssystemet.</li>
           </ul>
         </section>
