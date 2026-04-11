@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import ConstructionNotice from "@/components/ConstructionNotice";
 import USPSection from "@/components/USPSection";
 import AboutSection from "@/components/AboutSection";
 import TentsSection from "@/components/TentsSection";
@@ -26,6 +27,7 @@ const Index = ({ lang = "sv" }: IndexProps) => {
       <Navbar />
       <main>
         <HeroSection />
+        <ConstructionNotice />
         <USPSection />
         <AboutSection />
         <TentsSection />
