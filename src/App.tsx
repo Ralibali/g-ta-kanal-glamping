@@ -7,6 +7,7 @@ import LanguageRedirect from "./components/LanguageRedirect";
 import { usePageTracking, useAutoClickTracking } from "./hooks/useTracking";
 import Index from "./pages/Index";
 import CheckIn from "./pages/CheckIn";
+import BookingTerms from "./pages/BookingTerms";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Admin from "./pages/Admin";
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/glamping-gota-kanal" element={<GlampingGotaKanal />} />
           <Route path="/glamping-ostergotland" element={<GlampingOstergotland />} />
           <Route path="/checkin" element={<CheckIn />} />
+          <Route path="/bokningsvillkor" element={<BookingTerms />} />
           <Route path="/blogg" element={<Blog />} />
           <Route path="/blogg/:slug" element={<BlogPost />} />
           <Route path="/admin/login" element={<AdminLogin />} />
