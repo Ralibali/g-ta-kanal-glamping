@@ -42,8 +42,10 @@ const BookingTerms = () => {
           <h2 className="font-serif text-xl font-bold text-foreground mb-3">Avbokningspolicy</h2>
           <ul className="space-y-2 text-muted-foreground text-sm leading-relaxed list-disc list-inside">
             <li><strong className="text-foreground">Mer än 5 dagar före ankomst:</strong> Kostnadsfri avbokning. Fullständig återbetalning.</li>
-            <li><strong className="text-foreground">Mindre än 5 dagar före ankomst:</strong> Ingen återbetalning.</li>
+            <li><strong className="text-foreground">3–5 dagar före ankomst:</strong> 50 % av bokningsbeloppet återbetalas. Resterande behålls då städning och förberedelser redan är bokade och medför kostnader.</li>
+            <li><strong className="text-foreground">Mindre än 3 dagar före ankomst:</strong> Ingen återbetalning, av samma skäl.</li>
             <li><strong className="text-foreground">Utebliven ankomst (no-show):</strong> Ingen återbetalning.</li>
+            <li><strong className="text-foreground">Sjukdom/olycka:</strong> Kostnadsfri avbokning mot uppvisande av läkarintyg.</li>
             <li>Avbokning görs via e-post till <a href="mailto:hej@goglampingsweden.se" className="text-accent font-medium hover:underline">hej@goglampingsweden.se</a> eller via bokningssystemet.</li>
           </ul>
         </section>
