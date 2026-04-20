@@ -4,6 +4,7 @@ import { useLang } from "@/i18n/LanguageContext";
 const BookingSection = () => {
   const lang = useLang();
   const widgetRef = useRef<HTMLDivElement>(null);
+  const availabilityRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (widgetRef.current && !widgetRef.current.querySelector("script")) {
@@ -12,6 +13,14 @@ const BookingSection = () => {
       script.setAttribute("data-form-id", "9482eece181add59");
       script.src = "https://secured.sirvoy.com/widget/sirvoy.js";
       widgetRef.current.appendChild(script);
+    }
+    if (availabilityRef.current && !availabilityRef.current.querySelector("script")) {
+      const script = document.createElement("script");
+      script.async = true;
+      script.setAttribute("data-form-id", "9482eece181add59");
+      script.setAttribute("data-widget", "availability");
+      script.src = "https://secured.sirvoy.com/widget/sirvoy.js";
+      availabilityRef.current.appendChild(script);
     }
   }, []);
 
