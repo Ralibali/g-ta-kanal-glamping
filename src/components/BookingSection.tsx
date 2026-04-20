@@ -4,6 +4,7 @@ import { useLang } from "@/i18n/LanguageContext";
 const BookingSection = () => {
   const lang = useLang();
   const widgetRef = useRef<HTMLDivElement>(null);
+  const availabilityRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (widgetRef.current && !widgetRef.current.querySelector("script")) {
@@ -12,6 +13,14 @@ const BookingSection = () => {
       script.setAttribute("data-form-id", "9482eece181add59");
       script.src = "https://secured.sirvoy.com/widget/sirvoy.js";
       widgetRef.current.appendChild(script);
+    }
+    if (availabilityRef.current && !availabilityRef.current.querySelector("script")) {
+      const script = document.createElement("script");
+      script.async = true;
+      script.setAttribute("data-form-id", "9482eece181add59");
+      script.setAttribute("data-widget", "availability");
+      script.src = "https://secured.sirvoy.com/widget/sirvoy.js";
+      availabilityRef.current.appendChild(script);
     }
   }, []);
 
@@ -33,6 +42,16 @@ const BookingSection = () => {
         </div>
 
         <div ref={widgetRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
+
+        <div className="mt-10">
+          <h3 className="text-xl md:text-2xl font-bold text-primary-foreground text-center mb-4">
+            {lang === "en" ? "Availability calendar" : "Tillgänglighetskalender"}
+          </h3>
+          <p className="text-primary-foreground/60 text-center text-sm mb-6">
+            {lang === "en" ? "See which dates are already booked." : "Se vilka datum som redan är bokade."}
+          </p>
+          <div ref={availabilityRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
+        </div>
 
         <div className="text-center mt-8">
           <a href="#hantera-bokning" className="inline-block border-2 border-primary-foreground/40 text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary-foreground/10 transition-colors">
