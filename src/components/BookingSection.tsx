@@ -23,7 +23,7 @@ const BookingSection = () => {
       const script = document.createElement("script");
       script.async = true;
       script.setAttribute("data-form-id", "9482eece181add59");
-      script.setAttribute("data-widget", "availability");
+      script.setAttribute("data-widget", "calendar");
       script.src = "https://secured.sirvoy.com/widget/sirvoy.js";
       availabilityRef.current.appendChild(script);
     }
