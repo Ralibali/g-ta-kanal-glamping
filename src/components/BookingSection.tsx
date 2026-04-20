@@ -1,10 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLang } from "@/i18n/LanguageContext";
+import { Calendar, ChevronDown } from "lucide-react";
 
 const BookingSection = () => {
   const lang = useLang();
   const widgetRef = useRef<HTMLDivElement>(null);
   const availabilityRef = useRef<HTMLDivElement>(null);
+  const [showAvailability, setShowAvailability] = useState(false);
 
   useEffect(() => {
     if (widgetRef.current && !widgetRef.current.querySelector("script")) {
@@ -14,7 +16,10 @@ const BookingSection = () => {
       script.src = "https://secured.sirvoy.com/widget/sirvoy.js";
       widgetRef.current.appendChild(script);
     }
-    if (availabilityRef.current && !availabilityRef.current.querySelector("script")) {
+  }, []);
+
+  useEffect(() => {
+    if (showAvailability && availabilityRef.current && !availabilityRef.current.querySelector("script")) {
       const script = document.createElement("script");
       script.async = true;
       script.setAttribute("data-form-id", "9482eece181add59");
@@ -22,7 +27,7 @@ const BookingSection = () => {
       script.src = "https://secured.sirvoy.com/widget/sirvoy.js";
       availabilityRef.current.appendChild(script);
     }
-  }, []);
+  }, [showAvailability]);
 
   return (
     <section id="boka" className="py-20 md:py-28 bg-primary">
@@ -43,17 +48,27 @@ const BookingSection = () => {
 
         <div ref={widgetRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
 
-        <div className="mt-10">
-          <h3 className="text-xl md:text-2xl font-bold text-primary-foreground text-center mb-4">
-            {lang === "en" ? "Availability calendar" : "Tillgänglighetskalender"}
-          </h3>
-          <p className="text-primary-foreground/60 text-center text-sm mb-6">
-            {lang === "en" ? "See which dates are already booked." : "Se vilka datum som redan är bokade."}
-          </p>
-          <div ref={availabilityRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
+        <div className="text-center mt-6">
+          <button
+            type="button"
+            onClick={() => setShowAvailability((v) => !v)}
+            className="inline-flex items-center gap-2 text-primary-foreground/90 hover:text-primary-foreground underline-offset-4 hover:underline font-medium"
+          >
+            <Calendar className="h-4 w-4" />
+            {showAvailability
+              ? lang === "en" ? "Hide availability" : "Dölj tillgänglighet"
+              : lang === "en" ? "Show availability" : "Visa tillgänglighet"}
+            <ChevronDown className={`h-4 w-4 transition-transform ${showAvailability ? "rotate-180" : ""}`} />
+          </button>
         </div>
 
-        <div className="text-center mt-8">
+        {showAvailability && (
+          <div className="mt-6">
+            <div ref={availabilityRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
+          </div>
+        )}
+
+        <div className="text-center mt-10">
           <a href="#hantera-bokning" className="inline-block border-2 border-primary-foreground/40 text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary-foreground/10 transition-colors">
             {lang === "en" ? "Manage your booking" : "Hantera din bokning"}
           </a>
