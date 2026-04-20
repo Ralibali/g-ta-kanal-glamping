@@ -43,6 +43,16 @@ const BookingSection = () => {
 
         <div ref={widgetRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
 
+        <div className="mt-10">
+          <h3 className="text-xl md:text-2xl font-bold text-primary-foreground text-center mb-4">
+            {lang === "en" ? "Availability calendar" : "Tillgänglighetskalender"}
+          </h3>
+          <p className="text-primary-foreground/60 text-center text-sm mb-6">
+            {lang === "en" ? "See which dates are already booked." : "Se vilka datum som redan är bokade."}
+          </p>
+          <div ref={availabilityRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
+        </div>
+
         <div className="text-center mt-8">
           <a href="#hantera-bokning" className="inline-block border-2 border-primary-foreground/40 text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary-foreground/10 transition-colors">
             {lang === "en" ? "Manage your booking" : "Hantera din bokning"}
