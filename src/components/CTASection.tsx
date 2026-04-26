@@ -15,18 +15,18 @@ const CTASection = () => {
             {lang === "en" ? "Limited availability" : "Begränsat antal platser"}
           </p>
           <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-6 leading-tight">
-            {lang === "en" ? "Ready for an" : "Redo för en"}
+            {lang === "en" ? "Sleep by the canal" : "Sov vid kanalen"}
             <span className="block italic font-normal">
-              {lang === "en" ? "unforgettable night?" : "oförglömlig natt?"}
+              {lang === "en" ? "– book your tent today" : "– boka ditt tält idag"}
             </span>
           </h2>
           <p className="text-primary-foreground/70 text-lg mb-10 leading-relaxed">
             {lang === "en"
-              ? "Book your glamping stay by Göta Canal today. Our tents fill up quickly during the season."
-              : "Boka din glamping-vistelse vid Göta kanal idag. Våra tält fylls snabbt under säsongen."}
+              ? "Three tents, a short Swedish summer and one of Östergötland's most beautiful spots. Pick your dates while there's still room."
+              : "Tre tält, en kort svensk sommar och en av Östergötlands vackraste platser. Välj dina datum medan plats finns."}
           </p>
           <a href="#boka" className="inline-block bg-accent text-accent-foreground px-12 py-4 rounded-full text-lg font-semibold hover:scale-105 transition-transform shadow-xl">
-            {lang === "en" ? "Book now →" : "Boka nu →"}
+            {lang === "en" ? "Book your stay →" : "Boka din vistelse →"}
           </a>
         </ScrollReveal>
       </div>

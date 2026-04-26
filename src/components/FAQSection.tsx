@@ -21,18 +21,18 @@ const FAQSection = () => {
     { q: "Why choose glamping in Östergötland?", a: "Östergötland offers a unique mix of culture and nature. With Göta Canal, Lake Roxen, Omberg Ecopark and proximity to Linköping, glamping in Östergötland gives you endless experiences just steps from your tent." },
     { q: "When is glamping season in Sweden?", a: "Our glamping season runs from May to September. Summer is the most popular time, but late spring and early autumn offer quieter stays with beautiful nature and fewer visitors." },
   ] : [
-    { q: "Vad kostar glamping och vad ingår i priset?", a: "I priset ingår städning, bäddade sängar, sänglinne, handdukar, el, fläkt, minikylskåp, gasolvärmare, kaffe, te och en flaska vatten. Se aktuella glamping priser i bokningswidgeten ovan." },
+    { q: "Vad är glamping?", a: "Glamping är en kombination av camping och hotellkomfort. Du sover nära naturen i ett tält, men i en riktig bäddad säng med värme, el och minikylskåp. Hos oss vid Bergs Slussar slipper du både packningen och campingens enkla standard." },
+    { q: "Var ligger Bergs Slussar Glamping?", a: "Vi finns på Oscars Slussar 2 i Vreta Kloster, alldeles intill slusstrappan vid Bergs Slussar och Göta kanal i Östergötland." },
+    { q: "Hur långt är det från Linköping?", a: "Det tar cirka femton minuter med bil från centrala Linköping till glampingen. Östgötatrafikens bussar trafikerar också området med hållplats nära." },
+    { q: "Vad ingår i tälten?", a: "I varje tält ingår bäddade sängar med sänglinne, handdukar, värme, el, minikylskåp, fläkt samt kaffe, te och en flaska vatten. Städning vid utcheckning ingår också." },
+    { q: "Finns dusch och toalett?", a: "Ja, ett fräscht servicehus med dusch och toalett ligger cirka 150 meter från tälten." },
+    { q: "Kan barn bo på glampingen?", a: "Absolut. Barn upp till tolv år har rabatterade priser och kan sova tillsammans med vuxna i dubbelsängen. Sjöbrisretreatet har även en bäddsoffa för extra plats." },
+    { q: "När är glampingsäsongen?", a: "Säsongen löper från maj till september. Juli och tidig augusti är intensivast medan juni och slutet av augusti ger en lugnare upplevelse." },
     { q: "Hur bokar vi glamping vid Bergs Slussar?", a: "Det är enkelt! Scrolla upp till bokningssektionen på sidan, välj datum och antal gäster, och följ instruktionerna. Vi erbjuder glamping i Östergötland vid Göta kanal, strax utanför Linköping." },
-    { q: "Finns det parkering vid Bergs Slussar?", a: "Ja, parkering finns på plats mot en liten avgift, bara en kort promenad från glampingtälten. Perfekt för dig som reser med bil till Bergs Slussar." },
-    { q: "Finns det toaletter och dusch?", a: "Ja, ett fräscht servicehus ligger cirka 150 meter från tälten med toaletter, duschar och skötrum." },
-    { q: "Finns det mat och café vid Bergs Slussar?", a: "Ja! Det finns restauranger och caféer i närområdet kring Bergs Slussar. Vi erbjuder även frukost via Bostället som tillval vid bokning." },
-    { q: "Kan barn bo i glampingtälten?", a: "Självklart! Barn upp till 12 år har rabatterade priser och kan sova tillsammans med vuxna i dubbelsängen. Perfekt boende för familjer vid Göta kanal." },
+    { q: "Vad kostar glamping och vad ingår i priset?", a: "I priset ingår städning, bäddade sängar, sänglinne, handdukar, el, fläkt, minikylskåp, gasolvärmare, kaffe, te och en flaska vatten. Se aktuella priser i bokningswidgeten ovan." },
+    { q: "Finns det parkering vid Bergs Slussar?", a: "Ja, parkering finns på plats mot en liten avgift, bara en kort promenad från glampingtälten." },
     { q: "Får vi ta med husdjur?", a: "Ja, i tältet Lugnets Yta är husdjur välkomna mot en husdjursavgift." },
-    { q: "Hur långt är det från Linköping till Bergs Slussar?", a: "Bergs Slussar ligger i Vreta Kloster, cirka 15 minuter med bil från centrala Linköping. Enkelt att nå som boende utmed Göta kanal." },
     { q: "Vilka bokningsvillkor gäller?", a: "Incheckning från kl. 15:00, utcheckning senast kl. 10:00. Kostnadsfri avbokning upp till 5 dagar före ankomst. Sen utcheckning till kl. 11:30 kan erbjudas mot 400 kr." },
-    { q: "Vad är glamping i Sverige?", a: "Glamping i Sverige innebär att sova nära naturen med riktig komfort – riktiga sängar, värme och mysig inredning. Hos oss vid Bergs Slussar vid Göta kanal kombinerar du ombonade tält med Östergötlands vackra natur, vandring och kanalkultur." },
-    { q: "Varför välja glamping i Östergötland?", a: "Östergötland erbjuder en unik blandning av kultur och natur. Med Göta kanal, sjön Roxen, Ombergs ekopark och närheten till Linköping ger glamping i Östergötland dig oändliga upplevelser bara några steg från tältet." },
-    { q: "När är glampingsäsongen i Sverige?", a: "Vår glampingsäsong sträcker sig från maj till september. Sommaren är populärast, men sen vår och tidig höst erbjuder lugnare vistelser med vacker natur och färre besökare." },
   ];
 
   return (
