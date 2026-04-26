@@ -55,7 +55,7 @@ const FAQSection = () => {
                   <span className="font-serif text-lg font-semibold text-foreground pr-4">{faq.q}</span>
                   <ChevronDown className={`text-accent shrink-0 transition-transform duration-300 ${openIdx === i ? "rotate-180" : ""}`} size={20} />
                 </button>
-                <div className={`overflow-hidden transition-all duration-300 ${openIdx === i ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}>
+                <div className={`overflow-hidden transition-all duration-300 ${openIdx === i ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}>
                   <div className="px-6 pb-6">
                     <p className="text-muted-foreground leading-relaxed">{faq.a}</p>
                   </div>
