@@ -49,6 +49,7 @@ const BlogPost = () => {
               __html: line
                 .replace(/^- /, "")
                 .replace(/\*\*(.*?)\*\*/g, "<strong class='text-foreground'>$1</strong>")
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "<a href='$2' class='text-primary hover:underline font-medium'>$1</a>")
                 .replace(/–/g, "–"),
             }}
           />
@@ -59,10 +60,9 @@ const BlogPost = () => {
             key={`p-${i}`}
             className="text-muted-foreground leading-relaxed mb-4"
             dangerouslySetInnerHTML={{
-              __html: line.replace(
-                /\*\*(.*?)\*\*/g,
-                "<strong class='text-foreground'>$1</strong>"
-              ),
+              __html: line
+                .replace(/\*\*(.*?)\*\*/g, "<strong class='text-foreground'>$1</strong>")
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "<a href='$2' class='text-primary hover:underline font-medium'>$1</a>"),
             }}
           />
         );
