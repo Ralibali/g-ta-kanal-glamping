@@ -50,6 +50,30 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://goglampingsweden.se/glamping-linkoping</loc>
+    <lastmod>2026-04-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://goglampingsweden.se/glamping-gota-kanal</loc>
+    <lastmod>2026-04-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://goglampingsweden.se/glamping-ostergotland</loc>
+    <lastmod>2026-04-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://goglampingsweden.se/bokningsvillkor</loc>
+    <lastmod>2026-04-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
     <loc>https://goglampingsweden.se/blogg</loc>
     <lastmod>2025-06-01</lastmod>
     <changefreq>weekly</changefreq>
