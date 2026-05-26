@@ -48,6 +48,14 @@ const BookingSection = () => {
 
         <div ref={widgetRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
 
+        <p className="text-center text-primary-foreground/70 text-sm mt-4">
+          {lang === "en" ? (
+            <>Free cancellation up to 5 days before arrival. <a href="/bokningsvillkor" className="text-accent font-medium underline underline-offset-4 hover:no-underline">See full booking terms →</a></>
+          ) : (
+            <>Kostnadsfri avbokning upp till fem dagar före ankomst. <a href="/bokningsvillkor" className="text-accent font-medium underline underline-offset-4 hover:no-underline">Se alla bokningsvillkor →</a></>
+          )}
+        </p>
+
         <div className="text-center mt-6">
           <button
             type="button"
