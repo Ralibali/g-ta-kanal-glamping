@@ -70,7 +70,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.25 }}
-          className="text-white/75 text-base md:text-xl font-sans mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed"
+          className="text-white text-base md:text-xl font-sans mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed"
         >
           {lang === "en"
             ? "Cosy tents with double bed, heating and fridge – 15 minutes from Linköping. Breakfast available as add-on."
