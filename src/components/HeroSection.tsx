@@ -33,19 +33,23 @@ const HeroSection = () => {
   return (
     <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
       {slides.map((img, i) => (
-        <div
+        <img
           key={i}
-          className="absolute inset-0 bg-cover bg-center transition-opacity duration-[2000ms]"
-          aria-label={i === 0 ? "Glamping tält vid Göta kanal, Bergs Slussar i Östergötland" : undefined}
-          role={i === 0 ? "img" : undefined}
+          src={img}
+          alt={i === 0 ? "Glamping tält vid Göta kanal, Bergs Slussar i Östergötland" : ""}
+          width={1920}
+          height={1280}
+          fetchPriority={i === 0 ? "high" : "low"}
+          loading={i === 0 ? "eager" : "lazy"}
+          decoding={i === 0 ? "sync" : "async"}
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-[2000ms]"
           style={{
-            backgroundImage: `url(${img})`,
             opacity: i === current ? 1 : 0,
             transform: `translateY(${scrollY * 0.3}px) scale(1.1)`,
           }}
         />
       ))}
-      <div className="absolute inset-0 bg-black/[0.35]" />
+      <div className="absolute inset-0 bg-black/50" />
 
       <div className="relative z-10 text-center px-6 md:px-4 max-w-4xl mx-auto">
         <motion.h1
