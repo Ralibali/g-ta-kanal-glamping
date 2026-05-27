@@ -84,7 +84,7 @@ const HeroSection = () => {
           className="flex items-center justify-center gap-1 mb-6"
         >
           {[...Array(5)].map((_, i) => <Star key={i} />)}
-          <span className="text-white/70 text-sm font-sans ml-2">
+          <span className="text-white text-sm font-sans ml-2">
             {lang === "en" ? "Top rated on Google – verified by Trustindex" : "Toppbetyg på Google – verifierat av Trustindex"}
           </span>
         </motion.div>
