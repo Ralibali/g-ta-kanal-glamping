@@ -10,7 +10,9 @@ export interface TemplateEntry {
 }
 
 import { template as chatNotification } from './chat-notification.tsx'
+import { template as chatReply } from './chat-reply.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'chat-notification': chatNotification,
+  'chat-reply': chatReply,
 }
