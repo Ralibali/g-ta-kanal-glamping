@@ -11,6 +11,7 @@ import { BlogManager } from "@/components/admin/BlogManager";
 import { GalleryManager } from "@/components/admin/GalleryManager";
 import { PricingManager } from "@/components/admin/PricingManager";
 import { AdminSettings } from "@/components/admin/AdminSettings";
+import { ChatManager } from "@/components/admin/ChatManager";
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdmin();
@@ -50,6 +51,7 @@ const Admin = () => {
               <Route path="blog" element={<BlogManager />} />
               <Route path="gallery" element={<GalleryManager />} />
               <Route path="pricing" element={<PricingManager />} />
+              <Route path="chat" element={<ChatManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </main>

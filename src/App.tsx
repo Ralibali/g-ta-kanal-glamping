@@ -21,6 +21,8 @@ import BoendeGotaKanal from "./pages/BoendeGotaKanal";
 import GlampingVretaKloster from "./pages/GlampingVretaKloster";
 import RomantiskWeekendOstergotland from "./pages/RomantiskWeekendOstergotland";
 import NotFound from "./pages/NotFound";
+import ChatPage from "./pages/ChatPage";
+import Unsubscribe from "./pages/Unsubscribe";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +56,8 @@ const App = () => (
           <Route path="/bokningsvillkor" element={<BookingTerms />} />
           <Route path="/blogg" element={<Blog />} />
           <Route path="/blogg/:slug" element={<BlogPost />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/*" element={<Admin />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
