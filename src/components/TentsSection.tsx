@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import tentImg1 from "@/assets/glamping-interior-cozy.jpg";
 import tentImg2 from "@/assets/glamping-interior-wide.jpg";
-import tentImg3 from "@/assets/glamping-night-lights.jpg";
 import { useLang } from "@/i18n/LanguageContext";
 
 const TentsSection = () => {
