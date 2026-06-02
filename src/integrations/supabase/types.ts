@@ -20,8 +20,6 @@ export type Database = {
           id: string
           last_message_at: string
           status: string
-          unread_admin: number
-          unread_visitor: number
           visitor_email: string
           visitor_name: string
           visitor_token: string
@@ -31,8 +29,6 @@ export type Database = {
           id?: string
           last_message_at?: string
           status?: string
-          unread_admin?: number
-          unread_visitor?: number
           visitor_email: string
           visitor_name: string
           visitor_token: string
@@ -42,8 +38,6 @@ export type Database = {
           id?: string
           last_message_at?: string
           status?: string
-          unread_admin?: number
-          unread_visitor?: number
           visitor_email?: string
           visitor_name?: string
           visitor_token?: string
