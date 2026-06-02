@@ -91,7 +91,7 @@ Cirka femton minuter med bil. Bussen tar något längre tid men är ett fungeran
 
 ## Behöver jag boka i förväg?
 
-Ja, särskilt under sommaren. Vi har bara tre tält och de fylls snabbt. Boka så tidigt du kan för bästa val av datum.
+Ja, särskilt under sommaren. Vi har bara två tält och de fylls snabbt. Boka så tidigt du kan för bästa val av datum.
 
 ## Boka ditt boende vid Bergs Slussar
 
@@ -166,11 +166,11 @@ Det finns inga stora lekplatser direkt vid slussarna, men området självt funge
 
 ## Vilket tält passar bäst för en familj?
 
-Sjöbrisretreatet med sin bäddsoffa fungerar bäst för familjer. Mindre familjer eller en vuxen med ett barn kan gott bo i Naturkärnan eller Lugnets Yta.
+Sjöbrisretreatet med sin bäddsoffa fungerar bäst för familjer. Mindre familjer eller en vuxen med ett barn kan gott bo i Naturkärnan.
 
 ## Boka familjens glamping vid Bergs Slussar
 
-Tre tält och en kort sommarsäsong – välj era datum medan plats finns.
+Två tält och en kort sommarsäsong – välj era datum medan plats finns.
     `,
   },
   {
@@ -199,7 +199,7 @@ Tre saker brukar avgöra för dem som väljer glamping istället för hotell:
 
 - **Miljön** – kanalen, ängarna och tystnaden.
 - **Friheten** – ni rör er fritt, lagar inget i hast, behöver inte passa måltidstider.
-- **Den lilla skalan** – tre tält. Aldrig fullsatt restaurang eller köer till checkin.
+- **Den lilla skalan** – två tält. Aldrig fullsatt restaurang eller köer till checkin.
 
 Vill du läsa mer om läget och vägen hit finns sidan om [glamping nära Linköping](/glamping-linkoping).
 
@@ -219,7 +219,7 @@ Ingen behöver göra allt. Ofta är det den dag ni inte planerar något som blir
 
 För par är glamping ett av de mer romantiska alternativen i regionen. Bäddade sängar, kvällsljus, kanalen som soundtrack. Mer om det skriver vi på sidan om [romantisk weekend i Östergötland](/romantisk-weekend-ostergotland).
 
-Men det fungerar lika bra för en grupp vänner som vill umgås på ett annat sätt än hemma. Boka två eller tre tält, planera en gemensam middag, ta med en flaska vin och låt kvällen bli lång.
+Men det fungerar lika bra för en grupp vänner som vill umgås på ett annat sätt än hemma. Boka båda tälten, planera en gemensam middag, ta med en flaska vin och låt kvällen bli lång.
 
 ## Vad ni inte behöver oroa er för
 

@@ -20,7 +20,7 @@ const BoendeGotaKanal = () => {
             kanalpartier.
           </p>
           <p>
-            Vi har tre tält i olika storlek, alla med bäddade sängar, värme,
+            Vi har två tält i olika storlek, båda med bäddade sängar, värme,
             el och minikylskåp. Det är ett naturnära boende vid Göta kanal
             för dig som vill ha lugnet och utsikten utan att kompromissa på
             komforten. Du bor i Vreta Kloster, en kort bilresa från

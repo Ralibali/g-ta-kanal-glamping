@@ -113,7 +113,7 @@ const AboutSection = () => {
                   För par, familjer och weekendgäster
                 </h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Vi har tre tält i olika storlek. Sjöbrisretreatet har dubbelsäng och bäddsoffa och passar familjer eller mindre sällskap. Naturkärnan och Lugnets Yta är något mindre och blir gärna ett romantiskt val för par. Barn upp till tolv år har rabatterade priser och kan sova tillsammans med vuxna i dubbelsängen.
+                  Vi har två tält i olika storlek. Sjöbrisretreatet har dubbelsäng och bäddsoffa och passar familjer eller mindre sällskap. Naturkärnan är något mindre och blir gärna ett romantiskt val för par. Barn upp till tolv år har rabatterade priser och kan sova tillsammans med vuxna i dubbelsängen.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
                   För dig som söker en weekend nära Linköping fungerar två nätter ofta bäst – då hinner du både med en kvällspromenad längs kanalen, en cykeltur eller paddleboard på Roxen och en lugn morgon med kaffet i handen.

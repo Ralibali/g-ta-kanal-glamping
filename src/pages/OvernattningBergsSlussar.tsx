@@ -79,10 +79,10 @@ const OvernattningBergsSlussar = () => {
           body: (
             <>
               <p>
-                Våra tre tält är olika stora och täcker både par som vill ha
+                Våra två tält är olika stora och täcker både par som vill ha
                 en romantisk natt och familjer som behöver lite mer plats.
                 Sjöbrisretreatet har dubbelsäng och bäddsoffa, Naturkärnan
-                och Lugnets Yta är något mindre och passar par eller en
+                är något mindre och passar par eller en
                 vuxen med ett barn. Alla har samma standard på utrustning.
               </p>
               <p>
@@ -148,7 +148,7 @@ const OvernattningBergsSlussar = () => {
       ]}
       cta={{
         heading: "Boka din övernattning vid Bergs Slussar",
-        text: "Sov en natt eller stanna en hel weekend. Tre tält, kanalens lugn och allt förberett när du kommer.",
+        text: "Sov en natt eller stanna en hel weekend. Två tält, kanalens lugn och allt förberett när du kommer.",
         button: "Boka övernattning",
       }}
     />

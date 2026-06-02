@@ -2,13 +2,12 @@ import { useState } from "react";
 import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, MessageCircle, Clock, Gift } from "lucide-react";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
-// Koppla bokningsnummer till tält: "sjobris", "naturkarnan" eller "lugnets"
-type TentId = "sjobris" | "naturkarnan" | "lugnets";
+// Koppla bokningsnummer till tält: "sjobris" eller "naturkarnan"
+type TentId = "sjobris" | "naturkarnan";
 
 const VALID_BOOKINGS: Record<string, TentId> = {
   "DEMO-1234": "sjobris",   // Ta bort dessa och lägg in riktiga
   "DEMO-5678": "naturkarnan",
-  "DEMO-9012": "lugnets",
 };
 
 const TENT_INFO: Record<TentId, { name: string; directions: string }> = {
@@ -19,10 +18,6 @@ const TENT_INFO: Record<TentId, { name: string; directions: string }> = {
   naturkarnan: {
     name: "Naturkärnan",
     directions: "Gå till vänster och följ stigen – tältet ligger längst bort till vänster.",
-  },
-  lugnets: {
-    name: "Lugnets Yta",
-    directions: "Gå rakt fram och ta sedan mitten – tältet ligger i mitten av de tre.",
   },
 };
 

@@ -14,7 +14,7 @@ const FAQSection = () => {
     { q: "Are there toilets and showers?", a: "Yes, a fresh service house is located about 150 metres from the tents with toilets, showers and baby changing facilities." },
     { q: "Is there food and a café at Bergs Slussar?", a: "Yes! There are restaurants and cafés in the area around Bergs Slussar. We also offer breakfast via Bostället as an add-on when booking." },
     { q: "Can children stay in the glamping tents?", a: "Of course! Children up to 12 years have discounted prices and can sleep together with adults in the double bed. Perfect accommodation for families by Göta Canal." },
-    { q: "Can we bring pets?", a: "Yes, pets are welcome in the tent Lugnets Yta for a pet fee." },
+    { q: "Can we bring pets?", a: "Please contact us before booking if you wish to bring a pet. We may be able to accommodate depending on availability and season." },
     { q: "How far is it from Linköping to Bergs Slussar?", a: "Bergs Slussar is located in Vreta Kloster, about 15 minutes by car from central Linköping." },
     { q: "What are the booking terms?", a: <>Check-in from 3:00 PM, check-out by 10:00 AM. Free cancellation up to 5 days before arrival. Late check-out until 12:00 PM can be offered for 400 SEK. Optional cancellation protection (399 SEK) gives full refund up to arrival day. <a href="/bokningsvillkor" className="text-accent font-medium underline underline-offset-4 hover:no-underline">Read full booking terms →</a></> },
     { q: "What is glamping in Sweden like?", a: "Glamping in Sweden means sleeping in nature with real comfort – proper beds, heating and cosy interiors. At Bergs Slussar by Göta Canal you combine peaceful, cosy tents with beautiful Östergötland scenery, hiking and canal culture." },
@@ -31,7 +31,7 @@ const FAQSection = () => {
     { q: "Hur bokar vi glamping vid Bergs Slussar?", a: "Det är enkelt! Scrolla upp till bokningssektionen på sidan, välj datum och antal gäster, och följ instruktionerna. Vi erbjuder glamping i Östergötland vid Göta kanal, strax utanför Linköping." },
     { q: "Vad kostar glamping och vad ingår i priset?", a: "I priset ingår städning, bäddade sängar, sänglinne, handdukar, el, fläkt, minikylskåp, gasolvärmare, kaffe, te och en flaska vatten. Se aktuella priser i bokningswidgeten ovan." },
     { q: "Finns det parkering vid Bergs Slussar?", a: "Ja, parkering finns på plats mot en liten avgift, bara en kort promenad från glampingtälten." },
-    { q: "Får vi ta med husdjur?", a: "Ja, i tältet Lugnets Yta är husdjur välkomna mot en husdjursavgift." },
+    { q: "Får vi ta med husdjur?", a: "Hör av er innan bokning om ni vill ta med husdjur. Beroende på tillgänglighet och säsong kan vi eventuellt ordna det." },
     { q: "Vilka bokningsvillkor gäller?", a: <>Incheckning från kl. 15:00, utcheckning senast kl. 10:00. Kostnadsfri avbokning upp till fem dagar före ankomst. Sen utcheckning till kl. 12:00 kan erbjudas mot 400 kr. Vill du vara helt trygg kan du lägga till avbokningsskydd för 399 kr vid bokning – då får du full återbetalning oavsett anledning, ända fram till ankomstdagen. <a href="/bokningsvillkor" className="text-accent font-medium underline underline-offset-4 hover:no-underline">Läs alla bokningsvillkor →</a></> },
   ];
 

@@ -22,8 +22,8 @@ const CTASection = () => {
           </h2>
           <p className="text-primary-foreground/70 text-lg mb-10 leading-relaxed">
             {lang === "en"
-              ? "Three tents, a short Swedish summer and one of Östergötland's most beautiful spots. Pick your dates while there's still room."
-              : "Tre tält, en kort svensk sommar och en av Östergötlands vackraste platser. Välj dina datum medan plats finns."}
+              ? "Two tents, a short Swedish summer and one of Östergötland's most beautiful spots. Pick your dates while there's still room."
+              : "Två tält, en kort svensk sommar och en av Östergötlands vackraste platser. Välj dina datum medan plats finns."}
           </p>
           <a href="#boka" className="inline-block bg-accent text-accent-foreground px-12 py-4 rounded-full text-lg font-semibold hover:scale-105 transition-transform shadow-xl">
             {lang === "en" ? "Book your stay →" : "Boka din vistelse →"}

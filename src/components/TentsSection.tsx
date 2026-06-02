@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import tentImg1 from "@/assets/glamping-interior-cozy.jpg";
 import tentImg2 from "@/assets/glamping-interior-wide.jpg";
-import tentImg3 from "@/assets/glamping-night-lights.jpg";
 import { useLang } from "@/i18n/LanguageContext";
 
 const TentsSection = () => {
@@ -12,12 +11,10 @@ const TentsSection = () => {
     ? [
         { name: "Sjöbrisretreatet", image: tentImg1, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
         { name: "Naturkärnan", image: tentImg2, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
-        { name: "Lugnets Yta", image: tentImg3, features: ["Double bed", "Max 2 guests", "Heating", "Fridge", "Pet-friendly"], price: "From 700 kr/person" },
       ]
     : [
         { name: "Sjöbrisretreatet", image: tentImg1, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
         { name: "Naturkärnan", image: tentImg2, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
-        { name: "Lugnets Yta", image: tentImg3, features: ["Dubbelsäng", "Max 2 pers", "Värme", "Kylskåp", "Husdjursvänligt"], price: "Från 700 kr/person" },
       ];
 
   return (
@@ -35,7 +32,7 @@ const TentsSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {tents.map((tent, i) => (
             <motion.div
               key={tent.name}
