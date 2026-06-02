@@ -153,7 +153,7 @@ const GlampingVretaKloster = () => {
       ]}
       cta={{
         heading: "Boka glamping i Vreta Kloster",
-        text: "Sov vid Bergs Slussar mitt i en av Östergötlands vackraste bygder. Säsongen är kort och tre tält fylls snabbt.",
+        text: "Sov vid Bergs Slussar mitt i en av Östergötlands vackraste bygder. Säsongen är kort och två tält fylls snabbt.",
         button: "Boka nu",
       }}
     />

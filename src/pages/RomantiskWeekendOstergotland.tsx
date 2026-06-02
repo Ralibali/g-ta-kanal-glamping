@@ -35,9 +35,9 @@ const RomantiskWeekendOstergotland = () => {
             <>
               <p>
                 Det fina med glamping är just kombinationen – ni får
-                naturens lugn utan att kompromissa på sömnen. Vi har tält i
-                olika storlek, men de mindre, som Naturkärnan och Lugnets
-                Yta, är särskilt fina för par. Bäddade sängar med riktigt
+                naturens lugn utan att kompromissa på sömnen. Våra två
+                tält, Sjöbrisretreatet och Naturkärnan, är båda fina för
+                par. Bäddade sängar med riktigt
                 sänglinne, en fläkt, en värmare för svala kvällar och kaffe
                 framställt vid ankomst.
               </p>
@@ -135,7 +135,7 @@ const RomantiskWeekendOstergotland = () => {
       faqs={[
         {
           q: "Vilket tält passar bäst för par?",
-          a: "Naturkärnan och Lugnets Yta är våra mindre tält och passar fint för par som vill ha en mysig och ombonad känsla. Sjöbrisretreatet är något större och rymmer även en bäddsoffa.",
+          a: "Naturkärnan är vårt mindre tält och passar fint för par som vill ha en mysig och ombonad känsla. Sjöbrisretreatet är något större och rymmer även en bäddsoffa.",
         },
         {
           q: "Kan ni ordna något extra inför ankomsten?",
@@ -156,7 +156,7 @@ const RomantiskWeekendOstergotland = () => {
       ]}
       cta={{
         heading: "Boka er romantiska weekend",
-        text: "Två nätter vid kanalen, bäddade sängar och en miljö ni inte glömmer. Tre tält och en kort säsong – välj era datum medan plats finns.",
+        text: "Två nätter vid kanalen, bäddade sängar och en miljö ni inte glömmer. Två tält och en kort säsong – välj era datum medan plats finns.",
         button: "Boka weekend",
       }}
     />

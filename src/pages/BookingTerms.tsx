@@ -68,7 +68,7 @@ const BookingTerms = () => {
           <ul className="space-y-2 text-muted-foreground text-sm leading-relaxed list-disc list-inside">
             <li>Rökning är inte tillåten i eller i närheten av tälten.</li>
             <li>Håll ljudnivån nere, särskilt kvällstid – visa hänsyn till medgäster och grannar.</li>
-            <li>Husdjur är välkomna i tältet Lugnets Yta mot en husdjursavgift.</li>
+            <li>Husdjur kan eventuellt medtagas efter överenskommelse – kontakta oss innan bokning.
             <li>Tältet ska lämnas i rimligt skick. Skräp och matrester tas med vid utcheckning.</li>
             <li>Disk sker i servicehuset (~150 m från tälten). Lämna köksytan ren efter användning.</li>
             <li>Städning ingår i priset, men vi ber er visa omsorg om tält och inventarier.</li>

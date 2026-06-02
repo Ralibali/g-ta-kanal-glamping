@@ -57,7 +57,7 @@ const BoendeBergsSlussar = () => {
           body: (
             <>
               <p>
-                Vi har tre tält med olika storlek, alla utrustade för att du
+                Vi har två tält med olika storlek, båda utrustade för att du
                 ska kunna kliva direkt in i en ombonad miljö. Sängarna är
                 bäddade vid ankomst, med riktigt sänglinne och rena
                 handdukar. I tältet finns el för laddning, värme för svala
@@ -155,7 +155,7 @@ const BoendeBergsSlussar = () => {
       ]}
       cta={{
         heading: "Boka ditt boende vid Bergs Slussar",
-        text: "Tre tält, en av Östergötlands vackraste platser och allt du behöver för en avkopplande vistelse. Säsongen är kort – välj dina datum medan plats finns.",
+        text: "Två tält, en av Östergötlands vackraste platser och allt du behöver för en avkopplande vistelse. Säsongen är kort – välj dina datum medan plats finns.",
         button: "Boka nu",
       }}
     />

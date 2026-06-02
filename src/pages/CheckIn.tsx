@@ -19,10 +19,6 @@ const TENT_INFO: Record<TentId, { name: string; directions: string }> = {
     name: "Naturkärnan",
     directions: "Gå till vänster och följ stigen – tältet ligger längst bort till vänster.",
   },
-  lugnets: {
-    name: "Lugnets Yta",
-    directions: "Gå rakt fram och ta sedan mitten – tältet ligger i mitten av de tre.",
-  },
 };
 
 // Låskod (samma för alla tält)
