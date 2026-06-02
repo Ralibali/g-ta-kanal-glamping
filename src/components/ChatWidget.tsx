@@ -212,16 +212,31 @@ const ChatWidget = () => {
 
   return (
     <>
-      {/* Toggle button */}
-      <motion.button
-        onClick={() => setOpen((v) => !v)}
-        aria-label={t("Öppna chatt", "Open chat")}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className="fixed bottom-5 right-5 z-[60] h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center md:bottom-6 md:right-6"
-      >
-        {open ? <X size={22} /> : <MessageCircle size={24} />}
-      </motion.button>
+      {/* Toggle button + label */}
+      <div className="fixed bottom-5 right-5 md:bottom-6 md:right-6 z-[60] flex flex-col items-end gap-2">
+        <AnimatePresence>
+          {!open && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.2 }}
+              className="bg-card border border-border text-foreground text-xs font-medium px-3 py-1.5 rounded-full shadow-md whitespace-nowrap"
+            >
+              {t("Kontakta oss här", "Contact us here")}
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <motion.button
+          onClick={() => setOpen((v) => !v)}
+          aria-label={t("Öppna chatt", "Open chat")}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center"
+        >
+          {open ? <X size={22} /> : <MessageCircle size={24} />}
+        </motion.button>
+      </div>
 
       <AnimatePresence>
         {open && (
