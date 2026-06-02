@@ -50,6 +50,7 @@ const App = () => (
           <Route path="/glamping-vreta-kloster" element={<GlampingVretaKloster />} />
           <Route path="/romantisk-weekend-ostergotland" element={<RomantiskWeekendOstergotland />} />
           <Route path="/checkin" element={<CheckIn />} />
+          <Route path="/checka-in" element={<CheckIn />} />
           <Route path="/bokningsvillkor" element={<BookingTerms />} />
           <Route path="/blogg" element={<Blog />} />
           <Route path="/blogg/:slug" element={<BlogPost />} />
