@@ -1,37 +1,127 @@
 import { useState } from "react";
-import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, MessageCircle, Clock, Gift } from "lucide-react";
+import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin } from "lucide-react";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
 // Koppla bokningsnummer till tält: "sjobris" eller "naturkarnan"
 type TentId = "sjobris" | "naturkarnan";
+type Lang = "sv" | "da";
 
-const VALID_BOOKINGS: Record<string, TentId> = {
-  "JM06JI38XT": "sjobris", // Michael Vinge, 2026-06-03 till 2026-06-05
+interface Booking {
+  tentId: TentId;
+  lang: Lang;
+}
+
+const VALID_BOOKINGS: Record<string, Booking> = {
+  "JM06JI38XT": { tentId: "sjobris", lang: "da" }, // Michael Vinge, 2026-06-03 till 2026-06-05
 };
 
-const TENT_INFO: Record<TentId, { name: string; directions: string }> = {
-  sjobris: {
-    name: "Sjöbrisretreatet",
-    directions: "Gå rakt fram från QR-koden – tältet ligger rakt upp framför dig.",
+const TENT_INFO: Record<Lang, Record<TentId, { name: string; directions: string }>> = {
+  sv: {
+    sjobris: {
+      name: "Sjöbrisretreatet",
+      directions: "Gå rakt fram från QR-koden – tältet ligger rakt upp framför dig.",
+    },
+    naturkarnan: {
+      name: "Naturkärnan",
+      directions: "Gå till vänster och följ stigen – tältet ligger längst bort till vänster.",
+    },
   },
-  naturkarnan: {
-    name: "Naturkärnan",
-    directions: "Gå till vänster och följ stigen – tältet ligger längst bort till vänster.",
+  da: {
+    sjobris: {
+      name: "Sjöbrisretreatet (teltet lige frem)",
+      directions: "Gå ligeud fra QR-koden – teltet ligger lige frem foran dig.",
+    },
+    naturkarnan: {
+      name: "Naturkärnan",
+      directions: "Gå til venstre og følg stien – teltet ligger længst væk til venstre.",
+    },
   },
 };
 
 // Låskod (samma för alla tält)
 const LOCK_CODE = "2018";
 
+// ─── Översättningar ──────────────────────────────────────────
+const T: Record<Lang, Record<string, string>> = {
+  sv: {
+    backToHome: "Tillbaka till startsidan",
+    digitalCheckin: "Digital incheckning",
+    welcome: "Välkommen!",
+    enterBooking: "Ange ditt bokningsnummer för att checka in.",
+    bookingPlaceholder: "T.ex. BSG-12345",
+    enterBookingError: "Ange ditt bokningsnummer.",
+    bookingNotFound: "Bokningsnumret hittades inte. Kontrollera och försök igen.",
+    continue: "Fortsätt",
+    problemSms: "Problem?",
+    smsContact: "SMS:a Christoffer",
+    termsTitle: "Villkor för vistelsen",
+    termsSubtitle: "Godkänn villkoren för att få din låskod.",
+    back: "Tillbaka",
+    showLockCode: "Visa låskod",
+    checkinComplete: "Incheckning klar!",
+    yourTent: "Ditt tält",
+    lockCodeLabel: "Din kod till låset:",
+    goodToKnow: "Bra att veta",
+    checkinFrom: "Incheckning från kl. 15:00",
+    checkoutBy: "Utcheckning senast kl. 10:00",
+    washDishes: "Diska i servicehuset (~150 m bort) och lämna köksytan ren",
+    lateCheckoutTitle: "♡ Vill du checka ut lite senare? Du kan förlänga till kl. 12:00 för 400 kr. Swisha och meddela oss – så är det fixat.",
+    swish: "Swisha",
+    notifyUs: "Meddela oss",
+    notWorking: "Fungerar något inte?",
+    contactChristoffer: "Kontakta Christoffer via SMS",
+    goHome: "Gå till startsidan →",
+  },
+  da: {
+    backToHome: "Tilbage til forsiden",
+    digitalCheckin: "Digital indtjekning",
+    welcome: "Velkommen!",
+    enterBooking: "Indtast dit bookingsnummer for at checke ind.",
+    bookingPlaceholder: "F.eks. BSG-12345",
+    enterBookingError: "Indtast dit bookingsnummer.",
+    bookingNotFound: "Bookingsnummeret blev ikke fundet. Tjek og prøv igen.",
+    continue: "Fortsæt",
+    problemSms: "Problemer?",
+    smsContact: "SMS Christoffer",
+    termsTitle: "Vilkår for opholdet",
+    termsSubtitle: "Accepter vilkårene for at få din låsekode.",
+    back: "Tilbage",
+    showLockCode: "Vis låsekode",
+    checkinComplete: "Indtjekning gennemført!",
+    yourTent: "Dit telt",
+    lockCodeLabel: "Din kode til låsen:",
+    goodToKnow: "Godt at vide",
+    checkinFrom: "Indtjekning fra kl. 15:00",
+    checkoutBy: "Udtjekning senest kl. 10:00",
+    washDishes: "Vask dit service i servicehuset (~150 m væk) og efterlad køkkenoverfladen ren",
+    lateCheckoutTitle: "♡ Vil du checke ud lidt senere? Du kan forlænge til kl. 12:00 for 400 kr. Swish og giv os besked – så er det ordnet.",
+    swish: "Swish",
+    notifyUs: "Giv os besked",
+    notWorking: "Fungerer noget ikke?",
+    contactChristoffer: "Kontakt Christoffer via SMS",
+    goHome: "Gå til forsiden →",
+  },
+};
+
 // ─── Villkor ─────────────────────────────────────────────────
-const TERMS = [
-  "Jag förstår att incheckning sker från kl. 15:00 och utcheckning senast kl. 10:00.",
-  "Jag lämnar tältet i rimligt skick – städning ingår, men personliga tillhörigheter, skräp och matrester tas med vid utcheckning.",
-  "Jag diskar mina egna kärl och bestick i servicehuset och lämnar köksytan ren efter användning.",
-  "Rökning är inte tillåten i eller i närheten av tälten.",
-  "Jag visar hänsyn till medgäster, grannar och natur – och håller ljudnivån nere, särskilt kvällstid.",
-  "Jag har läst och godkänner bokningsvillkoren.",
-];
+const TERMS: Record<Lang, string[]> = {
+  sv: [
+    "Jag förstår att incheckning sker från kl. 15:00 och utcheckning senast kl. 10:00.",
+    "Jag lämnar tältet i rimligt skick – städning ingår, men personliga tillhörigheter, skräp och matrester tas med vid utcheckning.",
+    "Jag diskar mina egna kärl och bestick i servicehuset och lämnar köksytan ren efter användning.",
+    "Rökning är inte tillåten i eller i närheten av tälten.",
+    "Jag visar hänsyn till medgäster, grannar och natur – och håller ljudnivån nere, särskilt kvällstid.",
+    "Jag har läst och godkänner bokningsvillkoren.",
+  ],
+  da: [
+    "Jeg forstår, at indtjekning er fra kl. 15:00 og udtjekning senest kl. 10:00.",
+    "Jeg efterlader teltet i rimelig stand – rengøring er inkluderet, men personlige ejendele, affald og madrester medtages ved udtjekning.",
+    "Jeg vasker mit eget service og bestik i servicehuset og efterlader køkkenoverfladen ren efter brug.",
+    "Rygning er ikke tilladt i eller i nærheden af teltene.",
+    "Jeg viser hensyn til medgæster, naboer og natur – og holder lydniveauet nede, især om aftenen.",
+    "Jeg har læst og accepterer bookingsbetingelserne.",
+  ],
+};
 
 type Step = "booking" | "terms" | "code";
 
@@ -40,23 +130,27 @@ const CheckIn = () => {
   const [bookingNumber, setBookingNumber] = useState("");
   const [error, setError] = useState("");
   const [tentId, setTentId] = useState<TentId | null>(null);
-  const [termsAccepted, setTermsAccepted] = useState<boolean[]>(
-    TERMS.map(() => false)
-  );
+  const [lang, setLang] = useState<Lang>("sv");
+  const [termsAccepted, setTermsAccepted] = useState<boolean[]>([]);
+
+  const t = T[lang];
+  const currentTerms = TERMS[lang];
 
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = bookingNumber.trim().toUpperCase();
     if (!trimmed) {
-      setError("Ange ditt bokningsnummer.");
+      setError(t.enterBookingError);
       return;
     }
-    const matchedTent = VALID_BOOKINGS[trimmed];
-    if (!matchedTent) {
-      setError("Bokningsnumret hittades inte. Kontrollera och försök igen.");
+    const matchedBooking = VALID_BOOKINGS[trimmed];
+    if (!matchedBooking) {
+      setError(t.bookingNotFound);
       return;
     }
-    setTentId(matchedTent);
+    setTentId(matchedBooking.tentId);
+    setLang(matchedBooking.lang);
+    setTermsAccepted(TERMS[matchedBooking.lang].map(() => false));
     setError("");
     setStep("terms");
   };
@@ -76,13 +170,13 @@ const CheckIn = () => {
         <div className="text-center mb-10">
           <a href="/" className="inline-flex items-center gap-2 text-primary-foreground/50 hover:text-primary-foreground/80 text-sm mb-6 transition-colors">
             <ArrowLeft size={14} />
-            Tillbaka till startsidan
+            {t.backToHome}
           </a>
           <p className="font-serif text-2xl font-bold text-primary-foreground">
             Bergs Slussar
           </p>
           <p className="text-[10px] font-sans font-medium tracking-[0.35em] uppercase text-primary-foreground/50 mt-1">
-            Digital incheckning
+            {t.digitalCheckin}
           </p>
         </div>
 
@@ -125,10 +219,10 @@ const CheckIn = () => {
               <KeyRound className="text-primary" size={24} />
             </div>
             <h1 className="font-serif text-2xl font-bold text-foreground text-center mb-2">
-              Välkommen!
+              {t.welcome}
             </h1>
             <p className="text-muted-foreground text-center text-sm mb-8">
-              Ange ditt bokningsnummer för att checka in.
+              {t.enterBooking}
             </p>
             <form onSubmit={handleBookingSubmit}>
               <input
@@ -138,7 +232,7 @@ const CheckIn = () => {
                   setBookingNumber(e.target.value);
                   setError("");
                 }}
-                placeholder="T.ex. BSG-12345"
+                placeholder={t.bookingPlaceholder}
                 className="w-full bg-muted border border-border rounded-xl px-5 py-4 text-foreground text-center text-lg font-mono tracking-widest placeholder:text-muted-foreground/50 placeholder:font-sans placeholder:tracking-normal placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
                 autoFocus
                 maxLength={30}
@@ -150,11 +244,11 @@ const CheckIn = () => {
                 type="submit"
                 className="w-full mt-6 bg-accent text-accent-foreground py-4 rounded-xl font-semibold hover:scale-[1.02] transition-transform shadow-md"
               >
-                Fortsätt
+                {t.continue}
               </button>
             </form>
             <p className="text-muted-foreground text-xs text-center mt-5">
-              Problem? <a href="sms:0722254993" className="text-accent font-semibold hover:underline">SMS:a Christoffer</a>
+              {t.problemSms}{" "}<a href="sms:0722254993" className="text-accent font-semibold hover:underline">{t.smsContact}</a>
             </p>
           </div>
         )}
@@ -166,13 +260,13 @@ const CheckIn = () => {
               <ShieldCheck className="text-primary" size={24} />
             </div>
             <h2 className="font-serif text-2xl font-bold text-foreground text-center mb-2">
-              Villkor för vistelsen
+              {t.termsTitle}
             </h2>
             <p className="text-muted-foreground text-center text-sm mb-8">
-              Godkänn villkoren för att få din låskod.
+              {t.termsSubtitle}
             </p>
             <div className="space-y-4 mb-8">
-              {TERMS.map((term, i) => (
+              {currentTerms.map((term, i) => (
                 <label
                   key={i}
                   className="flex items-start gap-3 cursor-pointer group"
@@ -213,7 +307,7 @@ const CheckIn = () => {
                 onClick={() => setStep("booking")}
                 className="px-5 py-4 rounded-xl border border-border text-foreground font-medium hover:bg-muted transition-colors"
               >
-                Tillbaka
+                {t.back}
               </button>
               <button
                 onClick={handleTermsSubmit}
@@ -224,7 +318,7 @@ const CheckIn = () => {
                     : "bg-muted text-muted-foreground cursor-not-allowed"
                 }`}
               >
-                Visa låskod
+                {t.showLockCode}
               </button>
             </div>
           </div>
@@ -237,23 +331,23 @@ const CheckIn = () => {
               <CheckCircle className="text-accent" size={36} />
             </div>
             <h2 className="font-serif text-2xl font-bold text-foreground mb-2">
-              Incheckning klar!
+              {t.checkinComplete}
             </h2>
 
             {/* Tent info */}
             <div className="bg-secondary rounded-xl p-5 mb-6 text-left">
-              <p className="text-sm font-semibold text-foreground mb-1">Ditt tält</p>
-              <p className="font-serif text-lg font-bold text-foreground">{TENT_INFO[tentId].name}</p>
+              <p className="text-sm font-semibold text-foreground mb-1">{t.yourTent}</p>
+              <p className="font-serif text-lg font-bold text-foreground">{TENT_INFO[lang][tentId].name}</p>
               <div className="flex items-start gap-2 mt-3">
                 <MapPin className="text-accent shrink-0 mt-0.5" size={16} />
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  {TENT_INFO[tentId].directions}
+                  {TENT_INFO[lang][tentId].directions}
                 </p>
               </div>
             </div>
 
             <p className="text-muted-foreground text-sm mb-4">
-              Din kod till låset:
+              {t.lockCodeLabel}
             </p>
             <div className="bg-primary rounded-2xl py-8 px-6 mb-8">
               <p className="font-mono text-6xl font-bold text-primary-foreground tracking-[0.3em]">
@@ -261,18 +355,18 @@ const CheckIn = () => {
               </p>
             </div>
             <div className="bg-muted rounded-xl p-5 text-left space-y-2 mb-6">
-              <p className="text-sm font-semibold text-foreground">Bra att veta:</p>
+              <p className="text-sm font-semibold text-foreground">{t.goodToKnow}:</p>
               <ul className="text-sm text-muted-foreground space-y-1.5">
-                <li>• Incheckning från kl. 15:00</li>
-                <li>• Utcheckning senast kl. 10:00</li>
-                <li>• Diska i servicehuset (~150 m bort) och lämna köksytan ren</li>
+                <li>• {t.checkinFrom}</li>
+                <li>• {t.checkoutBy}</li>
+                <li>• {t.washDishes}</li>
               </ul>
             </div>
 
             {/* Late checkout option */}
             <div className="bg-muted/50 rounded-xl p-5 text-left mb-6">
               <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                ♡ Vill du checka ut lite senare? Du kan förlänga till <strong className="text-foreground">kl. 12:00</strong> för 400 kr. Swisha och meddela oss – så är det fixat.
+                {t.lateCheckoutTitle}
               </p>
               <div className="flex gap-2">
                 <a
@@ -281,13 +375,13 @@ const CheckIn = () => {
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 border border-border text-foreground py-2.5 px-4 rounded-lg font-medium hover:bg-muted transition-colors text-sm"
                 >
-                  Swisha
+                  {t.swish}
                 </a>
                 <a
-                  href={`sms:0722254993?body=${encodeURIComponent(`Hej! Jag har swishat 400 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[tentId].name}`)}`}
+                  href={`sms:0722254993?body=${encodeURIComponent(`Hej! Jag har swishat 400 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`)}`}
                   className="flex items-center justify-center gap-2 border border-border text-foreground py-2.5 px-4 rounded-lg font-medium hover:bg-muted transition-colors text-sm"
                 >
-                  Meddela oss
+                  {t.notifyUs}
                 </a>
               </div>
             </div>
@@ -295,9 +389,9 @@ const CheckIn = () => {
             {/* Contact support */}
             <div className="bg-muted rounded-xl p-4 mb-6">
               <p className="text-sm text-muted-foreground text-center">
-                Fungerar något inte?{" "}
+                {t.notWorking}{" "}
                 <a href="sms:0722254993" className="text-accent font-semibold hover:underline">
-                  Kontakta Christoffer via SMS
+                  {t.contactChristoffer}
                 </a>
               </p>
             </div>
@@ -306,7 +400,7 @@ const CheckIn = () => {
               href="/"
               className="inline-block text-accent hover:underline text-sm font-medium"
             >
-              Gå till startsidan →
+              {t.goHome}
             </a>
           </div>
         )}
