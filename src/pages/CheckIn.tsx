@@ -6,8 +6,7 @@ import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, MessageCircle, C
 type TentId = "sjobris" | "naturkarnan";
 
 const VALID_BOOKINGS: Record<string, TentId> = {
-  "DEMO-1234": "sjobris",   // Ta bort dessa och lägg in riktiga
-  "DEMO-5678": "naturkarnan",
+  "JM06JI38XT": "sjobris", // Michael Vinge, 2026-06-03 till 2026-06-05
 };
 
 const TENT_INFO: Record<TentId, { name: string; directions: string }> = {
