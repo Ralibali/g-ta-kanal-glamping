@@ -1,4 +1,36 @@
-import { sendLovableEmail } from 'npm:@lovable.dev/email-js'
+// Email sending via Resend (connector gateway).
+// Replaces the previous Lovable Emails sender — sends now go through Resend
+// using the connector-provided RESEND_API_KEY. Domain goglampingsweden.se
+// must be verified in the Resend dashboard.
+const RESEND_GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend/emails'
+
+async function sendViaResend(payload: Record<string, any>, lovableApiKey: string, resendApiKey: string) {
+  const res = await fetch(RESEND_GATEWAY_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${lovableApiKey}`,
+      'X-Connection-Api-Key': resendApiKey,
+    },
+    body: JSON.stringify({
+      from: payload.from,
+      to: [payload.to],
+      subject: payload.subject,
+      html: payload.html,
+      text: payload.text,
+      headers: payload.idempotency_key ? { 'X-Entity-Ref-ID': String(payload.idempotency_key) } : undefined,
+    }),
+  })
+  if (!res.ok) {
+    const body = await res.text()
+    const err: any = new Error(`Resend ${res.status}: ${body.slice(0, 500)}`)
+    err.status = res.status
+    const retryAfter = res.headers.get('Retry-After')
+    if (retryAfter) err.retryAfterSeconds = parseInt(retryAfter, 10) || 60
+    throw err
+  }
+  return await res.json()
+}
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const MAX_RETRIES = 5
