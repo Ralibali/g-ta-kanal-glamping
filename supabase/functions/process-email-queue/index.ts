@@ -1,4 +1,36 @@
-import { sendLovableEmail } from 'npm:@lovable.dev/email-js'
+// Email sending via Resend (connector gateway).
+// Replaces the previous Lovable Emails sender — sends now go through Resend
+// using the connector-provided RESEND_API_KEY. Domain goglampingsweden.se
+// must be verified in the Resend dashboard.
+const RESEND_GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend/emails'
+
+async function sendViaResend(payload: Record<string, any>, lovableApiKey: string, resendApiKey: string) {
+  const res = await fetch(RESEND_GATEWAY_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${lovableApiKey}`,
+      'X-Connection-Api-Key': resendApiKey,
+    },
+    body: JSON.stringify({
+      from: payload.from,
+      to: [payload.to],
+      subject: payload.subject,
+      html: payload.html,
+      text: payload.text,
+      headers: payload.idempotency_key ? { 'X-Entity-Ref-ID': String(payload.idempotency_key) } : undefined,
+    }),
+  })
+  if (!res.ok) {
+    const body = await res.text()
+    const err: any = new Error(`Resend ${res.status}: ${body.slice(0, 500)}`)
+    err.status = res.status
+    const retryAfter = res.headers.get('Retry-After')
+    if (retryAfter) err.retryAfterSeconds = parseInt(retryAfter, 10) || 60
+    throw err
+  }
+  return await res.json()
+}
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const MAX_RETRIES = 5
@@ -80,10 +112,11 @@ async function moveToDlq(
 
 Deno.serve(async (req) => {
   const apiKey = Deno.env.get('LOVABLE_API_KEY')
+  const resendApiKey = Deno.env.get('RESEND_API_KEY')
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
-  if (!apiKey || !supabaseUrl || !supabaseServiceKey) {
+  if (!apiKey || !resendApiKey || !supabaseUrl || !supabaseServiceKey) {
     console.error('Missing required environment variables')
     return new Response(
       JSON.stringify({ error: 'Server configuration error' }),
@@ -249,26 +282,7 @@ Deno.serve(async (req) => {
       }
 
       try {
-        await sendLovableEmail(
-          {
-            run_id: payload.run_id,
-            to: payload.to,
-            from: payload.from,
-            sender_domain: payload.sender_domain,
-            subject: payload.subject,
-            html: payload.html,
-            text: payload.text,
-            purpose: payload.purpose,
-            label: payload.label,
-            idempotency_key: payload.idempotency_key,
-            unsubscribe_token: payload.unsubscribe_token,
-            message_id: payload.message_id,
-          },
-          // sendUrl is optional — when LOVABLE_SEND_URL is not set, the library
-          // falls back to the default Lovable API endpoint (https://api.lovable.dev).
-          // Set LOVABLE_SEND_URL as a Supabase secret to override (e.g. for local dev).
-          { apiKey, sendUrl: Deno.env.get('LOVABLE_SEND_URL') }
-        )
+        await sendViaResend(payload, apiKey, resendApiKey)
 
         // Log success
         await supabase.from('email_send_log').insert({
