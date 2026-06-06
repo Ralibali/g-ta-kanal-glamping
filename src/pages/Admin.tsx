@@ -13,6 +13,7 @@ import { PricingManager } from "@/components/admin/PricingManager";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { ChatManager } from "@/components/admin/ChatManager";
 import { CheckInsManager } from "@/components/admin/CheckInsManager";
+import { BookingsManager } from "@/components/admin/BookingsManager";
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdmin();
@@ -54,6 +55,7 @@ const Admin = () => {
               <Route path="pricing" element={<PricingManager />} />
               <Route path="chat" element={<ChatManager />} />
               <Route path="checkins" element={<CheckInsManager />} />
+              <Route path="bookings" element={<BookingsManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </main>

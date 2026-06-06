@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          address: string | null
+          amount: number | null
+          booking_number: string
+          checkin_date: string | null
+          checkout_date: string | null
+          created_at: string
+          email: string | null
+          guest_name: string | null
+          id: string
+          lang: string | null
+          phone: string | null
+          raw: Json | null
+          tent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          amount?: number | null
+          booking_number: string
+          checkin_date?: string | null
+          checkout_date?: string | null
+          created_at?: string
+          email?: string | null
+          guest_name?: string | null
+          id?: string
+          lang?: string | null
+          phone?: string | null
+          raw?: Json | null
+          tent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          amount?: number | null
+          booking_number?: string
+          checkin_date?: string | null
+          checkout_date?: string | null
+          created_at?: string
+          email?: string | null
+          guest_name?: string | null
+          id?: string
+          lang?: string | null
+          phone?: string | null
+          raw?: Json | null
+          tent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       chat_conversations: {
         Row: {
           created_at: string

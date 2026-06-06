@@ -138,14 +138,34 @@ const CheckIn = () => {
   const t = T[lang];
   const currentTerms = TERMS[lang];
 
-  const handleBookingSubmit = (e: React.FormEvent) => {
+  const [lookupLoading, setLookupLoading] = useState(false);
+
+  const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = bookingNumber.trim().toUpperCase();
     if (!trimmed) {
       setError(t.enterBookingError);
       return;
     }
-    const matchedBooking = VALID_BOOKINGS[trimmed];
+
+    // 1) Hårdkodade bokningar (fallback)
+    let matchedBooking: Booking | null = VALID_BOOKINGS[trimmed] ?? null;
+
+    // 2) Slå upp i databasen
+    if (!matchedBooking) {
+      setLookupLoading(true);
+      const { data } = await supabase
+        .from("bookings")
+        .select("tent_id, lang")
+        .eq("booking_number", trimmed)
+        .maybeSingle();
+      setLookupLoading(false);
+      if (data && (data.tent_id === "sjobris" || data.tent_id === "naturkarnan")) {
+        const dbLang: Lang = data.lang === "da" ? "da" : "sv";
+        matchedBooking = { tentId: data.tent_id as TentId, lang: dbLang };
+      }
+    }
+
     if (!matchedBooking) {
       setError(t.bookingNotFound);
       return;
@@ -255,9 +275,10 @@ const CheckIn = () => {
               )}
               <button
                 type="submit"
-                className="w-full mt-6 bg-accent text-accent-foreground py-4 rounded-xl font-semibold hover:scale-[1.02] transition-transform shadow-md"
+                disabled={lookupLoading}
+                className="w-full mt-6 bg-accent text-accent-foreground py-4 rounded-xl font-semibold hover:scale-[1.02] transition-transform shadow-md disabled:opacity-60 disabled:hover:scale-100"
               >
-                {t.continue}
+                {lookupLoading ? "..." : t.continue}
               </button>
             </form>
             <p className="text-muted-foreground text-xs text-center mt-5">
