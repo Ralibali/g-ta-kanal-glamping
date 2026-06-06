@@ -76,6 +76,33 @@ export type Database = {
           },
         ]
       }
+      check_ins: {
+        Row: {
+          booking_number: string
+          checked_in_at: string
+          id: string
+          lang: string
+          tent_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          booking_number: string
+          checked_in_at?: string
+          id?: string
+          lang: string
+          tent_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          booking_number?: string
+          checked_in_at?: string
+          id?: string
+          lang?: string
+          tent_id?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       click_events: {
         Row: {
           created_at: string
