@@ -55,6 +55,7 @@ const Admin = () => {
               <Route path="pricing" element={<PricingManager />} />
               <Route path="chat" element={<ChatManager />} />
               <Route path="checkins" element={<CheckInsManager />} />
+              <Route path="bookings" element={<BookingsManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </main>
