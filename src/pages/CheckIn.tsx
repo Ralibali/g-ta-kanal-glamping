@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
 // Koppla bokningsnummer till tält: "sjobris" eller "naturkarnan"
