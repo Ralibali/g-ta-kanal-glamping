@@ -59,10 +59,10 @@ const HeroSection = () => {
           className="font-serif text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-[0.95] mb-5 md:mb-6"
         >
           {lang === "en"
-            ? "Glamping by Göta Canal"
-            : "Glamping vid Göta kanal"}
+            ? "Glamping at Bergs Slussar"
+            : "Glamping vid Bergs Slussar"}
           <span className="block italic font-normal text-white/90 mt-2">
-            {lang === "en" ? "– Bergs Slussar, Östergötland" : "– Bergs Slussar, Östergötland"}
+            {lang === "en" ? "– by Göta Canal in Östergötland" : "– vid Göta kanal i Östergötland"}
           </span>
         </motion.h1>
 
