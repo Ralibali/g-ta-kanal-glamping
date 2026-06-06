@@ -159,9 +159,20 @@ const CheckIn = () => {
 
   const allTermsAccepted = termsAccepted.every(Boolean);
 
-  const handleTermsSubmit = () => {
-    if (allTermsAccepted) {
+  const handleTermsSubmit = async () => {
+    if (allTermsAccepted && tentId) {
       setStep("code");
+      // Logga incheckning (fire-and-forget)
+      try {
+        await supabase.from("check_ins").insert({
+          booking_number: bookingNumber.trim().toUpperCase(),
+          tent_id: tentId,
+          lang,
+          user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+        });
+      } catch (err) {
+        console.error("Failed to log check-in", err);
+      }
     }
   };
 
