@@ -172,7 +172,7 @@ export function BookingsManager() {
       header: true,
       skipEmptyLines: true,
       complete: async (results) => {
-        const rows = results.data.map(mapRow).filter(Boolean) as Array<ReturnType<typeof mapRow> & object>;
+        const rows = aggregateRows(results.data);
         if (rows.length === 0) {
           toast.error("Hittade inga giltiga rader. Saknas kolumnen för bokningsnummer?");
           setUploading(false);
