@@ -27,74 +27,120 @@ interface Booking {
 
 // Mappar olika möjliga rubriker → vårt fält
 const FIELD_ALIASES: Record<string, string[]> = {
-  booking_number: ["bokningsnummer", "bokning", "booking", "booking number", "boknings-id", "boknings id", "id"],
+  booking_number: ["bokningsnummer", "bokning", "booking", "booking number", "booking no", "boknings-id", "boknings id"],
   guest_name: ["namn", "gäst", "guest", "guest name", "name", "kund"],
+  first_name: ["first name", "förnamn", "fornamn"],
+  last_name: ["last name", "efternamn"],
   email: ["e-post", "epost", "email", "e-mail", "mail"],
   phone: ["telefon", "telefonnummer", "phone", "mobile", "mobil"],
   address: ["adress", "address"],
-  checkin_date: ["incheckning", "ankomst", "check-in", "checkin", "arrival", "from"],
-  checkout_date: ["utcheckning", "avresa", "check-out", "checkout", "departure", "to"],
-  tent_id: ["tält", "rum", "tent", "room", "boende", "kategori"],
+  checkin_date: ["incheckning", "ankomst", "check-in", "checkin", "arrival", "from", "check in"],
+  checkout_date: ["utcheckning", "avresa", "check-out", "checkout", "departure", "to", "check out"],
+  tent_id: ["tält", "rum", "tent", "room", "boende", "kategori", "specification"],
   amount: ["belopp", "summa", "totalt", "amount", "total", "price", "pris"],
   lang: ["språk", "language", "lang"],
+  type: ["type", "typ"],
 };
 
 function normaliseHeader(h: string) {
   return h.toLowerCase().trim().replace(/[_\-.]/g, " ").replace(/\s+/g, " ");
 }
 
-function mapRow(row: Record<string, string>): Partial<Booking> & { booking_number: string; raw: Record<string, string> } | null {
-  const lookup: Record<string, string> = {};
-  for (const [k, v] of Object.entries(row)) {
-    lookup[normaliseHeader(k)] = (v ?? "").trim();
+function detectTent(s: string): string | null {
+  const t = s.toLowerCase();
+  if (!t) return null;
+  if (t.includes("sjö") || t.includes("sjo") || t.includes("bris")) return "sjobris";
+  if (t.includes("natur") || t.includes("kärn") || t.includes("karn")) return "naturkarnan";
+  if (t.includes("lugn")) return "lugnetsyta";
+  return null;
+}
+
+function parseDate(s: string) {
+  if (!s) return null;
+  const d = new Date(s);
+  if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+  return null;
+}
+
+type MappedBooking = {
+  booking_number: string;
+  guest_name: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  checkin_date: string | null;
+  checkout_date: string | null;
+  tent_id: string | null;
+  amount: number | null;
+  lang: string;
+  raw: Record<string, unknown>;
+};
+
+function aggregateRows(rawRows: Record<string, string>[]): MappedBooking[] {
+  const grouped = new Map<string, MappedBooking>();
+
+  for (const row of rawRows) {
+    const lookup: Record<string, string> = {};
+    for (const [k, v] of Object.entries(row)) {
+      lookup[normaliseHeader(k)] = (v ?? "").toString().trim();
+    }
+    const pick = (field: keyof typeof FIELD_ALIASES) => {
+      for (const alias of FIELD_ALIASES[field]) {
+        const val = lookup[alias];
+        if (val) return val;
+      }
+      return "";
+    };
+
+    const booking_number = pick("booking_number").toUpperCase();
+    if (!booking_number) continue;
+
+    const type = pick("type").toUpperCase();
+    // Hoppa över betalningsrader – negativa belopp, inget gästnamn
+    if (type === "PAYMENT") continue;
+
+    const first = pick("first_name");
+    const last = pick("last_name");
+    const combined = pick("guest_name");
+    const guest_name = combined || [first, last].filter(Boolean).join(" ") || null;
+
+    const tent_id = detectTent(pick("tent_id"));
+
+    const amountRaw = pick("amount").replace(/\s/g, "").replace(",", ".").replace(/[^\d.\-]/g, "");
+    const amountNum = amountRaw ? Number(amountRaw) : NaN;
+    const amount = !isNaN(amountNum) ? amountNum : null;
+
+    const langRaw = pick("lang").toLowerCase().slice(0, 2);
+    const lang = ["sv", "da", "en", "no", "de"].includes(langRaw) ? langRaw : "sv";
+
+    const existing = grouped.get(booking_number);
+    if (!existing) {
+      grouped.set(booking_number, {
+        booking_number,
+        guest_name,
+        email: pick("email") || null,
+        phone: pick("phone") || null,
+        address: pick("address") || null,
+        checkin_date: parseDate(pick("checkin_date")),
+        checkout_date: parseDate(pick("checkout_date")),
+        tent_id,
+        amount: amount && amount > 0 ? amount : null,
+        lang,
+        raw: { rows: [row] },
+      });
+    } else {
+      if (!existing.guest_name && guest_name) existing.guest_name = guest_name;
+      if (!existing.tent_id && tent_id) existing.tent_id = tent_id;
+      if (!existing.email && pick("email")) existing.email = pick("email");
+      if (!existing.phone && pick("phone")) existing.phone = pick("phone");
+      if (!existing.address && pick("address")) existing.address = pick("address");
+      if (amount && amount > 0) existing.amount = (existing.amount ?? 0) + amount;
+      const prev = (existing.raw.rows as unknown[]) ?? [];
+      existing.raw = { rows: [...prev, row] };
+    }
   }
 
-  const pick = (field: keyof typeof FIELD_ALIASES) => {
-    for (const alias of FIELD_ALIASES[field]) {
-      const val = lookup[alias];
-      if (val) return val;
-    }
-    return "";
-  };
-
-  const booking_number = pick("booking_number");
-  if (!booking_number) return null;
-
-  // Tält-matchning på substring
-  const tentRaw = pick("tent_id").toLowerCase();
-  let tent_id: string | null = null;
-  if (tentRaw.includes("sjö") || tentRaw.includes("sjo") || tentRaw.includes("bris")) tent_id = "sjobris";
-  else if (tentRaw.includes("natur") || tentRaw.includes("kärn") || tentRaw.includes("karn")) tent_id = "naturkarnan";
-  else if (tentRaw) tent_id = tentRaw;
-
-  // Datum (försök ISO eller YYYY-MM-DD)
-  const parseDate = (s: string) => {
-    if (!s) return null;
-    const d = new Date(s);
-    if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
-    return null;
-  };
-
-  // Belopp – plocka ut nummer
-  const amountRaw = pick("amount").replace(/\s/g, "").replace(",", ".").replace(/[^\d.]/g, "");
-  const amount = amountRaw ? Number(amountRaw) : null;
-
-  const langRaw = pick("lang").toLowerCase().slice(0, 2);
-  const lang = ["sv", "da", "en", "no", "de"].includes(langRaw) ? langRaw : "sv";
-
-  return {
-    booking_number: booking_number.toUpperCase(),
-    guest_name: pick("guest_name") || null,
-    email: pick("email") || null,
-    phone: pick("phone") || null,
-    address: pick("address") || null,
-    checkin_date: parseDate(pick("checkin_date")),
-    checkout_date: parseDate(pick("checkout_date")),
-    tent_id,
-    amount: amount && !isNaN(amount) ? amount : null,
-    lang,
-    raw: row,
-  };
+  return Array.from(grouped.values());
 }
 
 export function BookingsManager() {
