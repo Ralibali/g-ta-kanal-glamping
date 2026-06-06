@@ -1,4 +1,5 @@
 import { Bed, Thermometer, ShowerHead, Plug, Snowflake, ParkingCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import aboutImg from "@/assets/glamping-exterior-deck.jpg";
 import aboutImg2 from "@/assets/glamping-interior-cozy.jpg";
 import ScrollReveal from "./ScrollReveal";
@@ -85,10 +86,10 @@ const AboutSection = () => {
                   Boende vid Bergs Slussar – nära natur, kanal och Linköping
                 </h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Bergs Slussar är en av Göta kanals mest älskade platser. Slusstrappan med sju slussar i följd, kanalvattnet, Roxen och de gröna kullarna runt omkring skapar en miljö som är svår att hitta någon annanstans. Hos oss bor du mitt i den miljön – inte på avstånd, utan med slussarna inom gångavstånd.
+                  Bergs Slussar är en av Göta kanals mest älskade platser. Slusstrappan med sju slussar i följd, kanalvattnet, Roxen och de gröna kullarna runt omkring skapar en miljö som är svår att hitta någon annanstans. Hos oss bor du mitt i den miljön – inte på avstånd, utan med slussarna inom gångavstånd. Läs mer om vårt <Link to="/boende-bergs-slussar" className="text-accent font-medium underline underline-offset-4 hover:no-underline">boende vid Bergs Slussar</Link>.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  Samtidigt har du Linköping inom femton minuters bilresa. Det gör vårt boende vid Bergs Slussar till ett naturligt val för dig som vill kombinera naturen med stadens utbud, eller bara ha en lugn bas att återvända till efter en dag på utflykt.
+                  Samtidigt har du Linköping inom femton minuters bilresa. Det gör vårt boende vid Bergs Slussar till ett naturligt val för dig som vill kombinera naturen med stadens utbud, eller bara ha en lugn bas att återvända till efter en dag på utflykt. Vill du bara stanna en natt? Se vår sida om <Link to="/overnattning-bergs-slussar" className="text-accent font-medium underline underline-offset-4 hover:no-underline">övernattning vid Bergs Slussar</Link>.
                 </p>
               </div>
             </ScrollReveal>
