@@ -12,6 +12,7 @@ import { GalleryManager } from "@/components/admin/GalleryManager";
 import { PricingManager } from "@/components/admin/PricingManager";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { ChatManager } from "@/components/admin/ChatManager";
+import { CheckInsManager } from "@/components/admin/CheckInsManager";
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdmin();
