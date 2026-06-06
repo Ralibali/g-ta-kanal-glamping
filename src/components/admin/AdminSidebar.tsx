@@ -37,6 +37,7 @@ const analyticsItems = [
 
 const contentItems = [
   { title: "Chatt", url: "/admin/chat", icon: MessageCircle },
+  { title: "Incheckningar", url: "/admin/checkins", icon: LogIn },
   { title: "Blogginlägg", url: "/admin/blog", icon: FileText },
   { title: "Bildgalleri", url: "/admin/gallery", icon: Image },
   { title: "Priser & Tält", url: "/admin/pricing", icon: Tag },
