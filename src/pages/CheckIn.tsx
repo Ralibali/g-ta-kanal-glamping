@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
 // Koppla bokningsnummer till tält: "sjobris" eller "naturkarnan"
@@ -158,9 +159,20 @@ const CheckIn = () => {
 
   const allTermsAccepted = termsAccepted.every(Boolean);
 
-  const handleTermsSubmit = () => {
-    if (allTermsAccepted) {
+  const handleTermsSubmit = async () => {
+    if (allTermsAccepted && tentId) {
       setStep("code");
+      // Logga incheckning (fire-and-forget)
+      try {
+        await supabase.from("check_ins").insert({
+          booking_number: bookingNumber.trim().toUpperCase(),
+          tent_id: tentId,
+          lang,
+          user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+        });
+      } catch (err) {
+        console.error("Failed to log check-in", err);
+      }
     }
   };
 
