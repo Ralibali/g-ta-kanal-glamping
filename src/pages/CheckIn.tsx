@@ -275,9 +275,10 @@ const CheckIn = () => {
               )}
               <button
                 type="submit"
-                className="w-full mt-6 bg-accent text-accent-foreground py-4 rounded-xl font-semibold hover:scale-[1.02] transition-transform shadow-md"
+                disabled={lookupLoading}
+                className="w-full mt-6 bg-accent text-accent-foreground py-4 rounded-xl font-semibold hover:scale-[1.02] transition-transform shadow-md disabled:opacity-60 disabled:hover:scale-100"
               >
-                {t.continue}
+                {lookupLoading ? "..." : t.continue}
               </button>
             </form>
             <p className="text-muted-foreground text-xs text-center mt-5">
