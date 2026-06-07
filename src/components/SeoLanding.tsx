@@ -82,23 +82,29 @@ const SeoLanding = ({
               name: title,
               description,
               url: canonical,
-              breadcrumb: {
-                "@type": "BreadcrumbList",
-                itemListElement: [
-                  {
-                    "@type": "ListItem",
-                    position: 1,
-                    name: "Hem",
-                    item: "https://goglampingsweden.se/",
-                  },
-                  {
-                    "@type": "ListItem",
-                    position: 2,
-                    name: breadcrumbLabel,
-                    item: canonical,
-                  },
-                ],
-              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  name: "Hem",
+                  item: "https://goglampingsweden.se/",
+                },
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  name: breadcrumbLabel,
+                  item: canonical,
+                },
+              ],
             }),
           }}
         />
