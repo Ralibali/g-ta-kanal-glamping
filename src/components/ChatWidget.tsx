@@ -99,17 +99,15 @@ const ChatWidget = () => {
     }
     setLoading(true);
     const token = genToken();
-    const { data: convo, error: convoErr } = await supabase
+    const { error: convoErr } = await supabase
       .from("chat_conversations")
       .insert({
         visitor_name: parsed.data.name,
         visitor_email: parsed.data.email,
         visitor_token: token,
-      })
-      .select("id, visitor_name, visitor_email, visitor_token")
-      .single();
+      });
 
-    if (convoErr || !convo) {
+    if (convoErr) {
       setLoading(false);
       setError(t("Något gick fel. Försök igen.", "Something went wrong. Please try again."));
       return;
@@ -128,8 +126,16 @@ const ChatWidget = () => {
       return;
     }
 
-    setConversation(convo as Conversation);
-    setMessages([msg as unknown as Message]);
+    const { data: chat } = await supabase.rpc("get_chat_by_token", { p_token: token });
+    const convo = (chat as any)?.conversation as Conversation | undefined;
+    if (!convo) {
+      setLoading(false);
+      setError(t("Något gick fel. Försök igen.", "Something went wrong. Please try again."));
+      return;
+    }
+
+    setConversation(convo);
+    setMessages((((chat as any).messages as Message[]) ?? [msg as unknown as Message]));
     setForm({ name: "", email: "", message: "" });
     setLoading(false);
 
