@@ -115,15 +115,12 @@ const ChatWidget = () => {
       return;
     }
 
-    const { data: msg, error: msgErr } = await supabase
-      .from("chat_messages")
-      .insert({
-        conversation_id: convo.id,
-        sender: "visitor",
-        body: parsed.data.message,
-      })
-      .select()
-      .single();
+    localStorage.setItem(STORAGE_KEY, token);
+
+    const { data: msg, error: msgErr } = await supabase.rpc("post_visitor_chat_message", {
+      p_token: token,
+      p_body: parsed.data.message,
+    });
 
     if (msgErr || !msg) {
       setLoading(false);
@@ -131,9 +128,8 @@ const ChatWidget = () => {
       return;
     }
 
-    localStorage.setItem(STORAGE_KEY, token);
     setConversation(convo as Conversation);
-    setMessages([msg as Message]);
+    setMessages([msg as unknown as Message]);
     setForm({ name: "", email: "", message: "" });
     setLoading(false);
 
