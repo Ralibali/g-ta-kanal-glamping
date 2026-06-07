@@ -154,25 +154,22 @@ const ChatWidget = () => {
 
   const sendMessage = async () => {
     if (!conversation || !draft.trim()) return;
+    const token = localStorage.getItem(STORAGE_KEY);
+    if (!token) return;
     const body = draft.trim().slice(0, 4000);
     setDraft("");
-    const { data: msg, error: msgErr } = await supabase
-      .from("chat_messages")
-      .insert({
-        conversation_id: conversation.id,
-        sender: "visitor",
-        body,
-      })
-      .select()
-      .single();
+    const { data, error: msgErr } = await supabase.rpc("post_visitor_chat_message", {
+      p_token: token,
+      p_body: body,
+    });
 
-    if (msgErr || !msg) {
+    if (msgErr || !data) {
       setError(t("Kunde inte skicka meddelandet.", "Couldn't send message."));
       return;
     }
+    const msg = data as unknown as Message;
 
-    // Optimistic add (realtime may also deliver it)
-    setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg as Message]));
+    setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
 
     supabase.functions
       .invoke("send-transactional-email", {
