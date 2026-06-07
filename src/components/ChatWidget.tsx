@@ -134,12 +134,13 @@ const ChatWidget = () => {
     setLoading(false);
 
     // Fire-and-forget notification to admin
+    const newMsg = msg as unknown as Message;
     supabase.functions
       .invoke("send-transactional-email", {
         body: {
           templateName: "chat-notification",
           recipientEmail: "info@auroramedia.se",
-          idempotencyKey: `chat-notify-${msg.id}`,
+          idempotencyKey: `chat-notify-${newMsg.id}`,
           templateData: {
             visitorName: convo.visitor_name,
             visitorEmail: convo.visitor_email,
