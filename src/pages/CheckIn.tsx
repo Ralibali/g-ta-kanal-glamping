@@ -154,15 +154,14 @@ const CheckIn = () => {
     // 2) Slå upp i databasen
     if (!matchedBooking) {
       setLookupLoading(true);
-      const { data } = await supabase
-        .from("bookings")
-        .select("tent_id, lang")
-        .eq("booking_number", trimmed)
-        .maybeSingle();
+      const { data } = await supabase.rpc("lookup_booking_for_checkin", {
+        p_booking_number: trimmed,
+      });
       setLookupLoading(false);
-      if (data && (data.tent_id === "sjobris" || data.tent_id === "naturkarnan")) {
-        const dbLang: Lang = data.lang === "da" ? "da" : "sv";
-        matchedBooking = { tentId: data.tent_id as TentId, lang: dbLang };
+      const row = Array.isArray(data) ? data[0] : null;
+      if (row && (row.tent_id === "sjobris" || row.tent_id === "naturkarnan")) {
+        const dbLang: Lang = row.lang === "da" ? "da" : "sv";
+        matchedBooking = { tentId: row.tent_id as TentId, lang: dbLang };
       }
     }
 

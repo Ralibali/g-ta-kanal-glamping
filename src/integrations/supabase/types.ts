@@ -368,12 +368,20 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_chat_by_token: { Args: { p_token: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      lookup_booking_for_checkin: {
+        Args: { p_booking_number: string }
+        Returns: {
+          lang: string
+          tent_id: string
+        }[]
       }
       move_to_dlq: {
         Args: {
@@ -383,6 +391,10 @@ export type Database = {
           source_queue: string
         }
         Returns: number
+      }
+      post_visitor_chat_message: {
+        Args: { p_body: string; p_token: string }
+        Returns: Json
       }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }

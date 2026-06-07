@@ -48,55 +48,39 @@ const ChatWidget = () => {
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Restore conversation from localStorage
+  // Restore conversation from localStorage via token-scoped RPC
   useEffect(() => {
     const token = localStorage.getItem(STORAGE_KEY);
     if (!token) return;
     (async () => {
-      const { data } = await supabase
-        .from("chat_conversations")
-        .select("id, visitor_name, visitor_email, visitor_token")
-        .eq("visitor_token", token)
-        .maybeSingle();
-      if (data) {
-        setConversation(data as Conversation);
-        const { data: msgs } = await supabase
-          .from("chat_messages")
-          .select("*")
-          .eq("conversation_id", data.id)
-          .order("created_at", { ascending: true });
-        setMessages((msgs ?? []) as Message[]);
+      const { data } = await supabase.rpc("get_chat_by_token", { p_token: token });
+      if (data && (data as any).conversation) {
+        setConversation((data as any).conversation as Conversation);
+        setMessages(((data as any).messages ?? []) as Message[]);
       } else {
         localStorage.removeItem(STORAGE_KEY);
       }
     })();
   }, []);
 
-  // Realtime subscription for new messages
+  // Poll for new messages every 5s while open (visitors cannot use realtime)
   useEffect(() => {
     if (!conversation) return;
-    const channel = supabase
-      .channel(`chat-${conversation.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "chat_messages",
-          filter: `conversation_id=eq.${conversation.id}`,
-        },
-        (payload) => {
-          setMessages((prev) => {
-            if (prev.some((m) => m.id === (payload.new as Message).id)) return prev;
-            return [...prev, payload.new as Message];
-          });
-        },
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
+    const token = localStorage.getItem(STORAGE_KEY);
+    if (!token) return;
+    let cancelled = false;
+    const tick = async () => {
+      const { data } = await supabase.rpc("get_chat_by_token", { p_token: token });
+      if (cancelled || !data || !(data as any).messages) return;
+      const next = (data as any).messages as Message[];
+      setMessages((prev) => (prev.length === next.length ? prev : next));
     };
-  }, [conversation]);
+    const interval = setInterval(tick, open ? 4000 : 15000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [conversation, open]);
 
   // Auto-scroll
   useEffect(() => {
@@ -115,31 +99,26 @@ const ChatWidget = () => {
     }
     setLoading(true);
     const token = genToken();
-    const { data: convo, error: convoErr } = await supabase
+    const { error: convoErr } = await supabase
       .from("chat_conversations")
       .insert({
         visitor_name: parsed.data.name,
         visitor_email: parsed.data.email,
         visitor_token: token,
-      })
-      .select("id, visitor_name, visitor_email, visitor_token")
-      .single();
+      });
 
-    if (convoErr || !convo) {
+    if (convoErr) {
       setLoading(false);
       setError(t("Något gick fel. Försök igen.", "Something went wrong. Please try again."));
       return;
     }
 
-    const { data: msg, error: msgErr } = await supabase
-      .from("chat_messages")
-      .insert({
-        conversation_id: convo.id,
-        sender: "visitor",
-        body: parsed.data.message,
-      })
-      .select()
-      .single();
+    localStorage.setItem(STORAGE_KEY, token);
+
+    const { data: msg, error: msgErr } = await supabase.rpc("post_visitor_chat_message", {
+      p_token: token,
+      p_body: parsed.data.message,
+    });
 
     if (msgErr || !msg) {
       setLoading(false);
@@ -147,19 +126,27 @@ const ChatWidget = () => {
       return;
     }
 
-    localStorage.setItem(STORAGE_KEY, token);
-    setConversation(convo as Conversation);
-    setMessages([msg as Message]);
+    const { data: chat } = await supabase.rpc("get_chat_by_token", { p_token: token });
+    const convo = (chat as any)?.conversation as Conversation | undefined;
+    if (!convo) {
+      setLoading(false);
+      setError(t("Något gick fel. Försök igen.", "Something went wrong. Please try again."));
+      return;
+    }
+
+    setConversation(convo);
+    setMessages((((chat as any).messages as Message[]) ?? [msg as unknown as Message]));
     setForm({ name: "", email: "", message: "" });
     setLoading(false);
 
     // Fire-and-forget notification to admin
+    const newMsg = msg as unknown as Message;
     supabase.functions
       .invoke("send-transactional-email", {
         body: {
           templateName: "chat-notification",
           recipientEmail: "info@auroramedia.se",
-          idempotencyKey: `chat-notify-${msg.id}`,
+          idempotencyKey: `chat-notify-${newMsg.id}`,
           templateData: {
             visitorName: convo.visitor_name,
             visitorEmail: convo.visitor_email,
@@ -173,25 +160,22 @@ const ChatWidget = () => {
 
   const sendMessage = async () => {
     if (!conversation || !draft.trim()) return;
+    const token = localStorage.getItem(STORAGE_KEY);
+    if (!token) return;
     const body = draft.trim().slice(0, 4000);
     setDraft("");
-    const { data: msg, error: msgErr } = await supabase
-      .from("chat_messages")
-      .insert({
-        conversation_id: conversation.id,
-        sender: "visitor",
-        body,
-      })
-      .select()
-      .single();
+    const { data, error: msgErr } = await supabase.rpc("post_visitor_chat_message", {
+      p_token: token,
+      p_body: body,
+    });
 
-    if (msgErr || !msg) {
+    if (msgErr || !data) {
       setError(t("Kunde inte skicka meddelandet.", "Couldn't send message."));
       return;
     }
+    const msg = data as unknown as Message;
 
-    // Optimistic add (realtime may also deliver it)
-    setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg as Message]));
+    setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
 
     supabase.functions
       .invoke("send-transactional-email", {
