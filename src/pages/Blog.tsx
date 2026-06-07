@@ -1,8 +1,59 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Clock } from "lucide-react";
 import { blogPosts } from "@/data/blogPosts";
 
+const SITE = "https://goglampingsweden.se";
+
 const Blog = () => {
+  useEffect(() => {
+    document.title = "Blogg | Bergs Slussar Glamping";
+
+    const setMeta = (selector: string, attr: string, name: string, content: string) => {
+      let el = document.head.querySelector(selector) as HTMLMetaElement | null;
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute(attr, name);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+    setMeta('meta[name="description"]', "name", "description", "Inspiration, tips och berättelser från vår glamping vid Göta kanal och Bergs Slussar i Östergötland.");
+    setMeta('meta[property="og:title"]', "property", "og:title", "Blogg | Bergs Slussar Glamping");
+    setMeta('meta[property="og:description"]', "property", "og:description", "Inspiration, tips och berättelser från vår glamping vid Göta kanal.");
+    setMeta('meta[property="og:url"]', "property", "og:url", `${SITE}/blogg`);
+    setMeta('meta[property="og:type"]', "property", "og:type", "website");
+
+    let canon = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+    if (!canon) {
+      canon = document.createElement("link");
+      canon.setAttribute("rel", "canonical");
+      document.head.appendChild(canon);
+    }
+    canon.setAttribute("href", `${SITE}/blogg`);
+
+    const bcId = "blog-breadcrumb-jsonld";
+    let bc = document.getElementById(bcId) as HTMLScriptElement | null;
+    if (!bc) {
+      bc = document.createElement("script");
+      bc.type = "application/ld+json";
+      bc.id = bcId;
+      document.head.appendChild(bc);
+    }
+    bc.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Hem", item: `${SITE}/` },
+        { "@type": "ListItem", position: 2, name: "Blogg", item: `${SITE}/blogg` },
+      ],
+    });
+
+    return () => {
+      bc?.remove();
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}

@@ -67,8 +67,27 @@ const BlogPost = () => {
       inLanguage: "sv-SE",
     });
 
+    const bcId = "blog-breadcrumb-jsonld";
+    let bc = document.getElementById(bcId) as HTMLScriptElement | null;
+    if (!bc) {
+      bc = document.createElement("script");
+      bc.type = "application/ld+json";
+      bc.id = bcId;
+      document.head.appendChild(bc);
+    }
+    bc.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Hem", item: `${SITE}/` },
+        { "@type": "ListItem", position: 2, name: "Blogg", item: `${SITE}/blogg` },
+        { "@type": "ListItem", position: 3, name: post.title, item: canonical },
+      ],
+    });
+
     return () => {
       ld?.remove();
+      bc?.remove();
     };
   }, [post, canonical]);
 
