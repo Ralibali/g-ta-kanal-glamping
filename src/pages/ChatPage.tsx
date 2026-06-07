@@ -27,11 +27,8 @@ const ChatPage = () => {
       return;
     }
     (async () => {
-      const { data: convo } = await supabase
-        .from("chat_conversations")
-        .select("id, visitor_name, visitor_email")
-        .eq("visitor_token", token)
-        .maybeSingle();
+      const { data } = await supabase.rpc("get_chat_by_token", { p_token: token });
+      const convo = (data as any)?.conversation;
       if (!convo) {
         setNotFound(true);
         setLoading(false);
@@ -39,56 +36,43 @@ const ChatPage = () => {
       }
       localStorage.setItem("bsg_chat_token", token);
       setConversation(convo);
-      const { data: msgs } = await supabase
-        .from("chat_messages")
-        .select("*")
-        .eq("conversation_id", convo.id)
-        .order("created_at", { ascending: true });
-      setMessages((msgs ?? []) as Message[]);
+      setMessages((((data as any).messages ?? []) as Message[]));
       setLoading(false);
     })();
   }, [token]);
 
+  // Poll for new messages every 5s
   useEffect(() => {
-    if (!conversation) return;
-    const channel = supabase
-      .channel(`chat-page-${conversation.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "chat_messages",
-          filter: `conversation_id=eq.${conversation.id}`,
-        },
-        (payload) => {
-          setMessages((prev) => {
-            if (prev.some((m) => m.id === (payload.new as Message).id)) return prev;
-            return [...prev, payload.new as Message];
-          });
-        },
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
+    if (!conversation || !token) return;
+    let cancelled = false;
+    const tick = async () => {
+      const { data } = await supabase.rpc("get_chat_by_token", { p_token: token });
+      if (cancelled || !data) return;
+      const next = ((data as any).messages ?? []) as Message[];
+      setMessages((prev) => (prev.length === next.length ? prev : next));
     };
-  }, [conversation]);
+    const interval = setInterval(tick, 5000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [conversation, token]);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!conversation || !draft.trim()) return;
+    if (!conversation || !draft.trim() || !token) return;
     const body = draft.trim().slice(0, 4000);
     setDraft("");
-    const { data: msg } = await supabase
-      .from("chat_messages")
-      .insert({ conversation_id: conversation.id, sender: "visitor", body })
-      .select()
-      .single();
-    if (!msg) return;
-    setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg as Message]));
+    const { data } = await supabase.rpc("post_visitor_chat_message", {
+      p_token: token,
+      p_body: body,
+    });
+    if (!data) return;
+    const msg = data as unknown as Message;
+    setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
 
     supabase.functions
       .invoke("send-transactional-email", {
