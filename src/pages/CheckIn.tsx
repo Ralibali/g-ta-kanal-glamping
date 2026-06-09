@@ -20,22 +20,22 @@ const VALID_BOOKINGS: Record<string, Booking> = {
 const TENT_INFO: Record<Lang, Record<TentId, { name: string; directions: string }>> = {
   sv: {
     sjobris: {
-      name: "Sjöbrisretreatet",
-      directions: "Gå rakt fram från QR-koden – tältet ligger rakt upp framför dig.",
+      name: "Sjöbrisretreatet (Tält 1)",
+      directions: "Tältet längst till höger – gå rakt fram från QR-koden.",
     },
     naturkarnan: {
-      name: "Naturkärnan",
-      directions: "Gå till vänster och följ stigen – tältet ligger längst bort till vänster.",
+      name: "Naturkärnan (Tält 2)",
+      directions: "Tältet längst till vänster – gå till vänster och följ stigen.",
     },
   },
   da: {
     sjobris: {
-      name: "Sjöbrisretreatet (teltet lige frem)",
-      directions: "Gå ligeud fra QR-koden – teltet ligger lige frem foran dig.",
+      name: "Sjöbrisretreatet (Telt 1)",
+      directions: "Teltet længst til højre – gå ligeud fra QR-koden.",
     },
     naturkarnan: {
-      name: "Naturkärnan",
-      directions: "Gå til venstre og følg stien – teltet ligger længst væk til venstre.",
+      name: "Naturkärnan (Telt 2)",
+      directions: "Teltet længst til venstre – gå til venstre og følg stien.",
     },
   },
 };
