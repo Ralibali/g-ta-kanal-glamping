@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 // ─── Aktiva bokningsnummer ───────────────────────────────────
 // Koppla bokningsnummer till tält: "sjobris" eller "naturkarnan"
 type TentId = "sjobris" | "naturkarnan";
-type Lang = "sv" | "da";
+type Lang = "sv" | "da" | "en";
 
 interface Booking {
   tentId: TentId;
@@ -36,6 +36,16 @@ const TENT_INFO: Record<Lang, Record<TentId, { name: string; directions: string 
     naturkarnan: {
       name: "Naturkärnan (Telt 2)",
       directions: "Teltet længst til venstre – gå til venstre og følg stien.",
+    },
+  },
+  en: {
+    sjobris: {
+      name: "Sjöbrisretreatet (Tent 1)",
+      directions: "The tent furthest to the right – walk straight ahead from the QR code.",
+    },
+    naturkarnan: {
+      name: "Naturkärnan (Tent 2)",
+      directions: "The tent furthest to the left – go left and follow the path.",
     },
   },
 };
@@ -103,6 +113,35 @@ const T: Record<Lang, Record<string, string>> = {
     contactChristoffer: "Kontakt Christoffer via SMS",
     goHome: "Gå til forsiden →",
   },
+  en: {
+    backToHome: "Back to homepage",
+    digitalCheckin: "Digital check-in",
+    welcome: "Welcome!",
+    enterBooking: "Enter your booking number or name to check in.",
+    bookingPlaceholder: "Booking number or name",
+    enterBookingError: "Enter your booking number or name.",
+    bookingNotFound: "Booking not found. Please check and try again.",
+    continue: "Continue",
+    problemSms: "Problem?",
+    smsContact: "Text Christoffer",
+    termsTitle: "Terms of stay",
+    termsSubtitle: "Accept the terms to get your lock code.",
+    back: "Back",
+    showLockCode: "Show lock code",
+    checkinComplete: "Check-in complete!",
+    yourTent: "Your tent",
+    lockCodeLabel: "Your code for the lock:",
+    goodToKnow: "Good to know",
+    checkinFrom: "Check-in from 3:00 PM",
+    checkoutBy: "Check-out by 10:00 AM",
+    washDishes: "Wash dishes in the service house (~150 m away) and leave the kitchen area clean",
+    lateCheckoutTitle: "♡ Would you like to check out a bit later? You can extend until 12:00 PM for 400 SEK. Swish and let us know – and it's sorted.",
+    swish: "Swish",
+    notifyUs: "Notify us",
+    notWorking: "Something not working?",
+    contactChristoffer: "Contact Christoffer via SMS",
+    goHome: "Go to homepage →",
+  },
 };
 
 
@@ -123,6 +162,14 @@ const TERMS: Record<Lang, string[]> = {
     "Rygning er ikke tilladt i eller i nærheden af teltene.",
     "Jeg viser hensyn til medgæster, naboer og natur – og holder lydniveauet nede, især om aftenen.",
     "Jeg har læst og accepterer bookingsbetingelserne.",
+  ],
+  en: [
+    "I understand that check-in is from 3:00 PM and check-out is by 10:00 AM at the latest.",
+    "I will leave the tent in reasonable condition – cleaning is included, but personal belongings, trash and food scraps will be taken with me at check-out.",
+    "I will wash my own dishes and cutlery in the service house and leave the kitchen area clean after use.",
+    "Smoking is not allowed in or near the tents.",
+    "I will be considerate of other guests, neighbours and nature – and keep noise levels down, especially in the evening.",
+    "I have read and accept the booking terms.",
   ],
 };
 
@@ -155,7 +202,6 @@ const CheckIn = () => {
     let resolvedBookingNumber = trimmedUpper;
 
     // Heuristik: innehåller bokstav + mellanslag => troligen namn
-    const looksLikeName = /\s/.test(raw) || (/[A-Za-zÀ-ÿ]/.test(raw) && !/^\w+$/.test(raw) === false && raw.length >= 3 && !/^\w*\d/.test(raw));
     const hasLetters = /[A-Za-zÀ-ÿ]/.test(raw);
     const hasDigits = /\d/.test(raw);
 
@@ -168,8 +214,9 @@ const CheckIn = () => {
       setLookupLoading(false);
       const row = Array.isArray(data) ? data[0] : null;
       if (row && (row.tent_id === "sjobris" || row.tent_id === "naturkarnan")) {
-        const dbLang: Lang = row.lang === "da" ? "da" : "sv";
-        matchedBooking = { tentId: row.tent_id as TentId, lang: dbLang };
+        const dbLang: Lang = row.lang === "da" ? "da" : row.lang === "en" ? "en" : "sv";
+        // Respektera användarens valda språk om det skiljer sig
+        matchedBooking = { tentId: row.tent_id as TentId, lang: lang !== "sv" ? lang : dbLang };
       }
     }
 
@@ -182,8 +229,8 @@ const CheckIn = () => {
       setLookupLoading(false);
       const row = Array.isArray(data) ? data[0] : null;
       if (row && (row.tent_id === "sjobris" || row.tent_id === "naturkarnan")) {
-        const dbLang: Lang = row.lang === "da" ? "da" : "sv";
-        matchedBooking = { tentId: row.tent_id as TentId, lang: dbLang };
+        const dbLang: Lang = row.lang === "da" ? "da" : row.lang === "en" ? "en" : "sv";
+        matchedBooking = { tentId: row.tent_id as TentId, lang: lang !== "sv" ? lang : dbLang };
         resolvedBookingNumber = row.booking_number ?? trimmedUpper;
       }
     }
@@ -222,6 +269,27 @@ const CheckIn = () => {
   return (
     <div className="min-h-screen bg-primary flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
+        {/* Language switcher */}
+        <div className="flex justify-end mb-4">
+          <div className="inline-flex rounded-full bg-primary-foreground/10 p-1 text-xs font-medium">
+            {(["sv", "en"] as const).map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => setLang(l)}
+                className={`px-3 py-1.5 rounded-full uppercase tracking-wider transition-colors ${
+                  lang === l
+                    ? "bg-accent text-accent-foreground"
+                    : "text-primary-foreground/60 hover:text-primary-foreground"
+                }`}
+                aria-pressed={lang === l}
+              >
+                {l === "sv" ? "SV" : "EN"}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-10">
           <a href="/" className="inline-flex items-center gap-2 text-primary-foreground/50 hover:text-primary-foreground/80 text-sm mb-6 transition-colors">
