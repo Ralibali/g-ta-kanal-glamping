@@ -49,10 +49,10 @@ const T: Record<Lang, Record<string, string>> = {
     backToHome: "Tillbaka till startsidan",
     digitalCheckin: "Digital incheckning",
     welcome: "Välkommen!",
-    enterBooking: "Ange ditt bokningsnummer för att checka in.",
-    bookingPlaceholder: "T.ex. BSG-12345",
-    enterBookingError: "Ange ditt bokningsnummer.",
-    bookingNotFound: "Bokningsnumret hittades inte. Kontrollera och försök igen.",
+    enterBooking: "Ange ditt bokningsnummer eller namn för att checka in.",
+    bookingPlaceholder: "Bokningsnummer eller namn",
+    enterBookingError: "Ange ditt bokningsnummer eller namn.",
+    bookingNotFound: "Bokningen hittades inte. Kontrollera och försök igen.",
     continue: "Fortsätt",
     problemSms: "Problem?",
     smsContact: "SMS:a Christoffer",
@@ -78,10 +78,10 @@ const T: Record<Lang, Record<string, string>> = {
     backToHome: "Tilbage til forsiden",
     digitalCheckin: "Digital indtjekning",
     welcome: "Velkommen!",
-    enterBooking: "Indtast dit bookingsnummer for at checke ind.",
-    bookingPlaceholder: "F.eks. BSG-12345",
-    enterBookingError: "Indtast dit bookingsnummer.",
-    bookingNotFound: "Bookingsnummeret blev ikke fundet. Tjek og prøv igen.",
+    enterBooking: "Indtast dit bookingsnummer eller navn for at checke ind.",
+    bookingPlaceholder: "Bookingsnummer eller navn",
+    enterBookingError: "Indtast dit bookingsnummer eller navn.",
+    bookingNotFound: "Bookingen blev ikke fundet. Tjek og prøv igen.",
     continue: "Fortsæt",
     problemSms: "Problemer?",
     smsContact: "SMS Christoffer",
@@ -104,6 +104,7 @@ const T: Record<Lang, Record<string, string>> = {
     goHome: "Gå til forsiden →",
   },
 };
+
 
 // ─── Villkor ─────────────────────────────────────────────────
 const TERMS: Record<Lang, string[]> = {
