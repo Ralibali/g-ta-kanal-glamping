@@ -503,7 +503,13 @@ const CheckIn = () => {
                   {t.swish}
                 </a>
                 <a
-                  href={`sms:0722254993?body=${encodeURIComponent(`Hej! Jag har swishat 400 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`)}`}
+                  href={`sms:0722254993?body=${encodeURIComponent(
+                    lang === "en"
+                      ? `Hi! I've Swished 400 SEK for late check-out (12:00). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
+                      : lang === "da"
+                      ? `Hej! Jeg har Swishet 400 kr for sen udtjekning (kl. 12). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
+                      : `Hej! Jag har swishat 400 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
+                  )}`}
                   className="flex items-center justify-center gap-2 border border-border text-foreground py-2.5 px-4 rounded-lg font-medium hover:bg-muted transition-colors text-sm"
                 >
                   {t.notifyUs}
