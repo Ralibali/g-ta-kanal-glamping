@@ -376,6 +376,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_valid_checkin_booking: {
+        Args: { p_booking_number: string; p_tent_id: string }
+        Returns: boolean
+      }
       lookup_booking_for_checkin: {
         Args: { p_booking_number: string }
         Returns: {
