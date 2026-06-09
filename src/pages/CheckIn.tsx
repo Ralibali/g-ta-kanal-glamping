@@ -143,20 +143,27 @@ const CheckIn = () => {
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = bookingNumber.trim().toUpperCase();
-    if (!trimmed) {
+    const raw = bookingNumber.trim();
+    if (!raw) {
       setError(t.enterBookingError);
       return;
     }
+    const trimmedUpper = raw.toUpperCase();
 
     // 1) Hårdkodade bokningar (fallback)
-    let matchedBooking: Booking | null = VALID_BOOKINGS[trimmed] ?? null;
+    let matchedBooking: Booking | null = VALID_BOOKINGS[trimmedUpper] ?? null;
+    let resolvedBookingNumber = trimmedUpper;
 
-    // 2) Slå upp i databasen
-    if (!matchedBooking) {
+    // Heuristik: innehåller bokstav + mellanslag => troligen namn
+    const looksLikeName = /\s/.test(raw) || (/[A-Za-zÀ-ÿ]/.test(raw) && !/^\w+$/.test(raw) === false && raw.length >= 3 && !/^\w*\d/.test(raw));
+    const hasLetters = /[A-Za-zÀ-ÿ]/.test(raw);
+    const hasDigits = /\d/.test(raw);
+
+    // 2) Slå upp på bokningsnummer först (om det ser ut som ett)
+    if (!matchedBooking && !(hasLetters && !hasDigits && /\s/.test(raw))) {
       setLookupLoading(true);
       const { data } = await supabase.rpc("lookup_booking_for_checkin", {
-        p_booking_number: trimmed,
+        p_booking_number: trimmedUpper,
       });
       setLookupLoading(false);
       const row = Array.isArray(data) ? data[0] : null;
@@ -166,10 +173,26 @@ const CheckIn = () => {
       }
     }
 
+    // 3) Slå upp på namn om vi inte hittade något och inputet innehåller bokstäver
+    if (!matchedBooking && hasLetters && raw.length >= 3) {
+      setLookupLoading(true);
+      const { data } = await supabase.rpc("lookup_booking_for_checkin_by_name", {
+        p_name: raw,
+      });
+      setLookupLoading(false);
+      const row = Array.isArray(data) ? data[0] : null;
+      if (row && (row.tent_id === "sjobris" || row.tent_id === "naturkarnan")) {
+        const dbLang: Lang = row.lang === "da" ? "da" : "sv";
+        matchedBooking = { tentId: row.tent_id as TentId, lang: dbLang };
+        resolvedBookingNumber = row.booking_number ?? trimmedUpper;
+      }
+    }
+
     if (!matchedBooking) {
       setError(t.bookingNotFound);
       return;
     }
+    setBookingNumber(resolvedBookingNumber);
     setTentId(matchedBooking.tentId);
     setLang(matchedBooking.lang);
     setTermsAccepted(TERMS[matchedBooking.lang].map(() => false));
