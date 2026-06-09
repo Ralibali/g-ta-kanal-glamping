@@ -383,6 +383,14 @@ export type Database = {
           tent_id: string
         }[]
       }
+      lookup_booking_for_checkin_by_name: {
+        Args: { p_name: string }
+        Returns: {
+          booking_number: string
+          lang: string
+          tent_id: string
+        }[]
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string

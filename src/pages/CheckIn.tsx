@@ -49,10 +49,10 @@ const T: Record<Lang, Record<string, string>> = {
     backToHome: "Tillbaka till startsidan",
     digitalCheckin: "Digital incheckning",
     welcome: "Välkommen!",
-    enterBooking: "Ange ditt bokningsnummer för att checka in.",
-    bookingPlaceholder: "T.ex. BSG-12345",
-    enterBookingError: "Ange ditt bokningsnummer.",
-    bookingNotFound: "Bokningsnumret hittades inte. Kontrollera och försök igen.",
+    enterBooking: "Ange ditt bokningsnummer eller namn för att checka in.",
+    bookingPlaceholder: "Bokningsnummer eller namn",
+    enterBookingError: "Ange ditt bokningsnummer eller namn.",
+    bookingNotFound: "Bokningen hittades inte. Kontrollera och försök igen.",
     continue: "Fortsätt",
     problemSms: "Problem?",
     smsContact: "SMS:a Christoffer",
@@ -78,10 +78,10 @@ const T: Record<Lang, Record<string, string>> = {
     backToHome: "Tilbage til forsiden",
     digitalCheckin: "Digital indtjekning",
     welcome: "Velkommen!",
-    enterBooking: "Indtast dit bookingsnummer for at checke ind.",
-    bookingPlaceholder: "F.eks. BSG-12345",
-    enterBookingError: "Indtast dit bookingsnummer.",
-    bookingNotFound: "Bookingsnummeret blev ikke fundet. Tjek og prøv igen.",
+    enterBooking: "Indtast dit bookingsnummer eller navn for at checke ind.",
+    bookingPlaceholder: "Bookingsnummer eller navn",
+    enterBookingError: "Indtast dit bookingsnummer eller navn.",
+    bookingNotFound: "Bookingen blev ikke fundet. Tjek og prøv igen.",
     continue: "Fortsæt",
     problemSms: "Problemer?",
     smsContact: "SMS Christoffer",
@@ -104,6 +104,7 @@ const T: Record<Lang, Record<string, string>> = {
     goHome: "Gå til forsiden →",
   },
 };
+
 
 // ─── Villkor ─────────────────────────────────────────────────
 const TERMS: Record<Lang, string[]> = {
@@ -142,20 +143,27 @@ const CheckIn = () => {
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmed = bookingNumber.trim().toUpperCase();
-    if (!trimmed) {
+    const raw = bookingNumber.trim();
+    if (!raw) {
       setError(t.enterBookingError);
       return;
     }
+    const trimmedUpper = raw.toUpperCase();
 
     // 1) Hårdkodade bokningar (fallback)
-    let matchedBooking: Booking | null = VALID_BOOKINGS[trimmed] ?? null;
+    let matchedBooking: Booking | null = VALID_BOOKINGS[trimmedUpper] ?? null;
+    let resolvedBookingNumber = trimmedUpper;
 
-    // 2) Slå upp i databasen
-    if (!matchedBooking) {
+    // Heuristik: innehåller bokstav + mellanslag => troligen namn
+    const looksLikeName = /\s/.test(raw) || (/[A-Za-zÀ-ÿ]/.test(raw) && !/^\w+$/.test(raw) === false && raw.length >= 3 && !/^\w*\d/.test(raw));
+    const hasLetters = /[A-Za-zÀ-ÿ]/.test(raw);
+    const hasDigits = /\d/.test(raw);
+
+    // 2) Slå upp på bokningsnummer först (om det ser ut som ett)
+    if (!matchedBooking && !(hasLetters && !hasDigits && /\s/.test(raw))) {
       setLookupLoading(true);
       const { data } = await supabase.rpc("lookup_booking_for_checkin", {
-        p_booking_number: trimmed,
+        p_booking_number: trimmedUpper,
       });
       setLookupLoading(false);
       const row = Array.isArray(data) ? data[0] : null;
@@ -165,10 +173,26 @@ const CheckIn = () => {
       }
     }
 
+    // 3) Slå upp på namn om vi inte hittade något och inputet innehåller bokstäver
+    if (!matchedBooking && hasLetters && raw.length >= 3) {
+      setLookupLoading(true);
+      const { data } = await supabase.rpc("lookup_booking_for_checkin_by_name", {
+        p_name: raw,
+      });
+      setLookupLoading(false);
+      const row = Array.isArray(data) ? data[0] : null;
+      if (row && (row.tent_id === "sjobris" || row.tent_id === "naturkarnan")) {
+        const dbLang: Lang = row.lang === "da" ? "da" : "sv";
+        matchedBooking = { tentId: row.tent_id as TentId, lang: dbLang };
+        resolvedBookingNumber = row.booking_number ?? trimmedUpper;
+      }
+    }
+
     if (!matchedBooking) {
       setError(t.bookingNotFound);
       return;
     }
+    setBookingNumber(resolvedBookingNumber);
     setTentId(matchedBooking.tentId);
     setLang(matchedBooking.lang);
     setTermsAccepted(TERMS[matchedBooking.lang].map(() => false));
@@ -265,9 +289,9 @@ const CheckIn = () => {
                   setError("");
                 }}
                 placeholder={t.bookingPlaceholder}
-                className="w-full bg-muted border border-border rounded-xl px-5 py-4 text-foreground text-center text-lg font-mono tracking-widest placeholder:text-muted-foreground/50 placeholder:font-sans placeholder:tracking-normal placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                className="w-full bg-muted border border-border rounded-xl px-5 py-4 text-foreground text-center text-base placeholder:text-muted-foreground/50 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
                 autoFocus
-                maxLength={30}
+                maxLength={80}
               />
               {error && (
                 <p className="text-destructive text-sm mt-3 text-center">{error}</p>
