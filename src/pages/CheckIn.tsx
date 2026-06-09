@@ -289,9 +289,9 @@ const CheckIn = () => {
                   setError("");
                 }}
                 placeholder={t.bookingPlaceholder}
-                className="w-full bg-muted border border-border rounded-xl px-5 py-4 text-foreground text-center text-lg font-mono tracking-widest placeholder:text-muted-foreground/50 placeholder:font-sans placeholder:tracking-normal placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                className="w-full bg-muted border border-border rounded-xl px-5 py-4 text-foreground text-center text-base placeholder:text-muted-foreground/50 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
                 autoFocus
-                maxLength={30}
+                maxLength={80}
               />
               {error && (
                 <p className="text-destructive text-sm mt-3 text-center">{error}</p>
