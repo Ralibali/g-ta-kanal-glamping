@@ -233,7 +233,7 @@ const CheckIn = () => {
       });
       setLookupLoading(false);
       const row = Array.isArray(data) ? data[0] : null;
-      if (row && (row.tent_id === "sjobris" || row.tent_id === "naturkarnan")) {
+      if (row && VALID_TENT_IDS.includes(row.tent_id as TentId)) {
         const dbLang: Lang = row.lang === "da" ? "da" : row.lang === "en" ? "en" : "sv";
         // Respektera användarens valda språk om det skiljer sig
         matchedBooking = { tentId: row.tent_id as TentId, lang: lang !== "sv" ? lang : dbLang };
