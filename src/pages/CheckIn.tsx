@@ -101,6 +101,7 @@ const T: Record<Lang, Record<string, string>> = {
     notifyUs: "Meddela oss",
     notWorking: "Fungerar något inte?",
     contactChristoffer: "Kontakta Christoffer via SMS",
+    contactHost: "Frågor eller akuta ärenden under vistelsen? Kontakta värden:",
     goHome: "Gå till startsidan →",
   },
   da: {
