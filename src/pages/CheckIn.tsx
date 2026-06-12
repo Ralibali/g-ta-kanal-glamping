@@ -491,6 +491,7 @@ const CheckIn = () => {
                 <li>• {t.checkinFrom}</li>
                 <li>• {t.checkoutBy}</li>
                 <li>• {t.washDishes}</li>
+                <li>• {t.wasteSorting}</li>
               </ul>
             </div>
 
