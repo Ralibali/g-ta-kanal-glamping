@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, AlertCircle, MessageSquare } from "lucide-react";
+import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, AlertCircle, MessageSquare, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
@@ -101,6 +101,7 @@ const T: Record<Lang, Record<string, string>> = {
     notifyUs: "Meddela oss",
     notWorking: "Fungerar något inte?",
     contactChristoffer: "Kontakta Christoffer via SMS",
+    contactHost: "Frågor eller akuta ärenden under vistelsen? Kontakta värden:",
     goHome: "Gå till startsidan →",
   },
   da: {
@@ -135,6 +136,7 @@ const T: Record<Lang, Record<string, string>> = {
     notifyUs: "Giv os besked",
     notWorking: "Fungerer noget ikke?",
     contactChristoffer: "Kontakt Christoffer via SMS",
+    contactHost: "Spørgsmål eller akutte ærinder under opholdet? Kontakt værten:",
     goHome: "Gå til forsiden →",
   },
   en: {
@@ -169,6 +171,7 @@ const T: Record<Lang, Record<string, string>> = {
     notifyUs: "Notify us",
     notWorking: "Something not working?",
     contactChristoffer: "Contact Christoffer via SMS",
+    contactHost: "Questions or urgent matters during your stay? Contact the host:",
     goHome: "Go to homepage →",
   },
 };
@@ -179,29 +182,32 @@ const TERMS: Record<Lang, string[]> = {
   sv: [
     "Jag förstår att incheckning sker från kl. 15:00 och utcheckning senast kl. 10:00.",
     "Jag lämnar tältet i rimligt skick – städning ingår, men personliga tillhörigheter, skräp och matrester tas med vid utcheckning.",
-    "Jag diskar mina egna kärl och bestick i servicehuset och lämnar köksytan ren efter användning.",
+    "Jag diskar mina egna kärl och bestick i servicehuset, lämnar köksytan ren och ställer tillbaka det jag diskat på samma plats där det stod.",
     "Allt skräp slängs i den svarta papperskorgen vid ingången. Pant lämnas i den vänstra soptunnan och allt annat avfall i den högra.",
-    "Rökning är inte tillåten i eller i närheten av tälten.",
-    "Jag visar hänsyn till medgäster, grannar och natur – och håller ljudnivån nere, särskilt kvällstid.",
-    "Jag har läst och godkänner bokningsvillkoren.",
+    "Grillkol och andra gemensamma tillhörigheter ställs tillbaka i gemensamhetsskåpet efter användning.",
+    "Jag anmäler skador eller fel på tält och utrustning direkt till värden, så att det kan åtgärdas innan nästa gäst anländer.",
+    "Jag följer gällande eldningsförbud och grillar endast på anvisad plats.",
+    "Jag har läst och godkänner bokningsvillkoren, inklusive att en avgift om 2 000 kr kan debiteras det kort som användes vid bokningen om tältet lämnas i ett skick som utgör sanitär olägenhet eller om utrustning skadats genom oaktsamhet. Avgift debiteras alltid först efter dialog med gästen.",
   ],
   da: [
     "Jeg forstår, at indtjekning er fra kl. 15:00 og udtjekning senest kl. 10:00.",
     "Jeg efterlader teltet i rimelig stand – rengøring er inkluderet, men personlige ejendele, affald og madrester medtages ved udtjekning.",
-    "Jeg vasker mit eget service og bestik i servicehuset og efterlader køkkenoverfladen ren efter brug.",
+    "Jeg vasker mit eget service og bestik i servicehuset, efterlader køkkenoverfladen ren og stiller det, jeg har vasket, tilbage på samme plads, hvor det stod.",
     "Alt affald smides i den sorte papirkurv ved indgangen. Pantflasker lægges i den venstre skraldespand og alt andet affald i den højre.",
-    "Rygning er ikke tilladt i eller i nærheden af teltene.",
-    "Jeg viser hensyn til medgæster, naboer og natur – og holder lydniveauet nede, især om aftenen.",
-    "Jeg har læst og accepterer bookingsbetingelserne.",
+    "Grillkul og andre fælles tilbehør sættes tilbage i fællesskabsskabet efter brug.",
+    "Jeg anmelder skader eller fejl på telte og udstyr direkte til værten, så det kan repareres før næste gæst ankommer.",
+    "Jeg følger gældende brandforbud og griller kun på anvist sted.",
+    "Jeg har læst og accepterer bookingsbetingelserne, inklusive at et gebyr på 2 000 kr kan debiteres det kort, der blev brugt ved bookingen, hvis teltet efterlades i en tilstand, der udgør sanitær ulempe, eller hvis udstyr er beskadiget ved uagtsomhed. Gebyr debiteres altid først efter dialog med gæsten.",
   ],
   en: [
     "I understand that check-in is from 3:00 PM and check-out is by 10:00 AM at the latest.",
     "I will leave the tent in reasonable condition – cleaning is included, but personal belongings, trash and food scraps will be taken with me at check-out.",
-    "I will wash my own dishes and cutlery in the service house and leave the kitchen area clean after use.",
+    "I will wash my own dishes and cutlery in the service house, leave the kitchen area clean and put what I have washed back in the same place where it was.",
     "All rubbish goes in the black paper bin at the entrance. Deposit bottles go in the left bin and all other waste in the right one.",
-    "Smoking is not allowed in or near the tents.",
-    "I will be considerate of other guests, neighbours and nature – and keep noise levels down, especially in the evening.",
-    "I have read and accept the booking terms.",
+    "Charcoal and other shared items are returned to the communal cabinet after use.",
+    "I will report any damage or faults with the tent and equipment directly to the host, so it can be repaired before the next guest arrives.",
+    "I follow current fire bans and only barbecue at the designated spot.",
+    "I have read and accept the booking terms, including that a fee of 2 000 SEK may be charged to the card used for the booking if the tent is left in a condition constituting a sanitary nuisance or if equipment has been damaged through negligence. A fee is always charged only after dialogue with the guest.",
   ],
 };
 
@@ -538,9 +544,18 @@ const CheckIn = () => {
             <p className="text-muted-foreground text-sm mb-4">
               {t.lockCodeLabel}
             </p>
-            <div className="bg-primary rounded-2xl py-8 px-6 mb-8">
+            <div className="bg-primary rounded-2xl py-8 px-6 mb-6">
               <p className="font-mono text-6xl font-bold text-primary-foreground tracking-[0.3em]">
                 {LOCK_CODE}
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <Phone className="text-accent shrink-0" size={16} />
+              <p className="text-sm text-muted-foreground">
+                {t.contactHost}{" "}
+                <a href="tel:0722254993" className="text-accent font-semibold hover:underline">
+                  072-225 49 93
+                </a>
               </p>
             </div>
             <div className="bg-muted rounded-xl p-5 text-left space-y-2 mb-6">
