@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin } from "lucide-react";
+import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, AlertCircle, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
@@ -77,6 +77,10 @@ const T: Record<Lang, Record<string, string>> = {
     bookingPlaceholder: "Bokningsnummer eller namn",
     enterBookingError: "Ange ditt bokningsnummer eller namn.",
     bookingNotFound: "Bokningen hittades inte. Kontrollera och försök igen.",
+    notFoundTitle: "Vi hittade ingen bokning",
+    notFoundHelp: "Dubbelkolla stavning och siffror. Hittar systemet fortfarande inte din bokning – SMS:a Christoffer direkt så löser vi det på en minut.",
+    smsNow: "SMS:a Christoffer nu",
+    callNow: "Ring 072-225 49 93",
     continue: "Fortsätt",
     problemSms: "Problem?",
     smsContact: "SMS:a Christoffer",
@@ -107,6 +111,10 @@ const T: Record<Lang, Record<string, string>> = {
     bookingPlaceholder: "Bookingsnummer eller navn",
     enterBookingError: "Indtast dit bookingsnummer eller navn.",
     bookingNotFound: "Bookingen blev ikke fundet. Tjek og prøv igen.",
+    notFoundTitle: "Vi fandt ingen booking",
+    notFoundHelp: "Tjek stavning og tal. Hvis systemet stadig ikke kan finde din booking – send Christoffer en SMS, så løser vi det på et minut.",
+    smsNow: "SMS Christoffer nu",
+    callNow: "Ring +46 72-225 49 93",
     continue: "Fortsæt",
     problemSms: "Problemer?",
     smsContact: "SMS Christoffer",
@@ -137,6 +145,10 @@ const T: Record<Lang, Record<string, string>> = {
     bookingPlaceholder: "Booking number or name",
     enterBookingError: "Enter your booking number or name.",
     bookingNotFound: "Booking not found. Please check and try again.",
+    notFoundTitle: "We couldn't find your booking",
+    notFoundHelp: "Double-check the spelling and numbers. If the system still can't find your booking – text Christoffer right away and we'll sort it in a minute.",
+    smsNow: "Text Christoffer now",
+    callNow: "Call +46 72-225 49 93",
     continue: "Continue",
     problemSms: "Problem?",
     smsContact: "Text Christoffer",
@@ -199,6 +211,7 @@ const CheckIn = () => {
   const [step, setStep] = useState<Step>("booking");
   const [bookingNumber, setBookingNumber] = useState("");
   const [error, setError] = useState("");
+  const [notFound, setNotFound] = useState(false);
   const [tentId, setTentId] = useState<TentId | null>(null);
   const [lang, setLang] = useState<Lang>("sv");
   const [termsAccepted, setTermsAccepted] = useState<boolean[]>([]);
@@ -210,6 +223,7 @@ const CheckIn = () => {
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setNotFound(false);
     const raw = bookingNumber.trim();
     if (!raw) {
       setError(t.enterBookingError);
@@ -257,8 +271,10 @@ const CheckIn = () => {
 
     if (!matchedBooking) {
       setError(t.bookingNotFound);
+      setNotFound(true);
       return;
     }
+    setNotFound(false);
     setBookingNumber(resolvedBookingNumber);
     setTentId(matchedBooking.tentId);
     setLang(matchedBooking.lang);
@@ -375,15 +391,43 @@ const CheckIn = () => {
                 onChange={(e) => {
                   setBookingNumber(e.target.value);
                   setError("");
+                  setNotFound(false);
                 }}
                 placeholder={t.bookingPlaceholder}
-                className="w-full bg-muted border border-border rounded-xl px-5 py-4 text-foreground text-center text-base placeholder:text-muted-foreground/50 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                className={`w-full bg-muted border rounded-xl px-5 py-4 text-foreground text-center text-base placeholder:text-muted-foreground/50 placeholder:text-sm focus:outline-none focus:ring-2 transition-all ${
+                  notFound
+                    ? "border-destructive ring-2 ring-destructive/30 focus:ring-destructive/50"
+                    : "border-border focus:ring-accent/50"
+                }`}
                 autoFocus
                 maxLength={80}
               />
-              {error && (
+              {notFound ? (
+                <div className="mt-4 rounded-2xl border-2 border-destructive/30 bg-destructive/5 p-4 animate-fade-in">
+                  <div className="flex items-start gap-3 mb-3">
+                    <AlertCircle className="text-destructive shrink-0 mt-0.5" size={20} />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{t.notFoundTitle}</p>
+                      <p className="text-muted-foreground text-xs mt-1 leading-relaxed">{t.notFoundHelp}</p>
+                    </div>
+                  </div>
+                  <a
+                    href="sms:0722254993"
+                    className="flex items-center justify-center gap-2 w-full bg-accent text-accent-foreground py-3 rounded-xl font-semibold text-sm hover:scale-[1.02] transition-transform shadow-md"
+                  >
+                    <MessageSquare size={16} />
+                    {t.smsNow}
+                  </a>
+                  <a
+                    href="tel:0722254993"
+                    className="block text-center text-xs text-muted-foreground mt-3 hover:text-foreground underline-offset-2 hover:underline"
+                  >
+                    {t.callNow}
+                  </a>
+                </div>
+              ) : error ? (
                 <p className="text-destructive text-sm mt-3 text-center">{error}</p>
-              )}
+              ) : null}
               <button
                 type="submit"
                 disabled={lookupLoading}
