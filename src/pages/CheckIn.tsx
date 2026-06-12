@@ -391,15 +391,43 @@ const CheckIn = () => {
                 onChange={(e) => {
                   setBookingNumber(e.target.value);
                   setError("");
+                  setNotFound(false);
                 }}
                 placeholder={t.bookingPlaceholder}
-                className="w-full bg-muted border border-border rounded-xl px-5 py-4 text-foreground text-center text-base placeholder:text-muted-foreground/50 placeholder:text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
+                className={`w-full bg-muted border rounded-xl px-5 py-4 text-foreground text-center text-base placeholder:text-muted-foreground/50 placeholder:text-sm focus:outline-none focus:ring-2 transition-all ${
+                  notFound
+                    ? "border-destructive ring-2 ring-destructive/30 focus:ring-destructive/50"
+                    : "border-border focus:ring-accent/50"
+                }`}
                 autoFocus
                 maxLength={80}
               />
-              {error && (
+              {notFound ? (
+                <div className="mt-4 rounded-2xl border-2 border-destructive/30 bg-destructive/5 p-4 animate-fade-in">
+                  <div className="flex items-start gap-3 mb-3">
+                    <AlertCircle className="text-destructive shrink-0 mt-0.5" size={20} />
+                    <div>
+                      <p className="font-semibold text-foreground text-sm">{t.notFoundTitle}</p>
+                      <p className="text-muted-foreground text-xs mt-1 leading-relaxed">{t.notFoundHelp}</p>
+                    </div>
+                  </div>
+                  <a
+                    href="sms:0722254993"
+                    className="flex items-center justify-center gap-2 w-full bg-accent text-accent-foreground py-3 rounded-xl font-semibold text-sm hover:scale-[1.02] transition-transform shadow-md"
+                  >
+                    <MessageSquare size={16} />
+                    {t.smsNow}
+                  </a>
+                  <a
+                    href="tel:0722254993"
+                    className="block text-center text-xs text-muted-foreground mt-3 hover:text-foreground underline-offset-2 hover:underline"
+                  >
+                    {t.callNow}
+                  </a>
+                </div>
+              ) : error ? (
                 <p className="text-destructive text-sm mt-3 text-center">{error}</p>
-              )}
+              ) : null}
               <button
                 type="submit"
                 disabled={lookupLoading}
