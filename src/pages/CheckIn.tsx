@@ -3,8 +3,8 @@ import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin } from "lucide-re
 import { supabase } from "@/integrations/supabase/client";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
-// Koppla bokningsnummer till tält: "sjobris" eller "naturkarnan"
-type TentId = "sjobris" | "naturkarnan";
+// Koppla bokningsnummer till tält: "sjobris", "naturkarnan" eller "lugnetsyta"
+type TentId = "sjobris" | "naturkarnan" | "lugnetsyta";
 type Lang = "sv" | "da" | "en";
 
 interface Booking {
@@ -17,6 +17,8 @@ const VALID_BOOKINGS: Record<string, Booking> = {
   "26431": { tentId: "sjobris", lang: "sv" }, // Elin Pettersson, 2026-06-06 till 2026-06-07
 };
 
+const VALID_TENT_IDS: TentId[] = ["sjobris", "naturkarnan", "lugnetsyta"];
+
 const TENT_INFO: Record<Lang, Record<TentId, { name: string; directions: string }>> = {
   sv: {
     sjobris: {
@@ -26,6 +28,10 @@ const TENT_INFO: Record<Lang, Record<TentId, { name: string; directions: string 
     naturkarnan: {
       name: "Naturkärnan (Tält 2)",
       directions: "Tältet längst till vänster – gå till vänster och följ stigen.",
+    },
+    lugnetsyta: {
+      name: "Lugnetsytan (Tält 3)",
+      directions: "Tältet i mitten – följ stigen rakt fram.",
     },
   },
   da: {
@@ -37,6 +43,10 @@ const TENT_INFO: Record<Lang, Record<TentId, { name: string; directions: string 
       name: "Naturkärnan (Telt 2)",
       directions: "Teltet længst til venstre – gå til venstre og følg stien.",
     },
+    lugnetsyta: {
+      name: "Lugnetsytan (Telt 3)",
+      directions: "Teltet i midten – følg stien ligeud.",
+    },
   },
   en: {
     sjobris: {
@@ -46,6 +56,10 @@ const TENT_INFO: Record<Lang, Record<TentId, { name: string; directions: string 
     naturkarnan: {
       name: "Naturkärnan (Tent 2)",
       directions: "The tent furthest to the left – go left and follow the path.",
+    },
+    lugnetsyta: {
+      name: "Lugnetsytan (Tent 3)",
+      directions: "The middle tent – follow the path straight ahead.",
     },
   },
 };
@@ -219,7 +233,7 @@ const CheckIn = () => {
       });
       setLookupLoading(false);
       const row = Array.isArray(data) ? data[0] : null;
-      if (row && (row.tent_id === "sjobris" || row.tent_id === "naturkarnan")) {
+      if (row && VALID_TENT_IDS.includes(row.tent_id as TentId)) {
         const dbLang: Lang = row.lang === "da" ? "da" : row.lang === "en" ? "en" : "sv";
         // Respektera användarens valda språk om det skiljer sig
         matchedBooking = { tentId: row.tent_id as TentId, lang: lang !== "sv" ? lang : dbLang };
@@ -234,7 +248,7 @@ const CheckIn = () => {
       });
       setLookupLoading(false);
       const row = Array.isArray(data) ? data[0] : null;
-      if (row && (row.tent_id === "sjobris" || row.tent_id === "naturkarnan")) {
+      if (row && VALID_TENT_IDS.includes(row.tent_id as TentId)) {
         const dbLang: Lang = row.lang === "da" ? "da" : row.lang === "en" ? "en" : "sv";
         matchedBooking = { tentId: row.tent_id as TentId, lang: lang !== "sv" ? lang : dbLang };
         resolvedBookingNumber = row.booking_number ?? trimmedUpper;
