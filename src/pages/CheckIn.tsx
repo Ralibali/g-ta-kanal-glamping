@@ -223,6 +223,7 @@ const CheckIn = () => {
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setNotFound(false);
     const raw = bookingNumber.trim();
     if (!raw) {
       setError(t.enterBookingError);
