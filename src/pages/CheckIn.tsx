@@ -77,6 +77,7 @@ const T: Record<Lang, Record<string, string>> = {
     checkinFrom: "Incheckning från kl. 15:00",
     checkoutBy: "Utcheckning senast kl. 10:00",
     washDishes: "Diska i servicehuset (~150 m bort) och lämna köksytan ren",
+    wasteSorting: "Allt skräp slängs i den svarta papperskorgen vid ingången. Pant lämnas i den vänstra soptunnan och allt annat avfall i den högra.",
     lateCheckoutTitle: "♡ Vill du checka ut lite senare? Du kan förlänga till kl. 12:00 för 400 kr. Swisha och meddela oss – så är det fixat.",
     swish: "Swisha",
     notifyUs: "Meddela oss",
@@ -106,6 +107,7 @@ const T: Record<Lang, Record<string, string>> = {
     checkinFrom: "Indtjekning fra kl. 15:00",
     checkoutBy: "Udtjekning senest kl. 10:00",
     washDishes: "Vask dit service i servicehuset (~150 m væk) og efterlad køkkenoverfladen ren",
+    wasteSorting: "Alt affald smides i den sorte papirkurv ved indgangen. Pantflasker lægges i den venstre skraldespand og alt andet affald i den højre.",
     lateCheckoutTitle: "♡ Vil du checke ud lidt senere? Du kan forlænge til kl. 12:00 for 400 kr. Swish og giv os besked – så er det ordnet.",
     swish: "Swish",
     notifyUs: "Giv os besked",
@@ -135,6 +137,7 @@ const T: Record<Lang, Record<string, string>> = {
     checkinFrom: "Check-in from 3:00 PM",
     checkoutBy: "Check-out by 10:00 AM",
     washDishes: "Wash dishes in the service house (~150 m away) and leave the kitchen area clean",
+    wasteSorting: "All rubbish goes in the black paper bin at the entrance. Deposit bottles go in the left bin and all other waste in the right one.",
     lateCheckoutTitle: "♡ Would you like to check out a bit later? You can extend until 12:00 PM for 400 SEK. Swish and let us know – and it's sorted.",
     swish: "Swish",
     notifyUs: "Notify us",
@@ -151,6 +154,7 @@ const TERMS: Record<Lang, string[]> = {
     "Jag förstår att incheckning sker från kl. 15:00 och utcheckning senast kl. 10:00.",
     "Jag lämnar tältet i rimligt skick – städning ingår, men personliga tillhörigheter, skräp och matrester tas med vid utcheckning.",
     "Jag diskar mina egna kärl och bestick i servicehuset och lämnar köksytan ren efter användning.",
+    "Allt skräp slängs i den svarta papperskorgen vid ingången. Pant lämnas i den vänstra soptunnan och allt annat avfall i den högra.",
     "Rökning är inte tillåten i eller i närheten av tälten.",
     "Jag visar hänsyn till medgäster, grannar och natur – och håller ljudnivån nere, särskilt kvällstid.",
     "Jag har läst och godkänner bokningsvillkoren.",
@@ -159,6 +163,7 @@ const TERMS: Record<Lang, string[]> = {
     "Jeg forstår, at indtjekning er fra kl. 15:00 og udtjekning senest kl. 10:00.",
     "Jeg efterlader teltet i rimelig stand – rengøring er inkluderet, men personlige ejendele, affald og madrester medtages ved udtjekning.",
     "Jeg vasker mit eget service og bestik i servicehuset og efterlader køkkenoverfladen ren efter brug.",
+    "Alt affald smides i den sorte papirkurv ved indgangen. Pantflasker lægges i den venstre skraldespand og alt andet affald i den højre.",
     "Rygning er ikke tilladt i eller i nærheden af teltene.",
     "Jeg viser hensyn til medgæster, naboer og natur – og holder lydniveauet nede, især om aftenen.",
     "Jeg har læst og accepterer bookingsbetingelserne.",
@@ -167,6 +172,7 @@ const TERMS: Record<Lang, string[]> = {
     "I understand that check-in is from 3:00 PM and check-out is by 10:00 AM at the latest.",
     "I will leave the tent in reasonable condition – cleaning is included, but personal belongings, trash and food scraps will be taken with me at check-out.",
     "I will wash my own dishes and cutlery in the service house and leave the kitchen area clean after use.",
+    "All rubbish goes in the black paper bin at the entrance. Deposit bottles go in the left bin and all other waste in the right one.",
     "Smoking is not allowed in or near the tents.",
     "I will be considerate of other guests, neighbours and nature – and keep noise levels down, especially in the evening.",
     "I have read and accept the booking terms.",
@@ -485,6 +491,7 @@ const CheckIn = () => {
                 <li>• {t.checkinFrom}</li>
                 <li>• {t.checkoutBy}</li>
                 <li>• {t.washDishes}</li>
+                <li>• {t.wasteSorting}</li>
               </ul>
             </div>
 
