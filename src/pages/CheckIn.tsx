@@ -544,9 +544,18 @@ const CheckIn = () => {
             <p className="text-muted-foreground text-sm mb-4">
               {t.lockCodeLabel}
             </p>
-            <div className="bg-primary rounded-2xl py-8 px-6 mb-8">
+            <div className="bg-primary rounded-2xl py-8 px-6 mb-6">
               <p className="font-mono text-6xl font-bold text-primary-foreground tracking-[0.3em]">
                 {LOCK_CODE}
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-2 mb-6">
+              <Phone className="text-accent shrink-0" size={16} />
+              <p className="text-sm text-muted-foreground">
+                {t.contactHost}{" "}
+                <a href="tel:0722254993" className="text-accent font-semibold hover:underline">
+                  072-225 49 93
+                </a>
               </p>
             </div>
             <div className="bg-muted rounded-xl p-5 text-left space-y-2 mb-6">
