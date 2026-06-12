@@ -211,6 +211,7 @@ const CheckIn = () => {
   const [step, setStep] = useState<Step>("booking");
   const [bookingNumber, setBookingNumber] = useState("");
   const [error, setError] = useState("");
+  const [notFound, setNotFound] = useState(false);
   const [tentId, setTentId] = useState<TentId | null>(null);
   const [lang, setLang] = useState<Lang>("sv");
   const [termsAccepted, setTermsAccepted] = useState<boolean[]>([]);
