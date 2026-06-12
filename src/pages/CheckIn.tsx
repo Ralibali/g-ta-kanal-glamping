@@ -271,8 +271,10 @@ const CheckIn = () => {
 
     if (!matchedBooking) {
       setError(t.bookingNotFound);
+      setNotFound(true);
       return;
     }
+    setNotFound(false);
     setBookingNumber(resolvedBookingNumber);
     setTentId(matchedBooking.tentId);
     setLang(matchedBooking.lang);
