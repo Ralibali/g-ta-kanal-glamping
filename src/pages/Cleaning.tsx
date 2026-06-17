@@ -186,7 +186,7 @@ export default function Cleaning() {
       const dep = stays.find((s) => s.tent_id === t.id && s.checkout_date === date);
       if (!arr && !dep) return null;
       return {
-        tent_id: t.id, tentNo: t.no, tentName: t.name, date,
+        tent_id: t.id, tentNo: t.no, tentName: t.name, position: t.position, date,
         hasArrival: !!arr, hasDeparture: !!dep,
         arrivalBooking: arr?.booking_number,
         guests: arr?.guests ?? 0,
@@ -375,7 +375,7 @@ export default function Cleaning() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1">
                             <h3 className="font-serif text-xl">{c.tentName}</h3>
-                            <p className="text-xs text-muted-foreground">Tält {c.tentNo}</p>
+                            <p className="text-xs text-muted-foreground">Tält {c.tentNo} – {c.position}</p>
                             <div className="flex flex-wrap gap-1.5 mt-2">
                               {c.hasArrival && c.hasDeparture && <Badge className="bg-amber-500">{tr(lang, "changeover")}</Badge>}
                               {c.hasArrival && !c.hasDeparture && <Badge variant="secondary">{tr(lang, "arrivalOnly")}</Badge>}

@@ -14,12 +14,13 @@ export interface TentMeta {
   id: string;
   no: number;
   name: string;
+  position: string;
 }
 
 export const TENTS: TentMeta[] = [
-  { id: "sjobris", no: 1, name: "Sjöbrisretreatet" },
-  { id: "naturkarnan", no: 2, name: "Naturkärnan" },
-  { id: "lugnetsyta", no: 3, name: "Lugnets yta" },
+  { id: "sjobris", no: 1, name: "Sjöbrisretreatet", position: "Längst till höger" },
+  { id: "naturkarnan", no: 2, name: "Naturkärnan", position: "Längst till vänster" },
+  { id: "lugnetsyta", no: 3, name: "Lugnets yta", position: "I mitten" },
 ];
 
 export const TENT_BY_ID: Record<string, TentMeta> = Object.fromEntries(
