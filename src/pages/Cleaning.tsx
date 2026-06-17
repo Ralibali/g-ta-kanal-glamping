@@ -83,7 +83,8 @@ type UpcomingRow = {
 export default function Cleaning() {
   const { user, isCleaner, loading, signOut } = useCleaner();
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
-  const [view, setView] = useState<"day" | "overview">("overview");
+  const [view, setView] = useState<"day" | "overview" | "calendar">("calendar");
+  const [calMonth, setCalMonth] = useState<Date>(() => { const d = new Date(); d.setDate(1); return d; });
   const [date, setDate] = useState<string>(todayInStockholm());
   const [stays, setStays] = useState<Stay[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
