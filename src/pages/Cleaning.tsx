@@ -157,7 +157,8 @@ export default function Cleaning() {
     setUpcoming(list);
   };
 
-  useEffect(() => { if (user && isCleaner) load(); }, [user, isCleaner, date]);
+  useEffect(() => { if (user && isCleaner && view === "day") load(); }, [user, isCleaner, date, view]);
+  useEffect(() => { if (user && isCleaner && view === "overview") loadUpcoming(); }, [user, isCleaner, view]);
 
   const cards: TentDayData[] = useMemo(() => {
     return TENTS.map((t) => {
