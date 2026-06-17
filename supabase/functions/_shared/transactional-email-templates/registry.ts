@@ -12,9 +12,11 @@ export interface TemplateEntry {
 import { template as chatNotification } from './chat-notification.tsx'
 import { template as chatReply } from './chat-reply.tsx'
 import { template as cleaningComplete } from './cleaning-complete.tsx'
+import { template as cleaningScheduleUpdate } from './cleaning-schedule-update.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'chat-notification': chatNotification,
   'chat-reply': chatReply,
   'cleaning-complete': cleaningComplete,
+  'cleaning-schedule-update': cleaningScheduleUpdate,
 }
