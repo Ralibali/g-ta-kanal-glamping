@@ -8,7 +8,7 @@ const TENT_NAMES: Record<string, { no: number; name: string }> = {
 }
 
 const SMS_TEMPLATES: Record<string, string> = {
-  sv: 'Hej! Ditt tält {tent} på Bergs Slussar Glamping är nu städat och klart för incheckning. Varmt välkomna! Frågor? SMS:a 0722254993.',
+  sv: '', // built dynamically for Swedish to include name
   en: 'Hi! Your tent {tent} at Bergs Slussar Glamping is now cleaned and ready for check-in. Warm welcome! Questions? Text 0722254993.',
   da: 'Hej! Dit telt {tent} på Bergs Slussar Glamping er nu rengjort og klar til check-in. Velkommen! Spørgsmål? Sms 0722254993.',
   no: 'Hei! Teltet ditt {tent} på Bergs Slussar Glamping er nå rengjort og klart for innsjekk. Velkommen! Spørsmål? Send SMS 0722254993.',
@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
     .limit(1)
 
   const arrival = (stays ?? [])[0] as
-    | { booking_number: string; phone: string | null; lang: string | null; guests: number | null; breakfast: boolean; fikapase: boolean; late_checkout: boolean }
+    | { booking_number: string; guest_name: string | null; phone: string | null; lang: string | null; guests: number | null; breakfast: boolean; fikapase: boolean; late_checkout: boolean }
     | undefined
 
   // Fetch session + issues for the email
@@ -133,8 +133,15 @@ Deno.serve(async (req) => {
   } else {
     const toPhone = normalizePhone(arrival.phone)
     const lang = (arrival.lang ?? 'sv').toLowerCase()
-    const template = SMS_TEMPLATES[lang] ?? SMS_TEMPLATES.sv
-    const messageBody = template.replace('{tent}', tentMeta.name)
+    const name = arrival.guest_name
+    let messageBody: string
+    if (lang === 'sv') {
+      const greeting = name ? `Hej ${name}` : 'Hej'
+      messageBody = `${greeting} och välkommen till oss på Bergs Slussar Glamping! ☀️\n\nVåra städare har markerat erat tält som klart, vilket gör att ni är välkomna från nu. Ni checkar in via QR-koden som finns vid entrén och därigenom så får ni koden till erat tält. Bokningskoden hittar du i din mail.\n\nHar ni beställt frukost då serveras det mellan 08:30-09:00 och finns vid portalen halvvägs upp i backen. Om ni har beställt fikapåse så finns det redo i erat tält!\n\nHar ni några frågor? Hör av er till Christoffer per SMS på 0722254993.\n\nVänligen\n\nBergs slussar Glamping 🏕️`
+    } else {
+      const template = SMS_TEMPLATES[lang] ?? SMS_TEMPLATES.sv
+      messageBody = template.replace('{tent}', tentMeta.name)
+    }
 
     if (!toPhone) {
       // Insert failed row (idempotent)
