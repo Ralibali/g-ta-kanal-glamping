@@ -67,23 +67,23 @@ export const CLEANING_TASKS: Task[] = [
     en: "Make up the sofa bed: 2 pillows, 180 sheet and 2 duvets (in the left cupboard)",
     si: "සෝෆා-ඇඳ සකසන්න: කොට්ට 2, 180 ඇතිරිල්ල සහ රෙදි 2 (වම් අල්මාරියේ)",
   }},
-  { id: "handdukar", group: "beds", icon: ShowerHead, required: false, text: {
+  { id: "handdukar", group: "beds", icon: ShowerHead, required: true, text: {
     sv: "Lägg fram rena handdukar efter antal gäster",
     en: "Lay out clean towels according to the number of guests",
     si: "ආගන්තුකයන් සංඛ්‍යාවට අනුව පිරිසිදු තුවා තබන්න",
   }},
   // Kök
-  { id: "diska", group: "kitchen", icon: CookingPot, required: false, text: {
-    sv: "Diska vid behov (i servicehuset)",
-    en: "Wash dishes if needed (in the service house)",
-    si: "අවශ්‍ය නම් භාජන සෝදන්න (සේවා ගෘහයේ)",
+  { id: "diska", group: "kitchen", icon: CookingPot, required: true, text: {
+    sv: "Diska (i servicehuset) – skriv en kommentar om du behövt diska och hur mycket",
+    en: "Wash dishes (in the service house) – add a comment if you had to wash and how much",
+    si: "භාජන සෝදන්න (සේවා ගෘහයේ) – සෝදන්න සිදුවුවහොත් කොපමණ දැයි අදහසක් ලියන්න",
   }},
   { id: "kaffe_socker", group: "kitchen", icon: Coffee, required: true, text: {
     sv: "Kontrollera kaffe och socker – fyll på från förrådet om det är slut",
     en: "Check coffee and sugar – refill from storage if empty",
     si: "කෝපි සහ සීනි පරීක්ෂා කරන්න – හිස්නම් ගබඩාවෙන් පුරවන්න",
   }},
-  { id: "te_salt", group: "kitchen", icon: ShoppingBasket, required: false, text: {
+  { id: "te_salt", group: "kitchen", icon: ShoppingBasket, required: true, text: {
     sv: "Kontrollera te, salt/peppar, diskmedel och disksvamp",
     en: "Check tea, salt/pepper, dish soap and sponge",
     si: "තේ, ලුණු/ගම්මිරිස්, භාජන සබන් සහ ස්පොන්ජය පරීක්ෂා කරන්න",
