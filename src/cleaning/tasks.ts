@@ -115,15 +115,10 @@ export const CLEANING_TASKS: Task[] = [
     en: "Set up outside – furniture and entrance, tidy and welcoming",
     si: "පිටත සකසන්න – ගෘහ භාණ්ඩ සහ ප්‍රවේශය පිළිවෙළට හා පිළිගැනීමට සුදුසු ලෙස",
   }},
-  { id: "sopa_altan", group: "outdoor", icon: Brush, required: false, text: {
+  { id: "sopa_altan", group: "outdoor", icon: Brush, required: true, text: {
     sv: "Sopa altanen/entrén",
     en: "Sweep the deck/entrance",
     si: "තට්ටුව/ප්‍රවේශය අතුගා දමන්න",
-  }},
-  { id: "eldstad_grill", group: "outdoor", icon: Flame, required: false, text: {
-    sv: "Töm/rengör eldstad eller grill, fyll på ved vid behov",
-    en: "Empty/clean the fire pit or grill, refill firewood if needed",
-    si: "ගිනි ස්ථානය හෝ ග්‍රිල් හිස් කර පිරිසිදු කරන්න, අවශ්‍ය නම් දර පුරවන්න",
   }},
   // Klimat & avslut
   { id: "flakt", group: "climate", icon: Fan, required: true, condition: "season_warm", text: {
