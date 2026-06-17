@@ -184,7 +184,32 @@ export function BookingsManager() {
         if (error) {
           toast.error("Uppladdning misslyckades: " + error.message);
         } else {
-          toast.success(`${rows.length} bokningar uppladdade.`);
+          // Build tent_stays from the same file (Sirvoy "booking content" format)
+          const stays = buildTentStays(results.data);
+          let staysMsg = "";
+          if (stays.length > 0) {
+            const today = new Date().toISOString().slice(0, 10);
+            await (supabase as any).from("tent_stays").delete().gte("checkout_date", today);
+            const { error: stayErr } = await (supabase as any)
+              .from("tent_stays")
+              .upsert(stays, { onConflict: "booking_number,room_id,checkin_date" });
+            if (stayErr) staysMsg = ` Städschema-fel: ${stayErr.message}`;
+            else {
+              const datesWithTurnover = new Set<string>();
+              const byDate = new Map<string, Set<string>>();
+              stays.forEach((s) => {
+                byDate.set(s.checkin_date, (byDate.get(s.checkin_date) ?? new Set()).add(`in:${s.tent_id}`));
+                byDate.set(s.checkout_date, (byDate.get(s.checkout_date) ?? new Set()).add(`out:${s.tent_id}`));
+              });
+              byDate.forEach((set, d) => {
+                const tents = new Set<string>();
+                set.forEach((x) => { const [, t] = x.split(":"); if ([...set].some((y) => y.startsWith("in:") && y.endsWith(t)) && [...set].some((y) => y.startsWith("out:") && y.endsWith(t))) tents.add(t); });
+                if (tents.size > 0) datesWithTurnover.add(d);
+              });
+              staysMsg = ` • ${stays.length} tältvistelser, ${datesWithTurnover.size} datum med växling.`;
+            }
+          }
+          toast.success(`${rows.length} bokningar uppladdade.${staysMsg}`);
           await load();
         }
         setUploading(false);
