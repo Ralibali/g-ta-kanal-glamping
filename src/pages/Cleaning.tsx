@@ -90,6 +90,7 @@ export default function Cleaning() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selected, setSelected] = useState<TentDayData | null>(null);
   const [upcoming, setUpcoming] = useState<UpcomingRow[]>([]);
+  const [calData, setCalData] = useState<Map<string, { arrivals: number; departures: number }>>(new Map());
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
