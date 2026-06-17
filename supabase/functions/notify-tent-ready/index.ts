@@ -26,23 +26,22 @@ function normalizePhone(raw: string | null | undefined): string | null {
 }
 
 async function sendSms(toPhone: string, body: string): Promise<{ id: string }> {
-  const provider = Deno.env.get('SMS_PROVIDER') ?? ''
-  if (provider === '46elks') {
-    const auth = btoa(`${Deno.env.get('ELKS_API_USERNAME')}:${Deno.env.get('ELKS_API_PASSWORD')}`)
-    const res = await fetch('https://api.46elks.com/a1/sms', {
-      method: 'POST',
-      headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        from: Deno.env.get('ELKS_FROM') ?? 'GoGlamping',
-        to: toPhone,
-        message: body,
-      }),
-    })
-    if (!res.ok) throw new Error(`46elks ${res.status}: ${await res.text()}`)
-    const json = await res.json()
-    return { id: json.id ?? '' }
-  }
-  throw new Error('NO_PROVIDER')
+  const user = Deno.env.get('ELKS46_USERNAME') ?? Deno.env.get('ELKS_API_USERNAME')
+  const pass = Deno.env.get('ELKS46_PASSWORD') ?? Deno.env.get('ELKS_API_PASSWORD')
+  if (!user || !pass) throw new Error('NO_PROVIDER')
+  const auth = btoa(`${user}:${pass}`)
+  const res = await fetch('https://api.46elks.com/a1/sms', {
+    method: 'POST',
+    headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      from: Deno.env.get('ELKS46_FROM') || Deno.env.get('ELKS_FROM') || 'GoGlamping',
+      to: toPhone,
+      message: body,
+    }),
+  })
+  if (!res.ok) throw new Error(`46elks ${res.status}: ${await res.text()}`)
+  const json = await res.json()
+  return { id: json.id ?? '' }
 }
 
 Deno.serve(async (req) => {
