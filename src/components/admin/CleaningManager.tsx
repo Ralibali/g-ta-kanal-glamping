@@ -134,6 +134,50 @@ export function CleaningManager() {
       </div>
 
       <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><Mail className="h-5 w-5" /> Notifiera städ om ändrade datum</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Välj de datum som ändrats och skicka ett mail till <strong>karin@topstad.se</strong> med datum, tält och ankomst/avresa.
+          </p>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="border rounded-md p-2">
+              <Calendar
+                mode="multiple"
+                selected={notifyDates}
+                onSelect={(d) => setNotifyDates((d as Date[]) ?? [])}
+                weekStartsOn={1}
+              />
+            </div>
+            <div className="flex-1 space-y-2">
+              <div className="text-xs text-muted-foreground">
+                Valda datum: {notifyDates.length === 0 ? "inga" : notifyDates.map(fmtDate).sort().join(", ")}
+              </div>
+              <Textarea
+                placeholder="Valfri kommentar (t.ex. 'Avresa den 21 borttagen')"
+                value={notifyNote}
+                onChange={(e) => setNotifyNote(e.target.value)}
+                rows={4}
+              />
+              <div className="flex gap-2">
+                <Button onClick={sendScheduleUpdate} disabled={sendingNotify || notifyDates.length === 0}>
+                  <Send className="mr-2 h-4 w-4" />
+                  {sendingNotify ? "Skickar..." : "Skicka uppdatering"}
+                </Button>
+                {notifyDates.length > 0 && (
+                  <Button variant="ghost" onClick={() => { setNotifyDates([]); setNotifyNote(""); }}>
+                    Rensa
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+
+      <Card>
         <CardHeader><CardTitle className="flex items-center gap-2"><Sparkles className="h-5 w-5" /> Idag</CardTitle></CardHeader>
         <CardContent className="space-y-2">
           {todaySessions.length === 0 ? (
