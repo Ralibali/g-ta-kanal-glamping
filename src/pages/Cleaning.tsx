@@ -224,13 +224,30 @@ export default function Cleaning() {
         ) : (
           <>
             <p className="text-sm text-muted-foreground italic">{tr(lang, "intro")}</p>
-            <div>
-              <Label className="text-xs">{tr(lang, "date")}</Label>
-              <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-              <p className="text-xs text-muted-foreground mt-1">
-                {cards.length} {tr(lang, "tentsToHandle")}
-              </p>
+
+            <div className="flex gap-2">
+              <Button
+                variant={view === "overview" ? "default" : "outline"}
+                size="sm" className="flex-1"
+                onClick={() => setView("overview")}
+              >{tr(lang, "overview")}</Button>
+              <Button
+                variant={view === "day" ? "default" : "outline"}
+                size="sm" className="flex-1"
+                onClick={() => setView("day")}
+              >{tr(lang, "dayView")}</Button>
             </div>
+
+            {view === "day" && (
+              <div>
+                <Label className="text-xs">{tr(lang, "date")}</Label>
+                <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {cards.length} {tr(lang, "tentsToHandle")}
+                </p>
+              </div>
+            )}
+
 
             {cards.length === 0 ? (
               <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noTentsToday")}</CardContent></Card>
