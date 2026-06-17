@@ -139,8 +139,8 @@ Deno.serve(async (req) => {
       const greeting = name ? `Hej ${name}` : 'Hej'
       messageBody = `${greeting} och välkommen till oss på Bergs Slussar Glamping! ☀️\n\nVåra städare har markerat erat tält som klart, vilket gör att ni är välkomna från nu. Ni checkar in via QR-koden som finns vid entrén och därigenom så får ni koden till erat tält. Bokningskoden hittar du i din mail.\n\nHar ni beställt frukost då serveras det mellan 08:30-09:00 och finns vid portalen halvvägs upp i backen. Om ni har beställt fikapåse så finns det redo i erat tält!\n\nHar ni några frågor? Hör av er till Christoffer per SMS på 0722254993.\n\nVänligen\n\nBergs slussar Glamping 🏕️`
     } else {
-      const template = SMS_TEMPLATES[lang] ?? SMS_TEMPLATES.sv
-      messageBody = template.replace('{tent}', tentMeta.name)
+      const greeting = name ? `Hi ${name}` : 'Hi'
+      messageBody = `${greeting} and welcome to Bergs Slussar Glamping! ☀️\n\nOur cleaners have marked your tent as ready, so you are welcome to check in from now. Please check in via the QR code at the entrance — you will then receive the code to your tent. Your booking number is in your email.\n\nIf you have ordered breakfast, it is served between 08:30-09:00 at the portal halfway up the hill. If you have ordered a coffee/snack bag (fikapåse), it is ready in your tent!\n\nAny questions? Text Christoffer on +46 722 25 49 93.\n\nKind regards\n\nBergs Slussar Glamping 🏕️`
     }
 
     if (!toPhone) {
