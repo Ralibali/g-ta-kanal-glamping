@@ -245,18 +245,6 @@ export default function Cleaning() {
           <>
             <p className="text-sm text-muted-foreground italic">{tr(lang, "intro")}</p>
 
-            <div className="flex gap-2">
-              <Button
-                variant={view === "overview" ? "default" : "outline"}
-                size="sm" className="flex-1"
-                onClick={() => setView("overview")}
-              >{tr(lang, "overview")}</Button>
-              <Button
-                variant={view === "day" ? "default" : "outline"}
-                size="sm" className="flex-1"
-                onClick={() => setView("day")}
-              >{tr(lang, "dayView")}</Button>
-            </div>
 
             <div className="flex gap-2">
               <Button
