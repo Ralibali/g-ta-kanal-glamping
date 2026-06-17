@@ -12,7 +12,8 @@ Deno.serve(async (req) => {
   }
 
   const to = '+46722254993' // hardcoded test recipient for safety
-  const from = Deno.env.get('ELKS46_FROM') || 'GoGlamping'
+  const fromRaw = Deno.env.get('ELKS46_FROM') || 'Glamping'
+  const from = fromRaw.replace(/[^A-Za-z0-9]/g, '').slice(0, 11) || 'Glamping'
   const message =
     'Hej Christoffer och välkommen till oss på Bergs Slussar Glamping! ☀️\n\n' +
     'Våra städare har markerat erat tält som klart, vilket gör att ni är välkomna från nu. Ni checkar in via QR-koden som finns vid entrén och därigenom så får ni koden till erat tält. Bokningskoden hittar du i din mail.\n\n' +
