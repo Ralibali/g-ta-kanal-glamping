@@ -67,23 +67,23 @@ export const CLEANING_TASKS: Task[] = [
     en: "Make up the sofa bed: 2 pillows, 180 sheet and 2 duvets (in the left cupboard)",
     si: "සෝෆා-ඇඳ සකසන්න: කොට්ට 2, 180 ඇතිරිල්ල සහ රෙදි 2 (වම් අල්මාරියේ)",
   }},
-  { id: "handdukar", group: "beds", icon: ShowerHead, required: false, text: {
+  { id: "handdukar", group: "beds", icon: ShowerHead, required: true, text: {
     sv: "Lägg fram rena handdukar efter antal gäster",
     en: "Lay out clean towels according to the number of guests",
     si: "ආගන්තුකයන් සංඛ්‍යාවට අනුව පිරිසිදු තුවා තබන්න",
   }},
   // Kök
-  { id: "diska", group: "kitchen", icon: CookingPot, required: false, text: {
-    sv: "Diska vid behov (i servicehuset)",
-    en: "Wash dishes if needed (in the service house)",
-    si: "අවශ්‍ය නම් භාජන සෝදන්න (සේවා ගෘහයේ)",
+  { id: "diska", group: "kitchen", icon: CookingPot, required: true, text: {
+    sv: "Diska (i servicehuset) – skriv en kommentar om du behövt diska och hur mycket",
+    en: "Wash dishes (in the service house) – add a comment if you had to wash and how much",
+    si: "භාජන සෝදන්න (සේවා ගෘහයේ) – සෝදන්න සිදුවුවහොත් කොපමණ දැයි අදහසක් ලියන්න",
   }},
   { id: "kaffe_socker", group: "kitchen", icon: Coffee, required: true, text: {
     sv: "Kontrollera kaffe och socker – fyll på från förrådet om det är slut",
     en: "Check coffee and sugar – refill from storage if empty",
     si: "කෝපි සහ සීනි පරීක්ෂා කරන්න – හිස්නම් ගබඩාවෙන් පුරවන්න",
   }},
-  { id: "te_salt", group: "kitchen", icon: ShoppingBasket, required: false, text: {
+  { id: "te_salt", group: "kitchen", icon: ShoppingBasket, required: true, text: {
     sv: "Kontrollera te, salt/peppar, diskmedel och disksvamp",
     en: "Check tea, salt/pepper, dish soap and sponge",
     si: "තේ, ලුණු/ගම්මිරිස්, භාජන සබන් සහ ස්පොන්ජය පරීක්ෂා කරන්න",
@@ -103,11 +103,6 @@ export const CLEANING_TASKS: Task[] = [
     en: "Fika bag booked – set out the fika bag",
     si: "ෆිකා බෑගය වෙන් කර ඇත – එය බෑගය තබන්න",
   }},
-  { id: "frukost", group: "kitchen", icon: Coffee, required: false, condition: "breakfast", text: {
-    sv: "Frukost bokad – förbered/ställ fram frukost",
-    en: "Breakfast booked – prepare/set out breakfast",
-    si: "උදෑසන ආහාර වෙන් කර ඇත – එය සකස් කර තබන්න",
-  }},
   // Sopor
   { id: "tomma_sopor", group: "trash", icon: Trash2, required: true, text: {
     sv: "Töm tältets sopor i den högra papperskorgen; ny påse + extra påsar i botten",
@@ -120,15 +115,10 @@ export const CLEANING_TASKS: Task[] = [
     en: "Set up outside – furniture and entrance, tidy and welcoming",
     si: "පිටත සකසන්න – ගෘහ භාණ්ඩ සහ ප්‍රවේශය පිළිවෙළට හා පිළිගැනීමට සුදුසු ලෙස",
   }},
-  { id: "sopa_altan", group: "outdoor", icon: Brush, required: false, text: {
+  { id: "sopa_altan", group: "outdoor", icon: Brush, required: true, text: {
     sv: "Sopa altanen/entrén",
     en: "Sweep the deck/entrance",
     si: "තට්ටුව/ප්‍රවේශය අතුගා දමන්න",
-  }},
-  { id: "eldstad_grill", group: "outdoor", icon: Flame, required: false, text: {
-    sv: "Töm/rengör eldstad eller grill, fyll på ved vid behov",
-    en: "Empty/clean the fire pit or grill, refill firewood if needed",
-    si: "ගිනි ස්ථානය හෝ ග්‍රිල් හිස් කර පිරිසිදු කරන්න, අවශ්‍ය නම් දර පුරවන්න",
   }},
   // Klimat & avslut
   { id: "flakt", group: "climate", icon: Fan, required: true, condition: "season_warm", text: {
