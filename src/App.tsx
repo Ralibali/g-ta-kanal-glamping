@@ -23,6 +23,7 @@ import RomantiskWeekendOstergotland from "./pages/RomantiskWeekendOstergotland";
 import NotFound from "./pages/NotFound";
 import ChatPage from "./pages/ChatPage";
 import Unsubscribe from "./pages/Unsubscribe";
+import Cleaning from "./pages/Cleaning";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,8 @@ const App = () => (
           <Route path="/unsubscribe" element={<Unsubscribe />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/*" element={<Admin />} />
+          <Route path="/stad" element={<Cleaning />} />
+          <Route path="/cleaning" element={<Cleaning />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
