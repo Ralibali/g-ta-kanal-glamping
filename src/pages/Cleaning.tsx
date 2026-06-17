@@ -186,7 +186,7 @@ export default function Cleaning() {
       const dep = stays.find((s) => s.tent_id === t.id && s.checkout_date === date);
       if (!arr && !dep) return null;
       return {
-        tent_id: t.id, tentNo: t.no, tentName: t.name, date,
+        tent_id: t.id, tentNo: t.no, tentName: t.name, position: t.position, date,
         hasArrival: !!arr, hasDeparture: !!dep,
         arrivalBooking: arr?.booking_number,
         guests: arr?.guests ?? 0,
