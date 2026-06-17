@@ -249,7 +249,44 @@ export default function Cleaning() {
             )}
 
 
-            {cards.length === 0 ? (
+            {view === "overview" ? (
+              upcoming.length === 0 ? (
+                <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noUpcoming")}</CardContent></Card>
+              ) : (
+                <div className="space-y-3">
+                  <h2 className="font-serif text-lg">{tr(lang, "upcomingDates")}</h2>
+                  {upcoming.map((row) => {
+                    const dateLabel = new Date(row.date).toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { weekday: "short", day: "numeric", month: "short" });
+                    return (
+                      <Card key={row.date}>
+                        <CardContent className="p-4 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="font-medium capitalize">{dateLabel}</div>
+                            <div className="text-xs text-muted-foreground">{row.date}</div>
+                          </div>
+                          <div className="space-y-1.5">
+                            {row.tents.map((t) => (
+                              <div key={t.tent_id} className="border rounded p-2">
+                                <div className="text-sm font-medium">Tält {t.tentNo} – {t.tentName}</div>
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                  {t.hasArrival && t.hasDeparture && <Badge className="bg-amber-500">{tr(lang, "changeover")}</Badge>}
+                                  {t.hasArrival && !t.hasDeparture && <Badge variant="secondary">{tr(lang, "arrival")}</Badge>}
+                                  {!t.hasArrival && t.hasDeparture && <Badge variant="secondary">{tr(lang, "departure")}</Badge>}
+                                  {t.hasArrival && t.guests > 0 && <Badge variant="outline">{t.guests} {tr(lang, "guests")}</Badge>}
+                                  {t.breakfast && <Badge variant="outline">{tr(lang, "breakfast")}</Badge>}
+                                  {t.fikapase && <Badge variant="outline">{tr(lang, "fika")}</Badge>}
+                                  {t.lateCheckout && <Badge variant="outline">{tr(lang, "lateCheckout")}</Badge>}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )
+            ) : cards.length === 0 ? (
               <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noTentsToday")}</CardContent></Card>
             ) : (
               <div className="space-y-3">
