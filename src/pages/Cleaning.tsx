@@ -155,8 +155,30 @@ export default function Cleaning() {
     setUpcoming(list);
   };
 
+  const loadCalendar = async (monthStart: Date) => {
+    const start = new Date(monthStart); start.setDate(1);
+    const end = new Date(monthStart); end.setMonth(end.getMonth() + 1); end.setDate(0);
+    const s = start.toISOString().slice(0, 10);
+    const e = end.toISOString().slice(0, 10);
+    const { data } = await (supabase as any)
+      .from("tent_stays")
+      .select("checkin_date, checkout_date")
+      .or(`and(checkin_date.gte.${s},checkin_date.lte.${e}),and(checkout_date.gte.${s},checkout_date.lte.${e})`);
+    const rows = (data ?? []) as { checkin_date: string; checkout_date: string }[];
+    const m = new Map<string, { arrivals: number; departures: number }>();
+    const bump = (d: string, k: "arrivals" | "departures") => {
+      if (d < s || d > e) return;
+      const cur = m.get(d) ?? { arrivals: 0, departures: 0 };
+      cur[k]++;
+      m.set(d, cur);
+    };
+    rows.forEach((r) => { bump(r.checkin_date, "arrivals"); bump(r.checkout_date, "departures"); });
+    setCalData(m);
+  };
+
   useEffect(() => { if (user && isCleaner && view === "day") load(); }, [user, isCleaner, date, view]);
   useEffect(() => { if (user && isCleaner && view === "overview") loadUpcoming(); }, [user, isCleaner, view]);
+  useEffect(() => { if (user && isCleaner && view === "calendar") loadCalendar(calMonth); }, [user, isCleaner, view, calMonth]);
 
   const cards: TentDayData[] = useMemo(() => {
     return TENTS.map((t) => {
