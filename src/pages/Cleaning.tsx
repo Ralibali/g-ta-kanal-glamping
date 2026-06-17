@@ -67,13 +67,30 @@ function LoginForm({ lang }: { lang: CleanLang }) {
 }
 
 
+type UpcomingRow = {
+  date: string;
+  tents: {
+    tent_id: string;
+    tentNo: number;
+    tentName: string;
+    hasArrival: boolean;
+    hasDeparture: boolean;
+    guests: number;
+    breakfast: boolean;
+    fikapase: boolean;
+    lateCheckout: boolean;
+  }[];
+};
+
 export default function Cleaning() {
   const { user, isCleaner, loading, signOut } = useCleaner();
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
+  const [view, setView] = useState<"day" | "overview">("overview");
   const [date, setDate] = useState<string>(todayInStockholm());
   const [stays, setStays] = useState<Stay[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selected, setSelected] = useState<TentDayData | null>(null);
+  const [upcoming, setUpcoming] = useState<UpcomingRow[]>([]);
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
@@ -88,6 +105,56 @@ export default function Cleaning() {
       .select("tent_id, cleaning_date, status")
       .eq("cleaning_date", date);
     setSessions((sessRows ?? []) as Session[]);
+  };
+
+  const loadUpcoming = async () => {
+    const today = todayInStockholm();
+    const end = new Date();
+    end.setDate(end.getDate() + 60);
+    const endStr = end.toISOString().slice(0, 10);
+    const { data } = await (supabase as any)
+      .from("tent_stays")
+      .select("tent_id, checkin_date, checkout_date, guests, breakfast, fikapase, late_checkout")
+      .or(`and(checkin_date.gte.${today},checkin_date.lte.${endStr}),and(checkout_date.gte.${today},checkout_date.lte.${endStr})`);
+    const rows = (data ?? []) as Stay[];
+    const map = new Map<string, UpcomingRow>();
+    const addDate = (d: string) => {
+      if (!map.has(d)) map.set(d, { date: d, tents: [] });
+      return map.get(d)!;
+    };
+    TENTS.forEach((t) => {
+      rows.forEach((s) => {
+        if (s.tent_id !== t.id) return;
+        const dates: { d: string; arr: boolean; dep: boolean }[] = [];
+        if (s.checkin_date >= today && s.checkin_date <= endStr) dates.push({ d: s.checkin_date, arr: true, dep: false });
+        if (s.checkout_date >= today && s.checkout_date <= endStr) dates.push({ d: s.checkout_date, arr: false, dep: true });
+        dates.forEach(({ d, arr, dep }) => {
+          const row = addDate(d);
+          let existing = row.tents.find((x) => x.tent_id === t.id);
+          if (!existing) {
+            existing = {
+              tent_id: t.id, tentNo: t.no, tentName: t.name,
+              hasArrival: false, hasDeparture: false,
+              guests: 0, breakfast: false, fikapase: false, lateCheckout: false,
+            };
+            row.tents.push(existing);
+          }
+          if (arr) {
+            existing.hasArrival = true;
+            existing.guests = s.guests ?? 0;
+            existing.breakfast = !!s.breakfast;
+            existing.fikapase = !!s.fikapase;
+          }
+          if (dep) {
+            existing.hasDeparture = true;
+            existing.lateCheckout = !!s.late_checkout;
+          }
+        });
+      });
+    });
+    const list = Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
+    list.forEach((r) => r.tents.sort((a, b) => a.tentNo - b.tentNo));
+    setUpcoming(list);
   };
 
   useEffect(() => { if (user && isCleaner) load(); }, [user, isCleaner, date]);
