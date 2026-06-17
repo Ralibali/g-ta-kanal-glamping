@@ -26,14 +26,15 @@ type Stay = {
 
 type Session = { tent_id: string; cleaning_date: string; status: string };
 
+const CLEANER_EMAIL = "stadare@goglampingsweden.se";
+
 function LoginForm({ lang }: { lang: CleanLang }) {
-  const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [busy, setBusy] = useState(false);
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password: pw });
+    const { error } = await supabase.auth.signInWithPassword({ email: CLEANER_EMAIL, password: pw });
     setBusy(false);
     if (error) toast.error(tr(lang, "loginFailed"));
   };
@@ -47,12 +48,14 @@ function LoginForm({ lang }: { lang: CleanLang }) {
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-3">
             <div>
-              <Label>{tr(lang, "email")}</Label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-            </div>
-            <div>
               <Label>{tr(lang, "password")}</Label>
-              <Input type="password" value={pw} onChange={(e) => setPw(e.target.value)} required />
+              <Input
+                type="password"
+                value={pw}
+                onChange={(e) => setPw(e.target.value)}
+                autoFocus
+                required
+              />
             </div>
             <Button type="submit" className="w-full" disabled={busy}>{tr(lang, "signIn")}</Button>
           </form>
@@ -61,6 +64,7 @@ function LoginForm({ lang }: { lang: CleanLang }) {
     </div>
   );
 }
+
 
 export default function Cleaning() {
   const { user, isCleaner, loading, signOut } = useCleaner();
