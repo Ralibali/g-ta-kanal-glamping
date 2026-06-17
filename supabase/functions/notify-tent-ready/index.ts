@@ -8,7 +8,7 @@ const TENT_NAMES: Record<string, { no: number; name: string }> = {
 }
 
 const SMS_TEMPLATES: Record<string, string> = {
-  sv: 'Hej! Ditt tält {tent} på Bergs Slussar Glamping är nu städat och klart för incheckning. Varmt välkomna! Frågor? SMS:a 0722254993.',
+  sv: '', // built dynamically for Swedish to include name
   en: 'Hi! Your tent {tent} at Bergs Slussar Glamping is now cleaned and ready for check-in. Warm welcome! Questions? Text 0722254993.',
   da: 'Hej! Dit telt {tent} på Bergs Slussar Glamping er nu rengjort og klar til check-in. Velkommen! Spørgsmål? Sms 0722254993.',
   no: 'Hei! Teltet ditt {tent} på Bergs Slussar Glamping er nå rengjort og klart for innsjekk. Velkommen! Spørsmål? Send SMS 0722254993.',
