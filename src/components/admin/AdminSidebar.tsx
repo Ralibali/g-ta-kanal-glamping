@@ -12,6 +12,7 @@ import {
   MessageCircle,
   LogIn,
   CalendarCheck,
+  Sparkles,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -40,6 +41,7 @@ const contentItems = [
   { title: "Chatt", url: "/admin/chat", icon: MessageCircle },
   { title: "Bokningar", url: "/admin/bookings", icon: CalendarCheck },
   { title: "Incheckningar", url: "/admin/checkins", icon: LogIn },
+  { title: "Städning", url: "/admin/cleaning", icon: Sparkles },
   { title: "Blogginlägg", url: "/admin/blog", icon: FileText },
   { title: "Bildgalleri", url: "/admin/gallery", icon: Image },
   { title: "Priser & Tält", url: "/admin/pricing", icon: Tag },

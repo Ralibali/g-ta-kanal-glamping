@@ -154,6 +154,92 @@ export type Database = {
         }
         Relationships: []
       }
+      cleaning_issues: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          photo_path: string | null
+          resolved: boolean
+          session_id: string | null
+          tent_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description: string
+          id?: string
+          photo_path?: string | null
+          resolved?: boolean
+          session_id?: string | null
+          tent_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          photo_path?: string | null
+          resolved?: boolean
+          session_id?: string | null
+          tent_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cleaning_issues_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "cleaning_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cleaning_sessions: {
+        Row: {
+          arrival_booking: string | null
+          checklist: Json
+          cleaning_date: string
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          guests: number | null
+          id: string
+          sofa_bed_needed: boolean
+          status: string
+          tent_id: string
+          updated_at: string
+        }
+        Insert: {
+          arrival_booking?: string | null
+          checklist?: Json
+          cleaning_date?: string
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          guests?: number | null
+          id?: string
+          sofa_bed_needed?: boolean
+          status?: string
+          tent_id: string
+          updated_at?: string
+        }
+        Update: {
+          arrival_booking?: string | null
+          checklist?: Json
+          cleaning_date?: string
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          guests?: number | null
+          id?: string
+          sofa_bed_needed?: boolean
+          status?: string
+          tent_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       click_events: {
         Row: {
           created_at: string
@@ -313,6 +399,51 @@ export type Database = {
         }
         Relationships: []
       }
+      sms_outbox: {
+        Row: {
+          body: string
+          booking_number: string | null
+          cleaning_date_key: string
+          created_at: string
+          error: string | null
+          id: string
+          lang: string
+          provider_id: string | null
+          sent_at: string | null
+          status: string
+          tent_id: string
+          to_phone: string | null
+        }
+        Insert: {
+          body: string
+          booking_number?: string | null
+          cleaning_date_key?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          lang?: string
+          provider_id?: string | null
+          sent_at?: string | null
+          status?: string
+          tent_id: string
+          to_phone?: string | null
+        }
+        Update: {
+          body?: string
+          booking_number?: string | null
+          cleaning_date_key?: string
+          created_at?: string
+          error?: string | null
+          id?: string
+          lang?: string
+          provider_id?: string | null
+          sent_at?: string | null
+          status?: string
+          tent_id?: string
+          to_phone?: string | null
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -334,6 +465,72 @@ export type Database = {
           id?: string
           metadata?: Json | null
           reason?: string
+        }
+        Relationships: []
+      }
+      tent_stays: {
+        Row: {
+          adults: number
+          booking_number: string
+          breakfast: boolean
+          checkin_date: string
+          checkout_date: string
+          children: number
+          created_at: string
+          email: string | null
+          fikapase: boolean
+          guest_name: string | null
+          guests: number | null
+          id: string
+          lang: string
+          late_checkout: boolean
+          note: string | null
+          phone: string | null
+          raw: Json | null
+          room_id: string | null
+          tent_id: string
+        }
+        Insert: {
+          adults?: number
+          booking_number: string
+          breakfast?: boolean
+          checkin_date: string
+          checkout_date: string
+          children?: number
+          created_at?: string
+          email?: string | null
+          fikapase?: boolean
+          guest_name?: string | null
+          guests?: number | null
+          id?: string
+          lang?: string
+          late_checkout?: boolean
+          note?: string | null
+          phone?: string | null
+          raw?: Json | null
+          room_id?: string | null
+          tent_id: string
+        }
+        Update: {
+          adults?: number
+          booking_number?: string
+          breakfast?: boolean
+          checkin_date?: string
+          checkout_date?: string
+          children?: number
+          created_at?: string
+          email?: string | null
+          fikapase?: boolean
+          guest_name?: string | null
+          guests?: number | null
+          id?: string
+          lang?: string
+          late_checkout?: boolean
+          note?: string | null
+          phone?: string | null
+          raw?: Json | null
+          room_id?: string | null
+          tent_id?: string
         }
         Relationships: []
       }
@@ -418,7 +615,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "cleaner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -546,7 +743,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "cleaner"],
     },
   },
 } as const
