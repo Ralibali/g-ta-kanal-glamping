@@ -65,6 +65,54 @@ export type Database = {
         }
         Relationships: []
       }
+      breakfast_deliveries: {
+        Row: {
+          booking_number: string
+          created_at: string
+          delivered_at: string | null
+          delivered_by: string | null
+          delivery_date: string
+          id: string
+          kind: string
+          note: string | null
+          sms_error: string | null
+          sms_status: string | null
+          status: string
+          tent_id: string
+          updated_at: string
+        }
+        Insert: {
+          booking_number: string
+          created_at?: string
+          delivered_at?: string | null
+          delivered_by?: string | null
+          delivery_date: string
+          id?: string
+          kind?: string
+          note?: string | null
+          sms_error?: string | null
+          sms_status?: string | null
+          status?: string
+          tent_id: string
+          updated_at?: string
+        }
+        Update: {
+          booking_number?: string
+          created_at?: string
+          delivered_at?: string | null
+          delivered_by?: string | null
+          delivery_date?: string
+          id?: string
+          kind?: string
+          note?: string | null
+          sms_error?: string | null
+          sms_status?: string | null
+          status?: string
+          tent_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       chat_conversations: {
         Row: {
           created_at: string
@@ -615,7 +663,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user" | "cleaner"
+      app_role: "admin" | "moderator" | "user" | "cleaner" | "breakfast"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -743,7 +791,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user", "cleaner"],
+      app_role: ["admin", "moderator", "user", "cleaner", "breakfast"],
     },
   },
 } as const
