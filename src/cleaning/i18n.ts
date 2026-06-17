@@ -62,6 +62,11 @@ export const UI = {
   language: { sv: "Språk", en: "Language", si: "භාෂාව" },
   saving: { sv: "Sparar...", en: "Saving...", si: "සුරකිමින්..." },
   completedAt: { sv: "Klart", en: "Completed", si: "අවසන්" },
+  overview: { sv: "Översikt", en: "Overview", si: "දළ විශ්ලේෂණය" },
+  dayView: { sv: "Dagsvy", en: "Day view", si: "දින දසුන" },
+  upcomingDates: { sv: "Datum vi behöver hjälp", en: "Dates we need help", si: "අපට උදව් අවශ්‍ය දින" },
+  noUpcoming: { sv: "Inga kommande datum att städa.", en: "No upcoming cleaning dates.", si: "ඉදිරි දින නැත." },
+  arrival: { sv: "Ankomst", en: "Arrival", si: "පැමිණීම" },
 } as const;
 
 export function tr<K extends keyof typeof UI>(lang: CleanLang, key: K): string {
