@@ -83,12 +83,14 @@ type UpcomingRow = {
 export default function Cleaning() {
   const { user, isCleaner, loading, signOut } = useCleaner();
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
-  const [view, setView] = useState<"day" | "overview">("overview");
+  const [view, setView] = useState<"day" | "overview" | "calendar">("calendar");
+  const [calMonth, setCalMonth] = useState<Date>(() => { const d = new Date(); d.setDate(1); return d; });
   const [date, setDate] = useState<string>(todayInStockholm());
   const [stays, setStays] = useState<Stay[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selected, setSelected] = useState<TentDayData | null>(null);
   const [upcoming, setUpcoming] = useState<UpcomingRow[]>([]);
+  const [calData, setCalData] = useState<Map<string, { arrivals: number; departures: number }>>(new Map());
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
@@ -153,8 +155,30 @@ export default function Cleaning() {
     setUpcoming(list);
   };
 
+  const loadCalendar = async (monthStart: Date) => {
+    const start = new Date(monthStart); start.setDate(1);
+    const end = new Date(monthStart); end.setMonth(end.getMonth() + 1); end.setDate(0);
+    const s = start.toISOString().slice(0, 10);
+    const e = end.toISOString().slice(0, 10);
+    const { data } = await (supabase as any)
+      .from("tent_stays")
+      .select("checkin_date, checkout_date")
+      .or(`and(checkin_date.gte.${s},checkin_date.lte.${e}),and(checkout_date.gte.${s},checkout_date.lte.${e})`);
+    const rows = (data ?? []) as { checkin_date: string; checkout_date: string }[];
+    const m = new Map<string, { arrivals: number; departures: number }>();
+    const bump = (d: string, k: "arrivals" | "departures") => {
+      if (d < s || d > e) return;
+      const cur = m.get(d) ?? { arrivals: 0, departures: 0 };
+      cur[k]++;
+      m.set(d, cur);
+    };
+    rows.forEach((r) => { bump(r.checkin_date, "arrivals"); bump(r.checkout_date, "departures"); });
+    setCalData(m);
+  };
+
   useEffect(() => { if (user && isCleaner && view === "day") load(); }, [user, isCleaner, date, view]);
   useEffect(() => { if (user && isCleaner && view === "overview") loadUpcoming(); }, [user, isCleaner, view]);
+  useEffect(() => { if (user && isCleaner && view === "calendar") loadCalendar(calMonth); }, [user, isCleaner, view, calMonth]);
 
   const cards: TentDayData[] = useMemo(() => {
     return TENTS.map((t) => {
@@ -221,7 +245,13 @@ export default function Cleaning() {
           <>
             <p className="text-sm text-muted-foreground italic">{tr(lang, "intro")}</p>
 
+
             <div className="flex gap-2">
+              <Button
+                variant={view === "calendar" ? "default" : "outline"}
+                size="sm" className="flex-1"
+                onClick={() => setView("calendar")}
+              >{tr(lang, "calendar")}</Button>
               <Button
                 variant={view === "overview" ? "default" : "outline"}
                 size="sm" className="flex-1"
@@ -245,7 +275,69 @@ export default function Cleaning() {
             )}
 
 
-            {view === "overview" ? (
+            {view === "calendar" ? (
+              (() => {
+                const year = calMonth.getFullYear();
+                const month = calMonth.getMonth();
+                const first = new Date(year, month, 1);
+                const last = new Date(year, month + 1, 0);
+                // Monday = 0
+                const startOffset = (first.getDay() + 6) % 7;
+                const cells: (Date | null)[] = [];
+                for (let i = 0; i < startOffset; i++) cells.push(null);
+                for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(year, month, d));
+                while (cells.length % 7 !== 0) cells.push(null);
+                const monthLabel = first.toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { month: "long", year: "numeric" });
+                const dayNames = lang === "sv"
+                  ? ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"]
+                  : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+                const todayStr = todayInStockholm();
+                const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                return (
+                  <Card>
+                    <CardContent className="p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Button variant="ghost" size="sm" onClick={() => setCalMonth(new Date(year, month - 1, 1))}>‹</Button>
+                        <div className="font-medium capitalize">{monthLabel}</div>
+                        <Button variant="ghost" size="sm" onClick={() => setCalMonth(new Date(year, month + 1, 1))}>›</Button>
+                      </div>
+                      <div className="grid grid-cols-7 gap-1 text-[10px] text-muted-foreground text-center">
+                        {dayNames.map((n) => <div key={n} className="py-1">{n}</div>)}
+                      </div>
+                      <div className="grid grid-cols-7 gap-1">
+                        {cells.map((d, i) => {
+                          if (!d) return <div key={i} />;
+                          const key = fmt(d);
+                          const info = calData.get(key);
+                          const work = (info?.arrivals ?? 0) + (info?.departures ?? 0);
+                          const isToday = key === todayStr;
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => { setDate(key); setView("day"); }}
+                              className={`aspect-square rounded border p-1 flex flex-col items-center justify-start text-xs transition hover:bg-muted ${isToday ? "ring-2 ring-primary" : ""} ${work > 0 ? "bg-primary/10 border-primary/30" : ""}`}
+                            >
+                              <span className={`font-medium ${work > 0 ? "text-primary" : ""}`}>{d.getDate()}</span>
+                              {work > 0 && (
+                                <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
+                                  {info!.arrivals > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" title="ankomst" />}
+                                  {info!.departures > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" title="avresa" />}
+                                </div>
+                              )}
+                              {work > 0 && <span className="text-[9px] text-muted-foreground mt-auto">{work} {tr(lang, "tentsShort")}</span>}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <div className="flex gap-3 text-[10px] text-muted-foreground justify-center pt-1">
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> {tr(lang, "arrival")}</span>
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> {tr(lang, "departure")}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })()
+            ) : view === "overview" ? (
               upcoming.length === 0 ? (
                 <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noUpcoming")}</CardContent></Card>
               ) : (
