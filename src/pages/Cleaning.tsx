@@ -162,7 +162,7 @@ export default function Cleaning() {
     const e = end.toISOString().slice(0, 10);
     const { data } = await (supabase as any)
       .from("tent_stays")
-      .select("checkin_date, checkout_date")
+      .select("tent_id, checkin_date, checkout_date")
       .or(`and(checkin_date.gte.${s},checkin_date.lte.${e}),and(checkout_date.gte.${s},checkout_date.lte.${e})`);
     const rows = (data ?? []) as { tent_id?: string; checkin_date: string; checkout_date: string }[];
     const tentsByDate = new Map<string, Set<string>>();
