@@ -24,6 +24,7 @@ import NotFound from "./pages/NotFound";
 import ChatPage from "./pages/ChatPage";
 import Unsubscribe from "./pages/Unsubscribe";
 import Cleaning from "./pages/Cleaning";
+import Breakfast from "./pages/Breakfast";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,8 @@ const App = () => (
           <Route path="/admin/*" element={<Admin />} />
           <Route path="/stad" element={<Cleaning />} />
           <Route path="/cleaning" element={<Cleaning />} />
+          <Route path="/frukost" element={<Breakfast />} />
+          <Route path="/breakfast" element={<Breakfast />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
