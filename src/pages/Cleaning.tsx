@@ -324,7 +324,7 @@ export default function Cleaning() {
                           if (!d) return <div key={i} />;
                           const key = fmt(d);
                           const info = calData.get(key);
-                          const work = (info?.arrivals ?? 0) + (info?.departures ?? 0);
+                          const work = info?.total ?? 0;
                           const isToday = key === todayStr;
                           return (
                             <button
@@ -335,8 +335,8 @@ export default function Cleaning() {
                               <span className={`font-medium ${work > 0 ? "text-primary" : ""}`}>{d.getDate()}</span>
                               {work > 0 && (
                                 <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
-                                  {info!.arrivals > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" title="ankomst" />}
-                                  {info!.departures > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" title="avresa" />}
+                                  {(info!.arrivals ?? 0) > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" title="ankomst" />}
+                                  {(info!.departures ?? 0) > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" title="avresa" />}
                                 </div>
                               )}
                               {work > 0 && <span className="text-[9px] text-muted-foreground mt-auto">{work} {tr(lang, "tentsShort")}</span>}
