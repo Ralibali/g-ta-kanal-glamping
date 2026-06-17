@@ -143,6 +143,102 @@ function aggregateRows(rawRows: Record<string, string>[]): MappedBooking[] {
   return Array.from(grouped.values());
 }
 
+// ─── Sirvoy "booking content" → tent_stays ─────────────────────────────
+const ROOM_TO_TENT_LOCAL: Record<string, string> = { "1": "sjobris", "2": "naturkarnan", "3": "lugnetsyta" };
+
+type TentStayRow = {
+  booking_number: string;
+  room_id: string | null;
+  tent_id: string;
+  checkin_date: string;
+  checkout_date: string;
+  adults: number;
+  children: number;
+  breakfast: boolean;
+  fikapase: boolean;
+  late_checkout: boolean;
+  guest_name: string | null;
+  phone: string | null;
+  email: string | null;
+  lang: string;
+  note: string | null;
+  raw: Record<string, unknown>;
+};
+
+function buildTentStays(rawRows: Record<string, string>[]): TentStayRow[] {
+  // Normalize headers per row
+  const lookups = rawRows.map((row) => {
+    const o: Record<string, string> = {};
+    for (const [k, v] of Object.entries(row)) o[normaliseHeader(k)] = (v ?? "").toString().trim();
+    return o;
+  });
+  const get = (l: Record<string, string>, ...keys: string[]) => {
+    for (const k of keys) { const v = l[normaliseHeader(k)]; if (v) return v; }
+    return "";
+  };
+
+  // 1) Aggregate EXTRAS per booking number
+  const extras = new Map<string, { children: number; breakfast: boolean; fikapase: boolean; late_checkout: boolean }>();
+  for (const l of lookups) {
+    const type = get(l, "type", "typ").toUpperCase();
+    if (type !== "EXTRAS") continue;
+    const bn = get(l, "booking no.", "booking no", "bokningsnummer").toUpperCase();
+    if (!bn) continue;
+    const spec = get(l, "specification", "kategori").toLowerCase();
+    const units = parseInt(get(l, "units"), 10);
+    const e = extras.get(bn) ?? { children: 0, breakfast: false, fikapase: false, late_checkout: false };
+    if (spec.includes("barn")) e.children += isNaN(units) ? 1 : units;
+    if (spec.includes("frukost")) e.breakfast = true;
+    if (spec.includes("fikapåse") || spec.includes("fikapase")) e.fikapase = true;
+    if (spec.includes("sen utcheck")) e.late_checkout = true;
+    extras.set(bn, e);
+  }
+
+  // 2) One stay per ACCOMM row
+  const stays: TentStayRow[] = [];
+  for (let i = 0; i < lookups.length; i++) {
+    const l = lookups[i];
+    const type = get(l, "type", "typ").toUpperCase();
+    if (type !== "ACCOMM") continue;
+    const bn = get(l, "booking no.", "booking no", "bokningsnummer").toUpperCase();
+    if (!bn) continue;
+    const roomId = get(l, "room id", "room") || null;
+    let tentId = roomId ? ROOM_TO_TENT_LOCAL[roomId] : null;
+    if (!tentId) tentId = detectTent(get(l, "specification", "tält", "tent", "room")) ?? "";
+    if (!tentId) continue;
+    const ci = parseDate(get(l, "check-in", "checkin", "incheckning"));
+    const co = parseDate(get(l, "check-out", "checkout", "utcheckning"));
+    if (!ci || !co) continue;
+    const adults = parseInt(get(l, "guests"), 10) || 0;
+    const e = extras.get(bn) ?? { children: 0, breakfast: false, fikapase: false, late_checkout: false };
+    const first = get(l, "first name", "förnamn");
+    const last = get(l, "last name", "efternamn");
+    const combined = get(l, "guest name", "namn");
+    const guest = combined || [first, last].filter(Boolean).join(" ") || null;
+    const langRaw = get(l, "language", "språk", "lang").toLowerCase().slice(0, 2);
+    const lang = ["sv", "da", "en", "no", "de"].includes(langRaw) ? langRaw : "sv";
+    stays.push({
+      booking_number: bn,
+      room_id: roomId,
+      tent_id: tentId,
+      checkin_date: ci,
+      checkout_date: co,
+      adults,
+      children: e.children,
+      breakfast: e.breakfast,
+      fikapase: e.fikapase,
+      late_checkout: e.late_checkout,
+      guest_name: guest,
+      phone: get(l, "phone", "telefon") || null,
+      email: get(l, "email", "e-post", "epost") || null,
+      lang,
+      note: get(l, "internal note", "note") || null,
+      raw: rawRows[i],
+    });
+  }
+  return stays;
+}
+
 export function BookingsManager() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
