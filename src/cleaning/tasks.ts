@@ -103,11 +103,6 @@ export const CLEANING_TASKS: Task[] = [
     en: "Fika bag booked – set out the fika bag",
     si: "ෆිකා බෑගය වෙන් කර ඇත – එය බෑගය තබන්න",
   }},
-  { id: "frukost", group: "kitchen", icon: Coffee, required: false, condition: "breakfast", text: {
-    sv: "Frukost bokad – förbered/ställ fram frukost",
-    en: "Breakfast booked – prepare/set out breakfast",
-    si: "උදෑසන ආහාර වෙන් කර ඇත – එය සකස් කර තබන්න",
-  }},
   // Sopor
   { id: "tomma_sopor", group: "trash", icon: Trash2, required: true, text: {
     sv: "Töm tältets sopor i den högra papperskorgen; ny påse + extra påsar i botten",
