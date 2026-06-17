@@ -9,7 +9,7 @@ import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Sparkles, RefreshCw, MessageSquare, AlertTriangle, CheckCircle2, Mail, Send } from "lucide-react";
-import { TENT_BY_ID, TENTS, todayInStockholm } from "@/cleaning/config";
+import { TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
 import { toast } from "sonner";
 
 interface Session { id: string; tent_id: string; cleaning_date: string; status: string; completed_at: string | null; guests: number | null; }
