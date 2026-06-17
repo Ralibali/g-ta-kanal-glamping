@@ -67,13 +67,30 @@ function LoginForm({ lang }: { lang: CleanLang }) {
 }
 
 
+type UpcomingRow = {
+  date: string;
+  tents: {
+    tent_id: string;
+    tentNo: number;
+    tentName: string;
+    hasArrival: boolean;
+    hasDeparture: boolean;
+    guests: number;
+    breakfast: boolean;
+    fikapase: boolean;
+    lateCheckout: boolean;
+  }[];
+};
+
 export default function Cleaning() {
   const { user, isCleaner, loading, signOut } = useCleaner();
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
+  const [view, setView] = useState<"day" | "overview">("overview");
   const [date, setDate] = useState<string>(todayInStockholm());
   const [stays, setStays] = useState<Stay[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selected, setSelected] = useState<TentDayData | null>(null);
+  const [upcoming, setUpcoming] = useState<UpcomingRow[]>([]);
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
@@ -90,7 +107,58 @@ export default function Cleaning() {
     setSessions((sessRows ?? []) as Session[]);
   };
 
-  useEffect(() => { if (user && isCleaner) load(); }, [user, isCleaner, date]);
+  const loadUpcoming = async () => {
+    const today = todayInStockholm();
+    const end = new Date();
+    end.setDate(end.getDate() + 60);
+    const endStr = end.toISOString().slice(0, 10);
+    const { data } = await (supabase as any)
+      .from("tent_stays")
+      .select("tent_id, checkin_date, checkout_date, guests, breakfast, fikapase, late_checkout")
+      .or(`and(checkin_date.gte.${today},checkin_date.lte.${endStr}),and(checkout_date.gte.${today},checkout_date.lte.${endStr})`);
+    const rows = (data ?? []) as Stay[];
+    const map = new Map<string, UpcomingRow>();
+    const addDate = (d: string) => {
+      if (!map.has(d)) map.set(d, { date: d, tents: [] });
+      return map.get(d)!;
+    };
+    TENTS.forEach((t) => {
+      rows.forEach((s) => {
+        if (s.tent_id !== t.id) return;
+        const dates: { d: string; arr: boolean; dep: boolean }[] = [];
+        if (s.checkin_date >= today && s.checkin_date <= endStr) dates.push({ d: s.checkin_date, arr: true, dep: false });
+        if (s.checkout_date >= today && s.checkout_date <= endStr) dates.push({ d: s.checkout_date, arr: false, dep: true });
+        dates.forEach(({ d, arr, dep }) => {
+          const row = addDate(d);
+          let existing = row.tents.find((x) => x.tent_id === t.id);
+          if (!existing) {
+            existing = {
+              tent_id: t.id, tentNo: t.no, tentName: t.name,
+              hasArrival: false, hasDeparture: false,
+              guests: 0, breakfast: false, fikapase: false, lateCheckout: false,
+            };
+            row.tents.push(existing);
+          }
+          if (arr) {
+            existing.hasArrival = true;
+            existing.guests = s.guests ?? 0;
+            existing.breakfast = !!s.breakfast;
+            existing.fikapase = !!s.fikapase;
+          }
+          if (dep) {
+            existing.hasDeparture = true;
+            existing.lateCheckout = !!s.late_checkout;
+          }
+        });
+      });
+    });
+    const list = Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
+    list.forEach((r) => r.tents.sort((a, b) => a.tentNo - b.tentNo));
+    setUpcoming(list);
+  };
+
+  useEffect(() => { if (user && isCleaner && view === "day") load(); }, [user, isCleaner, date, view]);
+  useEffect(() => { if (user && isCleaner && view === "overview") loadUpcoming(); }, [user, isCleaner, view]);
 
   const cards: TentDayData[] = useMemo(() => {
     return TENTS.map((t) => {
@@ -156,15 +224,69 @@ export default function Cleaning() {
         ) : (
           <>
             <p className="text-sm text-muted-foreground italic">{tr(lang, "intro")}</p>
-            <div>
-              <Label className="text-xs">{tr(lang, "date")}</Label>
-              <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-              <p className="text-xs text-muted-foreground mt-1">
-                {cards.length} {tr(lang, "tentsToHandle")}
-              </p>
+
+            <div className="flex gap-2">
+              <Button
+                variant={view === "overview" ? "default" : "outline"}
+                size="sm" className="flex-1"
+                onClick={() => setView("overview")}
+              >{tr(lang, "overview")}</Button>
+              <Button
+                variant={view === "day" ? "default" : "outline"}
+                size="sm" className="flex-1"
+                onClick={() => setView("day")}
+              >{tr(lang, "dayView")}</Button>
             </div>
 
-            {cards.length === 0 ? (
+            {view === "day" && (
+              <div>
+                <Label className="text-xs">{tr(lang, "date")}</Label>
+                <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                <p className="text-xs text-muted-foreground mt-1">
+                  {cards.length} {tr(lang, "tentsToHandle")}
+                </p>
+              </div>
+            )}
+
+
+            {view === "overview" ? (
+              upcoming.length === 0 ? (
+                <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noUpcoming")}</CardContent></Card>
+              ) : (
+                <div className="space-y-3">
+                  <h2 className="font-serif text-lg">{tr(lang, "upcomingDates")}</h2>
+                  {upcoming.map((row) => {
+                    const dateLabel = new Date(row.date).toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { weekday: "short", day: "numeric", month: "short" });
+                    return (
+                      <Card key={row.date}>
+                        <CardContent className="p-4 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div className="font-medium capitalize">{dateLabel}</div>
+                            <div className="text-xs text-muted-foreground">{row.date}</div>
+                          </div>
+                          <div className="space-y-1.5">
+                            {row.tents.map((t) => (
+                              <div key={t.tent_id} className="border rounded p-2">
+                                <div className="text-sm font-medium">Tält {t.tentNo} – {t.tentName}</div>
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                  {t.hasArrival && t.hasDeparture && <Badge className="bg-amber-500">{tr(lang, "changeover")}</Badge>}
+                                  {t.hasArrival && !t.hasDeparture && <Badge variant="secondary">{tr(lang, "arrival")}</Badge>}
+                                  {!t.hasArrival && t.hasDeparture && <Badge variant="secondary">{tr(lang, "departure")}</Badge>}
+                                  {t.hasArrival && t.guests > 0 && <Badge variant="outline">{t.guests} {tr(lang, "guests")}</Badge>}
+                                  {t.breakfast && <Badge variant="outline">{tr(lang, "breakfast")}</Badge>}
+                                  {t.fikapase && <Badge variant="outline">{tr(lang, "fika")}</Badge>}
+                                  {t.lateCheckout && <Badge variant="outline">{tr(lang, "lateCheckout")}</Badge>}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )
+            ) : cards.length === 0 ? (
               <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noTentsToday")}</CardContent></Card>
             ) : (
               <div className="space-y-3">
