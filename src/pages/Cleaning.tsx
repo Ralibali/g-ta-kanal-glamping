@@ -76,8 +76,6 @@ type UpcomingRow = {
     hasArrival: boolean;
     hasDeparture: boolean;
     guests: number;
-    breakfast: boolean;
-    fikapase: boolean;
     lateCheckout: boolean;
   }[];
 };
@@ -114,7 +112,7 @@ export default function Cleaning() {
     const endStr = end.toISOString().slice(0, 10);
     const { data } = await (supabase as any)
       .from("tent_stays")
-      .select("tent_id, checkin_date, checkout_date, guests, breakfast, fikapase, late_checkout")
+      .select("tent_id, checkin_date, checkout_date, guests, late_checkout")
       .or(`and(checkin_date.gte.${today},checkin_date.lte.${endStr}),and(checkout_date.gte.${today},checkout_date.lte.${endStr})`);
     const rows = (data ?? []) as Stay[];
     const map = new Map<string, UpcomingRow>();
@@ -135,15 +133,13 @@ export default function Cleaning() {
             existing = {
               tent_id: t.id, tentNo: t.no, tentName: t.name,
               hasArrival: false, hasDeparture: false,
-              guests: 0, breakfast: false, fikapase: false, lateCheckout: false,
+              guests: 0, lateCheckout: false,
             };
             row.tents.push(existing);
           }
           if (arr) {
             existing.hasArrival = true;
             existing.guests = s.guests ?? 0;
-            existing.breakfast = !!s.breakfast;
-            existing.fikapase = !!s.fikapase;
           }
           if (dep) {
             existing.hasDeparture = true;
@@ -273,8 +269,6 @@ export default function Cleaning() {
                                   {t.hasArrival && !t.hasDeparture && <Badge variant="secondary">{tr(lang, "arrival")}</Badge>}
                                   {!t.hasArrival && t.hasDeparture && <Badge variant="secondary">{tr(lang, "departure")}</Badge>}
                                   {t.hasArrival && t.guests > 0 && <Badge variant="outline">{t.guests} {tr(lang, "guests")}</Badge>}
-                                  {t.breakfast && <Badge variant="outline">{tr(lang, "breakfast")}</Badge>}
-                                  {t.fikapase && <Badge variant="outline">{tr(lang, "fika")}</Badge>}
                                   {t.lateCheckout && <Badge variant="outline">{tr(lang, "lateCheckout")}</Badge>}
                                 </div>
                               </div>
