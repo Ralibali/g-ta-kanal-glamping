@@ -1,0 +1,246 @@
+import { createClient } from 'npm:@supabase/supabase-js@2'
+import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
+
+const TENT_NAMES: Record<string, { no: number; name: string }> = {
+  sjobris: { no: 1, name: 'Sjöbrisretreatet' },
+  naturkarnan: { no: 2, name: 'Naturkärnan' },
+  lugnetsyta: { no: 3, name: 'Lugnets yta' },
+}
+
+const SMS_TEMPLATES: Record<string, string> = {
+  sv: 'Hej! Ditt tält {tent} på Bergs Slussar Glamping är nu städat och klart för incheckning. Varmt välkomna! Frågor? SMS:a 0722254993.',
+  en: 'Hi! Your tent {tent} at Bergs Slussar Glamping is now cleaned and ready for check-in. Warm welcome! Questions? Text 0722254993.',
+  da: 'Hej! Dit telt {tent} på Bergs Slussar Glamping er nu rengjort og klar til check-in. Velkommen! Spørgsmål? Sms 0722254993.',
+  no: 'Hei! Teltet ditt {tent} på Bergs Slussar Glamping er nå rengjort og klart for innsjekk. Velkommen! Spørsmål? Send SMS 0722254993.',
+  de: 'Hallo! Ihr Zelt {tent} im Bergs Slussar Glamping ist jetzt gereinigt und bereit zum Check-in. Willkommen! Fragen? SMS an 0722254993.',
+}
+
+function normalizePhone(raw: string | null | undefined): string | null {
+  if (!raw) return null
+  const trimmed = raw.replace(/[\s\-()]/g, '')
+  if (!trimmed) return null
+  if (trimmed.startsWith('+')) return trimmed
+  if (trimmed.startsWith('00')) return '+' + trimmed.slice(2)
+  if (trimmed.startsWith('0')) return '+46' + trimmed.slice(1)
+  return '+' + trimmed
+}
+
+async function sendSms(toPhone: string, body: string): Promise<{ id: string }> {
+  const provider = Deno.env.get('SMS_PROVIDER') ?? ''
+  if (provider === '46elks') {
+    const auth = btoa(`${Deno.env.get('ELKS_API_USERNAME')}:${Deno.env.get('ELKS_API_PASSWORD')}`)
+    const res = await fetch('https://api.46elks.com/a1/sms', {
+      method: 'POST',
+      headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        from: Deno.env.get('ELKS_FROM') ?? 'GoGlamping',
+        to: toPhone,
+        message: body,
+      }),
+    })
+    if (!res.ok) throw new Error(`46elks ${res.status}: ${await res.text()}`)
+    const json = await res.json()
+    return { id: json.id ?? '' }
+  }
+  throw new Error('NO_PROVIDER')
+}
+
+Deno.serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!
+
+  // Auth: validate caller (cleaner or admin)
+  const authHeader = req.headers.get('Authorization')
+  if (!authHeader?.startsWith('Bearer ')) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+  }
+  const callerClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } })
+  const { data: claims, error: claimsErr } = await callerClient.auth.getClaims(authHeader.replace('Bearer ', ''))
+  if (claimsErr || !claims?.claims?.sub) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+  }
+  const userId = claims.claims.sub
+
+  const supabase = createClient(supabaseUrl, serviceKey)
+
+  const { data: roleRows } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId)
+  const roles = (roleRows ?? []).map((r: { role: string }) => r.role)
+  if (!roles.includes('cleaner') && !roles.includes('admin')) {
+    return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+  }
+
+  let body: { tent_id?: string; cleaning_date?: string; session_id?: string } = {}
+  try { body = await req.json() } catch { /* ignore */ }
+  const tent_id = body.tent_id
+  const cleaning_date = body.cleaning_date
+  if (!tent_id || !cleaning_date) {
+    return new Response(JSON.stringify({ error: 'tent_id and cleaning_date required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+  }
+
+  const tentMeta = TENT_NAMES[tent_id] ?? { no: 0, name: tent_id }
+
+  // Look up today's arrival in this tent
+  const { data: stays } = await supabase
+    .from('tent_stays')
+    .select('*')
+    .eq('tent_id', tent_id)
+    .eq('checkin_date', cleaning_date)
+    .limit(1)
+
+  const arrival = (stays ?? [])[0] as
+    | { booking_number: string; phone: string | null; lang: string | null; guests: number | null; breakfast: boolean; fikapase: boolean; late_checkout: boolean }
+    | undefined
+
+  // Fetch session + issues for the email
+  const { data: session } = await supabase
+    .from('cleaning_sessions')
+    .select('*')
+    .eq('tent_id', tent_id)
+    .eq('cleaning_date', cleaning_date)
+    .maybeSingle() as any
+  const sessionId = body.session_id || session?.id || null
+
+  let issues: { description: string; photo_path: string | null }[] = []
+  if (sessionId) {
+    const { data } = await supabase
+      .from('cleaning_issues')
+      .select('description, photo_path')
+      .eq('session_id', sessionId)
+    issues = (data ?? []) as any
+  }
+
+  // Sign photo URLs (1h)
+  const emailIssues = await Promise.all(issues.map(async (it) => {
+    let photoUrl: string | undefined
+    if (it.photo_path) {
+      const { data } = await supabase.storage.from('cleaning-photos').createSignedUrl(it.photo_path, 60 * 60)
+      photoUrl = data?.signedUrl
+    }
+    return { description: it.description, photoUrl }
+  }))
+
+  let smsStatus = 'skipped'
+  let smsReason: string | null = null
+
+  if (!arrival) {
+    smsStatus = 'skipped'
+    smsReason = 'no_arrival_today'
+  } else {
+    const toPhone = normalizePhone(arrival.phone)
+    const lang = (arrival.lang ?? 'sv').toLowerCase()
+    const template = SMS_TEMPLATES[lang] ?? SMS_TEMPLATES.sv
+    const messageBody = template.replace('{tent}', tentMeta.name)
+
+    if (!toPhone) {
+      // Insert failed row (idempotent)
+      const { data: existing } = await supabase
+        .from('sms_outbox')
+        .select('id, status')
+        .eq('tent_id', tent_id)
+        .eq('cleaning_date_key', cleaning_date)
+        .maybeSingle() as any
+      if (!existing) {
+        await supabase.from('sms_outbox').insert({
+          booking_number: arrival.booking_number,
+          tent_id, cleaning_date_key: cleaning_date,
+          to_phone: null, lang, body: messageBody,
+          status: 'failed', error: 'missing_phone',
+        } as any)
+      }
+      smsStatus = 'failed'
+      smsReason = 'missing_phone'
+    } else {
+      // Idempotent insert
+      const { data: existing } = await supabase
+        .from('sms_outbox')
+        .select('id, status')
+        .eq('tent_id', tent_id)
+        .eq('cleaning_date_key', cleaning_date)
+        .maybeSingle() as any
+
+      let outboxId = existing?.id
+      if (!existing) {
+        const { data: ins } = await supabase.from('sms_outbox').insert({
+          booking_number: arrival.booking_number,
+          tent_id, cleaning_date_key: cleaning_date,
+          to_phone: toPhone, lang, body: messageBody,
+          status: 'queued',
+        } as any).select('id').single()
+        outboxId = (ins as any)?.id
+      } else if (existing.status === 'sent') {
+        smsStatus = 'sent'
+      }
+
+      if (smsStatus !== 'sent') {
+        try {
+          const result = await sendSms(toPhone, messageBody)
+          await supabase.from('sms_outbox').update({
+            status: 'sent', sent_at: new Date().toISOString(), provider_id: result.id,
+          } as any).eq('id', outboxId)
+          smsStatus = 'sent'
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err)
+          if (msg === 'NO_PROVIDER') {
+            smsStatus = 'queued'
+            smsReason = 'no_provider_configured'
+          } else {
+            await supabase.from('sms_outbox').update({
+              status: 'failed', error: msg,
+            } as any).eq('id', outboxId)
+            smsStatus = 'failed'
+            smsReason = msg
+          }
+        }
+      }
+    }
+  }
+
+  // Send admin email (always)
+  const completedAt = session?.completed_at
+    ? new Date(session.completed_at).toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })
+    : new Date().toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })
+
+  try {
+    await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${serviceKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        templateName: 'cleaning-complete',
+        idempotencyKey: `cleaning-${tent_id}-${cleaning_date}`,
+        templateData: {
+          tentName: tentMeta.name,
+          tentNo: tentMeta.no,
+          date: cleaning_date,
+          completedAt,
+          hasArrival: !!arrival,
+          guests: arrival?.guests ?? null,
+          bookingNumber: arrival?.booking_number ?? null,
+          breakfast: !!arrival?.breakfast,
+          fikapase: !!arrival?.fikapase,
+          lateCheckout: !!arrival?.late_checkout,
+          smsStatus: smsReason ? `${smsStatus} (${smsReason})` : smsStatus,
+          issues: emailIssues,
+          adminUrl: 'https://goglampingsweden.se/admin',
+        },
+      }),
+    })
+  } catch (err) {
+    console.error('Failed to send admin email', err)
+  }
+
+  return new Response(JSON.stringify({
+    success: true,
+    sms_status: smsStatus,
+    sms_reason: smsReason,
+    has_arrival: !!arrival,
+  }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+})
