@@ -258,6 +258,24 @@ export default function Cleaning() {
               >{tr(lang, "dayView")}</Button>
             </div>
 
+            <div className="flex gap-2">
+              <Button
+                variant={view === "calendar" ? "default" : "outline"}
+                size="sm" className="flex-1"
+                onClick={() => setView("calendar")}
+              >{tr(lang, "calendar")}</Button>
+              <Button
+                variant={view === "overview" ? "default" : "outline"}
+                size="sm" className="flex-1"
+                onClick={() => setView("overview")}
+              >{tr(lang, "overview")}</Button>
+              <Button
+                variant={view === "day" ? "default" : "outline"}
+                size="sm" className="flex-1"
+                onClick={() => setView("day")}
+              >{tr(lang, "dayView")}</Button>
+            </div>
+
             {view === "day" && (
               <div>
                 <Label className="text-xs">{tr(lang, "date")}</Label>
@@ -269,7 +287,69 @@ export default function Cleaning() {
             )}
 
 
-            {view === "overview" ? (
+            {view === "calendar" ? (
+              (() => {
+                const year = calMonth.getFullYear();
+                const month = calMonth.getMonth();
+                const first = new Date(year, month, 1);
+                const last = new Date(year, month + 1, 0);
+                // Monday = 0
+                const startOffset = (first.getDay() + 6) % 7;
+                const cells: (Date | null)[] = [];
+                for (let i = 0; i < startOffset; i++) cells.push(null);
+                for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(year, month, d));
+                while (cells.length % 7 !== 0) cells.push(null);
+                const monthLabel = first.toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { month: "long", year: "numeric" });
+                const dayNames = lang === "sv"
+                  ? ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"]
+                  : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+                const todayStr = todayInStockholm();
+                const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                return (
+                  <Card>
+                    <CardContent className="p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Button variant="ghost" size="sm" onClick={() => setCalMonth(new Date(year, month - 1, 1))}>‹</Button>
+                        <div className="font-medium capitalize">{monthLabel}</div>
+                        <Button variant="ghost" size="sm" onClick={() => setCalMonth(new Date(year, month + 1, 1))}>›</Button>
+                      </div>
+                      <div className="grid grid-cols-7 gap-1 text-[10px] text-muted-foreground text-center">
+                        {dayNames.map((n) => <div key={n} className="py-1">{n}</div>)}
+                      </div>
+                      <div className="grid grid-cols-7 gap-1">
+                        {cells.map((d, i) => {
+                          if (!d) return <div key={i} />;
+                          const key = fmt(d);
+                          const info = calData.get(key);
+                          const work = (info?.arrivals ?? 0) + (info?.departures ?? 0);
+                          const isToday = key === todayStr;
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => { setDate(key); setView("day"); }}
+                              className={`aspect-square rounded border p-1 flex flex-col items-center justify-start text-xs transition hover:bg-muted ${isToday ? "ring-2 ring-primary" : ""} ${work > 0 ? "bg-primary/10 border-primary/30" : ""}`}
+                            >
+                              <span className={`font-medium ${work > 0 ? "text-primary" : ""}`}>{d.getDate()}</span>
+                              {work > 0 && (
+                                <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
+                                  {info!.arrivals > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" title="ankomst" />}
+                                  {info!.departures > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" title="avresa" />}
+                                </div>
+                              )}
+                              {work > 0 && <span className="text-[9px] text-muted-foreground mt-auto">{work} {tr(lang, "tentsShort")}</span>}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <div className="flex gap-3 text-[10px] text-muted-foreground justify-center pt-1">
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> {tr(lang, "arrival")}</span>
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> {tr(lang, "departure")}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })()
+            ) : view === "overview" ? (
               upcoming.length === 0 ? (
                 <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noUpcoming")}</CardContent></Card>
               ) : (
