@@ -90,7 +90,7 @@ export default function Cleaning() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [selected, setSelected] = useState<TentDayData | null>(null);
   const [upcoming, setUpcoming] = useState<UpcomingRow[]>([]);
-  const [calData, setCalData] = useState<Map<string, { arrivals: number; departures: number }>>(new Map());
+  const [calData, setCalData] = useState<Map<string, { arrivals: number; departures: number; total: number }>>(new Map());
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
@@ -162,18 +162,33 @@ export default function Cleaning() {
     const e = end.toISOString().slice(0, 10);
     const { data } = await (supabase as any)
       .from("tent_stays")
-      .select("checkin_date, checkout_date")
+      .select("tent_id, checkin_date, checkout_date")
       .or(`and(checkin_date.gte.${s},checkin_date.lte.${e}),and(checkout_date.gte.${s},checkout_date.lte.${e})`);
-    const rows = (data ?? []) as { checkin_date: string; checkout_date: string }[];
-    const m = new Map<string, { arrivals: number; departures: number }>();
-    const bump = (d: string, k: "arrivals" | "departures") => {
+    const rows = (data ?? []) as { tent_id?: string; checkin_date: string; checkout_date: string }[];
+    const tentsByDate = new Map<string, Set<string>>();
+    const arrByDate = new Map<string, Set<string>>();
+    const depByDate = new Map<string, Set<string>>();
+    const bump = (map: Map<string, Set<string>>, d: string, tent: string) => {
       if (d < s || d > e) return;
-      const cur = m.get(d) ?? { arrivals: 0, departures: 0 };
-      cur[k]++;
-      m.set(d, cur);
+      if (!map.has(d)) map.set(d, new Set());
+      map.get(d)!.add(tent);
     };
-    rows.forEach((r) => { bump(r.checkin_date, "arrivals"); bump(r.checkout_date, "departures"); });
-    setCalData(m);
+    rows.forEach((r: any) => {
+      const tent = r.tent_id ?? Math.random().toString();
+      bump(tentsByDate, r.checkin_date, tent);
+      bump(tentsByDate, r.checkout_date, tent);
+      bump(arrByDate, r.checkin_date, tent);
+      bump(depByDate, r.checkout_date, tent);
+    });
+    const m = new Map<string, { arrivals: number; departures: number; total: number }>();
+    tentsByDate.forEach((set, d) => {
+      m.set(d, {
+        arrivals: arrByDate.get(d)?.size ?? 0,
+        departures: depByDate.get(d)?.size ?? 0,
+        total: set.size,
+      });
+    });
+    setCalData(m as any);
   };
 
   useEffect(() => { if (user && isCleaner && view === "day") load(); }, [user, isCleaner, date, view]);
@@ -309,7 +324,7 @@ export default function Cleaning() {
                           if (!d) return <div key={i} />;
                           const key = fmt(d);
                           const info = calData.get(key);
-                          const work = (info?.arrivals ?? 0) + (info?.departures ?? 0);
+                          const work = info?.total ?? 0;
                           const isToday = key === todayStr;
                           return (
                             <button
@@ -320,8 +335,8 @@ export default function Cleaning() {
                               <span className={`font-medium ${work > 0 ? "text-primary" : ""}`}>{d.getDate()}</span>
                               {work > 0 && (
                                 <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
-                                  {info!.arrivals > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" title="ankomst" />}
-                                  {info!.departures > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" title="avresa" />}
+                                  {(info!.arrivals ?? 0) > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" title="ankomst" />}
+                                  {(info!.departures ?? 0) > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" title="avresa" />}
                                 </div>
                               )}
                               {work > 0 && <span className="text-[9px] text-muted-foreground mt-auto">{work} {tr(lang, "tentsShort")}</span>}
