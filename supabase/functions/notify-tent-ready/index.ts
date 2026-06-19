@@ -268,6 +268,7 @@ Deno.serve(async (req) => {
           fikapase: !!arrival?.fikapase,
           lateCheckout: !!arrival?.late_checkout,
           smsStatus: smsReason ? `${smsStatus} (${smsReason})` : smsStatus,
+          guestEmailStatus,
           issues: emailIssues,
           adminUrl: 'https://goglampingsweden.se/admin',
         },
@@ -281,6 +282,7 @@ Deno.serve(async (req) => {
     success: true,
     sms_status: smsStatus,
     sms_reason: smsReason,
+    guest_email_status: guestEmailStatus,
     has_arrival: !!arrival,
   }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 })

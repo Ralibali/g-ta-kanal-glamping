@@ -20,13 +20,14 @@ interface Props {
   fikapase?: boolean
   lateCheckout?: boolean
   smsStatus?: string
+  guestEmailStatus?: string
   issues?: Issue[]
   adminUrl?: string
 }
 
 const CleaningCompleteEmail = ({
   tentName, tentNo, date, completedAt, hasArrival, guests, bookingNumber,
-  breakfast, fikapase, lateCheckout, smsStatus, issues = [], adminUrl,
+  breakfast, fikapase, lateCheckout, smsStatus, guestEmailStatus, issues = [], adminUrl,
 }: Props) => {
   const hasIssues = issues.length > 0
   const tillval = [breakfast ? 'Frukost' : null, fikapase ? 'Fikapåse' : null, lateCheckout ? 'Sen utcheckning' : null]
@@ -68,6 +69,9 @@ const CleaningCompleteEmail = ({
 
             <Text style={label}>SMS till gäst</Text>
             <Text style={value}>{smsStatus ?? '—'}</Text>
+
+            <Text style={label}>E-post till gäst</Text>
+            <Text style={value}>{guestEmailStatus ?? '—'}</Text>
           </Section>
 
           {hasIssues ? (
