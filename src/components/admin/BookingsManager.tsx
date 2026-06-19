@@ -268,6 +268,58 @@ export function BookingsManager() {
       header: true,
       skipEmptyLines: true,
       complete: async (results) => {
+        const headers = (results.meta.fields ?? []).map((h) => h.toLowerCase());
+        const hasType = headers.some((h) => h === "type" || h === "typ");
+        const hasPhoneCol = headers.some((h) => h.includes("phone") || h.includes("telefon"));
+
+        // ─── Basic info CSV: enrich phone/email only ────────────────
+        if (!hasType && hasPhoneCol) {
+          const updates = results.data
+            .map((row) => {
+              const lookup: Record<string, string> = {};
+              for (const [k, v] of Object.entries(row)) {
+                lookup[normaliseHeader(k)] = (v ?? "").toString().trim();
+              }
+              const pick = (...keys: string[]) => {
+                for (const k of keys) { const v = lookup[normaliseHeader(k)]; if (v) return v; }
+                return "";
+              };
+              const bn = pick("booking no.", "booking no", "bokningsnummer").toUpperCase();
+              if (!bn) return null;
+              let phone = pick("phone", "telefon", "mobile", "mobil");
+              // Sirvoy prefixes phone with a leading apostrophe
+              if (phone.startsWith("'")) phone = phone.slice(1);
+              const email = pick("email", "e-post", "epost", "mail");
+              if (!phone && !email) return null;
+              return { booking_number: bn, phone: phone || null, email: email || null };
+            })
+            .filter((x): x is { booking_number: string; phone: string | null; email: string | null } => !!x);
+
+          if (updates.length === 0) {
+            toast.error("Hittade inga bokningsnummer eller kontaktuppgifter i filen.");
+            setUploading(false);
+            if (fileRef.current) fileRef.current.value = "";
+            return;
+          }
+
+          let okBookings = 0, okStays = 0;
+          for (const u of updates) {
+            const patch: Record<string, string> = {};
+            if (u.phone) patch.phone = u.phone;
+            if (u.email) patch.email = u.email;
+            const { error: e1 } = await supabase.from("bookings").update(patch).eq("booking_number", u.booking_number);
+            if (!e1) okBookings++;
+            const { error: e2 } = await (supabase as any).from("tent_stays").update(patch).eq("booking_number", u.booking_number);
+            if (!e2) okStays++;
+          }
+          toast.success(`Kontaktuppgifter uppdaterade på ${okBookings} bokningar och ${okStays} tältvistelser.`);
+          await load();
+          setUploading(false);
+          if (fileRef.current) fileRef.current.value = "";
+          return;
+        }
+
+        // ─── Booking content CSV: full import ──────────────────────
         const rows = aggregateRows(results.data);
         if (rows.length === 0) {
           toast.error("Hittade inga giltiga rader. Saknas kolumnen för bokningsnummer?");
@@ -305,7 +357,7 @@ export function BookingsManager() {
               staysMsg = ` • ${stays.length} tältvistelser, ${datesWithTurnover.size} datum med växling.`;
             }
           }
-          toast.success(`${rows.length} bokningar uppladdade.${staysMsg}`);
+          toast.success(`${rows.length} bokningar uppladdade.${staysMsg} Tips: ladda nu upp "Basic info"-CSV för telefon/e-post.`);
           await load();
         }
         setUploading(false);
@@ -360,8 +412,7 @@ export function BookingsManager() {
             Ladda upp CSV
           </CardTitle>
           <CardDescription>
-            Befintliga bokningar (samma bokningsnummer) skrivs över. Igenkända kolumner:
-            bokningsnummer, namn, e-post, telefon, adress, incheckning, utcheckning, tält, belopp, språk.
+            Ladda upp <strong>"Booking content"</strong>-CSV för bokningar och städschema. Ladda sedan upp <strong>"Basic info"</strong>-CSV för att fylla i telefon och e-post (krävs för SMS/mail till gäst). Båda filerna känns igen automatiskt.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
