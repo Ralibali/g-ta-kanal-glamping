@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
     .limit(1)
 
   const arrival = (stays ?? [])[0] as
-    | { booking_number: string; guest_name: string | null; phone: string | null; lang: string | null; guests: number | null; breakfast: boolean; fikapase: boolean; late_checkout: boolean }
+    | { booking_number: string; guest_name: string | null; phone: string | null; email: string | null; lang: string | null; guests: number | null; breakfast: boolean; fikapase: boolean; late_checkout: boolean }
     | undefined
 
   // Fetch session + issues for the email
@@ -207,6 +207,40 @@ Deno.serve(async (req) => {
     }
   }
 
+  // Send guest welcome email (if email present)
+  let guestEmailStatus = 'skipped'
+  if (arrival?.email) {
+    try {
+      const res = await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${serviceKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          templateName: 'tent-ready-guest',
+          recipientEmail: arrival.email,
+          idempotencyKey: `tent-ready-guest-${tent_id}-${cleaning_date}`,
+          templateData: {
+            guestName: arrival.guest_name,
+            tentName: tentMeta.name,
+            tentNo: tentMeta.no,
+            breakfast: !!arrival.breakfast,
+            fikapase: !!arrival.fikapase,
+            lang: arrival.lang ?? 'sv',
+          },
+        }),
+      })
+      guestEmailStatus = res.ok ? 'sent' : `failed (${res.status})`
+    } catch (err) {
+      guestEmailStatus = `failed (${err instanceof Error ? err.message : String(err)})`
+    }
+  } else if (arrival) {
+    guestEmailStatus = 'missing_email'
+  } else {
+    guestEmailStatus = 'no_arrival'
+  }
+
   // Send admin email (always)
   const completedAt = session?.completed_at
     ? new Date(session.completed_at).toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })
@@ -234,6 +268,7 @@ Deno.serve(async (req) => {
           fikapase: !!arrival?.fikapase,
           lateCheckout: !!arrival?.late_checkout,
           smsStatus: smsReason ? `${smsStatus} (${smsReason})` : smsStatus,
+          guestEmailStatus,
           issues: emailIssues,
           adminUrl: 'https://goglampingsweden.se/admin',
         },
@@ -247,6 +282,7 @@ Deno.serve(async (req) => {
     success: true,
     sms_status: smsStatus,
     sms_reason: smsReason,
+    guest_email_status: guestEmailStatus,
     has_arrival: !!arrival,
   }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 })
