@@ -1,0 +1,1 @@
+DELETE FROM public.tent_stays WHERE booking_number = '26413' AND tent_id = 'lugnetsyta' AND checkin_date = '2026-06-19';
