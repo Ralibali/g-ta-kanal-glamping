@@ -307,7 +307,7 @@ export function BookingsManager() {
             const patch: Record<string, string> = {};
             if (u.phone) patch.phone = u.phone;
             if (u.email) patch.email = u.email;
-            const { error: e1 } = await supabase.from("bookings").update(patch).eq("booking_number", u.booking_number);
+            const { error: e1 } = await supabase.from("bookings").update(patch as never).eq("booking_number", u.booking_number);
             if (!e1) okBookings++;
             const { error: e2 } = await (supabase as any).from("tent_stays").update(patch).eq("booking_number", u.booking_number);
             if (!e2) okStays++;
