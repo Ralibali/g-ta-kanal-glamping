@@ -81,7 +81,7 @@ type UpcomingRow = {
 };
 
 export default function Cleaning() {
-  const { user, isCleaner, loading, signOut } = useCleaner();
+  const { user, isCleaner, isAdmin, loading, signOut } = useCleaner();
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
   const [view, setView] = useState<"day" | "overview" | "calendar">("calendar");
   const [calMonth, setCalMonth] = useState<Date>(() => { const d = new Date(); d.setDate(1); return d; });
@@ -92,6 +92,8 @@ export default function Cleaning() {
   const [upcoming, setUpcoming] = useState<UpcomingRow[]>([]);
   const [calData, setCalData] = useState<Map<string, { arrivals: number; departures: number; total: number }>>(new Map());
   const [nextCleaning, setNextCleaning] = useState<{ date: string; tents: number; arrivals: number; departures: number; guests: number } | null>(null);
+  const [selfCleanDates, setSelfCleanDates] = useState<Set<string>>(new Set());
+  const [togglingSelfClean, setTogglingSelfClean] = useState(false);
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
