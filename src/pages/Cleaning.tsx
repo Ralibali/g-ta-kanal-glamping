@@ -488,7 +488,7 @@ export default function Cleaning() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <h3 className="font-serif text-xl">{c.tentName}</h3>
-                            <p className="text-xs text-muted-foreground">Tält {c.tentNo} – {c.position}</p>
+                            <p className="text-xs text-muted-foreground">{tr(lang, "tentLabel")} {c.tentNo} – {c.position}</p>
 
                             {c.hasArrival && (
                               <div className="mt-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30 p-3">
