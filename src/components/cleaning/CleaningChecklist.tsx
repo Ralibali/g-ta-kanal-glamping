@@ -179,7 +179,7 @@ export function CleaningChecklist({ data, lang, onBack, onCompleted }: Props) {
 
       <div>
         <h2 className="font-serif text-2xl">{data.tentName}</h2>
-        <p className="text-xs text-muted-foreground">Tält {data.tentNo} • {data.position} • {data.date}</p>
+        <p className="text-xs text-muted-foreground">{tr(lang, "tentLabel")} {data.tentNo} • {data.position} • {data.date}</p>
         <div className="flex flex-wrap gap-2 mt-2">
           {data.hasArrival && data.hasDeparture && (
             <Badge className="bg-amber-500">{tr(lang, "changeover")}</Badge>
