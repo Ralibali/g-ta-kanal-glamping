@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, LogOut, Sparkles } from "lucide-react";
+import { CalendarDays, CheckCircle2, LogOut, Sparkles, Users } from "lucide-react";
 import { TENT_BY_ID, TENTS, todayInStockholm } from "@/cleaning/config";
 import { CLEAN_LANGS, getStoredLang, setStoredLang, tr, type CleanLang } from "@/cleaning/i18n";
 import { CleaningChecklist, type TentDayData } from "@/components/cleaning/CleaningChecklist";
@@ -91,6 +91,7 @@ export default function Cleaning() {
   const [selected, setSelected] = useState<TentDayData | null>(null);
   const [upcoming, setUpcoming] = useState<UpcomingRow[]>([]);
   const [calData, setCalData] = useState<Map<string, { arrivals: number; departures: number; total: number }>>(new Map());
+  const [nextCleaning, setNextCleaning] = useState<{ date: string; tents: number; arrivals: number; departures: number; guests: number } | null>(null);
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
@@ -195,6 +196,39 @@ export default function Cleaning() {
   useEffect(() => { if (user && isCleaner && view === "overview") loadUpcoming(); }, [user, isCleaner, view]);
   useEffect(() => { if (user && isCleaner && view === "calendar") loadCalendar(calMonth); }, [user, isCleaner, view, calMonth]);
 
+  // Load next upcoming cleaning date (banner) once when authed
+  useEffect(() => {
+    if (!user || !isCleaner) return;
+    (async () => {
+      const today = todayInStockholm();
+      const end = new Date();
+      end.setDate(end.getDate() + 90);
+      const endStr = end.toISOString().slice(0, 10);
+      const { data } = await (supabase as any)
+        .from("tent_stays")
+        .select("tent_id, checkin_date, checkout_date, guests")
+        .or(`and(checkin_date.gte.${today},checkin_date.lte.${endStr}),and(checkout_date.gte.${today},checkout_date.lte.${endStr})`);
+      const rows = (data ?? []) as { tent_id: string; checkin_date: string; checkout_date: string; guests: number }[];
+      const byDate = new Map<string, { tents: Set<string>; arrivals: Set<string>; departures: Set<string>; guests: number }>();
+      const bump = (d: string) => {
+        if (!byDate.has(d)) byDate.set(d, { tents: new Set(), arrivals: new Set(), departures: new Set(), guests: 0 });
+        return byDate.get(d)!;
+      };
+      rows.forEach((r) => {
+        if (r.checkin_date >= today && r.checkin_date <= endStr) {
+          const b = bump(r.checkin_date); b.tents.add(r.tent_id); b.arrivals.add(r.tent_id); b.guests += r.guests ?? 0;
+        }
+        if (r.checkout_date >= today && r.checkout_date <= endStr) {
+          const b = bump(r.checkout_date); b.tents.add(r.tent_id); b.departures.add(r.tent_id);
+        }
+      });
+      const sorted = Array.from(byDate.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+      if (sorted.length === 0) { setNextCleaning(null); return; }
+      const [d, info] = sorted[0];
+      setNextCleaning({ date: d, tents: info.tents.size, arrivals: info.arrivals.size, departures: info.departures.size, guests: info.guests });
+    })();
+  }, [user, isCleaner]);
+
   const cards: TentDayData[] = useMemo(() => {
     return TENTS.map((t) => {
       const arr = stays.find((s) => s.tent_id === t.id && s.checkin_date === date);
@@ -261,6 +295,56 @@ export default function Cleaning() {
             <p className="text-sm text-muted-foreground italic">{tr(lang, "intro")}</p>
 
 
+            {nextCleaning && (() => {
+              const today = todayInStockholm();
+              const nd = new Date(nextCleaning.date);
+              const td = new Date(today);
+              const diffDays = Math.round((nd.getTime() - td.getTime()) / 86400000);
+              const dateLabel = nd.toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { weekday: "long", day: "numeric", month: "long" });
+              const whenLabel = diffDays === 0
+                ? tr(lang, "today")
+                : diffDays === 1
+                  ? tr(lang, "tomorrow")
+                  : `${tr(lang, "inDays")} ${diffDays} ${diffDays === 1 ? tr(lang, "daysOne") : tr(lang, "days")}`;
+              return (
+                <button
+                  onClick={() => { setDate(nextCleaning.date); setView("day"); }}
+                  className="w-full text-left rounded-xl border-2 border-primary/40 bg-primary/10 p-4 hover:bg-primary/15 transition shadow-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-full bg-primary/20 p-2.5 shrink-0">
+                      <CalendarDays className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[11px] uppercase tracking-wider text-primary font-semibold">{tr(lang, "nextCleaning")}</div>
+                      <div className="font-serif text-lg leading-tight capitalize truncate">{dateLabel}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{whenLabel}</div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-2xl font-bold text-primary leading-none">{nextCleaning.tents}</div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{tr(lang, "tentsCount")}</div>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 mt-3 pt-3 border-t border-primary/20 text-xs">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <strong>{nextCleaning.arrivals}</strong> {tr(lang, "arrivals")}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      <strong>{nextCleaning.departures}</strong> {tr(lang, "departures")}
+                    </span>
+                    {nextCleaning.guests > 0 && (
+                      <span className="flex items-center gap-1.5 ml-auto">
+                        <Users className="h-3.5 w-3.5" />
+                        <strong>{nextCleaning.guests}</strong> {tr(lang, "totalGuests")}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              );
+            })()}
+
             <div className="flex gap-2">
               <Button
                 variant={view === "calendar" ? "default" : "outline"}
@@ -316,12 +400,12 @@ export default function Cleaning() {
                         <div className="font-medium capitalize">{monthLabel}</div>
                         <Button variant="ghost" size="sm" onClick={() => setCalMonth(new Date(year, month + 1, 1))}>›</Button>
                       </div>
-                      <div className="grid grid-cols-7 gap-1 text-[10px] text-muted-foreground text-center">
+                      <div className="grid grid-cols-7 gap-1.5 text-xs text-muted-foreground text-center font-medium">
                         {dayNames.map((n) => <div key={n} className="py-1">{n}</div>)}
                       </div>
-                      <div className="grid grid-cols-7 gap-1">
+                      <div className="grid grid-cols-7 gap-1.5">
                         {cells.map((d, i) => {
-                          if (!d) return <div key={i} />;
+                          if (!d) return <div key={i} className="min-h-[64px]" />;
                           const key = fmt(d);
                           const info = calData.get(key);
                           const work = info?.total ?? 0;
@@ -330,23 +414,33 @@ export default function Cleaning() {
                             <button
                               key={i}
                               onClick={() => { setDate(key); setView("day"); }}
-                              className={`aspect-square rounded border p-1 flex flex-col items-center justify-start text-xs transition hover:bg-muted ${isToday ? "ring-2 ring-primary" : ""} ${work > 0 ? "bg-primary/10 border-primary/30" : ""}`}
+                              className={`min-h-[64px] rounded-lg border p-1.5 flex flex-col items-center justify-between text-xs transition hover:bg-muted active:scale-95 ${isToday ? "ring-2 ring-primary" : ""} ${work > 0 ? "bg-primary/10 border-primary/40" : "border-border/60"}`}
                             >
-                              <span className={`font-medium ${work > 0 ? "text-primary" : ""}`}>{d.getDate()}</span>
+                              <span className={`text-sm font-semibold ${work > 0 ? "text-primary" : isToday ? "text-primary" : ""}`}>{d.getDate()}</span>
                               {work > 0 && (
-                                <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
-                                  {(info!.arrivals ?? 0) > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" title="ankomst" />}
-                                  {(info!.departures ?? 0) > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" title="avresa" />}
+                                <div className="flex flex-col items-center gap-0.5 w-full">
+                                  <div className="flex gap-1">
+                                    {(info!.arrivals ?? 0) > 0 && (
+                                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{info!.arrivals}
+                                      </span>
+                                    )}
+                                    {(info!.departures ?? 0) > 0 && (
+                                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-500">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{info!.departures}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="text-[10px] font-bold text-primary">{work} {tr(lang, "tentsShort")}</span>
                                 </div>
                               )}
-                              {work > 0 && <span className="text-[9px] text-muted-foreground mt-auto">{work} {tr(lang, "tentsShort")}</span>}
                             </button>
                           );
                         })}
                       </div>
-                      <div className="flex gap-3 text-[10px] text-muted-foreground justify-center pt-1">
-                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> {tr(lang, "arrival")}</span>
-                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> {tr(lang, "departure")}</span>
+                      <div className="flex gap-4 text-xs text-muted-foreground justify-center pt-2 border-t">
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> {tr(lang, "arrival")}</span>
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" /> {tr(lang, "departure")}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -388,16 +482,31 @@ export default function Cleaning() {
                       onClick={() => setSelected(c)}>
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <h3 className="font-serif text-xl">{c.tentName}</h3>
                             <p className="text-xs text-muted-foreground">Tält {c.tentNo} – {c.position}</p>
+
+                            {c.hasArrival && (
+                              <div className="mt-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30 p-3">
+                                <Users className="h-7 w-7 text-primary shrink-0" />
+                                <div className="flex-1">
+                                  <div className="text-[10px] uppercase tracking-wider text-primary font-semibold">{tr(lang, "guestsLabel")}</div>
+                                  <div className="flex items-baseline gap-1.5">
+                                    <span className="text-3xl font-bold text-primary leading-none">{c.guests}</span>
+                                    <span className="text-sm text-muted-foreground">{tr(lang, "guests").toLowerCase()}</span>
+                                    {c.children > 0 && (
+                                      <span className="text-xs text-muted-foreground ml-1">({c.children} {tr(lang, "children").toLowerCase()})</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
                             <div className="flex flex-wrap gap-1.5 mt-2">
                               {c.hasArrival && c.hasDeparture && <Badge className="bg-amber-500">{tr(lang, "changeover")}</Badge>}
                               {c.hasArrival && !c.hasDeparture && <Badge variant="secondary">{tr(lang, "arrivalOnly")}</Badge>}
                               {!c.hasArrival && c.hasDeparture && <Badge variant="secondary">{tr(lang, "departure")}</Badge>}
-                              {c.hasArrival && <Badge variant="outline">{c.guests} {tr(lang, "guests")}</Badge>}
                               {c.guests > 2 && <Badge variant="outline">{tr(lang, "sofaBed")}</Badge>}
-                              {c.children > 0 && <Badge variant="outline">{tr(lang, "children")}: {c.children}</Badge>}
                               {c.breakfast && <Badge variant="outline">{tr(lang, "breakfast")}</Badge>}
                               {c.fikapase && <Badge variant="outline">{tr(lang, "fika")}</Badge>}
                               {c.lateCheckout && <Badge variant="outline">{tr(lang, "lateCheckout")}</Badge>}

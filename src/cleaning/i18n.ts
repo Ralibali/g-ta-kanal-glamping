@@ -71,6 +71,15 @@ export const UI = {
   prevMonth: { sv: "Föregående", en: "Previous", si: "පෙර" },
   nextMonth: { sv: "Nästa", en: "Next", si: "ඊළඟ" },
   tentsShort: { sv: "tält", en: "tents", si: "කූඩාරම්" },
+  nextCleaning: { sv: "Nästa städning", en: "Next cleaning", si: "ඊළඟ පිරිසිදු කිරීම" },
+  inDays: { sv: "om", en: "in", si: "දින" },
+  days: { sv: "dagar", en: "days", si: "දින" },
+  daysOne: { sv: "dag", en: "day", si: "දින" },
+  tentsCount: { sv: "tält", en: "tents", si: "කූඩාරම්" },
+  arrivals: { sv: "ankomster", en: "arrivals", si: "පැමිණීම්" },
+  departures: { sv: "avresor", en: "departures", si: "පිටවීම්" },
+  guestsLabel: { sv: "Gäster i tältet", en: "Guests in tent", si: "කූඩාරමේ ආගන්තුකයන්" },
+  totalGuests: { sv: "gäster totalt", en: "guests total", si: "මුළු ආගන්තුකයන්" },
 } as const;
 
 export function tr<K extends keyof typeof UI>(lang: CleanLang, key: K): string {
