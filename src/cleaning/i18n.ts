@@ -121,6 +121,9 @@ export const UI = {
     en: "Christoffer cleans this day himself – topstäd does not need to come.",
     si: "මෙම දින Christoffer විසින්ම පිරිසිදු කරයි – topstäd පැමිණිය යුතු නැත.",
   },
+  topstadLabel: { sv: "Topstäd", en: "Topstäd", si: "Topstäd" },
+  christofferLabel: { sv: "Christoffer", en: "Christoffer", si: "Christoffer" },
+  whoCleansLegend: { sv: "Vem städar?", en: "Who cleans?", si: "කවුද පිරිසිදු කරන්නේ?" },
 } as const;
 
 export function tr<K extends keyof typeof UI>(lang: CleanLang, key: K): string {
