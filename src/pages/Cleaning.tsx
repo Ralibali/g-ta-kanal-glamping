@@ -44,7 +44,7 @@ function LoginForm({ lang }: { lang: CleanLang }) {
         <CardHeader className="text-center">
           <Sparkles className="h-8 w-8 mx-auto text-primary" />
           <CardTitle>{tr(lang, "loginTitle")}</CardTitle>
-          <p className="text-sm text-muted-foreground">Logga in med lösenordet <strong>topstäd</strong></p>
+          <p className="text-sm text-muted-foreground">{tr(lang, "loginHint")}</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-3">
@@ -235,7 +235,7 @@ export default function Cleaning() {
       const dep = stays.find((s) => s.tent_id === t.id && s.checkout_date === date);
       if (!arr && !dep) return null;
       return {
-        tent_id: t.id, tentNo: t.no, tentName: t.name, position: t.position, date,
+        tent_id: t.id, tentNo: t.no, tentName: t.name, position: t.position[lang], date,
         hasArrival: !!arr, hasDeparture: !!dep,
         arrivalBooking: arr?.booking_number,
         guests: arr?.guests ?? 0,
@@ -300,7 +300,8 @@ export default function Cleaning() {
               const nd = new Date(nextCleaning.date);
               const td = new Date(today);
               const diffDays = Math.round((nd.getTime() - td.getTime()) / 86400000);
-              const dateLabel = nd.toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { weekday: "long", day: "numeric", month: "long" });
+              const dateLocale = lang === "sv" ? "sv-SE" : lang === "si" ? "si-LK" : "en-GB";
+              const dateLabel = nd.toLocaleDateString(dateLocale, { weekday: "long", day: "numeric", month: "long" });
               const whenLabel = diffDays === 0
                 ? tr(lang, "today")
                 : diffDays === 1
@@ -386,10 +387,13 @@ export default function Cleaning() {
                 for (let i = 0; i < startOffset; i++) cells.push(null);
                 for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(year, month, d));
                 while (cells.length % 7 !== 0) cells.push(null);
-                const monthLabel = first.toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { month: "long", year: "numeric" });
+                const calLocale = lang === "sv" ? "sv-SE" : lang === "si" ? "si-LK" : "en-GB";
+                const monthLabel = first.toLocaleDateString(calLocale, { month: "long", year: "numeric" });
                 const dayNames = lang === "sv"
                   ? ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"]
-                  : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+                  : lang === "si"
+                    ? ["සඳු", "අඟ", "බදා", "බ්‍රහ", "සිකු", "සෙන", "ඉරි"]
+                    : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
                 const todayStr = todayInStockholm();
                 const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
                 return (
@@ -453,7 +457,7 @@ export default function Cleaning() {
                 <div className="space-y-3">
                   <h2 className="font-serif text-lg">{tr(lang, "upcomingDates")}</h2>
                   {upcoming.map((row) => {
-                    const dateLabel = new Date(row.date).toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { weekday: "short", day: "numeric", month: "short" });
+                    const dateLabel = new Date(row.date).toLocaleDateString(lang === "sv" ? "sv-SE" : lang === "si" ? "si-LK" : "en-GB", { weekday: "short", day: "numeric", month: "short" });
                     const total = row.tents.length;
                     return (
                       <Card key={row.date} className="cursor-pointer" onClick={() => { setDate(row.date); setView("day"); }}>
@@ -484,7 +488,7 @@ export default function Cleaning() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <h3 className="font-serif text-xl">{c.tentName}</h3>
-                            <p className="text-xs text-muted-foreground">Tält {c.tentNo} – {c.position}</p>
+                            <p className="text-xs text-muted-foreground">{tr(lang, "tentLabel")} {c.tentNo} – {c.position}</p>
 
                             {c.hasArrival && (
                               <div className="mt-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30 p-3">
