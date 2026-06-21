@@ -31,7 +31,7 @@ export function IssueReporter({ sessionId, tentId, date, lang, issues, onChange 
   const fileRef = useRef<HTMLInputElement>(null);
 
   const submit = async () => {
-    if (!sessionId) { toast.error("Spara checklistan först (kryssa något)"); return; }
+    if (!sessionId) { toast.error(tr(lang, "saveChecklistFirst")); return; }
     if (!desc.trim()) return;
     setBusy(true);
     try {
