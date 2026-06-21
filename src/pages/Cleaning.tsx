@@ -279,16 +279,21 @@ export default function Cleaning() {
         if (!byDate.has(d)) byDate.set(d, { tents: new Set(), arrivals: new Set(), departures: new Set(), guests: 0 });
         return byDate.get(d)!;
       };
+      const arrivalKeys = new Set(rows.map((r) => `${r.tent_id}|${r.checkin_date}`));
       rows.forEach((r) => {
         if (r.checkin_date >= today && r.checkin_date <= endStr) {
           const b = bump(r.checkin_date); b.tents.add(r.tent_id); b.arrivals.add(r.tent_id); b.guests += r.guests ?? 0;
         }
         if (r.checkout_date >= today && r.checkout_date <= endStr) {
-          const b = bump(r.checkout_date); b.tents.add(r.tent_id); b.departures.add(r.tent_id);
+          const sameDayArrival = arrivalKeys.has(`${r.tent_id}|${r.checkout_date}`);
+          const nextDayArrival = arrivalKeys.has(`${r.tent_id}|${nextDayStr(r.checkout_date)}`);
+          if (sameDayArrival || !nextDayArrival) {
+            const b = bump(r.checkout_date); b.tents.add(r.tent_id); b.departures.add(r.tent_id);
+          }
         }
       });
       const sorted = Array.from(byDate.entries())
-        .filter(([d]) => !selfCleanDates.has(d))
+        .filter(([d, info]) => !selfCleanDates.has(d) && info.tents.size > 0)
         .sort((a, b) => a[0].localeCompare(b[0]));
       if (sorted.length === 0) { setNextCleaning(null); return; }
       const [d, info] = sorted[0];
@@ -301,6 +306,8 @@ export default function Cleaning() {
       const arr = stays.find((s) => s.tent_id === t.id && s.checkin_date === date);
       const dep = stays.find((s) => s.tent_id === t.id && s.checkout_date === date);
       if (!arr && !dep) return null;
+      // Skip departure-only when same tent has an arrival the next day (cleaning happens then)
+      if (!arr && dep && nextDayArrivals.has(t.id)) return null;
       return {
         tent_id: t.id, tentNo: t.no, tentName: t.name, position: t.position[lang], date,
         hasArrival: !!arr, hasDeparture: !!dep,
@@ -311,7 +318,7 @@ export default function Cleaning() {
         lateCheckout: !!dep?.late_checkout,
       } as TentDayData;
     }).filter(Boolean) as TentDayData[];
-  }, [stays, date]);
+  }, [stays, date, nextDayArrivals, lang]);
 
   const sessByTent = useMemo(() => {
     const m = new Map<string, Session>();
