@@ -30,6 +30,8 @@ type Stay = {
   breakfast: boolean;
   fikapase: boolean;
   guest_name: string | null;
+  dietary: string[] | null;
+  dietary_note: string | null;
 };
 
 type Delivery = {
@@ -52,6 +54,8 @@ type Order = {
   children: number;
   kind: "breakfast" | "fikapase";
   deliveryDate: string;
+  dietary: string[];
+  dietaryNote: string | null;
   delivered?: Delivery;
 };
 
