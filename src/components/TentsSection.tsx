@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import tentImg1 from "@/assets/glamping-interior-cozy.jpg";
 import tentImg2 from "@/assets/glamping-interior-wide.jpg";
+import tentImg3 from "@/assets/glamping-interior-beds.jpg";
 import { useLang } from "@/i18n/LanguageContext";
 
 const TentsSection = () => {
@@ -11,10 +12,12 @@ const TentsSection = () => {
     ? [
         { name: "Sjöbrisretreatet", image: tentImg1, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
         { name: "Naturkärnan", image: tentImg2, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
+        { name: "The Calm Space", image: tentImg3, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
       ]
     : [
         { name: "Sjöbrisretreatet", image: tentImg1, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
         { name: "Naturkärnan", image: tentImg2, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
+        { name: "Lugnets yta", image: tentImg3, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
       ];
 
   return (
