@@ -295,6 +295,56 @@ export default function Cleaning() {
             <p className="text-sm text-muted-foreground italic">{tr(lang, "intro")}</p>
 
 
+            {nextCleaning && (() => {
+              const today = todayInStockholm();
+              const nd = new Date(nextCleaning.date);
+              const td = new Date(today);
+              const diffDays = Math.round((nd.getTime() - td.getTime()) / 86400000);
+              const dateLabel = nd.toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { weekday: "long", day: "numeric", month: "long" });
+              const whenLabel = diffDays === 0
+                ? tr(lang, "today")
+                : diffDays === 1
+                  ? tr(lang, "tomorrow")
+                  : `${tr(lang, "inDays")} ${diffDays} ${diffDays === 1 ? tr(lang, "daysOne") : tr(lang, "days")}`;
+              return (
+                <button
+                  onClick={() => { setDate(nextCleaning.date); setView("day"); }}
+                  className="w-full text-left rounded-xl border-2 border-primary/40 bg-primary/10 p-4 hover:bg-primary/15 transition shadow-sm"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-full bg-primary/20 p-2.5 shrink-0">
+                      <CalendarDays className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[11px] uppercase tracking-wider text-primary font-semibold">{tr(lang, "nextCleaning")}</div>
+                      <div className="font-serif text-lg leading-tight capitalize truncate">{dateLabel}</div>
+                      <div className="text-xs text-muted-foreground mt-0.5">{whenLabel}</div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-2xl font-bold text-primary leading-none">{nextCleaning.tents}</div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{tr(lang, "tentsCount")}</div>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 mt-3 pt-3 border-t border-primary/20 text-xs">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <strong>{nextCleaning.arrivals}</strong> {tr(lang, "arrivals")}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      <strong>{nextCleaning.departures}</strong> {tr(lang, "departures")}
+                    </span>
+                    {nextCleaning.guests > 0 && (
+                      <span className="flex items-center gap-1.5 ml-auto">
+                        <Users className="h-3.5 w-3.5" />
+                        <strong>{nextCleaning.guests}</strong> {tr(lang, "totalGuests")}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              );
+            })()}
+
             <div className="flex gap-2">
               <Button
                 variant={view === "calendar" ? "default" : "outline"}
