@@ -401,14 +401,34 @@ export default function Cleaning() {
             </div>
 
             {view === "day" && (
-              <div>
-                <Label className="text-xs">{tr(lang, "date")}</Label>
-                <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-                <p className="text-xs text-muted-foreground mt-1">
-                  {cards.length} {tr(lang, "tentsToHandle")}
-                </p>
+              <div className="space-y-2">
+                <div>
+                  <Label className="text-xs">{tr(lang, "date")}</Label>
+                  <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {cards.length} {tr(lang, "tentsToHandle")}
+                  </p>
+                </div>
+                {selfCleanDates.has(date) && (
+                  <div className="rounded-lg border-2 border-blue-500/50 bg-blue-500/10 p-3 text-sm">
+                    <div className="font-semibold text-blue-900 dark:text-blue-200">🧹 {tr(lang, "selfClean")}</div>
+                    <div className="text-xs text-blue-900/80 dark:text-blue-200/80 mt-1">{tr(lang, "selfCleanBannerDay")}</div>
+                  </div>
+                )}
+                {isAdmin && (
+                  <Button
+                    variant={selfCleanDates.has(date) ? "outline" : "secondary"}
+                    size="sm"
+                    className="w-full"
+                    disabled={togglingSelfClean}
+                    onClick={() => toggleSelfClean(date)}
+                  >
+                    {selfCleanDates.has(date) ? tr(lang, "unmarkSelfClean") : tr(lang, "markSelfClean")}
+                  </Button>
+                )}
               </div>
             )}
+
 
 
             {view === "calendar" ? (
