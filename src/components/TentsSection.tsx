@@ -35,7 +35,7 @@ const TentsSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {tents.map((tent, i) => (
             <motion.div
               key={tent.name}
@@ -48,7 +48,7 @@ const TentsSection = () => {
               <div className="overflow-hidden aspect-[4/3] relative">
                 <img
                   src={tent.image}
-                  alt={`Inredning i glamping-tält vid Bergs Slussar – dubbelsäng och ombonad miljö`}
+                  alt={`${tent.name} – glamping-tält vid Bergs Slussar med dubbelsäng och bäddsoffa`}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                   loading="lazy"
                 />
