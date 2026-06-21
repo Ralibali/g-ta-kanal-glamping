@@ -457,7 +457,7 @@ export default function Cleaning() {
                 <div className="space-y-3">
                   <h2 className="font-serif text-lg">{tr(lang, "upcomingDates")}</h2>
                   {upcoming.map((row) => {
-                    const dateLabel = new Date(row.date).toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { weekday: "short", day: "numeric", month: "short" });
+                    const dateLabel = new Date(row.date).toLocaleDateString(lang === "sv" ? "sv-SE" : lang === "si" ? "si-LK" : "en-GB", { weekday: "short", day: "numeric", month: "short" });
                     const total = row.tents.length;
                     return (
                       <Card key={row.date} className="cursor-pointer" onClick={() => { setDate(row.date); setView("day"); }}>
