@@ -447,33 +447,35 @@ const Boka = () => {
   }, []);
 
   return (
-    <LanguageProvider value="sv">
-      <Helmet>
-        <title>Boka glamping vid Göta kanal | Bergs Slussar Glamping</title>
-        <meta name="description" content="Boka ett ombonat glampingtält vid Bergs slussar och Göta kanal. Bäddade sängar, värme, el och smidig direktbokning nära Linköping." />
-        <link rel="canonical" href="https://goglampingsweden.se/boka" />
-        <meta property="og:title" content="Boka glamping vid Göta kanal | Bergs Slussar Glamping" />
-        <meta property="og:description" content="Ombonade glampingtält vid Bergs slussar och Göta kanal. Bäddade sängar, värme och el – 15 minuter från Linköping." />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://goglampingsweden.se/boka" />
-        <meta property="og:image" content="https://goglampingsweden.se/og-image.jpg" />
-      </Helmet>
-      <style>{FONT_STYLES}</style>
+    <HelmetProvider>
+      <LanguageProvider value="sv">
+        <Helmet>
+          <title>Boka glamping vid Göta kanal | Bergs Slussar Glamping</title>
+          <meta name="description" content="Boka ett ombonat glampingtält vid Bergs slussar och Göta kanal. Bäddade sängar, värme, el och smidig direktbokning nära Linköping." />
+          <link rel="canonical" href="https://goglampingsweden.se/boka" />
+          <meta property="og:title" content="Boka glamping vid Göta kanal | Bergs Slussar Glamping" />
+          <meta property="og:description" content="Ombonade glampingtält vid Bergs slussar och Göta kanal. Bäddade sängar, värme och el – 15 minuter från Linköping." />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://goglampingsweden.se/boka" />
+          <meta property="og:image" content="https://goglampingsweden.se/og-image.jpg" />
+        </Helmet>
+        <style>{FONT_STYLES}</style>
 
-      <div className="boka-page">
-        <Header />
-        <main>
-          <Hero />
-          <BookingCard />
-          <Benefits />
-          <Editorial />
-          <Steps />
-          <FAQ />
-        </main>
-        <Footer />
-        <StickyMobileCTA />
-      </div>
-    </LanguageProvider>
+        <div className="boka-page">
+          <Header />
+          <main>
+            <Hero />
+            <BookingCard />
+            <Benefits />
+            <Editorial />
+            <Steps />
+            <FAQ />
+          </main>
+          <Footer />
+          <StickyMobileCTA />
+        </div>
+      </LanguageProvider>
+    </HelmetProvider>
   );
 };
 
