@@ -80,6 +80,17 @@ export const UI = {
   departures: { sv: "avresor", en: "departures", si: "පිටවීම්" },
   guestsLabel: { sv: "Gäster i tältet", en: "Guests in tent", si: "කූඩාරමේ ආගන්තුකයන්" },
   totalGuests: { sv: "gäster totalt", en: "guests total", si: "මුළු ආගන්තුකයන්" },
+  tentLabel: { sv: "Tält", en: "Tent", si: "කූඩාරම" },
+  loginHint: {
+    sv: "Logga in med lösenordet topstäd",
+    en: "Sign in with the password topstäd",
+    si: "topstäd මුරපදය භාවිතා කර පුරනය වන්න",
+  },
+  saveChecklistFirst: {
+    sv: "Spara checklistan först (kryssa något)",
+    en: "Save the checklist first (tick something)",
+    si: "පළමුව පිරික්සුම් ලැයිස්තුව සුරකින්න (යමක් සලකුණු කරන්න)",
+  },
 } as const;
 
 export function tr<K extends keyof typeof UI>(lang: CleanLang, key: K): string {
