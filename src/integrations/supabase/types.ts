@@ -447,6 +447,27 @@ export type Database = {
         }
         Relationships: []
       }
+      self_clean_dates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          date: string
+          note: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          date: string
+          note?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          date?: string
+          note?: string | null
+        }
+        Relationships: []
+      }
       sms_outbox: {
         Row: {
           body: string

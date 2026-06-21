@@ -81,7 +81,7 @@ type UpcomingRow = {
 };
 
 export default function Cleaning() {
-  const { user, isCleaner, loading, signOut } = useCleaner();
+  const { user, isCleaner, isAdmin, loading, signOut } = useCleaner();
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
   const [view, setView] = useState<"day" | "overview" | "calendar">("calendar");
   const [calMonth, setCalMonth] = useState<Date>(() => { const d = new Date(); d.setDate(1); return d; });
@@ -92,6 +92,8 @@ export default function Cleaning() {
   const [upcoming, setUpcoming] = useState<UpcomingRow[]>([]);
   const [calData, setCalData] = useState<Map<string, { arrivals: number; departures: number; total: number }>>(new Map());
   const [nextCleaning, setNextCleaning] = useState<{ date: string; tents: number; arrivals: number; departures: number; guests: number } | null>(null);
+  const [selfCleanDates, setSelfCleanDates] = useState<Set<string>>(new Set());
+  const [togglingSelfClean, setTogglingSelfClean] = useState(false);
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
@@ -196,7 +198,34 @@ export default function Cleaning() {
   useEffect(() => { if (user && isCleaner && view === "overview") loadUpcoming(); }, [user, isCleaner, view]);
   useEffect(() => { if (user && isCleaner && view === "calendar") loadCalendar(calMonth); }, [user, isCleaner, view, calMonth]);
 
-  // Load next upcoming cleaning date (banner) once when authed
+  const loadSelfClean = async () => {
+    const { data } = await (supabase as any).from("self_clean_dates").select("date");
+    setSelfCleanDates(new Set(((data ?? []) as { date: string }[]).map((r) => r.date)));
+  };
+  useEffect(() => { if (user && isCleaner) loadSelfClean(); }, [user, isCleaner]);
+
+  const toggleSelfClean = async (d: string) => {
+    if (!isAdmin || togglingSelfClean) return;
+    setTogglingSelfClean(true);
+    try {
+      if (selfCleanDates.has(d)) {
+        const { error } = await (supabase as any).from("self_clean_dates").delete().eq("date", d);
+        if (error) throw error;
+        toast.success(tr(lang, "unmarkSelfClean"));
+      } else {
+        const { error } = await (supabase as any).from("self_clean_dates").insert({ date: d, created_by: user?.id });
+        if (error) throw error;
+        toast.success(tr(lang, "selfClean"));
+      }
+      await loadSelfClean();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    } finally {
+      setTogglingSelfClean(false);
+    }
+  };
+
+
   useEffect(() => {
     if (!user || !isCleaner) return;
     (async () => {
@@ -222,12 +251,14 @@ export default function Cleaning() {
           const b = bump(r.checkout_date); b.tents.add(r.tent_id); b.departures.add(r.tent_id);
         }
       });
-      const sorted = Array.from(byDate.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+      const sorted = Array.from(byDate.entries())
+        .filter(([d]) => !selfCleanDates.has(d))
+        .sort((a, b) => a[0].localeCompare(b[0]));
       if (sorted.length === 0) { setNextCleaning(null); return; }
       const [d, info] = sorted[0];
       setNextCleaning({ date: d, tents: info.tents.size, arrivals: info.arrivals.size, departures: info.departures.size, guests: info.guests });
     })();
-  }, [user, isCleaner]);
+  }, [user, isCleaner, selfCleanDates]);
 
   const cards: TentDayData[] = useMemo(() => {
     return TENTS.map((t) => {
@@ -293,6 +324,11 @@ export default function Cleaning() {
         ) : (
           <>
             <p className="text-sm text-muted-foreground italic">{tr(lang, "intro")}</p>
+            <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-900 dark:text-amber-200">
+              📅 {tr(lang, "thursdayNotice")}
+            </div>
+
+
 
 
             {nextCleaning && (() => {
@@ -365,14 +401,34 @@ export default function Cleaning() {
             </div>
 
             {view === "day" && (
-              <div>
-                <Label className="text-xs">{tr(lang, "date")}</Label>
-                <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-                <p className="text-xs text-muted-foreground mt-1">
-                  {cards.length} {tr(lang, "tentsToHandle")}
-                </p>
+              <div className="space-y-2">
+                <div>
+                  <Label className="text-xs">{tr(lang, "date")}</Label>
+                  <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {cards.length} {tr(lang, "tentsToHandle")}
+                  </p>
+                </div>
+                {selfCleanDates.has(date) && (
+                  <div className="rounded-lg border-2 border-blue-500/50 bg-blue-500/10 p-3 text-sm">
+                    <div className="font-semibold text-blue-900 dark:text-blue-200">🧹 {tr(lang, "selfClean")}</div>
+                    <div className="text-xs text-blue-900/80 dark:text-blue-200/80 mt-1">{tr(lang, "selfCleanBannerDay")}</div>
+                  </div>
+                )}
+                {isAdmin && (
+                  <Button
+                    variant={selfCleanDates.has(date) ? "outline" : "secondary"}
+                    size="sm"
+                    className="w-full"
+                    disabled={togglingSelfClean}
+                    onClick={() => toggleSelfClean(date)}
+                  >
+                    {selfCleanDates.has(date) ? tr(lang, "unmarkSelfClean") : tr(lang, "markSelfClean")}
+                  </Button>
+                )}
               </div>
             )}
+
 
 
             {view === "calendar" ? (
@@ -414,37 +470,45 @@ export default function Cleaning() {
                           const info = calData.get(key);
                           const work = info?.total ?? 0;
                           const isToday = key === todayStr;
+                          const isSelf = selfCleanDates.has(key) && work > 0;
                           return (
                             <button
                               key={i}
                               onClick={() => { setDate(key); setView("day"); }}
-                              className={`min-h-[64px] rounded-lg border p-1.5 flex flex-col items-center justify-between text-xs transition hover:bg-muted active:scale-95 ${isToday ? "ring-2 ring-primary" : ""} ${work > 0 ? "bg-primary/10 border-primary/40" : "border-border/60"}`}
+                              className={`min-h-[64px] rounded-lg border p-1.5 flex flex-col items-center justify-between text-xs transition hover:bg-muted active:scale-95 ${isToday ? "ring-2 ring-primary" : ""} ${isSelf ? "bg-blue-500/10 border-blue-500/50 opacity-80" : work > 0 ? "bg-primary/10 border-primary/40" : "border-border/60"}`}
                             >
-                              <span className={`text-sm font-semibold ${work > 0 ? "text-primary" : isToday ? "text-primary" : ""}`}>{d.getDate()}</span>
+                              <span className={`text-sm font-semibold ${isSelf ? "text-blue-700 dark:text-blue-300 line-through" : work > 0 ? "text-primary" : isToday ? "text-primary" : ""}`}>{d.getDate()}</span>
                               {work > 0 && (
-                                <div className="flex flex-col items-center gap-0.5 w-full">
-                                  <div className="flex gap-1">
-                                    {(info!.arrivals ?? 0) > 0 && (
-                                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{info!.arrivals}
-                                      </span>
-                                    )}
-                                    {(info!.departures ?? 0) > 0 && (
-                                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-500">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{info!.departures}
-                                      </span>
-                                    )}
+                                isSelf ? (
+                                  <span className="text-[9px] font-bold text-blue-700 dark:text-blue-300 leading-tight text-center">
+                                    🧹 {tr(lang, "selfCleanShort")}
+                                  </span>
+                                ) : (
+                                  <div className="flex flex-col items-center gap-0.5 w-full">
+                                    <div className="flex gap-1">
+                                      {(info!.arrivals ?? 0) > 0 && (
+                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
+                                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{info!.arrivals}
+                                        </span>
+                                      )}
+                                      {(info!.departures ?? 0) > 0 && (
+                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-500">
+                                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{info!.departures}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="text-[10px] font-bold text-primary">{work} {tr(lang, "tentsShort")}</span>
                                   </div>
-                                  <span className="text-[10px] font-bold text-primary">{work} {tr(lang, "tentsShort")}</span>
-                                </div>
+                                )
                               )}
                             </button>
                           );
                         })}
                       </div>
-                      <div className="flex gap-4 text-xs text-muted-foreground justify-center pt-2 border-t">
+                      <div className="flex gap-4 text-xs text-muted-foreground justify-center pt-2 border-t flex-wrap">
                         <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> {tr(lang, "arrival")}</span>
                         <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" /> {tr(lang, "departure")}</span>
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500" /> {tr(lang, "selfCleanShort")}</span>
                       </div>
                     </CardContent>
                   </Card>
