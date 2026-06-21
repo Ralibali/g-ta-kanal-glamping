@@ -470,37 +470,45 @@ export default function Cleaning() {
                           const info = calData.get(key);
                           const work = info?.total ?? 0;
                           const isToday = key === todayStr;
+                          const isSelf = selfCleanDates.has(key) && work > 0;
                           return (
                             <button
                               key={i}
                               onClick={() => { setDate(key); setView("day"); }}
-                              className={`min-h-[64px] rounded-lg border p-1.5 flex flex-col items-center justify-between text-xs transition hover:bg-muted active:scale-95 ${isToday ? "ring-2 ring-primary" : ""} ${work > 0 ? "bg-primary/10 border-primary/40" : "border-border/60"}`}
+                              className={`min-h-[64px] rounded-lg border p-1.5 flex flex-col items-center justify-between text-xs transition hover:bg-muted active:scale-95 ${isToday ? "ring-2 ring-primary" : ""} ${isSelf ? "bg-blue-500/10 border-blue-500/50 opacity-80" : work > 0 ? "bg-primary/10 border-primary/40" : "border-border/60"}`}
                             >
-                              <span className={`text-sm font-semibold ${work > 0 ? "text-primary" : isToday ? "text-primary" : ""}`}>{d.getDate()}</span>
+                              <span className={`text-sm font-semibold ${isSelf ? "text-blue-700 dark:text-blue-300 line-through" : work > 0 ? "text-primary" : isToday ? "text-primary" : ""}`}>{d.getDate()}</span>
                               {work > 0 && (
-                                <div className="flex flex-col items-center gap-0.5 w-full">
-                                  <div className="flex gap-1">
-                                    {(info!.arrivals ?? 0) > 0 && (
-                                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{info!.arrivals}
-                                      </span>
-                                    )}
-                                    {(info!.departures ?? 0) > 0 && (
-                                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-500">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{info!.departures}
-                                      </span>
-                                    )}
+                                isSelf ? (
+                                  <span className="text-[9px] font-bold text-blue-700 dark:text-blue-300 leading-tight text-center">
+                                    🧹 {tr(lang, "selfCleanShort")}
+                                  </span>
+                                ) : (
+                                  <div className="flex flex-col items-center gap-0.5 w-full">
+                                    <div className="flex gap-1">
+                                      {(info!.arrivals ?? 0) > 0 && (
+                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
+                                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{info!.arrivals}
+                                        </span>
+                                      )}
+                                      {(info!.departures ?? 0) > 0 && (
+                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-500">
+                                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{info!.departures}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="text-[10px] font-bold text-primary">{work} {tr(lang, "tentsShort")}</span>
                                   </div>
-                                  <span className="text-[10px] font-bold text-primary">{work} {tr(lang, "tentsShort")}</span>
-                                </div>
+                                )
                               )}
                             </button>
                           );
                         })}
                       </div>
-                      <div className="flex gap-4 text-xs text-muted-foreground justify-center pt-2 border-t">
+                      <div className="flex gap-4 text-xs text-muted-foreground justify-center pt-2 border-t flex-wrap">
                         <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> {tr(lang, "arrival")}</span>
                         <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" /> {tr(lang, "departure")}</span>
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500" /> {tr(lang, "selfCleanShort")}</span>
                       </div>
                     </CardContent>
                   </Card>
