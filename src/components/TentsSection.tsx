@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import tentImg1 from "@/assets/glamping-interior-cozy.jpg";
 import tentImg2 from "@/assets/glamping-interior-wide.jpg";
+import tentImg3 from "@/assets/glamping-interior-beds.jpg";
 import { useLang } from "@/i18n/LanguageContext";
 
 const TentsSection = () => {
@@ -11,10 +12,12 @@ const TentsSection = () => {
     ? [
         { name: "Sjöbrisretreatet", image: tentImg1, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
         { name: "Naturkärnan", image: tentImg2, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
+        { name: "The Calm Space", image: tentImg3, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
       ]
     : [
         { name: "Sjöbrisretreatet", image: tentImg1, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
         { name: "Naturkärnan", image: tentImg2, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
+        { name: "Lugnets yta", image: tentImg3, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
       ];
 
   return (
@@ -32,7 +35,7 @@ const TentsSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {tents.map((tent, i) => (
             <motion.div
               key={tent.name}
@@ -45,7 +48,7 @@ const TentsSection = () => {
               <div className="overflow-hidden aspect-[4/3] relative">
                 <img
                   src={tent.image}
-                  alt={`Inredning i glamping-tält vid Bergs Slussar – dubbelsäng och ombonad miljö`}
+                  alt={`${tent.name} – glamping-tält vid Bergs Slussar med dubbelsäng och bäddsoffa`}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                   loading="lazy"
                 />
