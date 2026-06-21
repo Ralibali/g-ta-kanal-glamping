@@ -146,6 +146,37 @@ export default function Breakfast() {
   const [confirm, setConfirm] = useState<Order | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [upcomingWindow, setUpcomingWindow] = useState(45);
+  const [editDiet, setEditDiet] = useState<Order | null>(null);
+  const [dietDraft, setDietDraft] = useState<string[]>([]);
+  const [dietNoteDraft, setDietNoteDraft] = useState<string>("");
+  const [savingDiet, setSavingDiet] = useState(false);
+
+  const openDietEditor = (o: Order) => {
+    setDietDraft(o.dietary ?? []);
+    setDietNoteDraft(o.dietaryNote ?? "");
+    setEditDiet(o);
+  };
+
+  const saveDiet = async () => {
+    if (!editDiet) return;
+    setSavingDiet(true);
+    try {
+      const { error } = await (supabase as any).rpc("set_stay_dietary", {
+        p_booking_number: editDiet.booking_number,
+        p_tent_id: editDiet.tent_id,
+        p_dietary: dietDraft,
+        p_dietary_note: dietNoteDraft || null,
+      });
+      if (error) throw error;
+      toast.success("Kostanpassning sparad");
+      setEditDiet(null);
+      await load();
+    } catch (e: any) {
+      toast.error(e.message ?? "Kunde inte spara");
+    } finally {
+      setSavingDiet(false);
+    }
+  };
 
   const load = async () => {
     const { data: stayRows } = await (supabase as any)
