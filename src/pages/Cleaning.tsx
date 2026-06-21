@@ -251,12 +251,14 @@ export default function Cleaning() {
           const b = bump(r.checkout_date); b.tents.add(r.tent_id); b.departures.add(r.tent_id);
         }
       });
-      const sorted = Array.from(byDate.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+      const sorted = Array.from(byDate.entries())
+        .filter(([d]) => !selfCleanDates.has(d))
+        .sort((a, b) => a[0].localeCompare(b[0]));
       if (sorted.length === 0) { setNextCleaning(null); return; }
       const [d, info] = sorted[0];
       setNextCleaning({ date: d, tents: info.tents.size, arrivals: info.arrivals.size, departures: info.departures.size, guests: info.guests });
     })();
-  }, [user, isCleaner]);
+  }, [user, isCleaner, selfCleanDates]);
 
   const cards: TentDayData[] = useMemo(() => {
     return TENTS.map((t) => {
