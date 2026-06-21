@@ -324,6 +324,11 @@ export default function Cleaning() {
         ) : (
           <>
             <p className="text-sm text-muted-foreground italic">{tr(lang, "intro")}</p>
+            <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-900 dark:text-amber-200">
+              📅 {tr(lang, "thursdayNotice")}
+            </div>
+
+
 
 
             {nextCleaning && (() => {
