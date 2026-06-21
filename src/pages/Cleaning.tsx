@@ -198,7 +198,34 @@ export default function Cleaning() {
   useEffect(() => { if (user && isCleaner && view === "overview") loadUpcoming(); }, [user, isCleaner, view]);
   useEffect(() => { if (user && isCleaner && view === "calendar") loadCalendar(calMonth); }, [user, isCleaner, view, calMonth]);
 
-  // Load next upcoming cleaning date (banner) once when authed
+  const loadSelfClean = async () => {
+    const { data } = await (supabase as any).from("self_clean_dates").select("date");
+    setSelfCleanDates(new Set(((data ?? []) as { date: string }[]).map((r) => r.date)));
+  };
+  useEffect(() => { if (user && isCleaner) loadSelfClean(); }, [user, isCleaner]);
+
+  const toggleSelfClean = async (d: string) => {
+    if (!isAdmin || togglingSelfClean) return;
+    setTogglingSelfClean(true);
+    try {
+      if (selfCleanDates.has(d)) {
+        const { error } = await (supabase as any).from("self_clean_dates").delete().eq("date", d);
+        if (error) throw error;
+        toast.success(tr(lang, "unmarkSelfClean"));
+      } else {
+        const { error } = await (supabase as any).from("self_clean_dates").insert({ date: d, created_by: user?.id });
+        if (error) throw error;
+        toast.success(tr(lang, "selfClean"));
+      }
+      await loadSelfClean();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Error");
+    } finally {
+      setTogglingSelfClean(false);
+    }
+  };
+
+
   useEffect(() => {
     if (!user || !isCleaner) return;
     (async () => {
