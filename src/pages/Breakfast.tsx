@@ -4,11 +4,14 @@ import { useBreakfast } from "@/hooks/useBreakfast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Coffee, LogOut, CheckCircle2, Send, ChevronLeft, ChevronRight,
-  Users, CalendarDays, Croissant, Leaf,
+  Users, CalendarDays, Croissant, Leaf, AlertTriangle, Pencil, Wheat, Sprout,
+  Milk as MilkIcon, Nut,
 } from "lucide-react";
 import { TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
 import { toast } from "sonner";
@@ -16,8 +19,20 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription,
+} from "@/components/ui/dialog";
 
 const BREAKFAST_EMAIL = "frukost@goglampingsweden.se";
+
+const DIET_OPTIONS: { id: string; label: string; icon: typeof Wheat; color: string }[] = [
+  { id: "gluten_free", label: "Glutenfritt", icon: Wheat, color: "text-amber-700" },
+  { id: "vegan", label: "Veganskt", icon: Sprout, color: "text-emerald-700" },
+  { id: "vegetarian", label: "Vegetariskt", icon: Leaf, color: "text-emerald-600" },
+  { id: "lactose_free", label: "Laktosfritt", icon: MilkIcon, color: "text-sky-700" },
+  { id: "nut_allergy", label: "Nötallergi", icon: Nut, color: "text-red-700" },
+];
+const DIET_BY_ID = Object.fromEntries(DIET_OPTIONS.map((d) => [d.id, d]));
 
 type Stay = {
   booking_number: string;
