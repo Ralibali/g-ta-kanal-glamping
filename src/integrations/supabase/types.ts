@@ -525,6 +525,8 @@ export type Database = {
           checkout_date: string
           children: number
           created_at: string
+          dietary: string[]
+          dietary_note: string | null
           email: string | null
           fikapase: boolean
           guest_name: string | null
@@ -546,6 +548,8 @@ export type Database = {
           checkout_date: string
           children?: number
           created_at?: string
+          dietary?: string[]
+          dietary_note?: string | null
           email?: string | null
           fikapase?: boolean
           guest_name?: string | null
@@ -567,6 +571,8 @@ export type Database = {
           checkout_date?: string
           children?: number
           created_at?: string
+          dietary?: string[]
+          dietary_note?: string | null
           email?: string | null
           fikapase?: boolean
           guest_name?: string | null
@@ -660,6 +666,15 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      set_stay_dietary: {
+        Args: {
+          p_booking_number: string
+          p_dietary: string[]
+          p_dietary_note: string
+          p_tent_id: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

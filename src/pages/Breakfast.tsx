@@ -4,11 +4,14 @@ import { useBreakfast } from "@/hooks/useBreakfast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Coffee, LogOut, CheckCircle2, Send, ChevronLeft, ChevronRight,
-  Users, CalendarDays, Croissant, Leaf,
+  Users, CalendarDays, Croissant, Leaf, AlertTriangle, Pencil, Wheat, Sprout,
+  Milk as MilkIcon, Nut,
 } from "lucide-react";
 import { TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
 import { toast } from "sonner";
@@ -16,8 +19,20 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription,
+} from "@/components/ui/dialog";
 
 const BREAKFAST_EMAIL = "frukost@goglampingsweden.se";
+
+const DIET_OPTIONS: { id: string; label: string; icon: typeof Wheat; color: string }[] = [
+  { id: "gluten_free", label: "Glutenfritt", icon: Wheat, color: "text-amber-700" },
+  { id: "vegan", label: "Veganskt", icon: Sprout, color: "text-emerald-700" },
+  { id: "vegetarian", label: "Vegetariskt", icon: Leaf, color: "text-emerald-600" },
+  { id: "lactose_free", label: "Laktosfritt", icon: MilkIcon, color: "text-sky-700" },
+  { id: "nut_allergy", label: "Nötallergi", icon: Nut, color: "text-red-700" },
+];
+const DIET_BY_ID = Object.fromEntries(DIET_OPTIONS.map((d) => [d.id, d]));
 
 type Stay = {
   booking_number: string;
@@ -30,6 +45,8 @@ type Stay = {
   breakfast: boolean;
   fikapase: boolean;
   guest_name: string | null;
+  dietary: string[] | null;
+  dietary_note: string | null;
 };
 
 type Delivery = {
@@ -52,6 +69,8 @@ type Order = {
   children: number;
   kind: "breakfast" | "fikapase";
   deliveryDate: string;
+  dietary: string[];
+  dietaryNote: string | null;
   delivered?: Delivery;
 };
 
@@ -127,11 +146,42 @@ export default function Breakfast() {
   const [confirm, setConfirm] = useState<Order | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [upcomingWindow, setUpcomingWindow] = useState(45);
+  const [editDiet, setEditDiet] = useState<Order | null>(null);
+  const [dietDraft, setDietDraft] = useState<string[]>([]);
+  const [dietNoteDraft, setDietNoteDraft] = useState<string>("");
+  const [savingDiet, setSavingDiet] = useState(false);
+
+  const openDietEditor = (o: Order) => {
+    setDietDraft(o.dietary ?? []);
+    setDietNoteDraft(o.dietaryNote ?? "");
+    setEditDiet(o);
+  };
+
+  const saveDiet = async () => {
+    if (!editDiet) return;
+    setSavingDiet(true);
+    try {
+      const { error } = await (supabase as any).rpc("set_stay_dietary", {
+        p_booking_number: editDiet.booking_number,
+        p_tent_id: editDiet.tent_id,
+        p_dietary: dietDraft,
+        p_dietary_note: dietNoteDraft || null,
+      });
+      if (error) throw error;
+      toast.success("Kostanpassning sparad");
+      setEditDiet(null);
+      await load();
+    } catch (e: any) {
+      toast.error(e.message ?? "Kunde inte spara");
+    } finally {
+      setSavingDiet(false);
+    }
+  };
 
   const load = async () => {
     const { data: stayRows } = await (supabase as any)
       .from("tent_stays")
-      .select("booking_number, tent_id, checkin_date, checkout_date, guests, adults, children, breakfast, fikapase, guest_name")
+      .select("booking_number, tent_id, checkin_date, checkout_date, guests, adults, children, breakfast, fikapase, guest_name, dietary, dietary_note")
       .or("breakfast.eq.true,fikapase.eq.true")
       .gte("checkout_date", today)
       .lte("checkin_date", addDays(today, upcomingWindow));
@@ -174,6 +224,8 @@ export default function Breakfast() {
             children: s.children ?? 0,
             kind: "breakfast",
             deliveryDate: d,
+            dietary: s.dietary ?? [],
+            dietaryNote: s.dietary_note ?? null,
             delivered: deliveries.find((x) => x.booking_number === s.booking_number && x.delivery_date === d && x.kind === "breakfast"),
           });
         }
@@ -191,6 +243,8 @@ export default function Breakfast() {
               children: s.children ?? 0,
               kind: "fikapase",
               deliveryDate: d,
+              dietary: s.dietary ?? [],
+              dietaryNote: s.dietary_note ?? null,
               delivered: deliveries.find((x) => x.booking_number === s.booking_number && x.delivery_date === d && x.kind === "fikapase"),
             });
           }
@@ -516,6 +570,48 @@ export default function Breakfast() {
                           </div>
                         )}
 
+                        {/* Dietary needs – prominent so Karin never misses them */}
+                        {(o.dietary.length > 0 || o.dietaryNote) ? (
+                          <div className="rounded-lg border-2 border-red-300 dark:border-red-900 bg-red-50 dark:bg-red-950/20 p-3 space-y-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <AlertTriangle className="h-5 w-5 text-red-700 dark:text-red-400 shrink-0" />
+                                <div className="text-[11px] uppercase tracking-wider text-red-800 dark:text-red-300 font-bold">Kostanpassning</div>
+                              </div>
+                              <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => openDietEditor(o)}>
+                                <Pencil className="h-3 w-3 mr-1" /> Ändra
+                              </Button>
+                            </div>
+                            {o.dietary.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5">
+                                {o.dietary.map((id) => {
+                                  const def = DIET_BY_ID[id];
+                                  if (!def) return <Badge key={id} variant="outline">{id}</Badge>;
+                                  const Icon = def.icon;
+                                  return (
+                                    <Badge key={id} className="bg-red-100 text-red-900 hover:bg-red-100 border border-red-300 dark:bg-red-900/40 dark:text-red-100 dark:border-red-800">
+                                      <Icon className="h-3 w-3 mr-1" />{def.label}
+                                    </Badge>
+                                  );
+                                })}
+                              </div>
+                            )}
+                            {o.dietaryNote && (
+                              <p className="text-sm text-red-900 dark:text-red-100 font-medium leading-snug">
+                                "{o.dietaryNote}"
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => openDietEditor(o)}
+                            className="w-full text-left text-xs text-muted-foreground border border-dashed rounded-lg p-2 hover:bg-muted/40 flex items-center gap-2"
+                          >
+                            <Pencil className="h-3 w-3" /> Lägg till kostanpassning (gluten, vegan, allergi…)
+                          </button>
+                        )}
+
+
                         {done ? (
                           <div className="text-xs text-muted-foreground">
                             Levererat{o.delivered?.delivered_at ? ` ${new Date(o.delivered.delivered_at).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" })}` : ""}
@@ -594,6 +690,54 @@ export default function Breakfast() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!editDiet} onOpenChange={(open) => !open && setEditDiet(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Kostanpassning</DialogTitle>
+            <DialogDescription>
+              {editDiet && <>Tält {editDiet.tentNo} – {editDiet.tentName} • Bokning {editDiet.booking_number}</>}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              {DIET_OPTIONS.map((opt) => {
+                const checked = dietDraft.includes(opt.id);
+                const Icon = opt.icon;
+                return (
+                  <label
+                    key={opt.id}
+                    className={`flex items-center gap-3 rounded-lg border p-3 cursor-pointer transition ${checked ? "border-primary bg-primary/5" : "hover:bg-muted/50"}`}
+                  >
+                    <Checkbox
+                      checked={checked}
+                      onCheckedChange={(v) => {
+                        setDietDraft((prev) => v ? [...prev, opt.id] : prev.filter((x) => x !== opt.id));
+                      }}
+                    />
+                    <Icon className={`h-4 w-4 ${opt.color}`} />
+                    <span className="text-sm font-medium">{opt.label}</span>
+                  </label>
+                );
+              })}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="diet-note" className="text-xs">Övriga allergier / kommentar</Label>
+              <Textarea
+                id="diet-note"
+                value={dietNoteDraft}
+                onChange={(e) => setDietNoteDraft(e.target.value)}
+                placeholder="T.ex. 'Allergisk mot jordnötter, ej skaldjur'"
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDiet(null)} disabled={savingDiet}>Avbryt</Button>
+            <Button onClick={saveDiet} disabled={savingDiet}>{savingDiet ? "Sparar..." : "Spara"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
