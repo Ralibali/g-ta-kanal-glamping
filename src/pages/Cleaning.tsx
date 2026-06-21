@@ -300,7 +300,8 @@ export default function Cleaning() {
               const nd = new Date(nextCleaning.date);
               const td = new Date(today);
               const diffDays = Math.round((nd.getTime() - td.getTime()) / 86400000);
-              const dateLabel = nd.toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { weekday: "long", day: "numeric", month: "long" });
+              const dateLocale = lang === "sv" ? "sv-SE" : lang === "si" ? "si-LK" : "en-GB";
+              const dateLabel = nd.toLocaleDateString(dateLocale, { weekday: "long", day: "numeric", month: "long" });
               const whenLabel = diffDays === 0
                 ? tr(lang, "today")
                 : diffDays === 1
