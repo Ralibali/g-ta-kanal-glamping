@@ -690,6 +690,54 @@ export default function Breakfast() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!editDiet} onOpenChange={(open) => !open && setEditDiet(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Kostanpassning</DialogTitle>
+            <DialogDescription>
+              {editDiet && <>Tält {editDiet.tentNo} – {editDiet.tentName} • Bokning {editDiet.booking_number}</>}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              {DIET_OPTIONS.map((opt) => {
+                const checked = dietDraft.includes(opt.id);
+                const Icon = opt.icon;
+                return (
+                  <label
+                    key={opt.id}
+                    className={`flex items-center gap-3 rounded-lg border p-3 cursor-pointer transition ${checked ? "border-primary bg-primary/5" : "hover:bg-muted/50"}`}
+                  >
+                    <Checkbox
+                      checked={checked}
+                      onCheckedChange={(v) => {
+                        setDietDraft((prev) => v ? [...prev, opt.id] : prev.filter((x) => x !== opt.id));
+                      }}
+                    />
+                    <Icon className={`h-4 w-4 ${opt.color}`} />
+                    <span className="text-sm font-medium">{opt.label}</span>
+                  </label>
+                );
+              })}
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="diet-note" className="text-xs">Övriga allergier / kommentar</Label>
+              <Textarea
+                id="diet-note"
+                value={dietNoteDraft}
+                onChange={(e) => setDietNoteDraft(e.target.value)}
+                placeholder="T.ex. 'Allergisk mot jordnötter, ej skaldjur'"
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDiet(null)} disabled={savingDiet}>Avbryt</Button>
+            <Button onClick={saveDiet} disabled={savingDiet}>{savingDiet ? "Sparar..." : "Spara"}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
