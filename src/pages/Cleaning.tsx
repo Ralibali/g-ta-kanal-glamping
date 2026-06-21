@@ -44,7 +44,7 @@ function LoginForm({ lang }: { lang: CleanLang }) {
         <CardHeader className="text-center">
           <Sparkles className="h-8 w-8 mx-auto text-primary" />
           <CardTitle>{tr(lang, "loginTitle")}</CardTitle>
-          <p className="text-sm text-muted-foreground">Logga in med lösenordet <strong>topstäd</strong></p>
+          <p className="text-sm text-muted-foreground">{tr(lang, "loginHint")}</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-3">
