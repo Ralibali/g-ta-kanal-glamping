@@ -475,40 +475,51 @@ export default function Cleaning() {
                             <button
                               key={i}
                               onClick={() => { setDate(key); setView("day"); }}
-                              className={`min-h-[64px] rounded-lg border p-1.5 flex flex-col items-center justify-between text-xs transition hover:bg-muted active:scale-95 ${isToday ? "ring-2 ring-primary" : ""} ${isSelf ? "bg-blue-500/10 border-blue-500/50 opacity-80" : work > 0 ? "bg-primary/10 border-primary/40" : "border-border/60"}`}
+                              className={`min-h-[78px] rounded-lg border p-1 flex flex-col items-stretch text-xs transition hover:bg-muted active:scale-95 overflow-hidden ${isToday ? "ring-2 ring-primary" : ""} ${isSelf ? "bg-blue-500/10 border-blue-500/60" : work > 0 ? "bg-emerald-500/10 border-emerald-500/50" : "border-border/60"}`}
                             >
-                              <span className={`text-sm font-semibold ${isSelf ? "text-blue-700 dark:text-blue-300 line-through" : work > 0 ? "text-primary" : isToday ? "text-primary" : ""}`}>{d.getDate()}</span>
+                              <div className="flex items-center justify-between px-0.5">
+                                <span className={`text-sm font-semibold ${isSelf ? "text-blue-700 dark:text-blue-300" : work > 0 ? "text-emerald-700 dark:text-emerald-400" : isToday ? "text-primary" : ""}`}>{d.getDate()}</span>
+                                {work > 0 && (
+                                  <span className={`text-[10px] font-bold ${isSelf ? "text-blue-700 dark:text-blue-300" : "text-emerald-700 dark:text-emerald-400"}`}>{work}</span>
+                                )}
+                              </div>
                               {work > 0 && (
-                                isSelf ? (
-                                  <span className="text-[9px] font-bold text-blue-700 dark:text-blue-300 leading-tight text-center">
-                                    🧹 {tr(lang, "selfCleanShort")}
+                                <div className="mt-auto flex flex-col items-center gap-0.5">
+                                  <span className={`w-full rounded text-[9px] font-bold uppercase tracking-tight py-0.5 text-center ${isSelf ? "bg-blue-500 text-white" : "bg-emerald-600 text-white"}`}>
+                                    {isSelf ? "👤 " + tr(lang, "christofferLabel") : "🧹 " + tr(lang, "topstadLabel")}
                                   </span>
-                                ) : (
-                                  <div className="flex flex-col items-center gap-0.5 w-full">
-                                    <div className="flex gap-1">
-                                      {(info!.arrivals ?? 0) > 0 && (
-                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
-                                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{info!.arrivals}
-                                        </span>
-                                      )}
-                                      {(info!.departures ?? 0) > 0 && (
-                                        <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-500">
-                                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{info!.departures}
-                                        </span>
-                                      )}
-                                    </div>
-                                    <span className="text-[10px] font-bold text-primary">{work} {tr(lang, "tentsShort")}</span>
+                                  <div className="flex gap-1">
+                                    {(info!.arrivals ?? 0) > 0 && (
+                                      <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-emerald-700 dark:text-emerald-400">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{info!.arrivals}
+                                      </span>
+                                    )}
+                                    {(info!.departures ?? 0) > 0 && (
+                                      <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-700 dark:text-amber-500">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{info!.departures}
+                                      </span>
+                                    )}
                                   </div>
-                                )
+                                </div>
                               )}
                             </button>
                           );
                         })}
                       </div>
-                      <div className="flex gap-4 text-xs text-muted-foreground justify-center pt-2 border-t flex-wrap">
-                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> {tr(lang, "arrival")}</span>
-                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" /> {tr(lang, "departure")}</span>
-                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-500" /> {tr(lang, "selfCleanShort")}</span>
+                      <div className="pt-2 border-t space-y-2">
+                        <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tr(lang, "whoCleansLegend")}</div>
+                        <div className="flex gap-2 flex-wrap text-xs">
+                          <span className="inline-flex items-center gap-1.5 rounded px-2 py-1 bg-emerald-500/10 border border-emerald-500/40">
+                            <span className="rounded bg-emerald-600 text-white text-[9px] font-bold px-1.5 py-0.5">🧹 {tr(lang, "topstadLabel")}</span>
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 rounded px-2 py-1 bg-blue-500/10 border border-blue-500/50">
+                            <span className="rounded bg-blue-500 text-white text-[9px] font-bold px-1.5 py-0.5">👤 {tr(lang, "christofferLabel")}</span>
+                          </span>
+                        </div>
+                        <div className="flex gap-4 text-xs text-muted-foreground flex-wrap">
+                          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> {tr(lang, "arrival")}</span>
+                          <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" /> {tr(lang, "departure")}</span>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
