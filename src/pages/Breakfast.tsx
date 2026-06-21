@@ -570,6 +570,48 @@ export default function Breakfast() {
                           </div>
                         )}
 
+                        {/* Dietary needs – prominent so Karin never misses them */}
+                        {(o.dietary.length > 0 || o.dietaryNote) ? (
+                          <div className="rounded-lg border-2 border-red-300 dark:border-red-900 bg-red-50 dark:bg-red-950/20 p-3 space-y-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">
+                                <AlertTriangle className="h-5 w-5 text-red-700 dark:text-red-400 shrink-0" />
+                                <div className="text-[11px] uppercase tracking-wider text-red-800 dark:text-red-300 font-bold">Kostanpassning</div>
+                              </div>
+                              <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => openDietEditor(o)}>
+                                <Pencil className="h-3 w-3 mr-1" /> Ändra
+                              </Button>
+                            </div>
+                            {o.dietary.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5">
+                                {o.dietary.map((id) => {
+                                  const def = DIET_BY_ID[id];
+                                  if (!def) return <Badge key={id} variant="outline">{id}</Badge>;
+                                  const Icon = def.icon;
+                                  return (
+                                    <Badge key={id} className="bg-red-100 text-red-900 hover:bg-red-100 border border-red-300 dark:bg-red-900/40 dark:text-red-100 dark:border-red-800">
+                                      <Icon className="h-3 w-3 mr-1" />{def.label}
+                                    </Badge>
+                                  );
+                                })}
+                              </div>
+                            )}
+                            {o.dietaryNote && (
+                              <p className="text-sm text-red-900 dark:text-red-100 font-medium leading-snug">
+                                "{o.dietaryNote}"
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => openDietEditor(o)}
+                            className="w-full text-left text-xs text-muted-foreground border border-dashed rounded-lg p-2 hover:bg-muted/40 flex items-center gap-2"
+                          >
+                            <Pencil className="h-3 w-3" /> Lägg till kostanpassning (gluten, vegan, allergi…)
+                          </button>
+                        )}
+
+
                         {done ? (
                           <div className="text-xs text-muted-foreground">
                             Levererat{o.delivered?.delivered_at ? ` ${new Date(o.delivered.delivered_at).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" })}` : ""}
