@@ -197,6 +197,8 @@ export default function Breakfast() {
               children: s.children ?? 0,
               kind: "fikapase",
               deliveryDate: d,
+              dietary: s.dietary ?? [],
+              dietaryNote: s.dietary_note ?? null,
               delivered: deliveries.find((x) => x.booking_number === s.booking_number && x.delivery_date === d && x.kind === "fikapase"),
             });
           }
