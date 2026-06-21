@@ -91,6 +91,36 @@ export const UI = {
     en: "Save the checklist first (tick something)",
     si: "පළමුව පිරික්සුම් ලැයිස්තුව සුරකින්න (යමක් සලකුණු කරන්න)",
   },
+  thursdayNotice: {
+    sv: "Varje torsdag skickas listan för kommande vecka med de städningar topstäd ska hjälpa till med. Dagar markerade ”Christoffer städar” behöver topstäd inte komma till.",
+    en: "Every Thursday we send the list for the coming week with the cleanings topstäd will help with. Days marked ”Christoffer cleans” do not need topstäd.",
+    si: "සෑම බ්‍රහස්පතින්දාම ඉදිරි සතියේ topstäd උපකාර කරන පිරිසිදු කිරීම් ලැයිස්තුව යවනු ලැබේ. ”Christoffer cleans” ලෙස සලකුණු කළ දින topstäd පැමිණිය යුතු නැත.",
+  },
+  selfClean: {
+    sv: "Christoffer städar själv",
+    en: "Christoffer cleans (no topstäd)",
+    si: "Christoffer විසින්ම පිරිසිදු කරයි",
+  },
+  selfCleanShort: {
+    sv: "Christoffer städar",
+    en: "Christoffer cleans",
+    si: "Christoffer පිරිසිදු කරයි",
+  },
+  markSelfClean: {
+    sv: "Markera: jag städar själv denna dag",
+    en: "Mark: I will clean this day myself",
+    si: "මෙම දිනය මා විසින්ම පිරිසිදු කරන බව සලකුණු කරන්න",
+  },
+  unmarkSelfClean: {
+    sv: "Ta bort markering – topstäd hjälper",
+    en: "Remove mark – topstäd will help",
+    si: "සලකුණ ඉවත් කරන්න – topstäd උදව් කරයි",
+  },
+  selfCleanBannerDay: {
+    sv: "Den här dagen städar Christoffer själv – topstäd behöver inte komma.",
+    en: "Christoffer cleans this day himself – topstäd does not need to come.",
+    si: "මෙම දින Christoffer විසින්ම පිරිසිදු කරයි – topstäd පැමිණිය යුතු නැත.",
+  },
 } as const;
 
 export function tr<K extends keyof typeof UI>(lang: CleanLang, key: K): string {
