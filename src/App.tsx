@@ -25,6 +25,7 @@ import ChatPage from "./pages/ChatPage";
 import Unsubscribe from "./pages/Unsubscribe";
 import Cleaning from "./pages/Cleaning";
 import Breakfast from "./pages/Breakfast";
+import Boka from "./pages/Boka";
 
 const queryClient = new QueryClient();
 
