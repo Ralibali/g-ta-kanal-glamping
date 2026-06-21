@@ -387,10 +387,13 @@ export default function Cleaning() {
                 for (let i = 0; i < startOffset; i++) cells.push(null);
                 for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(year, month, d));
                 while (cells.length % 7 !== 0) cells.push(null);
-                const monthLabel = first.toLocaleDateString(lang === "sv" ? "sv-SE" : "en-GB", { month: "long", year: "numeric" });
+                const calLocale = lang === "sv" ? "sv-SE" : lang === "si" ? "si-LK" : "en-GB";
+                const monthLabel = first.toLocaleDateString(calLocale, { month: "long", year: "numeric" });
                 const dayNames = lang === "sv"
                   ? ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"]
-                  : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+                  : lang === "si"
+                    ? ["සඳු", "අඟ", "බදා", "බ්‍රහ", "සිකු", "සෙන", "ඉරි"]
+                    : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
                 const todayStr = todayInStockholm();
                 const fmt = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
                 return (
