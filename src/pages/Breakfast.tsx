@@ -135,7 +135,7 @@ export default function Breakfast() {
   const load = async () => {
     const { data: stayRows } = await (supabase as any)
       .from("tent_stays")
-      .select("booking_number, tent_id, checkin_date, checkout_date, guests, adults, children, breakfast, fikapase, guest_name")
+      .select("booking_number, tent_id, checkin_date, checkout_date, guests, adults, children, breakfast, fikapase, guest_name, dietary, dietary_note")
       .or("breakfast.eq.true,fikapase.eq.true")
       .gte("checkout_date", today)
       .lte("checkin_date", addDays(today, upcomingWindow));
