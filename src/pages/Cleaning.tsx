@@ -400,12 +400,12 @@ export default function Cleaning() {
                         <div className="font-medium capitalize">{monthLabel}</div>
                         <Button variant="ghost" size="sm" onClick={() => setCalMonth(new Date(year, month + 1, 1))}>›</Button>
                       </div>
-                      <div className="grid grid-cols-7 gap-1 text-[10px] text-muted-foreground text-center">
+                      <div className="grid grid-cols-7 gap-1.5 text-xs text-muted-foreground text-center font-medium">
                         {dayNames.map((n) => <div key={n} className="py-1">{n}</div>)}
                       </div>
-                      <div className="grid grid-cols-7 gap-1">
+                      <div className="grid grid-cols-7 gap-1.5">
                         {cells.map((d, i) => {
-                          if (!d) return <div key={i} />;
+                          if (!d) return <div key={i} className="min-h-[64px]" />;
                           const key = fmt(d);
                           const info = calData.get(key);
                           const work = info?.total ?? 0;
@@ -414,23 +414,33 @@ export default function Cleaning() {
                             <button
                               key={i}
                               onClick={() => { setDate(key); setView("day"); }}
-                              className={`aspect-square rounded border p-1 flex flex-col items-center justify-start text-xs transition hover:bg-muted ${isToday ? "ring-2 ring-primary" : ""} ${work > 0 ? "bg-primary/10 border-primary/30" : ""}`}
+                              className={`min-h-[64px] rounded-lg border p-1.5 flex flex-col items-center justify-between text-xs transition hover:bg-muted active:scale-95 ${isToday ? "ring-2 ring-primary" : ""} ${work > 0 ? "bg-primary/10 border-primary/40" : "border-border/60"}`}
                             >
-                              <span className={`font-medium ${work > 0 ? "text-primary" : ""}`}>{d.getDate()}</span>
+                              <span className={`text-sm font-semibold ${work > 0 ? "text-primary" : isToday ? "text-primary" : ""}`}>{d.getDate()}</span>
                               {work > 0 && (
-                                <div className="flex gap-0.5 mt-0.5 flex-wrap justify-center">
-                                  {(info!.arrivals ?? 0) > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" title="ankomst" />}
-                                  {(info!.departures ?? 0) > 0 && <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" title="avresa" />}
+                                <div className="flex flex-col items-center gap-0.5 w-full">
+                                  <div className="flex gap-1">
+                                    {(info!.arrivals ?? 0) > 0 && (
+                                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{info!.arrivals}
+                                      </span>
+                                    )}
+                                    {(info!.departures ?? 0) > 0 && (
+                                      <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-500">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{info!.departures}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="text-[10px] font-bold text-primary">{work} {tr(lang, "tentsShort")}</span>
                                 </div>
                               )}
-                              {work > 0 && <span className="text-[9px] text-muted-foreground mt-auto">{work} {tr(lang, "tentsShort")}</span>}
                             </button>
                           );
                         })}
                       </div>
-                      <div className="flex gap-3 text-[10px] text-muted-foreground justify-center pt-1">
-                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> {tr(lang, "arrival")}</span>
-                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> {tr(lang, "departure")}</span>
+                      <div className="flex gap-4 text-xs text-muted-foreground justify-center pt-2 border-t">
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> {tr(lang, "arrival")}</span>
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-500" /> {tr(lang, "departure")}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -472,16 +482,31 @@ export default function Cleaning() {
                       onClick={() => setSelected(c)}>
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
+                          <div className="flex-1 min-w-0">
                             <h3 className="font-serif text-xl">{c.tentName}</h3>
                             <p className="text-xs text-muted-foreground">Tält {c.tentNo} – {c.position}</p>
+
+                            {c.hasArrival && (
+                              <div className="mt-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30 p-3">
+                                <Users className="h-7 w-7 text-primary shrink-0" />
+                                <div className="flex-1">
+                                  <div className="text-[10px] uppercase tracking-wider text-primary font-semibold">{tr(lang, "guestsLabel")}</div>
+                                  <div className="flex items-baseline gap-1.5">
+                                    <span className="text-3xl font-bold text-primary leading-none">{c.guests}</span>
+                                    <span className="text-sm text-muted-foreground">{tr(lang, "guests").toLowerCase()}</span>
+                                    {c.children > 0 && (
+                                      <span className="text-xs text-muted-foreground ml-1">({c.children} {tr(lang, "children").toLowerCase()})</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
                             <div className="flex flex-wrap gap-1.5 mt-2">
                               {c.hasArrival && c.hasDeparture && <Badge className="bg-amber-500">{tr(lang, "changeover")}</Badge>}
                               {c.hasArrival && !c.hasDeparture && <Badge variant="secondary">{tr(lang, "arrivalOnly")}</Badge>}
                               {!c.hasArrival && c.hasDeparture && <Badge variant="secondary">{tr(lang, "departure")}</Badge>}
-                              {c.hasArrival && <Badge variant="outline">{c.guests} {tr(lang, "guests")}</Badge>}
                               {c.guests > 2 && <Badge variant="outline">{tr(lang, "sofaBed")}</Badge>}
-                              {c.children > 0 && <Badge variant="outline">{tr(lang, "children")}: {c.children}</Badge>}
                               {c.breakfast && <Badge variant="outline">{tr(lang, "breakfast")}</Badge>}
                               {c.fikapase && <Badge variant="outline">{tr(lang, "fika")}</Badge>}
                               {c.lateCheckout && <Badge variant="outline">{tr(lang, "lateCheckout")}</Badge>}
