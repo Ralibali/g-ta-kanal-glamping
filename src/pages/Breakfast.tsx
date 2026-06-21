@@ -6,7 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Coffee, LogOut, CheckCircle2, Send, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Coffee, LogOut, CheckCircle2, Send, ChevronLeft, ChevronRight,
+  Users, CalendarDays, Croissant, Leaf,
+} from "lucide-react";
 import { TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
 import { toast } from "sonner";
 import {
@@ -46,6 +49,7 @@ type Order = {
   tentName: string;
   guestName: string | null;
   guests: number;
+  children: number;
   kind: "breakfast" | "fikapase";
   deliveryDate: string;
   delivered?: Delivery;
@@ -115,16 +119,16 @@ function prettyDate(d: string): string {
 export default function Breakfast() {
   const { user, isBreakfast, loading, signOut } = useBreakfast();
   const today = todayInStockholm();
+  const [view, setView] = useState<"day" | "calendar">("day");
   const [date, setDate] = useState<string>(today);
+  const [calMonth, setCalMonth] = useState<Date>(() => { const d = new Date(); d.setDate(1); return d; });
   const [stays, setStays] = useState<Stay[]>([]);
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [confirm, setConfirm] = useState<Order | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [upcomingWindow, setUpcomingWindow] = useState(14);
+  const [upcomingWindow, setUpcomingWindow] = useState(45);
 
   const load = async () => {
-    // For the breakfast app, deliver date = the night spent → we serve breakfast on each night from checkin to (checkout-1)
-    // Simpler: show orders for the selected date if it falls within [checkin, checkout-1]
     const { data: stayRows } = await (supabase as any)
       .from("tent_stays")
       .select("booking_number, tent_id, checkin_date, checkout_date, guests, adults, children, breakfast, fikapase, guest_name")
@@ -146,48 +150,45 @@ export default function Breakfast() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isBreakfast, upcomingWindow]);
 
-  // Build orders for the selected date
+  // Build orders for every day in the window
   const ordersByDate = useMemo(() => {
     const map = new Map<string, Order[]>();
     for (let i = 0; i < upcomingWindow; i++) {
       const d = addDays(today, i);
       const list: Order[] = [];
       stays.forEach((s) => {
-        // Breakfast is served on each morning from checkin_date+1 up to checkout_date (you stay night → breakfast next morning)
-        // Common practice: breakfast is served the morning(s) of the stay. We'll serve from checkin_date+1 to checkout_date inclusive
-        // Actually most glamping serves breakfast the morning(s) you wake up there:
-        // if checkin = Mon, checkout = Wed → breakfast Tue & Wed.
+        // Breakfast served the morning(s) you wake up there:
+        // checkin Mon, checkout Wed → breakfast Tue & Wed.
         if (d <= s.checkin_date || d > s.checkout_date) return;
         const tent = TENT_BY_ID[s.tent_id];
         if (!tent) return;
         if (s.breakfast) {
-          const k = `${s.booking_number}_${d}_breakfast`;
           list.push({
-            key: k,
+            key: `${s.booking_number}_${d}_breakfast`,
             booking_number: s.booking_number,
             tent_id: s.tent_id,
             tentNo: tent.no,
             tentName: tent.name,
             guestName: s.guest_name,
             guests: s.guests ?? s.adults ?? 0,
+            children: s.children ?? 0,
             kind: "breakfast",
             deliveryDate: d,
             delivered: deliveries.find((x) => x.booking_number === s.booking_number && x.delivery_date === d && x.kind === "breakfast"),
           });
         }
-        // Fikapåse: levereras en gång under vistelsen, helst första dagen (checkin_date+1 om endast en frukost-dag, annars samma logik). Vi visar på första morgonen.
         if (s.fikapase) {
           const firstMorning = addDays(s.checkin_date, 1);
           if (d === firstMorning) {
-            const k = `${s.booking_number}_${d}_fikapase`;
             list.push({
-              key: k,
+              key: `${s.booking_number}_${d}_fikapase`,
               booking_number: s.booking_number,
               tent_id: s.tent_id,
               tentNo: tent.no,
               tentName: tent.name,
               guestName: s.guest_name,
               guests: s.guests ?? s.adults ?? 0,
+              children: s.children ?? 0,
               kind: "fikapase",
               deliveryDate: d,
               delivered: deliveries.find((x) => x.booking_number === s.booking_number && x.delivery_date === d && x.kind === "fikapase"),
@@ -204,6 +205,21 @@ export default function Breakfast() {
   const dayOrders = ordersByDate.get(date) ?? [];
   const breakfastCount = dayOrders.filter((o) => o.kind === "breakfast").reduce((sum, o) => sum + o.guests, 0);
   const fikaCount = dayOrders.filter((o) => o.kind === "fikapase").length;
+  const undeliveredCount = dayOrders.filter((o) => o.delivered?.status !== "delivered").length;
+
+  // Next upcoming delivery date (the soonest day that still has work)
+  const nextDelivery = useMemo(() => {
+    const sorted = Array.from(ordersByDate.entries()).sort(([a], [b]) => a.localeCompare(b));
+    for (const [d, list] of sorted) {
+      const remaining = list.filter((o) => o.delivered?.status !== "delivered");
+      if (remaining.length > 0) {
+        const bf = remaining.filter((x) => x.kind === "breakfast").reduce((s, x) => s + x.guests, 0);
+        const fk = remaining.filter((x) => x.kind === "fikapase").length;
+        return { date: d, breakfast: bf, fika: fk, total: remaining.length };
+      }
+    }
+    return null;
+  }, [ordersByDate]);
 
   const doDeliver = async () => {
     if (!confirm) return;
@@ -265,129 +281,296 @@ export default function Breakfast() {
           Här ser du vilka tält som ska ha frukost eller fikapåse. När du tryckt "Levererat" går ett SMS till gästen.
         </p>
 
-        {/* Date navigator */}
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center justify-between gap-2">
-              <Button variant="outline" size="icon" onClick={() => setDate(addDays(date, -1))}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <div className="text-center flex-1">
-                <div className="font-medium capitalize">{prettyDate(date)}</div>
-                <div className="text-xs text-muted-foreground">{date}</div>
+        {/* Next delivery banner */}
+        {nextDelivery && (() => {
+          const nd = new Date(nextDelivery.date + "T12:00:00");
+          const td = new Date(today + "T12:00:00");
+          const diffDays = Math.round((nd.getTime() - td.getTime()) / 86400000);
+          const whenLabel = diffDays === 0
+            ? "Idag"
+            : diffDays === 1
+              ? "Imorgon"
+              : `om ${diffDays} dagar`;
+          return (
+            <button
+              onClick={() => { setDate(nextDelivery.date); setView("day"); }}
+              className="w-full text-left rounded-xl border-2 border-primary/40 bg-primary/10 p-4 hover:bg-primary/15 transition shadow-sm"
+            >
+              <div className="flex items-center gap-3">
+                <div className="rounded-full bg-primary/20 p-2.5 shrink-0">
+                  <CalendarDays className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[11px] uppercase tracking-wider text-primary font-semibold">Nästa leverans</div>
+                  <div className="font-serif text-lg leading-tight capitalize truncate">{prettyDate(nextDelivery.date)}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{whenLabel}</div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="text-2xl font-bold text-primary leading-none">{nextDelivery.total}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">leveranser</div>
+                </div>
               </div>
-              <Button variant="outline" size="icon" onClick={() => setDate(addDays(date, 1))}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="flex justify-center gap-2 mt-3">
-              <Button variant={date === today ? "default" : "outline"} size="sm" onClick={() => setDate(today)}>Idag</Button>
-              <Button variant={date === addDays(today, 1) ? "default" : "outline"} size="sm" onClick={() => setDate(addDays(today, 1))}>Imorgon</Button>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="flex gap-3 mt-3 pt-3 border-t border-primary/20 text-xs">
+                {nextDelivery.breakfast > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <Croissant className="h-3.5 w-3.5 text-amber-700" />
+                    <strong>{nextDelivery.breakfast}</strong> frukostportioner
+                  </span>
+                )}
+                {nextDelivery.fika > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <Leaf className="h-3.5 w-3.5 text-emerald-700" />
+                    <strong>{nextDelivery.fika}</strong> fikapåsar
+                  </span>
+                )}
+              </div>
+            </button>
+          );
+        })()}
 
-        {/* Summary */}
-        <div className="grid grid-cols-2 gap-3">
-          <Card>
-            <CardContent className="pt-4">
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">Frukostportioner</div>
-              <div className="text-3xl font-serif font-semibold">{breakfastCount}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-4">
-              <div className="text-xs text-muted-foreground uppercase tracking-wide">Fikapåsar</div>
-              <div className="text-3xl font-serif font-semibold">{fikaCount}</div>
-            </CardContent>
-          </Card>
+        {/* View toggle */}
+        <div className="flex gap-2">
+          <Button
+            variant={view === "day" ? "default" : "outline"}
+            size="sm" className="flex-1"
+            onClick={() => setView("day")}
+          >Dagsvy</Button>
+          <Button
+            variant={view === "calendar" ? "default" : "outline"}
+            size="sm" className="flex-1"
+            onClick={() => setView("calendar")}
+          >Kalender</Button>
         </div>
 
-        {/* Orders */}
-        {dayOrders.length === 0 ? (
-          <Card>
-            <CardContent className="pt-6 pb-6 text-center text-muted-foreground text-sm">
-              Inga leveranser detta datum.
-            </CardContent>
-          </Card>
+        {view === "calendar" ? (
+          (() => {
+            const year = calMonth.getFullYear();
+            const month = calMonth.getMonth();
+            const first = new Date(year, month, 1);
+            const last = new Date(year, month + 1, 0);
+            const startOffset = (first.getDay() + 6) % 7; // Monday = 0
+            const cells: (Date | null)[] = [];
+            for (let i = 0; i < startOffset; i++) cells.push(null);
+            for (let d = 1; d <= last.getDate(); d++) cells.push(new Date(year, month, d));
+            while (cells.length % 7 !== 0) cells.push(null);
+            const monthLabel = first.toLocaleDateString("sv-SE", { month: "long", year: "numeric" });
+            const dayNames = ["Mån", "Tis", "Ons", "Tor", "Fre", "Lör", "Sön"];
+            const fmt = (d: Date) =>
+              `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+            return (
+              <Card>
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Button variant="ghost" size="sm" onClick={() => setCalMonth(new Date(year, month - 1, 1))}>‹</Button>
+                    <div className="font-medium capitalize">{monthLabel}</div>
+                    <Button variant="ghost" size="sm" onClick={() => setCalMonth(new Date(year, month + 1, 1))}>›</Button>
+                  </div>
+                  <div className="grid grid-cols-7 gap-1.5 text-xs text-muted-foreground text-center font-medium">
+                    {dayNames.map((n) => <div key={n} className="py-1">{n}</div>)}
+                  </div>
+                  <div className="grid grid-cols-7 gap-1.5">
+                    {cells.map((d, i) => {
+                      if (!d) return <div key={i} className="min-h-[64px]" />;
+                      const key = fmt(d);
+                      const list = ordersByDate.get(key) ?? [];
+                      const bf = list.filter((x) => x.kind === "breakfast").reduce((s, x) => s + x.guests, 0);
+                      const fk = list.filter((x) => x.kind === "fikapase").length;
+                      const work = list.length;
+                      const isToday = key === today;
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => { setDate(key); setView("day"); }}
+                          className={`min-h-[64px] rounded-lg border p-1.5 flex flex-col items-center justify-between text-xs transition hover:bg-muted active:scale-95 ${isToday ? "ring-2 ring-primary" : ""} ${work > 0 ? "bg-primary/10 border-primary/40" : "border-border/60"}`}
+                        >
+                          <span className={`text-sm font-semibold ${work > 0 || isToday ? "text-primary" : ""}`}>{d.getDate()}</span>
+                          {work > 0 && (
+                            <div className="flex flex-col items-center gap-0.5 w-full">
+                              <div className="flex gap-1">
+                                {bf > 0 && (
+                                  <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-500">
+                                    <Croissant className="h-2.5 w-2.5" />{bf}
+                                  </span>
+                                )}
+                                {fk > 0 && (
+                                  <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
+                                    <Leaf className="h-2.5 w-2.5" />{fk}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="flex gap-4 text-xs text-muted-foreground justify-center pt-2 border-t">
+                    <span className="flex items-center gap-1.5"><Croissant className="h-3.5 w-3.5 text-amber-700" /> Frukostportioner</span>
+                    <span className="flex items-center gap-1.5"><Leaf className="h-3.5 w-3.5 text-emerald-700" /> Fikapåsar</span>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()
         ) : (
-          <div className="space-y-3">
-            {dayOrders.map((o) => {
-              const done = o.delivered?.status === "delivered";
-              return (
-                <Card key={o.key} className={done ? "bg-primary/5 border-primary/30" : ""}>
-                  <CardContent className="pt-4 space-y-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <Badge className={o.kind === "breakfast" ? "bg-amber-600" : "bg-emerald-700"}>
-                            {o.kind === "breakfast" ? "🥐 Frukost" : "🌿 Fikapåse"}
-                          </Badge>
-                          <span className="font-medium">Tält {o.tentNo} – {o.tentName}</span>
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-1">
-                          {o.guestName ?? "Gäst"} • Bokning {o.booking_number}
-                          {o.kind === "breakfast" && ` • ${o.guests} pers`}
-                        </div>
-                      </div>
-                      {done && (
-                        <Badge variant="outline" className="border-primary text-primary">
-                          <CheckCircle2 className="h-3 w-3 mr-1" /> Klar
-                        </Badge>
-                      )}
-                    </div>
-                    {done ? (
-                      <div className="text-xs text-muted-foreground">
-                        Levererat{o.delivered?.delivered_at ? ` ${new Date(o.delivered.delivered_at).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" })}` : ""}
-                        {o.delivered?.sms_status && ` • SMS: ${o.delivered.sms_status}`}
-                      </div>
-                    ) : (
-                      <Button className="w-full" onClick={() => setConfirm(o)}>
-                        <Send className="h-4 w-4 mr-2" /> Markera levererat
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
+          <>
+            {/* Date navigator */}
+            <Card>
+              <CardContent className="pt-4">
+                <div className="flex items-center justify-between gap-2">
+                  <Button variant="outline" size="icon" onClick={() => setDate(addDays(date, -1))}>
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <div className="text-center flex-1">
+                    <div className="font-medium capitalize">{prettyDate(date)}</div>
+                    <div className="text-xs text-muted-foreground">{date}</div>
+                  </div>
+                  <Button variant="outline" size="icon" onClick={() => setDate(addDays(date, 1))}>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="flex justify-center gap-2 mt-3">
+                  <Button variant={date === today ? "default" : "outline"} size="sm" onClick={() => setDate(today)}>Idag</Button>
+                  <Button variant={date === addDays(today, 1) ? "default" : "outline"} size="sm" onClick={() => setDate(addDays(today, 1))}>Imorgon</Button>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Future dates summary */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Kommande dagar</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {Array.from(ordersByDate.entries())
-              .filter(([d]) => d !== date)
-              .slice(0, 10)
-              .map(([d, list]) => {
-                const bf = list.filter((x) => x.kind === "breakfast").reduce((s, x) => s + x.guests, 0);
-                const fk = list.filter((x) => x.kind === "fikapase").length;
-                return (
-                  <button
-                    key={d}
-                    onClick={() => setDate(d)}
-                    className="w-full flex justify-between items-center border rounded p-2 hover:bg-muted/50 text-sm"
-                  >
-                    <span className="capitalize">{prettyDate(d)}</span>
-                    <span className="text-muted-foreground text-xs">
-                      {bf > 0 && `🥐 ${bf}`} {fk > 0 && `🌿 ${fk}`}
-                    </span>
-                  </button>
-                );
-              })}
-            {ordersByDate.size <= 1 && (
-              <p className="text-xs text-muted-foreground">Inga fler beställningar de närmsta {upcomingWindow} dagarna.</p>
-            )}
-            <div className="flex justify-center pt-2">
-              <Button variant="ghost" size="sm" onClick={() => setUpcomingWindow((w) => w + 14)}>
-                Visa fler dagar
-              </Button>
+            {/* Summary */}
+            <div className="grid grid-cols-3 gap-3">
+              <Card className="bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900">
+                <CardContent className="pt-4">
+                  <div className="flex items-center gap-1.5 text-[10px] text-amber-800 dark:text-amber-300 uppercase tracking-wide font-semibold">
+                    <Croissant className="h-3.5 w-3.5" /> Frukost
+                  </div>
+                  <div className="text-3xl font-serif font-semibold text-amber-900 dark:text-amber-200">{breakfastCount}</div>
+                  <div className="text-[10px] text-amber-700 dark:text-amber-400">portioner</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-900">
+                <CardContent className="pt-4">
+                  <div className="flex items-center gap-1.5 text-[10px] text-emerald-800 dark:text-emerald-300 uppercase tracking-wide font-semibold">
+                    <Leaf className="h-3.5 w-3.5" /> Fikapåsar
+                  </div>
+                  <div className="text-3xl font-serif font-semibold text-emerald-900 dark:text-emerald-200">{fikaCount}</div>
+                  <div className="text-[10px] text-emerald-700 dark:text-emerald-400">påsar</div>
+                </CardContent>
+              </Card>
+              <Card className={undeliveredCount > 0 ? "bg-primary/5 border-primary/30" : ""}>
+                <CardContent className="pt-4">
+                  <div className="text-[10px] text-muted-foreground uppercase tracking-wide font-semibold">Kvar att leverera</div>
+                  <div className="text-3xl font-serif font-semibold">{undeliveredCount}</div>
+                  <div className="text-[10px] text-muted-foreground">av {dayOrders.length}</div>
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
+
+            {/* Orders */}
+            {dayOrders.length === 0 ? (
+              <Card>
+                <CardContent className="pt-6 pb-6 text-center text-muted-foreground text-sm">
+                  Inga leveranser detta datum.
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {dayOrders.map((o) => {
+                  const done = o.delivered?.status === "delivered";
+                  const isBreakfast = o.kind === "breakfast";
+                  return (
+                    <Card key={o.key} className={done ? "bg-primary/5 border-primary/30" : ""}>
+                      <CardContent className="pt-4 space-y-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <Badge className={isBreakfast ? "bg-amber-600 hover:bg-amber-600" : "bg-emerald-700 hover:bg-emerald-700"}>
+                                {isBreakfast ? <><Croissant className="h-3 w-3 mr-1" /> Frukost</> : <><Leaf className="h-3 w-3 mr-1" /> Fikapåse</>}
+                              </Badge>
+                              <span className="font-medium">Tält {o.tentNo} – {o.tentName}</span>
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {o.guestName ?? "Gäst"} • Bokning {o.booking_number}
+                            </div>
+                          </div>
+                          {done && (
+                            <Badge variant="outline" className="border-primary text-primary shrink-0">
+                              <CheckCircle2 className="h-3 w-3 mr-1" /> Klar
+                            </Badge>
+                          )}
+                        </div>
+
+                        {/* Prominent guest count for breakfast */}
+                        {isBreakfast && (
+                          <div className="flex items-center gap-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 p-3">
+                            <Users className="h-7 w-7 text-amber-700 dark:text-amber-400 shrink-0" />
+                            <div className="flex-1">
+                              <div className="text-[10px] uppercase tracking-wider text-amber-800 dark:text-amber-300 font-semibold">Portioner till tältet</div>
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="text-3xl font-bold text-amber-900 dark:text-amber-200 leading-none">{o.guests}</span>
+                                <span className="text-sm text-muted-foreground">personer</span>
+                                {o.children > 0 && (
+                                  <span className="text-xs text-muted-foreground ml-1">({o.children} barn)</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {done ? (
+                          <div className="text-xs text-muted-foreground">
+                            Levererat{o.delivered?.delivered_at ? ` ${new Date(o.delivered.delivered_at).toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" })}` : ""}
+                            {o.delivered?.sms_status && ` • SMS: ${o.delivered.sms_status}`}
+                          </div>
+                        ) : (
+                          <Button className="w-full" onClick={() => setConfirm(o)}>
+                            <Send className="h-4 w-4 mr-2" /> Markera levererat
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Future dates summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Kommande dagar</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {Array.from(ordersByDate.entries())
+                  .filter(([d]) => d !== date)
+                  .slice(0, 10)
+                  .map(([d, list]) => {
+                    const bf = list.filter((x) => x.kind === "breakfast").reduce((s, x) => s + x.guests, 0);
+                    const fk = list.filter((x) => x.kind === "fikapase").length;
+                    return (
+                      <button
+                        key={d}
+                        onClick={() => setDate(d)}
+                        className="w-full flex justify-between items-center border rounded p-2 hover:bg-muted/50 text-sm"
+                      >
+                        <span className="capitalize">{prettyDate(d)}</span>
+                        <span className="text-muted-foreground text-xs flex items-center gap-2">
+                          {bf > 0 && <span className="flex items-center gap-1"><Croissant className="h-3 w-3 text-amber-700" />{bf}</span>}
+                          {fk > 0 && <span className="flex items-center gap-1"><Leaf className="h-3 w-3 text-emerald-700" />{fk}</span>}
+                        </span>
+                      </button>
+                    );
+                  })}
+                {ordersByDate.size <= 1 && (
+                  <p className="text-xs text-muted-foreground">Inga fler beställningar de närmsta {upcomingWindow} dagarna.</p>
+                )}
+                <div className="flex justify-center pt-2">
+                  <Button variant="ghost" size="sm" onClick={() => setUpcomingWindow((w) => w + 14)}>
+                    Visa fler dagar
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
 
       <AlertDialog open={!!confirm} onOpenChange={(open) => !open && setConfirm(null)}>
@@ -397,7 +580,7 @@ export default function Breakfast() {
             <AlertDialogDescription>
               {confirm && (
                 <>
-                  Tält {confirm.tentNo} – {confirm.tentName} ({confirm.kind === "breakfast" ? "frukost" : "fikapåse"}).
+                  Tält {confirm.tentNo} – {confirm.tentName} ({confirm.kind === "breakfast" ? `frukost för ${confirm.guests} pers` : "fikapåse"}).
                   Ett SMS skickas till gästen om att leveransen är i backen.
                 </>
               )}
