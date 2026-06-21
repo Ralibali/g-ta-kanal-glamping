@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, LogOut, Sparkles } from "lucide-react";
+import { CalendarDays, CheckCircle2, LogOut, Sparkles, Users } from "lucide-react";
 import { TENT_BY_ID, TENTS, todayInStockholm } from "@/cleaning/config";
 import { CLEAN_LANGS, getStoredLang, setStoredLang, tr, type CleanLang } from "@/cleaning/i18n";
 import { CleaningChecklist, type TentDayData } from "@/components/cleaning/CleaningChecklist";
@@ -91,6 +91,7 @@ export default function Cleaning() {
   const [selected, setSelected] = useState<TentDayData | null>(null);
   const [upcoming, setUpcoming] = useState<UpcomingRow[]>([]);
   const [calData, setCalData] = useState<Map<string, { arrivals: number; departures: number; total: number }>>(new Map());
+  const [nextCleaning, setNextCleaning] = useState<{ date: string; tents: number; arrivals: number; departures: number; guests: number } | null>(null);
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
@@ -194,6 +195,39 @@ export default function Cleaning() {
   useEffect(() => { if (user && isCleaner && view === "day") load(); }, [user, isCleaner, date, view]);
   useEffect(() => { if (user && isCleaner && view === "overview") loadUpcoming(); }, [user, isCleaner, view]);
   useEffect(() => { if (user && isCleaner && view === "calendar") loadCalendar(calMonth); }, [user, isCleaner, view, calMonth]);
+
+  // Load next upcoming cleaning date (banner) once when authed
+  useEffect(() => {
+    if (!user || !isCleaner) return;
+    (async () => {
+      const today = todayInStockholm();
+      const end = new Date();
+      end.setDate(end.getDate() + 90);
+      const endStr = end.toISOString().slice(0, 10);
+      const { data } = await (supabase as any)
+        .from("tent_stays")
+        .select("tent_id, checkin_date, checkout_date, guests")
+        .or(`and(checkin_date.gte.${today},checkin_date.lte.${endStr}),and(checkout_date.gte.${today},checkout_date.lte.${endStr})`);
+      const rows = (data ?? []) as { tent_id: string; checkin_date: string; checkout_date: string; guests: number }[];
+      const byDate = new Map<string, { tents: Set<string>; arrivals: Set<string>; departures: Set<string>; guests: number }>();
+      const bump = (d: string) => {
+        if (!byDate.has(d)) byDate.set(d, { tents: new Set(), arrivals: new Set(), departures: new Set(), guests: 0 });
+        return byDate.get(d)!;
+      };
+      rows.forEach((r) => {
+        if (r.checkin_date >= today && r.checkin_date <= endStr) {
+          const b = bump(r.checkin_date); b.tents.add(r.tent_id); b.arrivals.add(r.tent_id); b.guests += r.guests ?? 0;
+        }
+        if (r.checkout_date >= today && r.checkout_date <= endStr) {
+          const b = bump(r.checkout_date); b.tents.add(r.tent_id); b.departures.add(r.tent_id);
+        }
+      });
+      const sorted = Array.from(byDate.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+      if (sorted.length === 0) { setNextCleaning(null); return; }
+      const [d, info] = sorted[0];
+      setNextCleaning({ date: d, tents: info.tents.size, arrivals: info.arrivals.size, departures: info.departures.size, guests: info.guests });
+    })();
+  }, [user, isCleaner]);
 
   const cards: TentDayData[] = useMemo(() => {
     return TENTS.map((t) => {
