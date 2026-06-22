@@ -159,6 +159,7 @@ export type Database = {
           phone: string | null
           public_token: string | null
           raw: Json | null
+          reminder_5d_sent_at: string | null
           sirvoy_booking_no: string | null
           tent_id: string | null
           tent_name: string | null
@@ -182,6 +183,7 @@ export type Database = {
           phone?: string | null
           public_token?: string | null
           raw?: Json | null
+          reminder_5d_sent_at?: string | null
           sirvoy_booking_no?: string | null
           tent_id?: string | null
           tent_name?: string | null
@@ -205,6 +207,7 @@ export type Database = {
           phone?: string | null
           public_token?: string | null
           raw?: Json | null
+          reminder_5d_sent_at?: string | null
           sirvoy_booking_no?: string | null
           tent_id?: string | null
           tent_name?: string | null
@@ -684,6 +687,41 @@ export type Database = {
           note?: string | null
         }
         Relationships: []
+      }
+      short_links: {
+        Row: {
+          booking_id: string | null
+          clicks: number
+          created_at: string
+          id: string
+          slug: string
+          target_url: string
+        }
+        Insert: {
+          booking_id?: string | null
+          clicks?: number
+          created_at?: string
+          id?: string
+          slug: string
+          target_url: string
+        }
+        Update: {
+          booking_id?: string | null
+          clicks?: number
+          created_at?: string
+          id?: string
+          slug?: string
+          target_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "short_links_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sms_outbox: {
         Row: {
