@@ -14,6 +14,132 @@ export type Database = {
   }
   public: {
     Tables: {
+      addon_orders: {
+        Row: {
+          addon_id: string
+          booking_id: string
+          created_at: string
+          id: string
+          paid_at: string | null
+          quantity: number
+          status: string
+          stripe_payment_intent: string | null
+          stripe_session_id: string | null
+          total_sek: number
+          unit_price_sek: number
+          updated_at: string
+        }
+        Insert: {
+          addon_id: string
+          booking_id: string
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          quantity?: number
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          total_sek: number
+          unit_price_sek: number
+          updated_at?: string
+        }
+        Update: {
+          addon_id?: string
+          booking_id?: string
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          quantity?: number
+          status?: string
+          stripe_payment_intent?: string | null
+          stripe_session_id?: string | null
+          total_sek?: number
+          unit_price_sek?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "addon_orders_addon_id_fkey"
+            columns: ["addon_id"]
+            isOneToOne: false
+            referencedRelation: "addons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "addon_orders_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      addons: {
+        Row: {
+          active: boolean
+          created_at: string
+          description_en: string | null
+          description_sv: string | null
+          id: string
+          max_quantity: number
+          name_en: string
+          name_sv: string
+          price_sek: number
+          slug: string
+          sort_order: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description_en?: string | null
+          description_sv?: string | null
+          id?: string
+          max_quantity?: number
+          name_en: string
+          name_sv: string
+          price_sek: number
+          slug: string
+          sort_order?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description_en?: string | null
+          description_sv?: string | null
+          id?: string
+          max_quantity?: number
+          name_en?: string
+          name_sv?: string
+          price_sek?: number
+          slug?: string
+          sort_order?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           address: string | null
@@ -21,14 +147,21 @@ export type Database = {
           booking_number: string
           checkin_date: string | null
           checkout_date: string | null
+          country_code: string | null
           created_at: string
           email: string | null
+          guest_first_name: string | null
           guest_name: string | null
           id: string
           lang: string | null
+          language: string | null
+          nights: number | null
           phone: string | null
+          public_token: string | null
           raw: Json | null
+          sirvoy_booking_no: string | null
           tent_id: string | null
+          tent_name: string | null
           updated_at: string
         }
         Insert: {
@@ -37,14 +170,21 @@ export type Database = {
           booking_number: string
           checkin_date?: string | null
           checkout_date?: string | null
+          country_code?: string | null
           created_at?: string
           email?: string | null
+          guest_first_name?: string | null
           guest_name?: string | null
           id?: string
           lang?: string | null
+          language?: string | null
+          nights?: number | null
           phone?: string | null
+          public_token?: string | null
           raw?: Json | null
+          sirvoy_booking_no?: string | null
           tent_id?: string | null
+          tent_name?: string | null
           updated_at?: string
         }
         Update: {
@@ -53,14 +193,21 @@ export type Database = {
           booking_number?: string
           checkin_date?: string | null
           checkout_date?: string | null
+          country_code?: string | null
           created_at?: string
           email?: string | null
+          guest_first_name?: string | null
           guest_name?: string | null
           id?: string
           lang?: string | null
+          language?: string | null
+          nights?: number | null
           phone?: string | null
+          public_token?: string | null
           raw?: Json | null
+          sirvoy_booking_no?: string | null
           tent_id?: string | null
+          tent_name?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -324,6 +471,41 @@ export type Database = {
         }
         Relationships: []
       }
+      early_checkin_flags: {
+        Row: {
+          active: boolean
+          booking_id: string | null
+          created_at: string
+          date: string
+          id: string
+          tent_id: string
+        }
+        Insert: {
+          active?: boolean
+          booking_id?: string | null
+          created_at?: string
+          date: string
+          id?: string
+          tent_id: string
+        }
+        Update: {
+          active?: boolean
+          booking_id?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          tent_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "early_checkin_flags_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -446,6 +628,41 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      prearrival_messages: {
+        Row: {
+          booking_id: string
+          channel: string
+          error: string | null
+          id: string
+          sent_at: string
+          status: string
+        }
+        Insert: {
+          booking_id: string
+          channel: string
+          error?: string | null
+          id?: string
+          sent_at?: string
+          status?: string
+        }
+        Update: {
+          booking_id?: string
+          channel?: string
+          error?: string | null
+          id?: string
+          sent_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prearrival_messages_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       self_clean_dates: {
         Row: {
@@ -641,6 +858,7 @@ export type Database = {
         Returns: number
       }
       get_chat_by_token: { Args: { p_token: string }; Returns: Json }
+      get_stay_by_token: { Args: { p_token: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -651,6 +869,18 @@ export type Database = {
       is_valid_checkin_booking: {
         Args: { p_booking_number: string; p_tent_id: string }
         Returns: boolean
+      }
+      list_bookings_missing_contact: {
+        Args: { p_window_days?: number }
+        Returns: {
+          booking_number: string
+          checkin_date: string
+          guest_name: string
+          has_email: boolean
+          has_phone: boolean
+          id: string
+          tent_id: string
+        }[]
       }
       lookup_booking_for_checkin: {
         Args: { p_booking_number: string }
