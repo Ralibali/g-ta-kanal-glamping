@@ -154,9 +154,11 @@ Deno.serve(async (req) => {
   const phone = normalizePhone(booking.phone)
   if (phone) {
     const itemsStr = emailItems.map(i => `${i.quantity}× ${i.name}`).join(', ')
-    const smsBody = lang === 'sv'
-      ? `Tack ${firstName ?? ''}! Beställt: ${itemsStr}. Swisha ${total} kr till ${swishNumber} (${swishPayee}), meddelande: ${swishRef}. Vi ses!`
-      : `Thank you ${firstName ?? ''}! Order: ${itemsStr}. Swish ${total} SEK to ${swishNumber} (${swishPayee}), message: ${swishRef}. See you!`
+    const smsBody = isSv
+      ? `Tack ${firstName ?? ''}! Bestallt: ${itemsStr}. Swisha ${total} kr till ${swishNumber} (${swishPayee}), meddelande: ${swishRef}. Vi ses!`.replace('Bestallt', 'Beställt')
+      : `Thank you ${firstName ?? ''}! Order received: ${itemsStr}. Total ${total} SEK. We'll email you a secure payment link shortly. Ref: ${swishRef}.`
+    try { await sendSms(phone, smsBody) } catch (err) { console.error('sms failed', err) }
+  }
     try { await sendSms(phone, smsBody) } catch (err) { console.error('sms failed', err) }
   }
 
