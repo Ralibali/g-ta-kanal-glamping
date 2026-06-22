@@ -48,7 +48,8 @@ Deno.serve(async (req) => {
   )
 
   const baseUrl = 'https://goglampingsweden.se'
-  const targetUrl = `${baseUrl}/stay/5e1f43ba-f57a-4f94-9943-95dcef3acc2b`
+  // Real upcoming booking with no phone: Lars Olsson, Sjöbrisretreatet, 26–28 juni
+  const targetUrl = `${baseUrl}/stay/9ac6a4cb-00d1-442a-aa62-8d09b0219704`
 
   // Always create a fresh short link for the test (no booking_id binding)
   let slug = ''
