@@ -51,28 +51,31 @@ Deno.serve(async (req) => {
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!
 
-  // Auth: validate caller (cleaner or admin)
+  // Auth: allow service role (internal calls) or validate caller (cleaner or admin)
   const authHeader = req.headers.get('Authorization')
   if (!authHeader?.startsWith('Bearer ')) {
     return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
-  const callerClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } })
-  const { data: claims, error: claimsErr } = await callerClient.auth.getClaims(authHeader.replace('Bearer ', ''))
-  if (claimsErr || !claims?.claims?.sub) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+  const token = authHeader.replace('Bearer ', '')
+  const isServiceRole = token === serviceKey
+  if (!isServiceRole) {
+    const callerClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authHeader } } })
+    const { data: claims, error: claimsErr } = await callerClient.auth.getClaims(token)
+    if (claimsErr || !claims?.claims?.sub) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const userId = claims.claims.sub
+    const supabaseTmp = createClient(supabaseUrl, serviceKey)
+    const { data: roleRows } = await supabaseTmp
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+    const roles = (roleRows ?? []).map((r: { role: string }) => r.role)
+    if (!roles.includes('cleaner') && !roles.includes('admin')) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
   }
-  const userId = claims.claims.sub
 
-  const supabase = createClient(supabaseUrl, serviceKey)
-
-  const { data: roleRows } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', userId)
-  const roles = (roleRows ?? []).map((r: { role: string }) => r.role)
-  if (!roles.includes('cleaner') && !roles.includes('admin')) {
-    return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
-  }
 
   let body: { tent_id?: string; cleaning_date?: string; session_id?: string } = {}
   try { body = await req.json() } catch { /* ignore */ }
