@@ -6,6 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees } from "lucide-react";
 import { toast } from "sonner";
+import addonBreakfastImg from "@/assets/addon-breakfast.jpg";
+import addonFikaImg from "@/assets/addon-fika.jpg";
+import addonEarlyCheckinImg from "@/assets/addon-early-checkin.jpg";
+
+const ADDON_IMAGES: Record<string, string> = {
+  breakfast: addonBreakfastImg,
+  fika_bag: addonFikaImg,
+  fika: addonFikaImg,
+  early_checkin: addonEarlyCheckinImg,
+};
 
 interface Addon {
   id: string; slug: string;
