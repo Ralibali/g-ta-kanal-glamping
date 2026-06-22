@@ -155,6 +155,7 @@ export default function Stay() {
         body: { public_token: token, items },
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
+      setPaidTotal(total);
       setDone(true);
       toast.success(t.success);
     } catch (err: any) {
