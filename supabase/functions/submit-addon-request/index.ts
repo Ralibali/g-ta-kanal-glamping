@@ -103,6 +103,7 @@ Deno.serve(async (req) => {
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   const tentName = booking.tent_name || booking.tent_id
   const firstName = booking.guest_first_name || (booking.guest_name ? booking.guest_name.split(',')[0].split(' ').pop() : null)
+  const swishRef = booking.booking_number || String(booking.public_token).slice(0, 8).toUpperCase()
 
   // Owner email
   try {
@@ -133,7 +134,10 @@ Deno.serve(async (req) => {
           templateName: 'addon-request-guest',
           recipientEmail: booking.email,
           idempotencyKey: `addon-guest-${booking.id}-${Date.now()}`,
-          templateData: { firstName, tentName, items: emailItems, total, lang },
+          templateData: {
+            firstName, tentName, items: emailItems, total, lang,
+            swishNumber, swishPayee, swishReference: swishRef,
+          },
         }),
       })
     } catch (err) { console.error('guest email failed', err) }
@@ -144,12 +148,15 @@ Deno.serve(async (req) => {
   if (phone) {
     const itemsStr = emailItems.map(i => `${i.quantity}× ${i.name}`).join(', ')
     const smsBody = lang === 'sv'
-      ? `Tack ${firstName ?? ''}! Vi har noterat: ${itemsStr}. Faktura kommer på mail. Vi ses snart!`
-      : `Thank you ${firstName ?? ''}! Noted: ${itemsStr}. Invoice coming by email. See you soon!`
+      ? `Tack ${firstName ?? ''}! Beställt: ${itemsStr}. Swisha ${total} kr till ${swishNumber} (${swishPayee}), meddelande: ${swishRef}. Vi ses!`
+      : `Thank you ${firstName ?? ''}! Order: ${itemsStr}. Swish ${total} SEK to ${swishNumber} (${swishPayee}), message: ${swishRef}. See you!`
     try { await sendSms(phone, smsBody) } catch (err) { console.error('sms failed', err) }
   }
 
-  return new Response(JSON.stringify({ success: true, total, count: orderRows.length }), {
+  return new Response(JSON.stringify({
+    success: true, total, count: orderRows.length,
+    swish: { number: swishNumber, payee: swishPayee, reference: swishRef, amount: total },
+  }), {
     status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
 })
