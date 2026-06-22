@@ -300,3 +300,58 @@ export default function Stay() {
 function Centered({ children }: { children: React.ReactNode }) {
   return <div className="min-h-screen flex items-center justify-center p-6 text-center text-muted-foreground">{children}</div>;
 }
+
+function SwishCard({
+  t, amount, reference, swishNumber, payee,
+}: {
+  t: any; amount: number; reference: string; swishNumber: string; payee: string;
+}) {
+  const [copied, setCopied] = useState<string | null>(null);
+  const copy = async (val: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(val);
+      setCopied(key);
+      toast.success(t.swishCopied);
+      setTimeout(() => setCopied((c) => (c === key ? null : c)), 1500);
+    } catch { /* noop */ }
+  };
+  // Swish deep link (mobile opens the app, desktop ignores)
+  const swishUrl = `https://app.swish.nu/1/p/sw/?sw=${swishNumber}&amt=${amount}&cur=SEK&msg=${encodeURIComponent(reference)}&src=qr`;
+
+  const Row = ({ label, value, copyKey }: { label: string; value: string; copyKey: string }) => (
+    <div className="flex items-center justify-between gap-3 py-2 border-b border-border/50 last:border-0">
+      <div>
+        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
+        <div className="font-medium text-base">{value}</div>
+      </div>
+      <Button size="sm" variant="ghost" onClick={() => copy(value, copyKey)} className="shrink-0">
+        {copied === copyKey ? "✓" : t.copy}
+      </Button>
+    </div>
+  );
+
+  return (
+    <Card className="border-primary/50 bg-primary/5">
+      <CardContent className="p-5 space-y-4">
+        <div className="flex items-center gap-3">
+          <CheckCircle2 className="h-8 w-8 text-primary shrink-0" />
+          <div>
+            <h2 className="font-serif text-xl text-primary">{t.success}</h2>
+            <p className="text-sm text-muted-foreground">{t.swishIntro}</p>
+          </div>
+        </div>
+
+        <div className="rounded-lg bg-background border p-3">
+          <Row label={t.swishNumber} value={swishNumber} copyKey="num" />
+          <Row label={t.swishPayee} value={payee} copyKey="payee" />
+          <Row label={t.swishAmount} value={`${amount} kr`} copyKey="amt" />
+          <Row label={t.swishRef} value={reference} copyKey="ref" />
+        </div>
+
+        <a href={swishUrl} className="block">
+          <Button className="w-full" size="lg">{t.swishOpen}</Button>
+        </a>
+      </CardContent>
+    </Card>
+  );
+}
