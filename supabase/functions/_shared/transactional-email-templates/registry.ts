@@ -14,6 +14,9 @@ import { template as chatReply } from './chat-reply.tsx'
 import { template as cleaningComplete } from './cleaning-complete.tsx'
 import { template as cleaningScheduleUpdate } from './cleaning-schedule-update.tsx'
 import { template as tentReadyGuest } from './tent-ready-guest.tsx'
+import { template as prearrivalOffer } from './prearrival-offer.tsx'
+import { template as addonRequestOwner } from './addon-request-owner.tsx'
+import { template as addonRequestGuest } from './addon-request-guest.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'chat-notification': chatNotification,
@@ -21,4 +24,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'cleaning-complete': cleaningComplete,
   'cleaning-schedule-update': cleaningScheduleUpdate,
   'tent-ready-guest': tentReadyGuest,
+  'prearrival-offer': prearrivalOffer,
+  'addon-request-owner': addonRequestOwner,
+  'addon-request-guest': addonRequestGuest,
 }

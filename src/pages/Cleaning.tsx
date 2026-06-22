@@ -95,6 +95,7 @@ export default function Cleaning() {
   const [selfCleanDates, setSelfCleanDates] = useState<Set<string>>(new Set());
   const [togglingSelfClean, setTogglingSelfClean] = useState(false);
   const [nextDayArrivals, setNextDayArrivals] = useState<Set<string>>(new Set());
+  const [earlyTents, setEarlyTents] = useState<Set<string>>(new Set());
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
@@ -121,6 +122,12 @@ export default function Cleaning() {
       .select("tent_id, cleaning_date, status")
       .eq("cleaning_date", date);
     setSessions((sessRows ?? []) as Session[]);
+    const { data: earlyRows } = await (supabase as any)
+      .from("early_checkin_flags")
+      .select("tent_id")
+      .eq("date", date)
+      .eq("active", true);
+    setEarlyTents(new Set(((earlyRows ?? []) as { tent_id: string }[]).map((r) => r.tent_id)));
   };
 
   const loadUpcoming = async () => {
@@ -290,7 +297,7 @@ export default function Cleaning() {
   }, [user, isCleaner, selfCleanDates]);
 
   const cards: TentDayData[] = useMemo(() => {
-    return TENTS.map((t) => {
+    const list = TENTS.map((t) => {
       const arr = stays.find((s) => s.tent_id === t.id && s.checkin_date === date);
       const dep = stays.find((s) => s.tent_id === t.id && s.checkout_date === date);
       // Clean only on departure days. Arrival-only days are skipped (tent already clean from last departure).
@@ -303,9 +310,17 @@ export default function Cleaning() {
         children: arr?.children ?? 0,
         breakfast: !!arr?.breakfast, fikapase: !!arr?.fikapase,
         lateCheckout: !!dep?.late_checkout,
+        earlyCheckin: earlyTents.has(t.id),
       } as TentDayData;
     }).filter(Boolean) as TentDayData[];
-  }, [stays, date, lang]);
+    // Sort: early check-in tents first, then by tent number
+    return list.sort((a, b) => {
+      const ea = a.earlyCheckin ? 0 : 1;
+      const eb = b.earlyCheckin ? 0 : 1;
+      if (ea !== eb) return ea - eb;
+      return a.tentNo - b.tentNo;
+    });
+  }, [stays, date, lang, earlyTents]);
 
   const sessByTent = useMemo(() => {
     const m = new Map<string, Session>();
@@ -587,13 +602,19 @@ export default function Cleaning() {
                   const done = sess?.status === "completed";
                   const inProg = sess?.status === "in_progress";
                   return (
-                    <Card key={c.tent_id} className={`cursor-pointer ${done ? "border-green-500/50 bg-green-500/5" : ""}`}
+                    <Card key={c.tent_id} className={`cursor-pointer ${done ? "border-green-500/50 bg-green-500/5" : c.earlyCheckin ? "border-2 border-amber-500 bg-amber-500/5" : ""}`}
                       onClick={() => setSelected(c)}>
                       <CardContent className="p-4">
+                        {c.earlyCheckin && (
+                          <div className="mb-3 -mx-4 -mt-4 px-4 py-2 bg-amber-500 text-white text-xs font-bold uppercase tracking-wide rounded-t-lg flex items-center gap-2">
+                            ⏰ {lang === "sv" ? "Tidig incheckning kl 12.00 – städa detta tält först" : "Early check-in 12:00 – clean this tent first"}
+                          </div>
+                        )}
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <h3 className="font-serif text-xl">{c.tentName}</h3>
                             <p className="text-xs text-muted-foreground">{tr(lang, "tentLabel")} {c.tentNo} – {c.position}</p>
+
 
                             {c.hasArrival && (
                               <div className="mt-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30 p-3">

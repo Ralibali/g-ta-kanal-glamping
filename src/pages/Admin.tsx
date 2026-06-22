@@ -15,6 +15,8 @@ import { ChatManager } from "@/components/admin/ChatManager";
 import { CheckInsManager } from "@/components/admin/CheckInsManager";
 import { BookingsManager } from "@/components/admin/BookingsManager";
 import { CleaningManager } from "@/components/admin/CleaningManager";
+import { AddonsManager } from "@/components/admin/AddonsManager";
+import { AddonOrdersManager } from "@/components/admin/AddonOrdersManager";
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdmin();
@@ -58,6 +60,8 @@ const Admin = () => {
               <Route path="checkins" element={<CheckInsManager />} />
               <Route path="bookings" element={<BookingsManager />} />
               <Route path="cleaning" element={<CleaningManager />} />
+              <Route path="addons" element={<AddonsManager />} />
+              <Route path="addon-orders" element={<AddonOrdersManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </main>

@@ -30,6 +30,7 @@ export interface TentDayData {
   breakfast: boolean;
   fikapase: boolean;
   lateCheckout: boolean;
+  earlyCheckin?: boolean;
 }
 
 interface Props {
