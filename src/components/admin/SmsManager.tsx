@@ -110,11 +110,21 @@ export function SmsManager() {
     return { total, sent, failed, pending };
   }, [rows]);
 
-  const statusOptions = useMemo(() => {
-    const set = new Set<string>();
-    rows.forEach((r) => set.add(r.status));
-    return Array.from(set).sort();
-  }, [rows]);
+  const clickStats = useMemo(() => {
+    const bookings = new Set(rows.map((r) => r.booking_number).filter(Boolean) as string[]);
+    let withLink = 0, clicked = 0, totalClicks = 0;
+    bookings.forEach((bn) => {
+      const c = clickMap[bn];
+      if (c) {
+        withLink++;
+        totalClicks += c.clicks;
+        if (c.clicks > 0) clicked++;
+      }
+    });
+    const rate = withLink > 0 ? Math.round((clicked / withLink) * 100) : 0;
+    return { withLink, clicked, totalClicks, rate };
+  }, [rows, clickMap]);
+
 
   return (
     <div className="space-y-6">
