@@ -767,6 +767,18 @@ export default function Stay() {
   );
 }
 
+function InfoRow({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
+  return (
+    <div className="flex gap-3">
+      <div className="rounded-full bg-primary/10 text-primary p-2 h-8 w-8 flex items-center justify-center shrink-0 mt-0.5">{icon}</div>
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-foreground mb-0.5">{title}</div>
+        <div className="text-muted-foreground leading-relaxed">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 function Centered({ children }: { children: React.ReactNode }) {
   return <div className="min-h-screen flex items-center justify-center p-6 text-center text-muted-foreground">{children}</div>;
 }
