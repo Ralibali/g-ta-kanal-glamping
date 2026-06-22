@@ -105,15 +105,17 @@ export default function Cleaning() {
   };
 
   const load = async () => {
-    const next = nextDayStr(date);
+    // Cleaning happens only on departure days. Include same-day arrivals (turnover) so
+    // we can show the incoming guest's info on the cleaning card.
     const { data: stayRows } = await (supabase as any)
       .from("tent_stays")
       .select("booking_number, tent_id, checkin_date, checkout_date, guests, children, breakfast, fikapase, late_checkout")
-      .or(`checkin_date.in.(${date},${next}),checkout_date.eq.${date}`);
+      .or(`checkout_date.eq.${date},checkin_date.eq.${date}`);
     const all = (stayRows ?? []) as Stay[];
-    const arrNext = new Set(all.filter((s) => s.checkin_date === next).map((s) => s.tent_id));
-    setNextDayArrivals(arrNext);
-    setStays(all.filter((s) => s.checkin_date === date || s.checkout_date === date));
+    const depTents = new Set(all.filter((s) => s.checkout_date === date).map((s) => s.tent_id));
+    setNextDayArrivals(new Set());
+    // Keep departures + only arrivals that are turnovers (same tent has a departure today)
+    setStays(all.filter((s) => s.checkout_date === date || (s.checkin_date === date && depTents.has(s.tent_id))));
     const { data: sessRows } = await (supabase as any)
       .from("cleaning_sessions")
       .select("tent_id, cleaning_date, status")
@@ -141,36 +143,26 @@ export default function Cleaning() {
     TENTS.forEach((t) => {
       rows.forEach((s) => {
         if (s.tent_id !== t.id) return;
-        const dates: { d: string; arr: boolean; dep: boolean }[] = [];
-        if (s.checkin_date >= today && s.checkin_date <= endStr) dates.push({ d: s.checkin_date, arr: true, dep: false });
-        if (s.checkout_date >= today && s.checkout_date <= endStr) {
-          // Skip pure departure if same tent has arrival the day after
-          const sameDayArrival = arrivalKeys.has(`${s.tent_id}|${s.checkout_date}`);
-          const nextDayArrival = arrivalKeys.has(`${s.tent_id}|${nextDayStr(s.checkout_date)}`);
-          if (sameDayArrival || !nextDayArrival) {
-            dates.push({ d: s.checkout_date, arr: false, dep: true });
-          }
+        // Cleaning only on departure days
+        if (s.checkout_date < today || s.checkout_date > endStr) return;
+        const row = addDate(s.checkout_date);
+        let existing = row.tents.find((x) => x.tent_id === t.id);
+        if (!existing) {
+          existing = {
+            tent_id: t.id, tentNo: t.no, tentName: t.name,
+            hasArrival: false, hasDeparture: false,
+            guests: 0, lateCheckout: false,
+          };
+          row.tents.push(existing);
         }
-        dates.forEach(({ d, arr, dep }) => {
-          const row = addDate(d);
-          let existing = row.tents.find((x) => x.tent_id === t.id);
-          if (!existing) {
-            existing = {
-              tent_id: t.id, tentNo: t.no, tentName: t.name,
-              hasArrival: false, hasDeparture: false,
-              guests: 0, lateCheckout: false,
-            };
-            row.tents.push(existing);
-          }
-          if (arr) {
-            existing.hasArrival = true;
-            existing.guests = s.guests ?? 0;
-          }
-          if (dep) {
-            existing.hasDeparture = true;
-            existing.lateCheckout = !!s.late_checkout;
-          }
-        });
+        existing.hasDeparture = true;
+        existing.lateCheckout = !!s.late_checkout;
+        // Same-day turnover: incoming guest arrives the day we clean
+        const turnover = rows.find((x) => x.tent_id === t.id && x.checkin_date === s.checkout_date);
+        if (turnover) {
+          existing.hasArrival = true;
+          existing.guests = turnover.guests ?? 0;
+        }
       });
     });
     const list = Array.from(map.values())
@@ -203,18 +195,13 @@ export default function Cleaning() {
     };
     rows.forEach((r: any) => {
       const tent = r.tent_id ?? Math.random().toString();
-      // Arrival always counts as a cleaning day
-      if (r.checkin_date >= s && r.checkin_date <= e) {
-        bump(tentsByDate, r.checkin_date, tent);
-        bump(arrByDate, r.checkin_date, tent);
-      }
-      // Departure: skip if same tent has arrival the day after (cleaning happens on arrival day)
+      // Cleaning only on departure days
       if (r.checkout_date >= s && r.checkout_date <= e) {
-        const sameDayArrival = arrivalKeys.has(`${tent}|${r.checkout_date}`);
-        const nextDayArrival = arrivalKeys.has(`${tent}|${nextDayStr(r.checkout_date)}`);
-        if (sameDayArrival || !nextDayArrival) {
-          bump(tentsByDate, r.checkout_date, tent);
-          bump(depByDate, r.checkout_date, tent);
+        bump(tentsByDate, r.checkout_date, tent);
+        bump(depByDate, r.checkout_date, tent);
+        // Show arrival badge too if same-day turnover
+        if (arrivalKeys.has(`${tent}|${r.checkout_date}`)) {
+          bump(arrByDate, r.checkout_date, tent);
         }
       }
     });
@@ -281,14 +268,15 @@ export default function Cleaning() {
       };
       const arrivalKeys = new Set(rows.map((r) => `${r.tent_id}|${r.checkin_date}`));
       rows.forEach((r) => {
-        if (r.checkin_date >= today && r.checkin_date <= endStr) {
-          const b = bump(r.checkin_date); b.tents.add(r.tent_id); b.arrivals.add(r.tent_id); b.guests += r.guests ?? 0;
-        }
+        // Cleaning only on departure days
         if (r.checkout_date >= today && r.checkout_date <= endStr) {
-          const sameDayArrival = arrivalKeys.has(`${r.tent_id}|${r.checkout_date}`);
-          const nextDayArrival = arrivalKeys.has(`${r.tent_id}|${nextDayStr(r.checkout_date)}`);
-          if (sameDayArrival || !nextDayArrival) {
-            const b = bump(r.checkout_date); b.tents.add(r.tent_id); b.departures.add(r.tent_id);
+          const b = bump(r.checkout_date);
+          b.tents.add(r.tent_id);
+          b.departures.add(r.tent_id);
+          // Same-day turnover: count incoming guest too
+          if (arrivalKeys.has(`${r.tent_id}|${r.checkout_date}`)) {
+            b.arrivals.add(r.tent_id);
+            b.guests += r.guests ?? 0;
           }
         }
       });
@@ -305,12 +293,11 @@ export default function Cleaning() {
     return TENTS.map((t) => {
       const arr = stays.find((s) => s.tent_id === t.id && s.checkin_date === date);
       const dep = stays.find((s) => s.tent_id === t.id && s.checkout_date === date);
-      if (!arr && !dep) return null;
-      // Skip departure-only when same tent has an arrival the next day (cleaning happens then)
-      if (!arr && dep && nextDayArrivals.has(t.id)) return null;
+      // Clean only on departure days. Arrival-only days are skipped (tent already clean from last departure).
+      if (!dep) return null;
       return {
         tent_id: t.id, tentNo: t.no, tentName: t.name, position: t.position[lang], date,
-        hasArrival: !!arr, hasDeparture: !!dep,
+        hasArrival: !!arr, hasDeparture: true,
         arrivalBooking: arr?.booking_number,
         guests: arr?.guests ?? 0,
         children: arr?.children ?? 0,
@@ -318,7 +305,7 @@ export default function Cleaning() {
         lateCheckout: !!dep?.late_checkout,
       } as TentDayData;
     }).filter(Boolean) as TentDayData[];
-  }, [stays, date, nextDayArrivals, lang]);
+  }, [stays, date, lang]);
 
   const sessByTent = useMemo(() => {
     const m = new Map<string, Session>();
