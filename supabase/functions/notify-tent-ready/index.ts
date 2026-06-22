@@ -76,8 +76,10 @@ Deno.serve(async (req) => {
     }
   }
 
+  const supabase = createClient(supabaseUrl, serviceKey)
 
   let body: { tent_id?: string; cleaning_date?: string; session_id?: string } = {}
+
   try { body = await req.json() } catch { /* ignore */ }
   const tent_id = body.tent_id
   const cleaning_date = body.cleaning_date
