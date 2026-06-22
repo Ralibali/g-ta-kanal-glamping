@@ -197,17 +197,19 @@ export function SmsManager() {
                   <TableHead>Bokning</TableHead>
                   <TableHead>Tält</TableHead>
                   <TableHead>Datum</TableHead>
+                  <TableHead>Klick</TableHead>
                   <TableHead>Meddelande</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                     {loading ? "Laddar..." : "Inga SMS i denna vy."}
                   </TableCell></TableRow>
                 ) : filtered.map((r) => {
                   const tent = r.tent_id ? TENT_BY_ID[r.tent_id] : null;
                   const ts = r.sent_at ?? r.created_at;
+                  const link = r.booking_number ? clickMap[r.booking_number] : null;
                   return (
                     <TableRow key={r.id}>
                       <TableCell className="text-xs whitespace-nowrap">
@@ -221,6 +223,13 @@ export function SmsManager() {
                       <TableCell className="text-sm">{r.booking_number ?? "—"}</TableCell>
                       <TableCell className="text-sm">{tent ? `${tent.no} – ${tent.name}` : (r.tent_id ?? "—")}</TableCell>
                       <TableCell className="text-sm whitespace-nowrap">{r.cleaning_date_key ?? "—"}</TableCell>
+                      <TableCell className="text-sm whitespace-nowrap">
+                        {link ? (
+                          <Badge className={link.clicks > 0 ? "bg-green-600 hover:bg-green-700" : "bg-muted text-foreground"}>
+                            {link.clicks} {link.clicks === 1 ? "klick" : "klick"}
+                          </Badge>
+                        ) : <span className="text-muted-foreground">—</span>}
+                      </TableCell>
                       <TableCell className="text-sm max-w-[360px]">
                         <div className="line-clamp-2 whitespace-pre-wrap" title={r.body ?? ""}>{r.body ?? "—"}</div>
                       </TableCell>
