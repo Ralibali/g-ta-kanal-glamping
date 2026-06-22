@@ -297,7 +297,7 @@ export default function Cleaning() {
   }, [user, isCleaner, selfCleanDates]);
 
   const cards: TentDayData[] = useMemo(() => {
-    return TENTS.map((t) => {
+    const list = TENTS.map((t) => {
       const arr = stays.find((s) => s.tent_id === t.id && s.checkin_date === date);
       const dep = stays.find((s) => s.tent_id === t.id && s.checkout_date === date);
       // Clean only on departure days. Arrival-only days are skipped (tent already clean from last departure).
@@ -310,9 +310,17 @@ export default function Cleaning() {
         children: arr?.children ?? 0,
         breakfast: !!arr?.breakfast, fikapase: !!arr?.fikapase,
         lateCheckout: !!dep?.late_checkout,
+        earlyCheckin: earlyTents.has(t.id),
       } as TentDayData;
     }).filter(Boolean) as TentDayData[];
-  }, [stays, date, lang]);
+    // Sort: early check-in tents first, then by tent number
+    return list.sort((a, b) => {
+      const ea = a.earlyCheckin ? 0 : 1;
+      const eb = b.earlyCheckin ? 0 : 1;
+      if (ea !== eb) return ea - eb;
+      return a.tentNo - b.tentNo;
+    });
+  }, [stays, date, lang, earlyTents]);
 
   const sessByTent = useMemo(() => {
     const m = new Map<string, Session>();
