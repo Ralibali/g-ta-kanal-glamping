@@ -464,7 +464,7 @@ export default function Stay() {
                 <CardContent className="p-4 flex items-center justify-between gap-3">
                   <div>
                     <div className="text-xs text-muted-foreground uppercase tracking-wider">{t.total}</div>
-                    <div className="font-serif text-2xl text-primary">{total} {lang === "sv" ? "kr" : "SEK"}</div>
+                    <div className="font-serif text-2xl text-primary">{total} {t.currency}</div>
                   </div>
                   <Button size="lg" onClick={submit} disabled={submitting}>
                     {submitting ? t.sending : t.submit}
