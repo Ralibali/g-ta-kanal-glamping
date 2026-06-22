@@ -138,12 +138,9 @@ Deno.serve(async (req) => {
     if (!existsSms) {
       const toPhone = normalizePhone(b.phone)
       if (toPhone) {
-        const fmtDate = (d: string, l: 'sv' | 'en') => new Intl.DateTimeFormat(l === 'sv' ? 'sv-SE' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Stockholm' }).format(new Date(d + 'T12:00:00'))
-        const inDate = fmtDate(b.checkin_date, lang)
-        const outDate = fmtDate(b.checkout_date, lang)
-        const body = lang === 'sv'
-          ? `Hej ${firstName ?? ''}! 🌿\n\nOm ${dWord} dagar är det dags – ${inDate} checkar ni in på ${tentName}, och er vistelse hos oss varar till ${outDate}.\n\nIncheckning sker själv från kl 15:00. Tältet är olåst och redo, ni hittar er välkomstinfo på plats. Utcheckning senast kl 11:00.\n\nGör vistelsen ännu mysigare – beställ nybakad frukost vid kanalen eller en välkomstfikapåse som väntar i tältet. Boka enkelt här:\n${link}\n\nSnart ses vi! 🏕️☀️\n\n/Bergs Slussar Glamping`
-          : `Hi ${firstName ?? ''}! 🌿\n\nIn ${dWord} days it's time – you check in on ${inDate} at ${tentName}, and your stay with us lasts until ${outDate}.\n\nSelf check-in from 3 PM. The tent is unlocked and ready with your welcome info inside. Check-out by 11 AM.\n\nMake your stay even cosier – order fresh breakfast by the canal or a welcome fika bag waiting in the tent. Book easily here:\n${link}\n\nSee you soon! 🏕️☀️\n\n/Bergs Slussar Glamping`
+      const body = lang === 'sv'
+        ? `Hej ${firstName ?? ''}! 🌿\n\nOm ${dWord} dagar väntar en mysig vistelse vid kanalen, ett bäddat tält och en härlig vistelse hos oss.\n\nGör vistelsen extra härlig med frukost från bageriet, en fikapåse i tältet eller tidig incheckning.\n\nLäs mer om tillvalen här:\n${link}\n\nSnart ses vi! 🏕️🌞\n\n/Bergs Slussar Glamping`
+        : `Hi ${firstName ?? ''}! 🌿\n\nIn ${dWord} days, a cozy stay by the canal, a made bed and a lovely stay with us awaits.\n\nMake your stay extra lovely with breakfast from the bakery, a fika bag in the tent or early check-in.\n\nRead more about add-ons here:\n${link}\n\nSee you soon! 🏕️🌞\n\n/Bergs Slussar Glamping`
         try {
           const r = await sendSms(toPhone, body)
           await supabase.from('prearrival_messages').insert({
