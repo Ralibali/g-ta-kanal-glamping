@@ -139,8 +139,8 @@ Deno.serve(async (req) => {
       const toPhone = normalizePhone(b.phone)
       if (toPhone) {
         const body = lang === 'sv'
-          ? `Hej ${firstName ?? ''}! Om ${dWord} dagar väntar ${tentName} på er 🌿 Gör vistelsen extra mysig – nybakad frukost vid sjön (${breakfastPrice} kr), välkomstfikapåse i tältet (${fikaPrice} kr) eller sen utcheckning. Boka enkelt: ${link}\n\nVi ses snart!\nBergs Slussar Glamping`
-          : `Hi ${firstName ?? ''}! In ${dWord} days ${tentName} is ready for you 🌿 Make your stay extra cosy – fresh breakfast by the lake (${breakfastPrice} SEK), a welcome fika bag in the tent (${fikaPrice} SEK) or late check-out. Book here: ${link}\n\nSee you soon!\nBergs Slussar Glamping`
+          ? `Hej ${firstName ?? ''}! 🌿\n\nNu är det bara ${dWord} dagar kvar tills ${tentName} väntar på er. Föreställ er en stilla kväll vid kanalen, en mysig stund i tältet och en morgon där frukosten kommer rykande färskt från bageriet!\n\nSätt guldkant på vistelsen med nybakad frukost vid vattnet (${breakfastPrice} kr), en välkomstfikapåse som väntar i tältet (${fikaPrice} kr) eller tidig incheckning så att ni får ännu mer tid att njuta.\n\nLägg till det ni önskar här:\n${link}\n\nSnart ses vi! 🏕️☀️\n\n/Bergs Slussar Glamping`
+          : `Hi ${firstName ?? ''}! 🌿\n\nOnly ${dWord} days left until ${tentName} is ready for you. Picture a quiet evening by the canal, a cosy moment in the tent and a morning where breakfast arrives fresh from the bakery!\n\nAdd a little extra to your stay – fresh breakfast by the water (${breakfastPrice} SEK), a welcome fika bag waiting in the tent (${fikaPrice} SEK) or early check-in for even more time to enjoy.\n\nAdd what you'd like here:\n${link}\n\nSee you soon! 🏕️☀️\n\n/Bergs Slussar Glamping`
         try {
           const r = await sendSms(toPhone, body)
           await supabase.from('prearrival_messages').insert({

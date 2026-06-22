@@ -181,7 +181,7 @@ export default function Stay() {
             <CardTitle className="font-serif text-lg">{t.stayInfo}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1 text-sm">
-            <div className="font-medium text-base">{data.booking.tent_name}</div>
+            <div className="font-medium text-base">{({sjobris:'Sjöbrisretreatet',naturkarnan:'Naturkärnan',lugnetsyta:'Lugnets Yta'} as Record<string,string>)[data.booking.tent_id] || data.booking.tent_name}</div>
             <div className="text-muted-foreground">
               {ci} → {co} · {t.nights(data.booking.nights ?? 1)}
             </div>
