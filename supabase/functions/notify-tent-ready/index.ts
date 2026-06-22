@@ -7,14 +7,6 @@ const TENT_NAMES: Record<string, { no: number; name: string }> = {
   lugnetsyta: { no: 3, name: 'Lugnets yta' },
 }
 
-const SMS_TEMPLATES: Record<string, string> = {
-  sv: '', // built dynamically for Swedish to include name
-  en: 'Hi! Your tent {tent} at Bergs Slussar Glamping is now cleaned and ready for check-in. Warm welcome! Questions? Text 0722254993.',
-  da: 'Hej! Dit telt {tent} på Bergs Slussar Glamping er nu rengjort og klar til check-in. Velkommen! Spørgsmål? Sms 0722254993.',
-  no: 'Hei! Teltet ditt {tent} på Bergs Slussar Glamping er nå rengjort og klart for innsjekk. Velkommen! Spørsmål? Send SMS 0722254993.',
-  de: 'Hallo! Ihr Zelt {tent} im Bergs Slussar Glamping ist jetzt gereinigt und bereit zum Check-in. Willkommen! Fragen? SMS an 0722254993.',
-}
-
 function normalizePhone(raw: string | null | undefined): string | null {
   if (!raw) return null
   const trimmed = raw.replace(/[\s\-()]/g, '')
@@ -43,6 +35,74 @@ async function sendSms(toPhone: string, body: string): Promise<{ id: string }> {
   if (!res.ok) throw new Error(`46elks ${res.status}: ${await res.text()}`)
   const json = await res.json()
   return { id: json.id ?? '' }
+}
+
+interface Addons {
+  breakfast: boolean
+  fikapase: boolean
+}
+
+function svMessage(name: string | null, tentName: string, flags: Addons): string {
+  const greet = name ? `Hej ${name}` : 'Hej'
+  let s = `${greet} och välkommen till oss på Bergs Slussar Glamping! ☀️🏕️\n\nVåra städare har markerat ${tentName} som klart, så ni är välkomna att checka in från nu. Incheckning sker via QR-koden vid entrén – där kan ni checka in med namn eller bokningsnummer, och får sedan koden till tältet. 🔑`
+  if (flags.breakfast) s += `\n\nNi har frukost inkluderat. Den serveras mellan 08:30–09:00 vid portalen halvvägs upp i backen. 🥐☕`
+  if (flags.fikapase) s += `\n\nErt välkomst-fika-paket (fikapåse) står redo i tältet. 🍪☕`
+  s += `\n\nHar ni några frågor? Hör av er till Christoffer per SMS på 0722254993.\n\nVänligen\nBergs Slussar Glamping 🌿`
+  return s
+}
+
+function enMessage(name: string | null, tentName: string, flags: Addons): string {
+  const greet = name ? `Hi ${name}` : 'Hi'
+  let s = `${greet} and welcome to Bergs Slussar Glamping! ☀️🏕️\n\nOur cleaners have marked ${tentName} as ready, so you are welcome to check in from now. Please check in via the QR code at the entrance — you can check in using your name or booking number, and you will then receive the code to your tent. 🔑`
+  if (flags.breakfast) s += `\n\nYou have breakfast included. It is served between 08:30–09:00 at the portal halfway up the hill. 🥐☕`
+  if (flags.fikapase) s += `\n\nYour welcome fika bag is ready inside your tent. 🍪☕`
+  s += `\n\nAny questions? Text Christoffer on +46 722 25 49 93.\n\nKind regards\nBergs Slussar Glamping 🌿`
+  return s
+}
+
+function deMessage(name: string | null, tentName: string, flags: Addons): string {
+  const greet = name ? `Hallo ${name}` : 'Hallo'
+  let s = `${greet} und herzlich willkommen im Bergs Slussar Glamping! ☀️🏕️\n\nUnsere Reinigungskräfte haben ${tentName} als fertig markiert, sodass Sie ab sofort einchecken können. Der Check-in erfolgt über den QR-Code am Eingang – dort können Sie mit Name oder Buchungsnummer einchecken und erhalten dann den Code zu Ihrem Zelt. 🔑`
+  if (flags.breakfast) s += `\n\nSie haben Frühstück inklusive. Es wird zwischen 08:30–09:00 am Portal auf halbem Weg den Hügel hinauf serviert. 🥐☕`
+  if (flags.fikapase) s += `\n\nIhre Willkommens-Fika-Tüte steht in Ihrem Zelt bereit. 🍪☕`
+  s += `\n\nBei Fragen? Schreiben Sie Christoffer per SMS an +46 722 25 49 93.\n\nFreundliche Grüße\nBergs Slussar Glamping 🌿`
+  return s
+}
+
+function noMessage(name: string | null, tentName: string, flags: Addons): string {
+  const greet = name ? `Hei ${name}` : 'Hei'
+  let s = `${greet} og velkommen til Bergs Slussar Glamping! ☀️🏕️\n\nRengjøringspersonalet vårt har markert ${tentName} som klart, så du kan sjekke inn fra nå av. Innsjekking skjer via QR-koden ved inngangen – der kan du sjekke inn med navn eller bestillingsnummer, og får deretter koden til teltet. 🔑`
+  if (flags.breakfast) s += `\n\nDu har frokost inkludert. Den serveres mellom 08:30–09:00 ved portalen halvveis opp bakken. 🥐☕`
+  if (flags.fikapase) s += `\n\nVelkomst-fikaposen din ligger klar i teltet ditt. 🍪☕`
+  s += `\n\nHar du spørsmål? Send SMS til Christoffer på +46 722 25 49 93.\n\nVennlig hilsen\nBergs Slussar Glamping 🌿`
+  return s
+}
+
+function daMessage(name: string | null, tentName: string, flags: Addons): string {
+  const greet = name ? `Hej ${name}` : 'Hej'
+  let s = `${greet} og velkommen til Bergs Slussar Glamping! ☀️🏕️\n\nVores rengøringspersonale har markeret ${tentName} som klar, så du er velkommen til at tjekke ind fra nu. Tjek ind via QR-koden ved indgangen – der kan du tjekke ind med navn eller bookingsnummer, og får derefter koden til dit telt. 🔑`
+  if (flags.breakfast) s += `\n\nDu har morgenmad inkluderet. Den serveres mellem 08:30–09:00 ved portalen halvvejs op ad bakken. 🥐☕`
+  if (flags.fikapase) s += `\n\nDin velkomst-fikapose ligger klar i dit telt. 🍪☕`
+  s += `\n\nHar du spørgsmål? Skriv til Christoffer på SMS +46 722 25 49 93.\n\nVenlig hilsen\nBergs Slussar Glamping 🌿`
+  return s
+}
+
+function nlMessage(name: string | null, tentName: string, flags: Addons): string {
+  const greet = name ? `Hoi ${name}` : 'Hoi'
+  let s = `${greet} en welkom bij Bergs Slussar Glamping! ☀️🏕️\n\nOnze schoonmakers hebben ${tentName} als klaar gemarkeerd, dus je kunt vanaf nu inchecken. Check in via de QR-code bij de ingang – daar kun je inchecken met naam of boekingsnummer, en ontvang dan de code voor je tent. 🔑`
+  if (flags.breakfast) s += `\n\nJe hebt ontbijt inbegrepen. Het wordt tussen 08:30–09:00 geserveerd bij het portaal halverwege de heuvel. 🥐☕`
+  if (flags.fikapase) s += `\n\nJe welkomst-fikatas staat klaar in je tent. 🍪☕`
+  s += `\n\nVragen? Stuur Christoffer een sms op +46 722 25 49 93.\n\nMet vriendelijke groet\nBergs Slussar Glamping 🌿`
+  return s
+}
+
+function buildMessage(lang: string, name: string | null, tentName: string, breakfast: boolean, fikapase: boolean): string {
+  const builders: Record<string, (name: string | null, tentName: string, flags: Addons) => string> = {
+    sv: svMessage, en: enMessage, de: deMessage, no: noMessage, da: daMessage, nl: nlMessage,
+  }
+  const key = (lang ?? '').toLowerCase()
+  const builder = builders[key] ?? enMessage
+  return builder(name, tentName, { breakfast, fikapase })
 }
 
 Deno.serve(async (req) => {
@@ -140,14 +200,7 @@ Deno.serve(async (req) => {
     const toPhone = normalizePhone(arrival.phone)
     const lang = (arrival.lang ?? 'sv').toLowerCase()
     const name = arrival.guest_name
-    let messageBody: string
-    if (lang === 'sv') {
-      const greeting = name ? `Hej ${name}` : 'Hej'
-      messageBody = `${greeting} och välkommen till oss på Bergs Slussar Glamping! ☀️\n\nVåra städare har markerat erat tält som klart, vilket gör att ni är välkomna från nu. Ni checkar in via QR-koden som finns vid entrén och därigenom så får ni koden till erat tält. Bokningskoden hittar du i din mail.\n\nHar ni beställt frukost då serveras det mellan 08:30-09:00 och finns vid portalen halvvägs upp i backen. Om ni har beställt fikapåse så finns det redo i erat tält!\n\nHar ni några frågor? Hör av er till Christoffer per SMS på 0722254993.\n\nVänligen\n\nBergs slussar Glamping 🏕️`
-    } else {
-      const greeting = name ? `Hi ${name}` : 'Hi'
-      messageBody = `${greeting} and welcome to Bergs Slussar Glamping! ☀️\n\nOur cleaners have marked your tent as ready, so you are welcome to check in from now. Please check in via the QR code at the entrance — you will then receive the code to your tent. Your booking number is in your email.\n\nIf you have ordered breakfast, it is served between 08:30-09:00 at the portal halfway up the hill. If you have ordered a coffee/snack bag (fikapåse), it is ready in your tent!\n\nAny questions? Text Christoffer on +46 722 25 49 93.\n\nKind regards\n\nBergs Slussar Glamping 🏕️`
-    }
+    const messageBody = buildMessage(lang, name, tentMeta.name, !!arrival.breakfast, !!arrival.fikapase)
 
     if (!toPhone) {
       // Insert failed row (idempotent)
