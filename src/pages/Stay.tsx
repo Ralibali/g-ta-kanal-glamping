@@ -212,12 +212,13 @@ export default function Stay() {
         )}
 
         {done ? (
-          <Card className="border-primary/50 bg-primary/10">
-            <CardContent className="p-6 text-center space-y-3">
-              <CheckCircle2 className="h-12 w-12 mx-auto text-primary" />
-              <p className="font-serif text-xl">{t.success}</p>
-            </CardContent>
-          </Card>
+          <SwishCard
+            t={t}
+            amount={paidTotal}
+            reference={data.booking.booking_number || data.booking.public_token.slice(0, 8).toUpperCase()}
+            swishNumber={data.settings?.swish_number || "1230628289"}
+            payee={data.settings?.swish_payee || "Aurora Media AB"}
+          />
         ) : tooLate ? (
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
