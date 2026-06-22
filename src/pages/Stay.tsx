@@ -419,8 +419,8 @@ export default function Stay() {
             <div className="space-y-3">
               {data.addons.map((a) => {
                 const q = qty[a.id] ?? 0;
-                const name = lang === "sv" ? a.name_sv : a.name_en;
-                const desc = lang === "sv" ? a.description_sv : a.description_en;
+                const name = isSv ? a.name_sv : a.name_en;
+                const desc = isSv ? a.description_sv : a.description_en;
                 const priceLabel = a.unit === "per_quantity" ? t.perPerson : t.perStay;
                 return (
                   <Card key={a.id} className={q > 0 ? "border-primary/50" : ""}>
@@ -440,7 +440,7 @@ export default function Stay() {
                               <Button size="icon" variant="outline" onClick={() => setQ(a.id, q - 1, a.max_quantity)} disabled={q === 0} aria-label="–"><Minus className="h-4 w-4" /></Button>
                               <span className="font-medium text-lg w-8 text-center">{q}</span>
                               <Button size="icon" variant="outline" onClick={() => setQ(a.id, q + 1, a.max_quantity)} disabled={q >= a.max_quantity} aria-label="+"><Plus className="h-4 w-4" /></Button>
-                              {q > 0 && <span className="text-sm text-muted-foreground ml-auto">{q * a.price_sek} {lang === "sv" ? "kr" : "SEK"}</span>}
+                              {q > 0 && <span className="text-sm text-muted-foreground ml-auto">{q * a.price_sek} {t.currency}</span>}
                             </div>
                           ) : (
                             <Button
@@ -448,7 +448,7 @@ export default function Stay() {
                               size="sm"
                               onClick={() => setQ(a.id, q > 0 ? 0 : 1, 1)}
                             >
-                              {q > 0 ? (lang === "sv" ? "✓ Vald" : "✓ Selected") : (lang === "sv" ? "Lägg till" : "Add")}
+                              {q > 0 ? t.selectedLabel : t.addLabel}
                             </Button>
                           )}
                         </div>
