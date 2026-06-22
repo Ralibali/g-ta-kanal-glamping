@@ -72,7 +72,10 @@ Deno.serve(async (req) => {
   const { data: addons } = await supabase.from('addons').select('id, slug, name_sv, name_en, price_sek, unit, max_quantity, active').in('id', addonIds)
   const addonMap = new Map((addons ?? []).map(a => [a.id, a]))
 
-  const lang: 'sv' | 'en' = (booking.language ?? 'en').toLowerCase().startsWith('sv') ? 'sv' : 'en'
+  const rawLang = (booking.language ?? 'sv').toLowerCase().slice(0, 2)
+  const supportedLangs = ['sv', 'en', 'de', 'da', 'no', 'nl', 'fr']
+  const lang: string = supportedLangs.includes(rawLang) ? rawLang : (rawLang === 'nb' || rawLang === 'nn' ? 'no' : 'en')
+  const isSv = lang === 'sv'
   const orderRows: any[] = []
   const emailItems: { name: string; quantity: number; total: number }[] = []
   let total = 0
@@ -88,7 +91,7 @@ Deno.serve(async (req) => {
       booking_id: booking.id, addon_id: a.id, quantity: qty,
       unit_price_sek: a.price_sek, total_sek: lineTotal, status: 'requested',
     })
-    emailItems.push({ name: lang === 'sv' ? a.name_sv : a.name_en, quantity: qty, total: lineTotal })
+    emailItems.push({ name: isSv ? a.name_sv : a.name_en, quantity: qty, total: lineTotal })
   }
   if (orderRows.length === 0) {
     return new Response(JSON.stringify({ error: 'no_valid_items' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
@@ -115,9 +118,13 @@ Deno.serve(async (req) => {
         recipientEmail: ownerEmail,
         idempotencyKey: `addon-owner-${booking.id}-${Date.now()}`,
         templateData: {
-          guestName: booking.guest_name, tentName,
+          guestName: booking.guest_name,
+          guestEmail: booking.email ?? null,
+          guestLang: lang,
+          tentName,
           checkinDate: booking.checkin_date,
           items: emailItems, total, hasEarlyCheckin: hasEarly,
+          reference: swishRef,
           adminUrl: 'https://goglampingsweden.se/admin/addon-orders',
         },
       }),
@@ -147,9 +154,9 @@ Deno.serve(async (req) => {
   const phone = normalizePhone(booking.phone)
   if (phone) {
     const itemsStr = emailItems.map(i => `${i.quantity}× ${i.name}`).join(', ')
-    const smsBody = lang === 'sv'
-      ? `Tack ${firstName ?? ''}! Beställt: ${itemsStr}. Swisha ${total} kr till ${swishNumber} (${swishPayee}), meddelande: ${swishRef}. Vi ses!`
-      : `Thank you ${firstName ?? ''}! Order: ${itemsStr}. Swish ${total} SEK to ${swishNumber} (${swishPayee}), message: ${swishRef}. See you!`
+    const smsBody = isSv
+      ? `Tack ${firstName ?? ''}! Bestallt: ${itemsStr}. Swisha ${total} kr till ${swishNumber} (${swishPayee}), meddelande: ${swishRef}. Vi ses!`.replace('Bestallt', 'Beställt')
+      : `Thank you ${firstName ?? ''}! Order received: ${itemsStr}. Total ${total} SEK. We'll email you a secure payment link shortly. Ref: ${swishRef}.`
     try { await sendSms(phone, smsBody) } catch (err) { console.error('sms failed', err) }
   }
 
