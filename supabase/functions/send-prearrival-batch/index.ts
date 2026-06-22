@@ -73,12 +73,11 @@ function buildBody(name: string | null, link: string, lang: 'sv' | 'en'): string
     return [
       `${hi}${leaf}`,
       '',
-      'Om fem dagar vantar en mysig vistelse vid kanalen, med baddat talt och skon ro vid vattnet.'.replace(/vantar/, 'väntar').replace(/baddat talt/, 'bäddat tält').replace(/skon/, 'skön'),
+      'Om fem dagar väntar en mysig vistelse vid kanalen, med bäddat tält och skön ro vid vattnet.',
       '',
-      'Gor den extra fin med frukost fran bageriet, en fikapase i taltet eller tidig incheckning. Tillvalen bokar du senast tva dagar fore ankomst.'
-        .replace(/Gor/, 'Gör').replace(/fran/, 'från').replace(/fikapase/, 'fikapåse').replace(/taltet/, 'tältet').replace(/tva/, 'två').replace(/fore/, 'före'),
+      'Gör den extra fin med frukost från bageriet, en fikapåse i tältet eller tidig incheckning. Tillvalen bokar du senast 2 dagar före ankomst.',
       '',
-      `Se dina tillval har: ${link}`.replace(/har:/, 'här:'),
+      `Se dina tillval här: ${link}`,
       '',
       'Snart ses vi!',
       '',
