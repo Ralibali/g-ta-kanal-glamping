@@ -43,18 +43,20 @@ Deno.serve(async (req) => {
 
   const { data: booking } = await supabase
     .from('bookings')
-    .select('id, guest_name, guest_first_name, tent_name, tent_id, checkin_date, email, phone, language')
+    .select('id, guest_name, guest_first_name, tent_name, tent_id, checkin_date, email, phone, language, booking_number, public_token')
     .eq('public_token', token).maybeSingle()
   if (!booking) {
     return new Response(JSON.stringify({ error: 'not_found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
   // Cutoff: must be >= cutoff_days before check-in
-  const { data: settings } = await supabase.from('app_settings').select('key,value').in('key', ['order_cutoff_days', 'owner_email'])
+  const { data: settings } = await supabase.from('app_settings').select('key,value').in('key', ['order_cutoff_days', 'owner_email', 'swish_number', 'swish_payee'])
   const sMap: Record<string, any> = {}
   for (const r of (settings ?? [])) sMap[r.key] = r.value
   const cutoffDays = Number(sMap['order_cutoff_days'] ?? 2)
   const ownerEmail = String(sMap['owner_email'] ?? 'info@auroramedia.se')
+  const swishNumber = String(sMap['swish_number'] ?? '1230628289')
+  const swishPayee = String(sMap['swish_payee'] ?? 'Aurora Media AB')
 
   const fmt = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Stockholm', year: 'numeric', month: '2-digit', day: '2-digit' })
   const todayStr = fmt.format(new Date())
