@@ -301,8 +301,9 @@ export default function Stay() {
   if (loading) return <Centered>{COPY.sv.loading}</Centered>;
   if (!data || !data.booking) return <Centered>{COPY.sv.notFound}</Centered>;
 
-  const lang: "sv" | "en" = data.booking.language?.toLowerCase().startsWith("sv") ? "sv" : "en";
+  const lang: LangKey = pickLang(data.booking.language);
   const t = COPY[lang];
+  const isSv = lang === "sv";
   const cutoff = data.settings?.order_cutoff_days ?? 2;
   const todayMs = new Date(new Date().toISOString().slice(0, 10)).getTime();
   const checkinMs = new Date(data.booking.checkin_date).getTime();
