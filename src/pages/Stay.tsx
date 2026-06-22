@@ -109,6 +109,7 @@ export default function Stay() {
   const [qty, setQty] = useState<Record<string, number>>({});
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [paidTotal, setPaidTotal] = useState<number>(0);
 
   useEffect(() => {
     if (!token) { setLoading(false); return; }
