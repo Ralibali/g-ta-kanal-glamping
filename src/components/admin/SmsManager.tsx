@@ -56,6 +56,7 @@ function StatusBadge({ status }: { status: string }) {
 
 export function SmsManager() {
   const [rows, setRows] = useState<Sms[]>([]);
+  const [clickMap, setClickMap] = useState<Record<string, { clicks: number; slug: string }>>({});
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState("7d");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -71,6 +72,19 @@ export function SmsManager() {
     }
     const { data } = await q;
     setRows((data ?? []) as Sms[]);
+
+    // Senaste short_link per bokning för klickstatistik
+    const { data: links } = await (supabase as any)
+      .from("short_links")
+      .select("slug, clicks, created_at, booking_id, bookings!inner(booking_number)")
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    const map: Record<string, { clicks: number; slug: string }> = {};
+    (links ?? []).forEach((l: any) => {
+      const bn = l.bookings?.booking_number;
+      if (bn && !map[bn]) map[bn] = { clicks: l.clicks ?? 0, slug: l.slug };
+    });
+    setClickMap(map);
     setLoading(false);
   };
 
@@ -96,11 +110,28 @@ export function SmsManager() {
     return { total, sent, failed, pending };
   }, [rows]);
 
+  const clickStats = useMemo(() => {
+    const bookings = new Set(rows.map((r) => r.booking_number).filter(Boolean) as string[]);
+    let withLink = 0, clicked = 0, totalClicks = 0;
+    bookings.forEach((bn) => {
+      const c = clickMap[bn];
+      if (c) {
+        withLink++;
+        totalClicks += c.clicks;
+        if (c.clicks > 0) clicked++;
+      }
+    });
+    const rate = withLink > 0 ? Math.round((clicked / withLink) * 100) : 0;
+    return { withLink, clicked, totalClicks, rate };
+  }, [rows, clickMap]);
+
   const statusOptions = useMemo(() => {
     const set = new Set<string>();
     rows.forEach((r) => set.add(r.status));
     return Array.from(set).sort();
   }, [rows]);
+
+
 
   return (
     <div className="space-y-6">
@@ -120,6 +151,14 @@ export function SmsManager() {
         <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Misslyckade</div><div className="text-2xl font-bold text-red-600">{stats.failed}</div></CardContent></Card>
         <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Väntar</div><div className="text-2xl font-bold text-amber-600">{stats.pending}</div></CardContent></Card>
       </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Bokningar m. länk</div><div className="text-2xl font-bold">{clickStats.withLink}</div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Gäster som klickat</div><div className="text-2xl font-bold text-green-600">{clickStats.clicked}</div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Klickfrekvens</div><div className="text-2xl font-bold">{clickStats.rate}%</div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Totala klick</div><div className="text-2xl font-bold">{clickStats.totalClicks}</div></CardContent></Card>
+      </div>
+
 
       <Card>
         <CardHeader>
@@ -158,17 +197,19 @@ export function SmsManager() {
                   <TableHead>Bokning</TableHead>
                   <TableHead>Tält</TableHead>
                   <TableHead>Datum</TableHead>
+                  <TableHead>Klick</TableHead>
                   <TableHead>Meddelande</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filtered.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableRow><TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                     {loading ? "Laddar..." : "Inga SMS i denna vy."}
                   </TableCell></TableRow>
                 ) : filtered.map((r) => {
                   const tent = r.tent_id ? TENT_BY_ID[r.tent_id] : null;
                   const ts = r.sent_at ?? r.created_at;
+                  const link = r.booking_number ? clickMap[r.booking_number] : null;
                   return (
                     <TableRow key={r.id}>
                       <TableCell className="text-xs whitespace-nowrap">
@@ -182,6 +223,13 @@ export function SmsManager() {
                       <TableCell className="text-sm">{r.booking_number ?? "—"}</TableCell>
                       <TableCell className="text-sm">{tent ? `${tent.no} – ${tent.name}` : (r.tent_id ?? "—")}</TableCell>
                       <TableCell className="text-sm whitespace-nowrap">{r.cleaning_date_key ?? "—"}</TableCell>
+                      <TableCell className="text-sm whitespace-nowrap">
+                        {link ? (
+                          <Badge className={link.clicks > 0 ? "bg-green-600 hover:bg-green-700" : "bg-muted text-foreground"}>
+                            {link.clicks} {link.clicks === 1 ? "klick" : "klick"}
+                          </Badge>
+                        ) : <span className="text-muted-foreground">—</span>}
+                      </TableCell>
                       <TableCell className="text-sm max-w-[360px]">
                         <div className="line-clamp-2 whitespace-pre-wrap" title={r.body ?? ""}>{r.body ?? "—"}</div>
                       </TableCell>
