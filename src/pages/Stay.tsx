@@ -380,7 +380,7 @@ export default function Stay() {
                 if (!a) return null;
                 return (
                   <div key={o.id} className="flex justify-between">
-                    <span>{o.quantity}× {lang === "sv" ? a.name_sv : a.name_en}</span>
+                    <span>{o.quantity}× {isSv ? a.name_sv : a.name_en}</span>
                     <Badge variant="secondary">{o.status === "confirmed" || o.status === "paid" ? t.confirmed : t.pending}</Badge>
                   </div>
                 );
