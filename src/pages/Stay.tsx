@@ -279,6 +279,84 @@ function iconFor(slug: string) {
   return null;
 }
 
+// Detaljerad info per produkt — visas under beskrivningen så gästen vet exakt vad de får.
+const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: string[]; note?: string }>> = {
+  breakfast: {
+    sv: {
+      tagline: "Nybakat från lokala Bergs Bageri — levereras direkt till ditt tält.",
+      bullets: [
+        "Färska frallor & croissant från bageriet",
+        "Ost, skinka, smör & marmelad",
+        "Yoghurt med müsli och säsongens frukt",
+        "Termos med kaffe eller te",
+        "Färskpressad juice",
+      ],
+      note: "Levereras till tältet kl 08:30. Pris per person.",
+    },
+    en: {
+      tagline: "Freshly baked from local Bergs Bakery — delivered to your tent.",
+      bullets: [
+        "Fresh rolls & croissant from the bakery",
+        "Cheese, ham, butter & jam",
+        "Yoghurt with muesli and seasonal fruit",
+        "Thermos of coffee or tea",
+        "Freshly pressed juice",
+      ],
+      note: "Delivered to your tent at 8:30 AM. Price per person.",
+    },
+  },
+  fika_bag: {
+    sv: {
+      tagline: "En mysig fikapåse som väntar i tältet vid ankomst.",
+      bullets: [
+        "Två hembakta kanelbullar",
+        "Lokalrostat kaffe & ekologiskt te",
+        "En liten chokladbit till kvällen",
+        "Servetter och allt du behöver",
+      ],
+      note: "Står framme i tältet när du checkar in. Perfekt till första kvällen vid kanalen.",
+    },
+    en: {
+      tagline: "A cozy fika bag waiting in the tent on arrival.",
+      bullets: [
+        "Two home-baked cinnamon buns",
+        "Locally roasted coffee & organic tea",
+        "A small piece of chocolate for the evening",
+        "Napkins and everything you need",
+      ],
+      note: "Ready in the tent at check-in. Perfect for your first evening by the canal.",
+    },
+  },
+  early_checkin: {
+    sv: {
+      tagline: "Kom redan kl 12:00 istället för ordinarie 15:00 — tre extra timmar att njuta.",
+      bullets: [
+        "Incheckning från kl 12:00",
+        "Tre extra timmar vid kanalen",
+        "Tältet är bäddat och klart när du kommer",
+        "Garanterad tillgänglighet (bokningsbart)",
+      ],
+      note: "Pris per bokning, oavsett antal gäster.",
+    },
+    en: {
+      tagline: "Arrive at 12:00 PM instead of the usual 3:00 PM — three extra hours to enjoy.",
+      bullets: [
+        "Check-in from 12:00 PM",
+        "Three extra hours by the canal",
+        "Tent made and ready when you arrive",
+        "Guaranteed availability (bookable)",
+      ],
+      note: "Price per booking, regardless of number of guests.",
+    },
+  },
+};
+
+function getDetails(slug: string, lang: string) {
+  const byLang = ADDON_DETAILS[slug];
+  if (!byLang) return null;
+  return byLang[lang] ?? byLang.en ?? byLang.sv;
+}
+
 export default function Stay() {
   const { token } = useParams<{ token: string }>();
   const [data, setData] = useState<StayData | null>(null);
