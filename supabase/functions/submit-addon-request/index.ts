@@ -72,7 +72,10 @@ Deno.serve(async (req) => {
   const { data: addons } = await supabase.from('addons').select('id, slug, name_sv, name_en, price_sek, unit, max_quantity, active').in('id', addonIds)
   const addonMap = new Map((addons ?? []).map(a => [a.id, a]))
 
-  const lang: 'sv' | 'en' = (booking.language ?? 'en').toLowerCase().startsWith('sv') ? 'sv' : 'en'
+  const rawLang = (booking.language ?? 'sv').toLowerCase().slice(0, 2)
+  const supportedLangs = ['sv', 'en', 'de', 'da', 'no', 'nl', 'fr']
+  const lang: string = supportedLangs.includes(rawLang) ? rawLang : (rawLang === 'nb' || rawLang === 'nn' ? 'no' : 'en')
+  const isSv = lang === 'sv'
   const orderRows: any[] = []
   const emailItems: { name: string; quantity: number; total: number }[] = []
   let total = 0
