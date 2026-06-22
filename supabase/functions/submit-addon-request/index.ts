@@ -91,8 +91,7 @@ Deno.serve(async (req) => {
       booking_id: booking.id, addon_id: a.id, quantity: qty,
       unit_price_sek: a.price_sek, total_sek: lineTotal, status: 'requested',
     })
-    emailItems.push({ name: lang === 'sv' ? a.name_sv : a.name_en, quantity: qty, total: lineTotal })
-  }
+    emailItems.push({ name: isSv ? a.name_sv : a.name_en, quantity: qty, total: lineTotal })
   if (orderRows.length === 0) {
     return new Response(JSON.stringify({ error: 'no_valid_items' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
