@@ -6,6 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees } from "lucide-react";
 import { toast } from "sonner";
+import addonBreakfastImg from "@/assets/addon-breakfast.jpg";
+import addonFikaImg from "@/assets/addon-fika.jpg";
+import addonEarlyCheckinImg from "@/assets/addon-early-checkin.jpg";
+
+const ADDON_IMAGES: Record<string, string> = {
+  breakfast: addonBreakfastImg,
+  fika_bag: addonFikaImg,
+  fika: addonFikaImg,
+  early_checkin: addonEarlyCheckinImg,
+};
 
 interface Addon {
   id: string; slug: string;
@@ -536,7 +546,22 @@ export default function Stay() {
                 };
                 const ctaLabel = addCta[lang as 'sv'|'en'] ?? `+ ${name} • ${a.price_sek} ${t.currency}`;
                 return (
-                  <Card key={a.id} className={q > 0 ? "border-primary/50 shadow-sm" : ""}>
+                  <Card key={a.id} className={`overflow-hidden ${q > 0 ? "border-primary/50 shadow-sm" : ""}`}>
+                    {ADDON_IMAGES[a.slug] && (
+                      <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted">
+                        <img
+                          src={ADDON_IMAGES[a.slug]}
+                          alt={name}
+                          loading="lazy"
+                          width={1536}
+                          height={1024}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-2 right-2 rounded-full bg-background/90 backdrop-blur px-3 py-1 text-xs font-semibold text-primary shadow-sm">
+                          {a.price_sek} {priceLabel}
+                        </div>
+                      </div>
+                    )}
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
                         <div className="rounded-full bg-primary/10 p-2.5 text-primary shrink-0">{iconFor(a.slug)}</div>
