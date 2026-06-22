@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Papa from "papaparse";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import { Upload, RefreshCw, Trash2, Search, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
 
@@ -25,6 +28,13 @@ interface Booking {
   created_at: string;
 }
 
+interface AddonBadge {
+  slug: string;
+  label: string;
+  status: string;
+  source: "order" | "stay";
+}
+
 // Mappar olika möjliga rubriker → vårt fält
 const FIELD_ALIASES: Record<string, string[]> = {
   booking_number: ["bokningsnummer", "bokning", "booking", "booking number", "booking no", "boknings-id", "boknings id"],
@@ -40,6 +50,24 @@ const FIELD_ALIASES: Record<string, string[]> = {
   amount: ["belopp", "summa", "totalt", "amount", "total", "price", "pris"],
   lang: ["språk", "language", "lang"],
   type: ["type", "typ"],
+};
+
+const SUPPORTED_LANGS = ["sv", "da", "en", "no", "de", "nl"];
+
+const ORDER_STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+  paid: "default",
+  confirmed: "default",
+  requested: "secondary",
+  pending: "secondary",
+  cancelled: "destructive",
+};
+
+const ORDER_STATUS_LABEL: Record<string, string> = {
+  paid: "betald",
+  confirmed: "bekräftad",
+  requested: "önskemål",
+  pending: "avvaktar",
+  cancelled: "avbokad",
 };
 
 function normaliseHeader(h: string) {
@@ -111,7 +139,7 @@ function aggregateRows(rawRows: Record<string, string>[]): MappedBooking[] {
     const amount = !isNaN(amountNum) ? amountNum : null;
 
     const langRaw = pick("lang").toLowerCase().slice(0, 2);
-    const lang = ["sv", "da", "en", "no", "de"].includes(langRaw) ? langRaw : "sv";
+    const lang = SUPPORTED_LANGS.includes(langRaw) ? langRaw : "sv";
 
     const existing = grouped.get(booking_number);
     if (!existing) {
@@ -216,7 +244,7 @@ function buildTentStays(rawRows: Record<string, string>[]): TentStayRow[] {
     const combined = get(l, "guest name", "namn");
     const guest = combined || [first, last].filter(Boolean).join(" ") || null;
     const langRaw = get(l, "language", "språk", "lang").toLowerCase().slice(0, 2);
-    const lang = ["sv", "da", "en", "no", "de"].includes(langRaw) ? langRaw : "sv";
+    const lang = SUPPORTED_LANGS.includes(langRaw) ? langRaw : "sv";
     stays.push({
       booking_number: bn,
       room_id: roomId,
@@ -251,6 +279,8 @@ export function BookingsManager() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState("");
+  const [addonFilter, setAddonFilter] = useState<"all" | "with" | "without">("all");
+  const [bookingAddons, setBookingAddons] = useState<Record<string, AddonBadge[]>>({});
   const fileRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
@@ -264,8 +294,78 @@ export function BookingsManager() {
       (supabase as any).rpc("list_bookings_missing_contact", { p_window_days: 30 }),
     ]);
     if (bRes.error) toast.error("Kunde inte ladda bokningar: " + bRes.error.message);
-    setBookings((bRes.data as Booking[]) ?? []);
+    const rows = (bRes.data as Booking[]) ?? [];
+    setBookings(rows);
     setMissing(((mRes.data as MissingContact[]) ?? []));
+
+    if (rows.length > 0) {
+      const ids = rows.map((r) => r.id);
+      const bookingNumbers = rows.map((r) => r.booking_number);
+      const [ordersRes, staysRes] = await Promise.all([
+        (supabase as any)
+          .from("addon_orders")
+          .select("booking_id, quantity, status, addons:addon_id(slug, name_sv)")
+          .in("booking_id", ids)
+          .limit(2000),
+        (supabase as any)
+          .from("tent_stays")
+          .select("booking_number, breakfast, fikapase, late_checkout")
+          .in("booking_number", bookingNumbers),
+      ]);
+
+      const map: Record<string, AddonBadge[]> = {};
+      const orderRows = (ordersRes.data ?? []) as any[];
+      const stayRows = (staysRes.data ?? []) as any[];
+      const byNumber = new Map(rows.map((r) => [r.booking_number, r.id]));
+
+      for (const o of orderRows) {
+        const bid = o.booking_id as string;
+        if (!bid) continue;
+        if (!map[bid]) map[bid] = [];
+        const slug = o.addons?.slug as string;
+        const label = o.addons?.name_sv as string;
+        if (!slug || !label) continue;
+        if (map[bid].some((x) => x.slug === slug && x.source === "order")) continue;
+        map[bid].push({ slug, label, status: o.status, source: "order" });
+      }
+
+      const stayMap = new Map<string, { breakfast: boolean; fikapase: boolean; late_checkout: boolean }>();
+      for (const s of stayRows) {
+        const bn = s.booking_number as string;
+        const existing = stayMap.get(bn);
+        if (!existing) {
+          stayMap.set(bn, {
+            breakfast: !!s.breakfast,
+            fikapase: !!s.fikapase,
+            late_checkout: !!s.late_checkout,
+          });
+        } else {
+          existing.breakfast ||= !!s.breakfast;
+          existing.fikapase ||= !!s.fikapase;
+          existing.late_checkout ||= !!s.late_checkout;
+        }
+      }
+
+      for (const [bn, flags] of stayMap.entries()) {
+        const bid = byNumber.get(bn);
+        if (!bid) continue;
+        if (!map[bid]) map[bid] = [];
+        if (flags.breakfast && !map[bid].some((x) => x.slug === "breakfast")) {
+          map[bid].push({ slug: "breakfast", label: "Frukost", status: "confirmed", source: "stay" });
+        }
+        if (flags.fikapase && !map[bid].some((x) => x.slug === "fika_bag")) {
+          map[bid].push({ slug: "fika_bag", label: "Fikapåse", status: "confirmed", source: "stay" });
+        }
+        if (flags.late_checkout && !map[bid].some((x) => x.slug === "late_checkout")) {
+          map[bid].push({ slug: "late_checkout", label: "Sen utcheckning", status: "confirmed", source: "stay" });
+        }
+      }
+
+      setBookingAddons(map);
+    } else {
+      setBookingAddons({});
+    }
+
     setLoading(false);
   };
 
@@ -391,15 +491,21 @@ export function BookingsManager() {
     }
   };
 
-  const filtered = bookings.filter((b) => {
-    if (!search) return true;
+  const filtered = useMemo(() => {
+    let list = bookings;
+    if (addonFilter === "with") list = list.filter((b) => (bookingAddons[b.id]?.length ?? 0) > 0);
+    if (addonFilter === "without") list = list.filter((b) => (bookingAddons[b.id]?.length ?? 0) === 0);
+    if (!search) return list;
     const q = search.toLowerCase();
-    return (
-      b.booking_number.toLowerCase().includes(q) ||
-      (b.guest_name?.toLowerCase().includes(q) ?? false) ||
-      (b.email?.toLowerCase().includes(q) ?? false)
-    );
-  });
+    return list.filter((b) => {
+      return (
+        b.booking_number.toLowerCase().includes(q) ||
+        (b.guest_name?.toLowerCase().includes(q) ?? false) ||
+        (b.email?.toLowerCase().includes(q) ?? false) ||
+        (b.phone?.toLowerCase().includes(q) ?? false)
+      );
+    });
+  }, [bookings, addonFilter, bookingAddons, search]);
 
   return (
     <div className="space-y-6">
@@ -491,16 +597,28 @@ export function BookingsManager() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileSpreadsheet className="h-5 w-5" />
-            Alla bokningar ({bookings.length})
+            Alla bokningar ({filtered.length})
           </CardTitle>
-          <div className="relative mt-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Sök bokningsnummer, namn eller e-post..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
-            />
+          <div className="flex flex-col sm:flex-row gap-2 mt-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Sök bokningsnummer, namn eller e-post..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <Select value={addonFilter} onValueChange={(v) => setAddonFilter(v as any)}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Alla bokningar</SelectItem>
+                <SelectItem value="with">Med tillval</SelectItem>
+                <SelectItem value="without">Utan tillval</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardHeader>
         <CardContent>
@@ -520,6 +638,7 @@ export function BookingsManager() {
                     <TableHead>Utcheckning</TableHead>
                     <TableHead>Tält</TableHead>
                     <TableHead>Belopp</TableHead>
+                    <TableHead>Tillval</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -538,6 +657,28 @@ export function BookingsManager() {
                         {b.tent_id ? <Badge variant="secondary">{b.tent_id}</Badge> : "—"}
                       </TableCell>
                       <TableCell>{b.amount ? `${b.amount} kr` : "—"}</TableCell>
+                      <TableCell>
+                        {bookingAddons[b.id]?.length ? (
+                          <div className="flex flex-wrap gap-1">
+                            {bookingAddons[b.id].map((a, i) => {
+                              const variant = ORDER_STATUS_VARIANT[a.status] ?? "outline";
+                              const label = ORDER_STATUS_LABEL[a.status] ?? a.status;
+                              return (
+                                <Badge
+                                  key={i}
+                                  variant={variant}
+                                  title={a.source === "order" ? "Beställning" : "Importerat tillval"}
+                                >
+                                  {a.label}
+                                  {label !== a.status && <span className="ml-1 opacity-70">({label})</span>}
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          "—"
+                        )}
+                      </TableCell>
                       <TableCell>
                         <Button
                           size="icon"
