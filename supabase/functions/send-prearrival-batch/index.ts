@@ -139,8 +139,8 @@ Deno.serve(async (req) => {
       const toPhone = normalizePhone(b.phone)
       if (toPhone) {
         const body = lang === 'sv'
-          ? `Hej ${firstName ?? ''}! Snart dags för ${tentName} 🌿 Lägg till frukost, fikapåse eller tidig incheckning: ${link}`
-          : `Hi ${firstName ?? ''}! Almost time for ${tentName} 🌿 Add breakfast, a fika bag or early check-in: ${link}`
+          ? `Hej ${firstName ?? ''}! Om ${dWord} dagar väntar ${tentName} på er 🌿 Gör vistelsen extra mysig – nybakad frukost vid sjön (${breakfastPrice} kr), välkomstfikapåse i tältet (${fikaPrice} kr) eller sen utcheckning. Boka enkelt: ${link}\n\nVi ses snart!\nBergs Slussar Glamping`
+          : `Hi ${firstName ?? ''}! In ${dWord} days ${tentName} is ready for you 🌿 Make your stay extra cosy – fresh breakfast by the lake (${breakfastPrice} SEK), a welcome fika bag in the tent (${fikaPrice} SEK) or late check-out. Book here: ${link}\n\nSee you soon!\nBergs Slussar Glamping`
         try {
           const r = await sendSms(toPhone, body)
           await supabase.from('prearrival_messages').insert({
