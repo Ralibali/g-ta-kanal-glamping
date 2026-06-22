@@ -390,13 +390,21 @@ export default function Stay() {
         )}
 
         {done ? (
-          <SwishCard
-            t={t}
-            amount={paidTotal}
-            reference={data.booking.booking_number || data.booking.public_token.slice(0, 8).toUpperCase()}
-            swishNumber={data.settings?.swish_number || "1230628289"}
-            payee={data.settings?.swish_payee || "Aurora Media AB"}
-          />
+          isSv ? (
+            <SwishCard
+              t={t}
+              amount={paidTotal}
+              reference={data.booking.booking_number || data.booking.public_token.slice(0, 8).toUpperCase()}
+              swishNumber={data.settings?.swish_number || "1230628289"}
+              payee={data.settings?.swish_payee || "Aurora Media AB"}
+            />
+          ) : (
+            <PaymentLinkCard
+              t={t}
+              amount={paidTotal}
+              reference={data.booking.booking_number || data.booking.public_token.slice(0, 8).toUpperCase()}
+            />
+          )
         ) : tooLate ? (
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
