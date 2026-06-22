@@ -541,3 +541,30 @@ function SwishCard({
     </Card>
   );
 }
+
+function PaymentLinkCard({ t, amount, reference }: { t: any; amount: number; reference: string }) {
+  return (
+    <Card className="border-primary/50 bg-primary/5">
+      <CardContent className="p-5 space-y-4">
+        <div className="flex items-center gap-3">
+          <CheckCircle2 className="h-8 w-8 text-primary shrink-0" />
+          <div>
+            <h2 className="font-serif text-xl text-primary">{t.payTitle}</h2>
+            <p className="text-sm text-muted-foreground">{t.payIntro}</p>
+          </div>
+        </div>
+        <div className="rounded-lg bg-background border p-4 space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">{t.payAmountLabel}</span>
+            <span className="font-medium">{amount} SEK</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">{t.payRefLabel}</span>
+            <span className="font-medium">{reference}</span>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground text-center">{t.payContact}</p>
+      </CardContent>
+    </Card>
+  );
+}
