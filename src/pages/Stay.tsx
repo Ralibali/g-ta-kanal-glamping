@@ -22,10 +22,10 @@ interface BookingInfo {
 }
 interface Order { id: string; addon_id: string; quantity: number; total_sek: number; status: string }
 interface StayData {
-  booking: BookingInfo;
+  booking: BookingInfo & { booking_number?: string };
   addons: Addon[];
   orders: Order[];
-  settings: { order_cutoff_days?: number };
+  settings: { order_cutoff_days?: number; swish_number?: string; swish_payee?: string };
 }
 
 const COPY = {
