@@ -22,10 +22,10 @@ interface BookingInfo {
 }
 interface Order { id: string; addon_id: string; quantity: number; total_sek: number; status: string }
 interface StayData {
-  booking: BookingInfo;
+  booking: BookingInfo & { booking_number?: string };
   addons: Addon[];
   orders: Order[];
-  settings: { order_cutoff_days?: number };
+  settings: { order_cutoff_days?: number; swish_number?: string; swish_payee?: string };
 }
 
 const COPY = {
@@ -38,7 +38,7 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "natt" : "nätter"}`,
     tooLate: "Tyvärr är det för sent att lägga till tillval inför den här vistelsen — beställning stänger två dygn före incheckning. Hör av dig till oss om något är akut!",
     addons: "Lägg till tillval",
-    intro: "Pricka i vad du vill, så får du faktura per mail. Vi tar betalt manuellt så att Swish och kort funkar för alla.",
+    intro: "Pricka i vad du vill, så får du betalningsinstruktioner direkt. Vi tar Swish till vårt företagsnummer.",
     already: "Du har redan beställt:",
     pcs: (n: number) => `${n} st`,
     perPerson: "kr/person",
@@ -48,9 +48,18 @@ const COPY = {
     sending: "Skickar…",
     success: "Tack! Vi har tagit emot ditt önskemål.",
     error: "Något gick fel. Försök igen om en stund.",
-    pending: "Avvaktar",
+    pending: "Avvaktar betalning",
     confirmed: "Bekräftad",
-    paid: "Bekräftad",
+    paid: "Betald",
+    swishTitle: "Betala med Swish",
+    swishIntro: "Swisha summan nedan så bekräftar vi din beställning så snart vi ser betalningen.",
+    swishNumber: "Swish-nummer",
+    swishPayee: "Mottagare",
+    swishAmount: "Belopp",
+    swishRef: "Meddelande / referens",
+    swishOpen: "Öppna Swish-appen",
+    swishCopied: "Kopierat!",
+    copy: "Kopiera",
   },
   en: {
     loading: "Loading your stay…",
@@ -61,7 +70,7 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "night" : "nights"}`,
     tooLate: "Sorry, it's too late to add extras for this stay — orders close two days before check-in. Reach out if it's urgent!",
     addons: "Add extras",
-    intro: "Pick what you'd like and we'll email you an invoice. We handle payment manually so Swish and cards both work.",
+    intro: "Pick what you'd like and you'll get payment instructions right away. We accept Swish to our company number.",
     already: "You've already ordered:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/person",
@@ -71,9 +80,18 @@ const COPY = {
     sending: "Sending…",
     success: "Thank you! We've received your request.",
     error: "Something went wrong. Please try again shortly.",
-    pending: "Pending",
+    pending: "Awaiting payment",
     confirmed: "Confirmed",
-    paid: "Confirmed",
+    paid: "Paid",
+    swishTitle: "Pay with Swish",
+    swishIntro: "Swish the amount below — we'll confirm your order as soon as the payment lands.",
+    swishNumber: "Swish number",
+    swishPayee: "Recipient",
+    swishAmount: "Amount",
+    swishRef: "Message / reference",
+    swishOpen: "Open Swish app",
+    swishCopied: "Copied!",
+    copy: "Copy",
   },
 } as const;
 
@@ -91,6 +109,7 @@ export default function Stay() {
   const [qty, setQty] = useState<Record<string, number>>({});
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [paidTotal, setPaidTotal] = useState<number>(0);
 
   useEffect(() => {
     if (!token) { setLoading(false); return; }
@@ -136,6 +155,7 @@ export default function Stay() {
         body: { public_token: token, items },
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
+      setPaidTotal(total);
       setDone(true);
       toast.success(t.success);
     } catch (err: any) {
@@ -192,12 +212,13 @@ export default function Stay() {
         )}
 
         {done ? (
-          <Card className="border-primary/50 bg-primary/10">
-            <CardContent className="p-6 text-center space-y-3">
-              <CheckCircle2 className="h-12 w-12 mx-auto text-primary" />
-              <p className="font-serif text-xl">{t.success}</p>
-            </CardContent>
-          </Card>
+          <SwishCard
+            t={t}
+            amount={paidTotal}
+            reference={data.booking.booking_number || data.booking.public_token.slice(0, 8).toUpperCase()}
+            swishNumber={data.settings?.swish_number || "1230628289"}
+            payee={data.settings?.swish_payee || "Aurora Media AB"}
+          />
         ) : tooLate ? (
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
@@ -278,4 +299,59 @@ export default function Stay() {
 
 function Centered({ children }: { children: React.ReactNode }) {
   return <div className="min-h-screen flex items-center justify-center p-6 text-center text-muted-foreground">{children}</div>;
+}
+
+function SwishCard({
+  t, amount, reference, swishNumber, payee,
+}: {
+  t: any; amount: number; reference: string; swishNumber: string; payee: string;
+}) {
+  const [copied, setCopied] = useState<string | null>(null);
+  const copy = async (val: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(val);
+      setCopied(key);
+      toast.success(t.swishCopied);
+      setTimeout(() => setCopied((c) => (c === key ? null : c)), 1500);
+    } catch { /* noop */ }
+  };
+  // Swish deep link (mobile opens the app, desktop ignores)
+  const swishUrl = `https://app.swish.nu/1/p/sw/?sw=${swishNumber}&amt=${amount}&cur=SEK&msg=${encodeURIComponent(reference)}&src=qr`;
+
+  const Row = ({ label, value, copyKey }: { label: string; value: string; copyKey: string }) => (
+    <div className="flex items-center justify-between gap-3 py-2 border-b border-border/50 last:border-0">
+      <div>
+        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
+        <div className="font-medium text-base">{value}</div>
+      </div>
+      <Button size="sm" variant="ghost" onClick={() => copy(value, copyKey)} className="shrink-0">
+        {copied === copyKey ? "✓" : t.copy}
+      </Button>
+    </div>
+  );
+
+  return (
+    <Card className="border-primary/50 bg-primary/5">
+      <CardContent className="p-5 space-y-4">
+        <div className="flex items-center gap-3">
+          <CheckCircle2 className="h-8 w-8 text-primary shrink-0" />
+          <div>
+            <h2 className="font-serif text-xl text-primary">{t.success}</h2>
+            <p className="text-sm text-muted-foreground">{t.swishIntro}</p>
+          </div>
+        </div>
+
+        <div className="rounded-lg bg-background border p-3">
+          <Row label={t.swishNumber} value={swishNumber} copyKey="num" />
+          <Row label={t.swishPayee} value={payee} copyKey="payee" />
+          <Row label={t.swishAmount} value={`${amount} kr`} copyKey="amt" />
+          <Row label={t.swishRef} value={reference} copyKey="ref" />
+        </div>
+
+        <a href={swishUrl} className="block">
+          <Button className="w-full" size="lg">{t.swishOpen}</Button>
+        </a>
+      </CardContent>
+    </Card>
+  );
 }
