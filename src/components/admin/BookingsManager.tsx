@@ -445,6 +445,48 @@ export function BookingsManager() {
         </CardContent>
       </Card>
 
+      {missing.length > 0 && (
+        <Card className="border-amber-500/60 bg-amber-500/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-amber-900 dark:text-amber-200">
+              ⚠️ Saknar kontaktuppgifter ({missing.length})
+            </CardTitle>
+            <CardDescription>
+              Dessa bokningar checkar in inom 30 dagar men saknar mejl och/eller telefon — automationen hoppar över dem. Ladda upp "Basic info"-CSV eller fyll i manuellt i Sirvoy och importera igen.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Boknings#</TableHead>
+                    <TableHead>Gäst</TableHead>
+                    <TableHead>Tält</TableHead>
+                    <TableHead>Incheckning</TableHead>
+                    <TableHead>Saknar</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {missing.map((m) => (
+                    <TableRow key={m.id}>
+                      <TableCell className="font-mono">{m.booking_number}</TableCell>
+                      <TableCell>{m.guest_name ?? "—"}</TableCell>
+                      <TableCell>{m.tent_id ? <Badge variant="secondary">{m.tent_id}</Badge> : "—"}</TableCell>
+                      <TableCell>{m.checkin_date}</TableCell>
+                      <TableCell>
+                        {!m.has_email && <Badge variant="destructive" className="mr-1">mejl</Badge>}
+                        {!m.has_phone && <Badge variant="destructive">telefon</Badge>}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
