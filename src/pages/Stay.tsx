@@ -311,7 +311,7 @@ export default function Stay() {
   const tooLate = daysLeft < cutoff;
 
   const firstName = data.booking.guest_first_name;
-  const dateLocale = lang === "sv" ? "sv-SE" : "en-GB";
+  const dateLocale = ({ sv: "sv-SE", en: "en-GB", de: "de-DE", da: "da-DK", no: "nb-NO", nl: "nl-NL", fr: "fr-FR" } as Record<LangKey, string>)[lang];
   const ci = new Date(data.booking.checkin_date).toLocaleDateString(dateLocale, { weekday: "short", day: "numeric", month: "short" });
   const co = new Date(data.booking.checkout_date).toLocaleDateString(dateLocale, { weekday: "short", day: "numeric", month: "short" });
 
