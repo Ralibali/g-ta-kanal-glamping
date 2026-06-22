@@ -15,6 +15,7 @@ import {
   Sparkles,
   PackagePlus,
   ShoppingBag,
+  MessageSquare,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -46,6 +47,7 @@ const contentItems = [
   { title: "Städning", url: "/admin/cleaning", icon: Sparkles },
   { title: "Tillval", url: "/admin/addons", icon: PackagePlus },
   { title: "Tillvalsbeställningar", url: "/admin/addon-orders", icon: ShoppingBag },
+  { title: "SMS", url: "/admin/sms", icon: MessageSquare },
   { title: "Blogginlägg", url: "/admin/blog", icon: FileText },
   { title: "Bildgalleri", url: "/admin/gallery", icon: Image },
   { title: "Priser & Tält", url: "/admin/pricing", icon: Tag },

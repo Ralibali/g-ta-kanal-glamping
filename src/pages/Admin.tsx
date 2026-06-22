@@ -17,6 +17,7 @@ import { BookingsManager } from "@/components/admin/BookingsManager";
 import { CleaningManager } from "@/components/admin/CleaningManager";
 import { AddonsManager } from "@/components/admin/AddonsManager";
 import { AddonOrdersManager } from "@/components/admin/AddonOrdersManager";
+import { SmsManager } from "@/components/admin/SmsManager";
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdmin();
@@ -62,6 +63,7 @@ const Admin = () => {
               <Route path="cleaning" element={<CleaningManager />} />
               <Route path="addons" element={<AddonsManager />} />
               <Route path="addon-orders" element={<AddonOrdersManager />} />
+              <Route path="sms" element={<SmsManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </main>
