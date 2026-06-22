@@ -512,7 +512,28 @@ export default function Stay() {
                               {a.price_sek} {priceLabel}
                             </div>
                           </div>
-                          {desc && <p className="text-xs text-muted-foreground mb-3">{desc}</p>}
+                          {(() => {
+                            const details = getDetails(a.slug, lang);
+                            if (details) {
+                              return (
+                                <div className="mb-3 space-y-2">
+                                  <p className="text-sm text-foreground/80 leading-relaxed">{details.tagline}</p>
+                                  <ul className="space-y-1">
+                                    {details.bullets.map((b, i) => (
+                                      <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                                        <span className="text-primary mt-1 shrink-0">•</span>
+                                        <span>{b}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                  {details.note && (
+                                    <p className="text-xs text-muted-foreground italic pt-1">{details.note}</p>
+                                  )}
+                                </div>
+                              );
+                            }
+                            return desc ? <p className="text-sm text-muted-foreground mb-3">{desc}</p> : null;
+                          })()}
                           {a.unit === "per_quantity" ? (
                             <div className="flex items-center gap-3">
                               <Button size="icon" variant="outline" onClick={() => setQ(a.id, q - 1, a.max_quantity)} disabled={q === 0} aria-label="–"><Minus className="h-4 w-4" /></Button>
