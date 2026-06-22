@@ -29,7 +29,7 @@ async function sendSms(toPhone: string, body: string): Promise<{ id: string } | 
     method: 'POST',
     headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
-      from: Deno.env.get('ELKS46_FROM') || 'GoGlamping',
+      from: ((Deno.env.get('ELKS46_FROM') || 'GoGlamping').replace(/[^A-Za-z0-9]/g, '').slice(0, 11)) || 'GoGlamping',
       to: toPhone,
       message: body,
     }),
