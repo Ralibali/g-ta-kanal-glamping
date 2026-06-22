@@ -409,7 +409,7 @@ export default function Stay() {
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
           </Card>
-        ) : (
+        ) : data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status))).length === 0 ? null : (
           <>
             <div>
               <h2 className="font-serif text-xl text-primary mb-1">{t.addons}</h2>
