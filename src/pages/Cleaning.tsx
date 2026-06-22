@@ -122,6 +122,12 @@ export default function Cleaning() {
       .select("tent_id, cleaning_date, status")
       .eq("cleaning_date", date);
     setSessions((sessRows ?? []) as Session[]);
+    const { data: earlyRows } = await (supabase as any)
+      .from("early_checkin_flags")
+      .select("tent_id")
+      .eq("date", date)
+      .eq("active", true);
+    setEarlyTents(new Set(((earlyRows ?? []) as { tent_id: string }[]).map((r) => r.tent_id)));
   };
 
   const loadUpcoming = async () => {
