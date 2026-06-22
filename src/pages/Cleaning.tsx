@@ -602,13 +602,19 @@ export default function Cleaning() {
                   const done = sess?.status === "completed";
                   const inProg = sess?.status === "in_progress";
                   return (
-                    <Card key={c.tent_id} className={`cursor-pointer ${done ? "border-green-500/50 bg-green-500/5" : ""}`}
+                    <Card key={c.tent_id} className={`cursor-pointer ${done ? "border-green-500/50 bg-green-500/5" : c.earlyCheckin ? "border-2 border-amber-500 bg-amber-500/5" : ""}`}
                       onClick={() => setSelected(c)}>
                       <CardContent className="p-4">
+                        {c.earlyCheckin && (
+                          <div className="mb-3 -mx-4 -mt-4 px-4 py-2 bg-amber-500 text-white text-xs font-bold uppercase tracking-wide rounded-t-lg flex items-center gap-2">
+                            ⏰ {lang === "sv" ? "Tidig incheckning kl 12.00 – städa detta tält först" : "Early check-in 12:00 – clean this tent first"}
+                          </div>
+                        )}
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <h3 className="font-serif text-xl">{c.tentName}</h3>
                             <p className="text-xs text-muted-foreground">{tr(lang, "tentLabel")} {c.tentNo} – {c.position}</p>
+
 
                             {c.hasArrival && (
                               <div className="mt-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30 p-3">
