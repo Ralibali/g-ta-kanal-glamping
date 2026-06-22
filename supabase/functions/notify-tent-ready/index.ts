@@ -34,10 +34,11 @@ async function sendSms(toPhone: string, body: string): Promise<{ id: string }> {
     method: 'POST',
     headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
     body: new URLSearchParams({
-      from: Deno.env.get('ELKS46_FROM') || Deno.env.get('ELKS_FROM') || 'GoGlamping',
+      from: ((Deno.env.get('ELKS46_FROM') || Deno.env.get('ELKS_FROM') || 'GoGlamping').replace(/[^A-Za-z0-9]/g, '').slice(0, 11)) || 'Glamping',
       to: toPhone,
       message: body,
     }),
+
   })
   if (!res.ok) throw new Error(`46elks ${res.status}: ${await res.text()}`)
   const json = await res.json()
