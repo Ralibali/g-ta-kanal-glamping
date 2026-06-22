@@ -293,12 +293,11 @@ export default function Cleaning() {
     return TENTS.map((t) => {
       const arr = stays.find((s) => s.tent_id === t.id && s.checkin_date === date);
       const dep = stays.find((s) => s.tent_id === t.id && s.checkout_date === date);
-      if (!arr && !dep) return null;
-      // Skip departure-only when same tent has an arrival the next day (cleaning happens then)
-      if (!arr && dep && nextDayArrivals.has(t.id)) return null;
+      // Clean only on departure days. Arrival-only days are skipped (tent already clean from last departure).
+      if (!dep) return null;
       return {
         tent_id: t.id, tentNo: t.no, tentName: t.name, position: t.position[lang], date,
-        hasArrival: !!arr, hasDeparture: !!dep,
+        hasArrival: !!arr, hasDeparture: true,
         arrivalBooking: arr?.booking_number,
         guests: arr?.guests ?? 0,
         children: arr?.children ?? 0,
@@ -306,7 +305,7 @@ export default function Cleaning() {
         lateCheckout: !!dep?.late_checkout,
       } as TentDayData;
     }).filter(Boolean) as TentDayData[];
-  }, [stays, date, nextDayArrivals, lang]);
+  }, [stays, date, lang]);
 
   const sessByTent = useMemo(() => {
     const m = new Map<string, Session>();
