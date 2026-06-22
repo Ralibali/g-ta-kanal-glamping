@@ -60,6 +60,8 @@ const Admin = () => {
               <Route path="checkins" element={<CheckInsManager />} />
               <Route path="bookings" element={<BookingsManager />} />
               <Route path="cleaning" element={<CleaningManager />} />
+              <Route path="addons" element={<AddonsManager />} />
+              <Route path="addon-orders" element={<AddonOrdersManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </main>
