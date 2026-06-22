@@ -3,12 +3,6 @@ import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
 
 const USE_EMOJI = false
 
-const TENT_NAMES: Record<string, string> = {
-  sjobris: 'Sjöbrisretreatet',
-  naturkarnan: 'Naturkärnan',
-  lugnetsyta: 'Lugnets Yta',
-}
-
 function normalizePhone(raw: string | null | undefined): string | null {
   if (!raw) return null
   const t = raw.replace(/[\s\-()]/g, '')
@@ -38,7 +32,6 @@ async function getOrCreateShortLink(supabase: any, baseUrl: string, targetUrl: s
     const slug = genSlug()
     const { error } = await supabase.from('short_links').insert({ slug, target_url: targetUrl, booking_id: bookingId })
     if (!error) return `${baseUrl}/s/${slug}`
-    // unique violation -> retry
   }
   throw new Error('could_not_generate_slug')
 }
@@ -62,41 +55,82 @@ async function sendSms(toPhone: string, body: string): Promise<{ id: string } | 
   return { id: json.id ?? '' }
 }
 
-function buildBody(name: string | null, link: string, lang: 'sv' | 'en'): string {
-  const hi = name && name.trim()
-    ? (lang === 'sv' ? `Hej ${name.trim()}!` : `Hi ${name.trim()}!`)
-    : (lang === 'sv' ? 'Hej!' : 'Hi!')
+// Per-language addon labels keyed by slug
+const ADDON_LABELS: Record<string, Record<string, string>> = {
+  breakfast:     { sv: 'frukost från bageriet', en: 'breakfast from the bakery', de: 'Frühstück von der Bäckerei', da: 'morgenmad fra bageriet', no: 'frokost fra bakeriet', nl: 'ontbijt van de bakkerij', fr: 'petit-déjeuner de la boulangerie' },
+  fika_bag:      { sv: 'en fikapåse i tältet',  en: 'a fika bag in the tent',    de: 'eine Fika-Tüte im Zelt',      da: 'en fika-pose i teltet',  no: 'en fika-pose i teltet',  nl: 'een fika-tas in de tent',     fr: 'un sac fika dans la tente' },
+  early_checkin: { sv: 'tidig incheckning',     en: 'early check-in',            de: 'früher Check-in',             da: 'tidlig check-in',        no: 'tidlig innsjekk',        nl: 'vroeg inchecken',             fr: 'arrivée anticipée' },
+}
+
+function joinList(items: string[], lang: string): string {
+  if (items.length === 0) return ''
+  if (items.length === 1) return items[0]
+  const and: Record<string, string> = { sv: ' eller ', en: ' or ', de: ' oder ', da: ' eller ', no: ' eller ', nl: ' of ', fr: ' ou ' }
+  return items.slice(0, -1).join(', ') + (and[lang] ?? and.en) + items[items.length - 1]
+}
+
+type Lang = 'sv' | 'en' | 'de' | 'da' | 'no' | 'nl' | 'fr'
+function pickLang(raw: string | null | undefined): Lang {
+  const l = (raw ?? '').toLowerCase().slice(0, 2)
+  if (['sv','en','de','da','no','nl','fr'].includes(l)) return l as Lang
+  return 'sv'
+}
+
+function buildBody(name: string | null, link: string | null, lang: Lang, availableSlugs: string[]): string {
+  const greetings: Record<Lang, (n: string) => string> = {
+    sv: (n) => `Hej ${n}!`, en: (n) => `Hi ${n}!`, de: (n) => `Hallo ${n}!`,
+    da: (n) => `Hej ${n}!`, no: (n) => `Hei ${n}!`, nl: (n) => `Hoi ${n}!`, fr: (n) => `Bonjour ${n} !`,
+  }
+  const noName: Record<Lang, string> = { sv: 'Hej!', en: 'Hi!', de: 'Hallo!', da: 'Hej!', no: 'Hei!', nl: 'Hoi!', fr: 'Bonjour !' }
+  const hi = name && name.trim() ? greetings[lang](name.trim()) : noName[lang]
   const leaf = USE_EMOJI ? ' 🌿' : ''
   const tent = USE_EMOJI ? '🏕️ ' : ''
+  const signature = `${tent}/Bergs Slussar Glamping`
 
-  if (lang === 'sv') {
-    return [
-      `${hi}${leaf}`,
-      '',
-      'Om fem dagar väntar en mysig vistelse vid kanalen, med bäddat tält och skön ro vid vattnet.',
-      '',
-      'Gör den extra fin med frukost från bageriet, en fikapåse i tältet eller tidig incheckning. Tillvalen bokar du senast 2 dagar före ankomst.',
-      '',
-      `Se dina tillval här: ${link}`,
-      '',
-      'Snart ses vi!',
-      '',
-      `${tent}/Bergs Slussar Glamping`,
-    ].join('\n')
+  const arrivalLine: Record<Lang, string> = {
+    sv: 'Om fem dagar väntar en mysig vistelse vid kanalen, med bäddat tält och skön ro vid vattnet.',
+    en: 'In five days a cozy stay by the canal awaits, with a made bed and peaceful moments by the water.',
+    de: 'In fünf Tagen erwartet Sie ein gemütlicher Aufenthalt am Kanal, mit gemachtem Bett und Ruhe am Wasser.',
+    da: 'Om fem dage venter et hyggeligt ophold ved kanalen med redt telt og ro ved vandet.',
+    no: 'Om fem dager venter et koselig opphold ved kanalen, med oppredd telt og ro ved vannet.',
+    nl: 'Over vijf dagen wacht een gezellig verblijf aan het kanaal, met opgemaakt bed en rust aan het water.',
+    fr: 'Dans cinq jours, un séjour cosy vous attend au bord du canal, avec un lit fait et le calme près de l\'eau.',
   }
-  return [
-    `${hi}${leaf}`,
-    '',
-    'In five days a cozy stay by the canal awaits, with a made bed and peaceful moments by the water.',
-    '',
-    'Make it extra lovely with breakfast from the bakery, a fika bag in the tent or early check-in. Add-ons must be booked at least 2 days before arrival.',
-    '',
-    `See your add-ons here: ${link}`,
-    '',
-    'See you soon!',
-    '',
-    `${tent}/Bergs Slussar Glamping`,
-  ].join('\n')
+  const seeYou: Record<Lang, string> = {
+    sv: 'Snart ses vi!', en: 'See you soon!', de: 'Bis bald!',
+    da: 'Vi ses snart!', no: 'Vi ses snart!', nl: 'Tot snel!', fr: 'À bientôt !',
+  }
+
+  const lines: string[] = [`${hi}${leaf}`, '', arrivalLine[lang], '']
+
+  if (availableSlugs.length > 0 && link) {
+    const labels = availableSlugs
+      .map((s) => ADDON_LABELS[s]?.[lang] ?? ADDON_LABELS[s]?.en)
+      .filter(Boolean) as string[]
+    const list = joinList(labels, lang)
+    const offer: Record<Lang, string> = {
+      sv: `Gör den extra fin med ${list}. Tillvalen bokar du senast 2 dagar före ankomst.`,
+      en: `Make it extra lovely with ${list}. Add-ons must be booked at least 2 days before arrival.`,
+      de: `Machen Sie ihn besonders schön mit ${list}. Extras sind spätestens 2 Tage vor Anreise zu buchen.`,
+      da: `Gør det ekstra dejligt med ${list}. Tilvalg skal bestilles senest 2 dage før ankomst.`,
+      no: `Gjør det ekstra fint med ${list}. Tillegg må bestilles senest 2 dager før ankomst.`,
+      nl: `Maak het extra leuk met ${list}. Extra's moet u uiterlijk 2 dagen voor aankomst boeken.`,
+      fr: `Rendez-le encore plus agréable avec ${list}. Les options doivent être réservées au moins 2 jours avant l'arrivée.`,
+    }
+    const linkLine: Record<Lang, string> = {
+      sv: `Se dina tillval här: ${link}`,
+      en: `See your add-ons here: ${link}`,
+      de: `Ihre Extras hier: ${link}`,
+      da: `Se dine tilvalg her: ${link}`,
+      no: `Se dine tillegg her: ${link}`,
+      nl: `Bekijk je extra's hier: ${link}`,
+      fr: `Voir vos options ici : ${link}`,
+    }
+    lines.push(offer[lang], '', linkLine[lang], '')
+  }
+
+  lines.push(seeYou[lang], '', signature)
+  return lines.join('\n')
 }
 
 Deno.serve(async (req) => {
@@ -108,26 +142,38 @@ Deno.serve(async (req) => {
 
   const { data: settings } = await supabase
     .from('app_settings').select('key, value')
-    .in('key', ['prearrival_lead_days', 'public_base_url'])
+    .in('key', ['prearrival_lead_days', 'order_cutoff_days', 'public_base_url'])
   const settingsMap: Record<string, any> = {}
   for (const r of (settings ?? [])) settingsMap[r.key] = r.value
   const leadDays = Number(settingsMap['prearrival_lead_days'] ?? 5)
+  const cutoffDays = Number(settingsMap['order_cutoff_days'] ?? 2)
   const baseUrl = String(settingsMap['public_base_url'] ?? 'https://goglampingsweden.se').replace(/\/$/, '')
 
+  // Window: all upcoming bookings whose check-in falls within [today+cutoff, today+leadDays]
+  // and that have not yet received the 5-day reminder.
   const fmt = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Stockholm', year: 'numeric', month: '2-digit', day: '2-digit' })
-  const target = new Date(Date.now() + leadDays * 86400000)
-  const targetDate = fmt.format(target)
+  const fromDate = fmt.format(new Date(Date.now() + cutoffDays * 86400000))
+  const toDate = fmt.format(new Date(Date.now() + leadDays * 86400000))
 
   const { data: bookings } = await supabase
     .from('bookings')
     .select('id, public_token, guest_first_name, guest_name, tent_name, tent_id, checkin_date, checkout_date, nights, email, phone, language, reminder_5d_sent_at')
-    .eq('checkin_date', targetDate)
+    .gte('checkin_date', fromDate)
+    .lte('checkin_date', toDate)
     .is('reminder_5d_sent_at', null)
+
+  // Preload active addon slugs
+  const { data: allAddons } = await supabase.from('addons').select('id, slug').eq('active', true)
+  const slugById = new Map<string, string>()
+  const allSlugs: string[] = []
+  for (const a of (allAddons ?? [])) {
+    slugById.set(a.id, a.slug)
+    allSlugs.push(a.slug)
+  }
 
   const results: any[] = []
   for (const b of (bookings ?? [])) {
-    const lang: 'sv' | 'en' = (b.language ?? b.tent_name ?? 'sv')
-      ? ((b.language ?? 'sv').toLowerCase().startsWith('en') ? 'en' : 'sv') : 'sv'
+    const lang = pickLang(b.language)
     const firstName = b.guest_first_name || (b.guest_name ? b.guest_name.split(',').pop()!.trim().split(' ')[0] : null)
     const toPhone = normalizePhone(b.phone)
 
@@ -140,16 +186,30 @@ Deno.serve(async (req) => {
     }
 
     try {
+      // Fetch existing addon orders (active)
+      const { data: orders } = await supabase
+        .from('addon_orders').select('addon_id, status')
+        .eq('booking_id', b.id)
+        .in('status', ['requested', 'confirmed', 'paid'])
+      const orderedSlugs = new Set<string>()
+      for (const o of (orders ?? [])) {
+        const s = slugById.get(o.addon_id)
+        if (s) orderedSlugs.add(s)
+      }
+      const availableSlugs = allSlugs.filter((s) => !orderedSlugs.has(s))
+
       const targetUrl = `${baseUrl}/stay/${b.public_token}`
-      const link = await getOrCreateShortLink(supabase, baseUrl, targetUrl, b.id)
-      const body = buildBody(firstName, link, lang)
+      const link = availableSlugs.length > 0
+        ? await getOrCreateShortLink(supabase, baseUrl, targetUrl, b.id)
+        : null
+      const body = buildBody(firstName, link, lang, availableSlugs)
       const r = await sendSms(toPhone, body)
 
       await supabase.from('bookings').update({ reminder_5d_sent_at: new Date().toISOString() }).eq('id', b.id)
       await supabase.from('prearrival_messages').upsert({
         booking_id: b.id, channel: 'sms', status: r ? 'sent' : 'skipped', error: r ? null : 'no_provider',
       }, { onConflict: 'booking_id,channel' })
-      results.push({ booking_id: b.id, sms: r ? 'sent' : 'no_provider' })
+      results.push({ booking_id: b.id, sms: r ? 'sent' : 'no_provider', available: availableSlugs })
     } catch (err) {
       await supabase.from('prearrival_messages').upsert({
         booking_id: b.id, channel: 'sms', status: 'failed', error: String(err),
@@ -158,7 +218,7 @@ Deno.serve(async (req) => {
     }
   }
 
-  return new Response(JSON.stringify({ target_date: targetDate, lead_days: leadDays, count: bookings?.length ?? 0, results }), {
+  return new Response(JSON.stringify({ from: fromDate, to: toDate, lead_days: leadDays, cutoff_days: cutoffDays, count: bookings?.length ?? 0, results }), {
     status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
 })
