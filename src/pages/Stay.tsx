@@ -6,14 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, Key, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette } from "lucide-react";
 import { toast } from "sonner";
-import addonBreakfastImg from "@/assets/addon-breakfast.jpg";
-import addonFikaImg from "@/assets/addon-fika.jpg";
-import addonEarlyCheckinImg from "@/assets/addon-early-checkin.jpg";
+import addonEarlyCheckinImg from "@/assets/glamping-exterior-deck.jpg";
 
+// Använder endast riktiga bilder från hemsidan. För frukost & fika saknas äkta foton — ladda upp dem så byter jag in direkt.
 const ADDON_IMAGES: Record<string, string> = {
-  breakfast: addonBreakfastImg,
-  fika_bag: addonFikaImg,
-  fika: addonFikaImg,
   early_checkin: addonEarlyCheckinImg,
 };
 
