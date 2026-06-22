@@ -138,9 +138,12 @@ Deno.serve(async (req) => {
     if (!existsSms) {
       const toPhone = normalizePhone(b.phone)
       if (toPhone) {
+        const fmtDate = (d: string, l: 'sv' | 'en') => new Intl.DateTimeFormat(l === 'sv' ? 'sv-SE' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Stockholm' }).format(new Date(d + 'T12:00:00'))
+        const inDate = fmtDate(b.checkin_date, lang)
+        const outDate = fmtDate(b.checkout_date, lang)
         const body = lang === 'sv'
-          ? `Hej ${firstName ?? ''}! 🌿\n\nNu är det bara ${dWord} dagar kvar tills er vistelse hos oss. Föreställ er en stilla kväll vid kanalen, en mysig stund i tältet och en morgon där frukosten kommer rykande färskt från bageriet!\n\nSätt guldkant på vistelsen med nybakad frukost vid vattnet, en välkomstfikapåse som väntar i tältet eller tidig incheckning så att ni får ännu mer tid att njuta.\n\nLägg till det ni önskar här:\n${link}\n\nSnart ses vi! 🏕️☀️\n\n/Bergs Slussar Glamping`
-          : `Hi ${firstName ?? ''}! 🌿\n\nOnly ${dWord} days left until your stay with us. Picture a quiet evening by the canal, a cosy moment in the tent and a morning where breakfast arrives fresh from the bakery!\n\nAdd a little extra to your stay – fresh breakfast by the water, a welcome fika bag waiting in the tent or early check-in for even more time to enjoy.\n\nAdd what you'd like here:\n${link}\n\nSee you soon! 🏕️☀️\n\n/Bergs Slussar Glamping`
+          ? `Hej ${firstName ?? ''}! 🌿\n\nOm ${dWord} dagar är det dags – ${inDate} checkar ni in på ${tentName}, och er vistelse hos oss varar till ${outDate}.\n\nIncheckning sker själv från kl 15:00. Tältet är olåst och redo, ni hittar er välkomstinfo på plats. Utcheckning senast kl 11:00.\n\nGör vistelsen ännu mysigare – beställ nybakad frukost vid kanalen eller en välkomstfikapåse som väntar i tältet. Boka enkelt här:\n${link}\n\nSnart ses vi! 🏕️☀️\n\n/Bergs Slussar Glamping`
+          : `Hi ${firstName ?? ''}! 🌿\n\nIn ${dWord} days it's time – you check in on ${inDate} at ${tentName}, and your stay with us lasts until ${outDate}.\n\nSelf check-in from 3 PM. The tent is unlocked and ready with your welcome info inside. Check-out by 11 AM.\n\nMake your stay even cosier – order fresh breakfast by the canal or a welcome fika bag waiting in the tent. Book easily here:\n${link}\n\nSee you soon! 🏕️☀️\n\n/Bergs Slussar Glamping`
         try {
           const r = await sendSms(toPhone, body)
           await supabase.from('prearrival_messages').insert({
