@@ -125,6 +125,13 @@ export function SmsManager() {
     return { withLink, clicked, totalClicks, rate };
   }, [rows, clickMap]);
 
+  const statusOptions = useMemo(() => {
+    const set = new Set<string>();
+    rows.forEach((r) => set.add(r.status));
+    return Array.from(set).sort();
+  }, [rows]);
+
+
 
   return (
     <div className="space-y-6">
