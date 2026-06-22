@@ -152,6 +152,14 @@ export function SmsManager() {
         <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Väntar</div><div className="text-2xl font-bold text-amber-600">{stats.pending}</div></CardContent></Card>
       </div>
 
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Bokningar m. länk</div><div className="text-2xl font-bold">{clickStats.withLink}</div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Gäster som klickat</div><div className="text-2xl font-bold text-green-600">{clickStats.clicked}</div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Klickfrekvens</div><div className="text-2xl font-bold">{clickStats.rate}%</div></CardContent></Card>
+        <Card><CardContent className="pt-6"><div className="text-xs text-muted-foreground">Totala klick</div><div className="text-2xl font-bold">{clickStats.totalClicks}</div></CardContent></Card>
+      </div>
+
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><MessageSquare className="h-5 w-5" /> SMS-logg</CardTitle>
