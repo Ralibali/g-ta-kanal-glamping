@@ -105,15 +105,17 @@ export default function Cleaning() {
   };
 
   const load = async () => {
-    const next = nextDayStr(date);
+    // Cleaning happens only on departure days. Include same-day arrivals (turnover) so
+    // we can show the incoming guest's info on the cleaning card.
     const { data: stayRows } = await (supabase as any)
       .from("tent_stays")
       .select("booking_number, tent_id, checkin_date, checkout_date, guests, children, breakfast, fikapase, late_checkout")
-      .or(`checkin_date.in.(${date},${next}),checkout_date.eq.${date}`);
+      .or(`checkout_date.eq.${date},checkin_date.eq.${date}`);
     const all = (stayRows ?? []) as Stay[];
-    const arrNext = new Set(all.filter((s) => s.checkin_date === next).map((s) => s.tent_id));
-    setNextDayArrivals(arrNext);
-    setStays(all.filter((s) => s.checkin_date === date || s.checkout_date === date));
+    const depTents = new Set(all.filter((s) => s.checkout_date === date).map((s) => s.tent_id));
+    setNextDayArrivals(new Set());
+    // Keep departures + only arrivals that are turnovers (same tent has a departure today)
+    setStays(all.filter((s) => s.checkout_date === date || (s.checkin_date === date && depTents.has(s.tent_id))));
     const { data: sessRows } = await (supabase as any)
       .from("cleaning_sessions")
       .select("tent_id, cleaning_date, status")
