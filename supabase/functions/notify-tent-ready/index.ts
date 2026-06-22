@@ -246,7 +246,7 @@ Deno.serve(async (req) => {
         try {
           const result = await sendSms(toPhone, messageBody)
           await supabase.from('sms_outbox').update({
-            status: 'sent', sent_at: new Date().toISOString(), provider_id: result.id,
+            status: 'sent', sent_at: new Date().toISOString(), provider_id: result.id, error: null,
           } as any).eq('id', outboxId)
           smsStatus = 'sent'
         } catch (err) {
