@@ -56,6 +56,7 @@ function StatusBadge({ status }: { status: string }) {
 
 export function SmsManager() {
   const [rows, setRows] = useState<Sms[]>([]);
+  const [clickMap, setClickMap] = useState<Record<string, { clicks: number; slug: string }>>({});
   const [loading, setLoading] = useState(true);
   const [range, setRange] = useState("7d");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -71,6 +72,19 @@ export function SmsManager() {
     }
     const { data } = await q;
     setRows((data ?? []) as Sms[]);
+
+    // Senaste short_link per bokning för klickstatistik
+    const { data: links } = await (supabase as any)
+      .from("short_links")
+      .select("slug, clicks, created_at, booking_id, bookings!inner(booking_number)")
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    const map: Record<string, { clicks: number; slug: string }> = {};
+    (links ?? []).forEach((l: any) => {
+      const bn = l.bookings?.booking_number;
+      if (bn && !map[bn]) map[bn] = { clicks: l.clicks ?? 0, slug: l.slug };
+    });
+    setClickMap(map);
     setLoading(false);
   };
 
