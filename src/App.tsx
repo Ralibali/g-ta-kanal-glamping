@@ -26,6 +26,7 @@ import Unsubscribe from "./pages/Unsubscribe";
 import Cleaning from "./pages/Cleaning";
 import Breakfast from "./pages/Breakfast";
 import Boka from "./pages/Boka";
+import Stay from "./pages/Stay";
 
 const queryClient = new QueryClient();
 
