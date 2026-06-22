@@ -76,13 +76,21 @@ Deno.serve(async (req) => {
     .select('id, public_token, guest_first_name, guest_name, tent_name, tent_id, checkin_date, checkout_date, nights, email, phone, language')
     .eq('checkin_date', targetDate)
 
+  const TENT_NAMES: Record<string, string> = {
+    sjobris: 'Sjöbrisretreatet',
+    naturkarnan: 'Naturkärnan',
+    lugnetsyta: 'Lugnets Yta',
+  }
+
   const results: any[] = []
   for (const b of (bookings ?? [])) {
     const lang: 'sv' | 'en' = (b.language ?? 'en').toLowerCase().startsWith('sv') ? 'sv' : 'en'
     const firstName = b.guest_first_name || (b.guest_name ? b.guest_name.split(',')[0].split(' ').pop() : null)
-    const tentName = b.tent_name || b.tent_id
+    const tentName = TENT_NAMES[b.tent_id] || b.tent_name || b.tent_id
     const link = `${baseUrl}/stay/${b.public_token}`
     const dWord = daysWord(leadDays, lang)
+    const breakfastPrice = prices['breakfast'] ?? 209
+    const fikaPrice = prices['fika_bag'] ?? 89
 
     // Email
     const { data: existsEmail } = await supabase.from('prearrival_messages')
@@ -131,8 +139,8 @@ Deno.serve(async (req) => {
       const toPhone = normalizePhone(b.phone)
       if (toPhone) {
         const body = lang === 'sv'
-          ? `Hej ${firstName ?? ''}! Snart dags för ${tentName} 🌿 Lägg till frukost, fikapåse eller tidig incheckning: ${link}`
-          : `Hi ${firstName ?? ''}! Almost time for ${tentName} 🌿 Add breakfast, a fika bag or early check-in: ${link}`
+          ? `Hej ${firstName ?? ''}! Om ${dWord} dagar väntar ${tentName} på er 🌿 Gör vistelsen extra mysig – nybakad frukost vid sjön (${breakfastPrice} kr), välkomstfikapåse i tältet (${fikaPrice} kr) eller sen utcheckning. Boka enkelt: ${link}\n\nVi ses snart!\nBergs Slussar Glamping`
+          : `Hi ${firstName ?? ''}! In ${dWord} days ${tentName} is ready for you 🌿 Make your stay extra cosy – fresh breakfast by the lake (${breakfastPrice} SEK), a welcome fika bag in the tent (${fikaPrice} SEK) or late check-out. Book here: ${link}\n\nSee you soon!\nBergs Slussar Glamping`
         try {
           const r = await sendSms(toPhone, body)
           await supabase.from('prearrival_messages').insert({

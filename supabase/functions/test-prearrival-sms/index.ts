@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
   const fromRaw = Deno.env.get('ELKS46_FROM') || 'Glamping'
   const from = (fromRaw.replace(/[^A-Za-z0-9]/g, '').slice(0, 11)) || 'Glamping'
   const link = 'https://goglampingsweden.se/stay/5e1f43ba-f57a-4f94-9943-95dcef3acc2b'
-  const message = `Hej Christoffer! Snart dags för Sjöbris 🌿 Lägg till frukost, fikapåse eller tidig incheckning: ${link}`
+  const message = `Hej Christoffer! Om fem dagar väntar Sjöbrisretreatet på er 🌿 Gör vistelsen extra mysig – nybakad frukost vid sjön (209 kr), välkomstfikapåse i tältet (89 kr) eller sen utcheckning. Boka enkelt: ${link}\n\nVi ses snart!\nBergs Slussar Glamping`
 
   const auth = btoa(`${user}:${pass}`)
   const res = await fetch('https://api.46elks.com/a1/sms', {
