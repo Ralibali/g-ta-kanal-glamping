@@ -14,6 +14,7 @@ Deno.serve(async (req) => {
   const to = '+46722254993'
   const fromRaw = Deno.env.get('ELKS46_FROM') || 'Glamping'
   const from = (fromRaw.replace(/[^A-Za-z0-9]/g, '').slice(0, 11)) || 'Glamping'
+  const link = 'https://goglampingsweden.se/stay/5e1f43ba-f57a-4f94-9943-95dcef3acc2b'
   const message = `Hej Christoffer! 🌿\n\nOm fem dagar väntar en mysig vistelse vid kanalen, ett bäddat tält och en härlig vistelse hos oss.\n\nGör vistelsen extra härlig med frukost från bageriet, en fikapåse i tältet eller tidig incheckning.\n\nLäs mer om tillvalen här:\n${link}\n\nSnart ses vi! 🏕️🌞\n\n/Bergs Slussar Glamping`
 
   const auth = btoa(`${user}:${pass}`)
