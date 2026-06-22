@@ -95,6 +95,7 @@ export default function Cleaning() {
   const [selfCleanDates, setSelfCleanDates] = useState<Set<string>>(new Set());
   const [togglingSelfClean, setTogglingSelfClean] = useState(false);
   const [nextDayArrivals, setNextDayArrivals] = useState<Set<string>>(new Set());
+  const [earlyTents, setEarlyTents] = useState<Set<string>>(new Set());
 
   const changeLang = (l: CleanLang) => { setLang(l); setStoredLang(l); };
 
