@@ -494,14 +494,49 @@ export default function Stay() {
               <p className="text-sm text-muted-foreground">{t.intro}</p>
             </div>
 
+            {/* Deadline-banner — skapar urgens med riktigt datum */}
+            {(() => {
+              const deadlineMs = checkinMs - cutoff * 86400000;
+              const deadline = new Date(deadlineMs);
+              const deadlineLabel = deadline.toLocaleDateString(dateLocale, { weekday: "long", day: "numeric", month: "long" });
+              const daysToDeadline = Math.max(0, Math.ceil((deadlineMs - todayMs) / 86400000));
+              const urgent = daysToDeadline <= 2;
+              const deadlineCopy: Record<string, { title: string; sub: (d: string) => string; urgent: (n: number) => string }> = {
+                sv: { title: "Sista beställningsdag", sub: (d) => `Beställ senast ${d}`, urgent: (n) => n === 0 ? "Sista chansen — beställningen stänger ikväll" : n === 1 ? "Bara 1 dag kvar att beställa" : `Bara ${n} dagar kvar att beställa` },
+                en: { title: "Order by", sub: (d) => `Place your order by ${d}`, urgent: (n) => n === 0 ? "Last chance — orders close tonight" : n === 1 ? "Only 1 day left to order" : `Only ${n} days left to order` },
+                de: { title: "Bestellschluss", sub: (d) => `Bestelle bis ${d}`, urgent: (n) => n <= 1 ? "Letzte Chance" : `Nur noch ${n} Tage` },
+                da: { title: "Bestil senest", sub: (d) => `Bestil senest ${d}`, urgent: (n) => n <= 1 ? "Sidste chance" : `Kun ${n} dage tilbage` },
+                no: { title: "Bestill innen", sub: (d) => `Bestill senest ${d}`, urgent: (n) => n <= 1 ? "Siste sjanse" : `Kun ${n} dager igjen` },
+                nl: { title: "Bestel uiterlijk", sub: (d) => `Bestel uiterlijk ${d}`, urgent: (n) => n <= 1 ? "Laatste kans" : `Nog ${n} dagen` },
+                fr: { title: "Commandez avant", sub: (d) => `Commandez avant le ${d}`, urgent: (n) => n <= 1 ? "Dernière chance" : `Plus que ${n} jours` },
+              };
+              const dc = deadlineCopy[lang] ?? deadlineCopy.en;
+              return (
+                <div className={`rounded-lg border p-3 flex items-center gap-3 ${urgent ? "border-amber-500/60 bg-amber-500/10" : "border-primary/30 bg-primary/5"}`}>
+                  <Clock className={`h-5 w-5 shrink-0 ${urgent ? "text-amber-700" : "text-primary"}`} />
+                  <div className="flex-1 min-w-0">
+                    <div className={`text-sm font-medium ${urgent ? "text-amber-900" : "text-foreground"}`}>
+                      {urgent ? dc.urgent(daysToDeadline) : dc.title}
+                    </div>
+                    <div className="text-xs text-muted-foreground">{dc.sub(deadlineLabel)}</div>
+                  </div>
+                </div>
+              );
+            })()}
+
             <div className="space-y-3">
               {data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status))).map((a) => {
                 const q = qty[a.id] ?? 0;
                 const name = isSv ? a.name_sv : a.name_en;
                 const desc = isSv ? a.description_sv : a.description_en;
                 const priceLabel = a.unit === "per_quantity" ? t.perPerson : t.perStay;
+                const addCta: Record<string, string> = {
+                  sv: `Lägg till ${name.toLowerCase()} • ${a.price_sek} kr`,
+                  en: `Add ${name.toLowerCase()} • ${a.price_sek} SEK`,
+                };
+                const ctaLabel = addCta[lang as 'sv'|'en'] ?? `+ ${name} • ${a.price_sek} ${t.currency}`;
                 return (
-                  <Card key={a.id} className={q > 0 ? "border-primary/50" : ""}>
+                  <Card key={a.id} className={q > 0 ? "border-primary/50 shadow-sm" : ""}>
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
                         <div className="rounded-full bg-primary/10 p-2.5 text-primary shrink-0">{iconFor(a.slug)}</div>
@@ -539,15 +574,16 @@ export default function Stay() {
                               <Button size="icon" variant="outline" onClick={() => setQ(a.id, q - 1, a.max_quantity)} disabled={q === 0} aria-label="–"><Minus className="h-4 w-4" /></Button>
                               <span className="font-medium text-lg w-8 text-center">{q}</span>
                               <Button size="icon" variant="outline" onClick={() => setQ(a.id, q + 1, a.max_quantity)} disabled={q >= a.max_quantity} aria-label="+"><Plus className="h-4 w-4" /></Button>
-                              {q > 0 && <span className="text-sm text-muted-foreground ml-auto">{q * a.price_sek} {t.currency}</span>}
+                              {q > 0 && <span className="text-sm text-muted-foreground ml-auto font-medium">{q * a.price_sek} {t.currency}</span>}
                             </div>
                           ) : (
                             <Button
                               variant={q > 0 ? "default" : "outline"}
-                              size="sm"
+                              size="default"
+                              className="w-full sm:w-auto"
                               onClick={() => setQ(a.id, q > 0 ? 0 : 1, 1)}
                             >
-                              {q > 0 ? t.selectedLabel : t.addLabel}
+                              {q > 0 ? t.selectedLabel : ctaLabel}
                             </Button>
                           )}
                         </div>
@@ -557,6 +593,49 @@ export default function Stay() {
                 );
               })}
             </div>
+
+            {/* Trygghetsrad — minskar friktion innan beslut */}
+            <div className="rounded-lg border bg-card/50 p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div className="flex items-start gap-2">
+                  <ShieldCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-medium text-foreground">{isSv ? "Inga förskottsbetalningar" : "No upfront payment"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Betala först när vi bekräftat din beställning" : "Pay only after we confirm your order"}</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <MessageCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-medium text-foreground">{isSv ? "Snabbt svar" : "Fast response"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Vi bekräftar inom några timmar" : "We confirm within a few hours"}</div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CreditCard className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-medium text-foreground">{isSv ? "Säker betalning" : "Secure payment"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Swish eller kortlänk" : "Card link by email"}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* "Ingår redan" — positionerar tillvalen som extra lyx, inte basbehov */}
+            <Card className="bg-muted/40 border-dashed">
+              <CardContent className="p-4">
+                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+                  {isSv ? "Detta ingår alltid i din bokning" : "Always included in your booking"}
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex items-center gap-2"><Bed className="h-4 w-4 text-primary/70" /><span>{isSv ? "Bäddat tält" : "Made bed"}</span></div>
+                  <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary/70" /><span>{isSv ? "Städat & klart" : "Cleaned & ready"}</span></div>
+                  <div className="flex items-center gap-2"><Trees className="h-4 w-4 text-primary/70" /><span>{isSv ? "Egen veranda" : "Private deck"}</span></div>
+                  <div className="flex items-center gap-2"><Coffee className="h-4 w-4 text-primary/70" /><span>{isSv ? "Kaffe & te" : "Coffee & tea"}</span></div>
+                </div>
+              </CardContent>
+            </Card>
+
 
             {itemCount > 0 && (
               <Card className="sticky bottom-4 border-primary shadow-lg">
