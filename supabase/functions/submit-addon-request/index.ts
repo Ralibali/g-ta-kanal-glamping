@@ -159,8 +159,6 @@ Deno.serve(async (req) => {
       : `Thank you ${firstName ?? ''}! Order received: ${itemsStr}. Total ${total} SEK. We'll email you a secure payment link shortly. Ref: ${swishRef}.`
     try { await sendSms(phone, smsBody) } catch (err) { console.error('sms failed', err) }
   }
-    try { await sendSms(phone, smsBody) } catch (err) { console.error('sms failed', err) }
-  }
 
   return new Response(JSON.stringify({
     success: true, total, count: orderRows.length,
