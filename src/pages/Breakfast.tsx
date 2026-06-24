@@ -23,12 +23,9 @@ import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 
-const BREAKFAST_EMAIL = "Karin@bostallet.se";
+const BREAKFAST_EMAIL = "karin@bostallet.se";
+const BREAKFAST_PASSWORD = "bostället";
 
-function normalizeBreakfastPassword(password: string) {
-  const normalized = password.trim().normalize("NFC").toLocaleLowerCase("sv-SE");
-  return normalized === "bostället" || normalized === "bostallet" ? "bostället" : password;
-}
 
 const DIET_OPTIONS: { id: string; label: string; icon: typeof Wheat; color: string }[] = [
   { id: "gluten_free", label: "Glutenfritt", icon: Wheat, color: "text-amber-700" },
@@ -79,48 +76,10 @@ type Order = {
   delivered?: Delivery;
 };
 
-function LoginForm() {
-  const [pw, setPw] = useState("");
-  const [busy, setBusy] = useState(false);
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: BREAKFAST_EMAIL,
-      password: normalizeBreakfastPassword(pw),
-    });
-    setBusy(false);
-    if (error) toast.error("Fel lösenord");
-  };
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <Coffee className="h-8 w-8 mx-auto text-primary" />
-          <CardTitle>Frukostleverans</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Logga in med lösenordet <strong>bostället</strong>
-          </p>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={onSubmit} className="space-y-3">
-            <div>
-              <Label>Lösenord</Label>
-              <Input
-                type="password"
-                value={pw}
-                onChange={(e) => setPw(e.target.value)}
-                autoFocus
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={busy}>Logga in</Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+// Login tillfälligt borttagen – auto-inloggning sker i Breakfast-komponenten nedan.
+
+
+
 
 function fmtDate(d: Date): string {
   const y = d.getFullYear();
@@ -155,6 +114,20 @@ export default function Breakfast() {
   const [dietDraft, setDietDraft] = useState<string[]>([]);
   const [dietNoteDraft, setDietNoteDraft] = useState<string>("");
   const [savingDiet, setSavingDiet] = useState(false);
+  const [autoLoginTried, setAutoLoginTried] = useState(false);
+
+  // Auto-inloggning – inloggningssidan är tillfälligt borttagen.
+  useEffect(() => {
+    if (loading || user || autoLoginTried) return;
+    setAutoLoginTried(true);
+    supabase.auth.signInWithPassword({
+      email: BREAKFAST_EMAIL,
+      password: BREAKFAST_PASSWORD,
+    }).then(({ error }) => {
+      if (error) toast.error("Kunde inte logga in automatiskt: " + error.message);
+    });
+  }, [loading, user, autoLoginTried]);
+
 
   const openDietEditor = (o: Order) => {
     setDietDraft(o.dietary ?? []);
@@ -309,7 +282,7 @@ export default function Breakfast() {
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Laddar...</div>;
   }
-  if (!user) return <LoginForm />;
+  if (!user) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loggar in...</div>;
   if (!isBreakfast) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 gap-4">
