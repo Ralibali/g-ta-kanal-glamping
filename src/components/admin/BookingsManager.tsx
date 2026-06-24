@@ -456,6 +456,7 @@ export function BookingsManager() {
             else {
               // Re-apply addon-orders flags so online bookings aren't wiped by CSV re-import
               try {
+                const { buildAddonFlagsByStay } = await import("@/lib/stay-sync");
                 const bookingNumbers = Array.from(new Set(stays.map((s: any) => s.booking_number)));
                 if (bookingNumbers.length > 0) {
                   const { data: bks } = await (supabase as any)
@@ -464,22 +465,9 @@ export function BookingsManager() {
                     .in("booking_number", bookingNumbers);
                   const { data: ords } = await (supabase as any)
                     .from("addon_orders")
-                    .select("booking_id, addon_id, status, addons:addon_id(slug)")
+                    .select("booking_id, status, addons:addon_id(slug)")
                     .in("status", ["paid", "confirmed", "requested"]);
-                  const bkMap = new Map<string, { booking_number: string; tent_id: string }>();
-                  (bks ?? []).forEach((b: any) => bkMap.set(b.id, { booking_number: b.booking_number, tent_id: b.tent_id }));
-                  const flagsByStay = new Map<string, { breakfast?: boolean; fikapase?: boolean }>();
-                  (ords ?? []).forEach((o: any) => {
-                    const b = bkMap.get(o.booking_id);
-                    if (!b) return;
-                    const slug = o.addons?.slug;
-                    if (slug !== "breakfast" && slug !== "fika_bag") return;
-                    const key = `${b.booking_number}|${b.tent_id}`;
-                    const cur = flagsByStay.get(key) ?? {};
-                    if (slug === "breakfast") cur.breakfast = true;
-                    if (slug === "fika_bag") cur.fikapase = true;
-                    flagsByStay.set(key, cur);
-                  });
+                  const flagsByStay = buildAddonFlagsByStay(ords ?? [], bks ?? []);
                   for (const [key, patch] of flagsByStay.entries()) {
                     const [bn, tid] = key.split("|");
                     await (supabase as any).from("tent_stays").update(patch).eq("booking_number", bn).eq("tent_id", tid);
@@ -500,6 +488,7 @@ export function BookingsManager() {
               });
               staysMsg = ` • ${stays.length} tältvistelser, ${datesWithTurnover.size} datum med växling.`;
             }
+
 
           }
           toast.success(`${rows.length} bokningar uppladdade.${staysMsg} Tips: ladda nu upp "Basic info"-CSV för telefon/e-post.`);
