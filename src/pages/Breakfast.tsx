@@ -249,7 +249,13 @@ export default function Breakfast() {
   const dayOrders = ordersByDate.get(date) ?? [];
   const breakfastCount = dayOrders.filter((o) => o.kind === "breakfast").reduce((sum, o) => sum + o.guests, 0);
   const fikaCount = dayOrders.filter((o) => o.kind === "fikapase").length;
+  const portionsForOrder = (o: Order) => (o.kind === "breakfast" ? o.guests : 1);
+  const totalPortions = dayOrders.reduce((s, o) => s + portionsForOrder(o), 0);
+  const undeliveredPortions = dayOrders
+    .filter((o) => o.delivered?.status !== "delivered")
+    .reduce((s, o) => s + portionsForOrder(o), 0);
   const undeliveredCount = dayOrders.filter((o) => o.delivered?.status !== "delivered").length;
+
 
   // Next upcoming delivery date (the soonest day that still has work)
   const nextDelivery = useMemo(() => {
