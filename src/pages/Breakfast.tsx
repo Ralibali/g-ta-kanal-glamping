@@ -25,6 +25,11 @@ import {
 
 const BREAKFAST_EMAIL = "Karin@bostallet.se";
 
+function normalizeBreakfastPassword(password: string) {
+  const normalized = password.trim().normalize("NFC").toLocaleLowerCase("sv-SE");
+  return normalized === "bostället" || normalized === "bostallet" ? "bostället" : password;
+}
+
 const DIET_OPTIONS: { id: string; label: string; icon: typeof Wheat; color: string }[] = [
   { id: "gluten_free", label: "Glutenfritt", icon: Wheat, color: "text-amber-700" },
   { id: "vegan", label: "Veganskt", icon: Sprout, color: "text-emerald-700" },
@@ -82,7 +87,7 @@ function LoginForm() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({
       email: BREAKFAST_EMAIL,
-      password: pw.toLowerCase() === "bostället" ? "bostället" : pw,
+      password: normalizeBreakfastPassword(pw),
     });
     setBusy(false);
     if (error) toast.error("Fel lösenord");
