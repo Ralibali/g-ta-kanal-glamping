@@ -371,6 +371,8 @@ export default function Stay() {
   const [data, setData] = useState<StayData | null>(null);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState<Record<string, number>>({});
+  const [dietary, setDietary] = useState<string[]>([]);
+  const [dietaryNote, setDietaryNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [paidTotal, setPaidTotal] = useState<number>(0);
