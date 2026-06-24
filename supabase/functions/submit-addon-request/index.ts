@@ -116,11 +116,25 @@ Deno.serve(async (req) => {
     if (a.slug === 'breakfast') hasBreakfastOrder = true
     if (a.slug === 'fika_bag') hasFikaOrder = true
   }
-  if (hasBreakfastOrder || hasFikaOrder) {
-    const patch: Record<string, boolean> = {}
+  if (hasBreakfastOrder || hasFikaOrder || dietary.length > 0 || dietaryNote) {
+    const patch: Record<string, any> = {}
     if (hasBreakfastOrder) patch.breakfast = true
     if (hasFikaOrder) patch.fikapase = true
     try {
+      // Merge dietary union with existing values so we never clobber prior info.
+      if (dietary.length > 0 || dietaryNote) {
+        const { data: existing } = await supabase.from('tent_stays')
+          .select('dietary, dietary_note')
+          .eq('booking_number', booking.booking_number)
+          .eq('tent_id', booking.tent_id)
+          .maybeSingle()
+        const merged = Array.from(new Set([...(existing?.dietary ?? []), ...dietary]))
+        if (merged.length > 0) patch.dietary = merged
+        if (dietaryNote) {
+          const prev = (existing?.dietary_note ?? '').trim()
+          patch.dietary_note = prev && !prev.includes(dietaryNote) ? `${prev}\n${dietaryNote}` : (prev || dietaryNote)
+        }
+      }
       await supabase.from('tent_stays').update(patch)
         .eq('booking_number', booking.booking_number)
         .eq('tent_id', booking.tent_id)
