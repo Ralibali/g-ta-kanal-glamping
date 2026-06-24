@@ -565,7 +565,7 @@ export default function Stay() {
           </Card>
         ) : data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status))).length === 0 ? null : (
           <>
-            <div>
+            <div id="addons-section" className="scroll-mt-4">
               <h2 className="font-serif text-xl text-primary mb-1">{t.addons}</h2>
               <p className="text-sm text-muted-foreground">{t.intro}</p>
             </div>
