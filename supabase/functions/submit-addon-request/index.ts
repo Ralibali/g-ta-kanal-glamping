@@ -180,7 +180,7 @@ Deno.serve(async (req) => {
         headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           templateName: 'breakfast-new-order',
-          recipientEmail: 'Karin@bostallet.se',
+          recipientEmail: 'Info@bostallets.se',
           idempotencyKey: `breakfast-new-${booking.id}-${Date.now()}`,
           templateData: {
             guestName: booking.guest_name,
