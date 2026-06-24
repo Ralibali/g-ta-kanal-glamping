@@ -99,7 +99,7 @@ const COPY = {
     payIntro: "We'll email you a secure payment link within a few hours so you can pay by card. Your request is reserved until then.",
     payAmountLabel: "Amount",
     payRefLabel: "Reference",
-    payContact: "Questions? Email info@auroramedia.se",
+    payContact: "Questions? Email hej@goglampingsweden.se",
     copy: "Copy",
     copied: "Copied!",
   },
@@ -132,7 +132,7 @@ const COPY = {
     payIntro: "Du erhältst innerhalb weniger Stunden einen sicheren Zahlungslink per E-Mail, mit dem du mit Karte bezahlen kannst. Deine Anfrage ist bis dahin reserviert.",
     payAmountLabel: "Betrag",
     payRefLabel: "Referenz",
-    payContact: "Fragen? info@auroramedia.se",
+    payContact: "Fragen? hej@goglampingsweden.se",
     copy: "Kopieren",
     copied: "Kopiert!",
   },
@@ -165,7 +165,7 @@ const COPY = {
     payIntro: "Du får et sikkert betalingslink på mail inden for få timer, så du kan betale med kort. Din bestilling er reserveret indtil da.",
     payAmountLabel: "Beløb",
     payRefLabel: "Reference",
-    payContact: "Spørgsmål? info@auroramedia.se",
+    payContact: "Spørgsmål? hej@goglampingsweden.se",
     copy: "Kopiér",
     copied: "Kopieret!",
   },
@@ -198,7 +198,7 @@ const COPY = {
     payIntro: "Du får en sikker betalingslenke på e-post innen få timer slik at du kan betale med kort. Bestillingen er reservert til da.",
     payAmountLabel: "Beløp",
     payRefLabel: "Referanse",
-    payContact: "Spørsmål? info@auroramedia.se",
+    payContact: "Spørsmål? hej@goglampingsweden.se",
     copy: "Kopier",
     copied: "Kopiert!",
   },
@@ -231,7 +231,7 @@ const COPY = {
     payIntro: "Je ontvangt binnen enkele uren een veilige betaallink per e-mail om met kaart te betalen. Je verzoek blijft tot dan gereserveerd.",
     payAmountLabel: "Bedrag",
     payRefLabel: "Referentie",
-    payContact: "Vragen? info@auroramedia.se",
+    payContact: "Vragen? hej@goglampingsweden.se",
     copy: "Kopiëren",
     copied: "Gekopieerd!",
   },
@@ -264,7 +264,7 @@ const COPY = {
     payIntro: "Vous recevrez sous quelques heures un lien de paiement sécurisé par e-mail pour régler par carte. Votre demande est réservée d'ici là.",
     payAmountLabel: "Montant",
     payRefLabel: "Référence",
-    payContact: "Questions ? info@auroramedia.se",
+    payContact: "Questions ? hej@goglampingsweden.se",
     copy: "Copier",
     copied: "Copié !",
   },
@@ -289,7 +289,7 @@ function iconFor(slug: string) {
 const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: string[]; note?: string }>> = {
   breakfast: {
     sv: {
-      tagline: "Nybakat från lokala Bergs Bageri — levereras direkt till ditt tält.",
+      tagline: "Nybakat från Bostället — levereras direkt till ditt tält.",
       bullets: [
         "Färska frallor & croissant från bageriet",
         "Ost, skinka, smör & marmelad",
@@ -300,7 +300,7 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
       note: "Levereras till tältet kl 08:30. Pris per person.",
     },
     en: {
-      tagline: "Freshly baked from local Bergs Bakery — delivered to your tent.",
+      tagline: "Freshly baked from Bostället — delivered to your tent.",
       bullets: [
         "Fresh rolls & croissant from the bakery",
         "Cheese, ham, butter & jam",
@@ -406,6 +406,22 @@ export default function Stay() {
   const total = data.addons.reduce((sum, a) => sum + (qty[a.id] ?? 0) * a.price_sek, 0);
   const itemCount = Object.values(qty).reduce((s, n) => s + n, 0);
 
+  // Vad gästen redan har beställt — styr personlig text, inte bokningsmöjlighet
+  const orderedSlugs = new Set<string>(
+    (data.orders ?? [])
+      .filter((o) => ["requested", "confirmed", "paid"].includes(o.status))
+      .map((o) => data.addons.find((a) => a.id === o.addon_id)?.slug)
+      .filter((s): s is string => !!s),
+  );
+  const hasBreakfast = orderedSlugs.has("breakfast");
+  const hasFika = orderedSlugs.has("fika_bag");
+  const hasEarly = orderedSlugs.has("early_checkin");
+  const hasAnyAddon = orderedSlugs.size > 0;
+
+  const scrollToAddons = () => {
+    document.getElementById("addons-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const submit = async () => {
     const items = data.addons
       .filter((a) => (qty[a.id] ?? 0) > 0)
@@ -447,6 +463,60 @@ export default function Stay() {
             <div className="text-muted-foreground">
               {ci} → {co} · {t.nights(data.booking.nights ?? 1)}
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Det här väntar er — personlig, varm sammanfattning baserat på beställda tillval */}
+        <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-card to-card">
+          <CardHeader className="pb-2">
+            <CardTitle className="font-serif text-lg flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              {isSv ? "Det här väntar er" : "Here's what awaits you"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <p className="text-foreground/85 leading-relaxed">
+              {isSv
+                ? "Vad roligt att ni snart kommer till oss vid kanalen! Här är allt ni behöver inför vistelsen."
+                : "We're so happy you're coming to stay with us by the canal! Here's everything you need before your visit."}
+            </p>
+            <ul className="space-y-2.5">
+              <li className="flex items-start gap-3">
+                <Clock className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <span>
+                  {hasEarly
+                    ? (isSv ? "Tidig incheckning — välkomna redan från kl 12:00 🌅" : "Early check-in — welcome from 12:00 noon 🌅")
+                    : (isSv ? "Incheckning från kl 15:00." : "Check-in from 3:00 pm.")}
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Clock className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <span>{isSv ? "Utcheckning senast kl 10:00." : "Check-out by 10:00 am."}</span>
+              </li>
+              {hasBreakfast && (
+                <li className="flex items-start gap-3">
+                  <Coffee className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  <span>{isSv ? "Frukost levereras till ert tält kl 08:30 varje morgon. ☕" : "Breakfast delivered to your tent at 8:30 every morning. ☕"}</span>
+                </li>
+              )}
+              {hasFika && (
+                <li className="flex items-start gap-3">
+                  <Cookie className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  <span>{isSv ? "En fikapåse står framme i tältet när ni checkar in. 🍪" : "A fika bag will be waiting in your tent at check-in. 🍪"}</span>
+                </li>
+              )}
+            </ul>
+            {!hasAnyAddon && (
+              <button
+                type="button"
+                onClick={scrollToAddons}
+                className="mt-1 w-full text-left rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors p-3 text-sm text-foreground/90"
+              >
+                {isSv
+                  ? "Vill ni förgylla vistelsen? Lägg till frukost eller fikapåse nedan 👇"
+                  : "Want to make your stay even sweeter? Add breakfast or a fika bag below 👇"}
+              </button>
+            )}
           </CardContent>
         </Card>
 
@@ -495,7 +565,7 @@ export default function Stay() {
           </Card>
         ) : data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status))).length === 0 ? null : (
           <>
-            <div>
+            <div id="addons-section" className="scroll-mt-4">
               <h2 className="font-serif text-xl text-primary mb-1">{t.addons}</h2>
               <p className="text-sm text-muted-foreground">{t.intro}</p>
             </div>
@@ -648,11 +718,13 @@ export default function Stay() {
                 <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
                   {isSv ? "Detta ingår alltid i din bokning" : "Always included in your booking"}
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="flex items-center gap-2"><Bed className="h-4 w-4 text-primary/70" /><span>{isSv ? "Bäddat tält" : "Made bed"}</span></div>
-                  <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary/70" /><span>{isSv ? "Städat & klart" : "Cleaned & ready"}</span></div>
-                  <div className="flex items-center gap-2"><Trees className="h-4 w-4 text-primary/70" /><span>{isSv ? "Egen veranda" : "Private deck"}</span></div>
-                  <div className="flex items-center gap-2"><Coffee className="h-4 w-4 text-primary/70" /><span>{isSv ? "Kaffe & te" : "Coffee & tea"}</span></div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+                  <div className="flex items-start gap-2"><Bed className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Bäddade sängar med sänglinne & handdukar" : "Made beds with linens & towels"}</span></div>
+                  <div className="flex items-start gap-2"><Flame className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "El, värme & fläkt" : "Electricity, heat & fan"}</span></div>
+                  <div className="flex items-start gap-2"><UtensilsCrossed className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Minikylskåp i tältet" : "Mini-fridge in the tent"}</span></div>
+                  <div className="flex items-start gap-2"><Coffee className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Kaffe, te & en flaska vatten" : "Coffee, tea & a bottle of water"}</span></div>
+                  <div className="flex items-start gap-2"><Sparkles className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Städning vid utcheckning" : "Cleaning at check-out"}</span></div>
+                  <div className="flex items-start gap-2"><ShowerHead className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Servicehus: toalett, dusch & skötrum" : "Service house: toilet, shower & changing room"}</span></div>
                 </div>
               </CardContent>
             </Card>
@@ -682,14 +754,14 @@ export default function Stay() {
 
                 <InfoRow icon={<Clock className="h-4 w-4" />} title={isSv ? "Incheckning & utcheckning" : "Check-in & check-out"}>
                   {isSv
-                    ? "Incheckning från kl 15:00, utcheckning senast kl 11:00. Sen utcheckning till 14:00 kan bokas i mån av plats (400 kr). Du checkar in själv — vi mejlar tydliga instruktioner och en kodlås-kod dagen före ankomst."
-                    : "Check-in from 3:00 pm, check-out by 11:00 am. Late check-out until 2:00 pm can be booked subject to availability (400 SEK). Self check-in — we email clear instructions and a lock code the day before arrival."}
+                    ? "Incheckning från kl 15:00, utcheckning senast kl 10:00. Sen utcheckning till kl 12:00 kan bokas i mån av plats (400 kr via Swish — meddela oss i förväg). Du checkar in själv — vi mejlar tydliga instruktioner och en kodlås-kod dagen före ankomst."
+                    : "Check-in from 3:00 pm, check-out by 10:00 am. Late check-out until 12:00 noon can be booked subject to availability (400 SEK via Swish — let us know in advance). Self check-in — we email clear instructions and a lock code the day before arrival."}
                 </InfoRow>
 
                 <InfoRow icon={<ShowerHead className="h-4 w-4" />} title={isSv ? "Servicehus (toalett & dusch)" : "Service house (toilet & shower)"}>
                   {isSv
-                    ? "Fräscht servicehus med varma duschar, toaletter och handfat ca 50 meter från tälten. Öppet dygnet runt under hela din vistelse — koden får du i incheckningsmejlet."
-                    : "Fresh service house with warm showers, toilets and sinks about 50 m from the tents. Open 24/7 throughout your stay — the code arrives with your check-in email."}
+                    ? "Fräscht servicehus med varma duschar, toaletter och handfat ca 150 meter från tälten. Öppet dygnet runt under hela din vistelse — koden får du i incheckningsmejlet."
+                    : "Fresh service house with warm showers, toilets and sinks about 150 m from the tents. Open 24/7 throughout your stay — the code arrives with your check-in email."}
                 </InfoRow>
 
                 <InfoRow icon={<UtensilsCrossed className="h-4 w-4" />} title={isSv ? "Mat & matlagning" : "Food & cooking"}>
@@ -730,9 +802,9 @@ export default function Stay() {
 
                 <InfoRow icon={<Phone className="h-4 w-4" />} title={isSv ? "Kontakt under vistelsen" : "Contact during your stay"}>
                   {isSv ? (
-                    <>Christoffer svarar i mobilen: <a href="tel:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a>. Vi finns nära till hands om något behövs.</>
+                    <>Christoffer svarar i mobilen: <a href="tel:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. Vi finns nära till hands om något behövs.</>
                   ) : (
-                    <>Christoffer is reachable on mobile: <a href="tel:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a>. We're close by if anything comes up.</>
+                    <>Christoffer is reachable on mobile: <a href="tel:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. We're close by if anything comes up.</>
                   )}
                 </InfoRow>
               </CardContent>
@@ -755,7 +827,39 @@ export default function Stay() {
           </>
         )}
 
-        <div className="text-center text-xs text-muted-foreground pt-6">
+        {/* Avbokning & villkor — varm sammanfattning, inte juridisk vägg */}
+        <Card className="bg-card border-primary/20">
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-start gap-3">
+              <ShieldCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <div className="flex-1 text-sm">
+                <div className="font-medium text-foreground mb-1">
+                  {isSv ? "Avbokning & villkor" : "Cancellation & terms"}
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  {isSv
+                    ? "Avbokning är kostnadsfri fram till 5 dagar före ankomst. Skulle något oförutsett hända — hör av er, så löser vi det tillsammans."
+                    : "Free cancellation up to 5 days before arrival. If something unexpected comes up, just reach out and we'll sort it out together."}
+                </p>
+              </div>
+            </div>
+            <Link to="/bokningsvillkor" className="inline-flex items-center gap-1 text-sm text-primary underline font-medium">
+              {isSv ? "Läs alla bokningsvillkor" : "Read the full booking terms"}
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Avslutande hälsning */}
+        <div className="text-center pt-4 pb-2">
+          <p className="font-serif text-lg text-primary">
+            {isSv ? "Vi ser så fram emot att välkomna er! 🌿" : "We can't wait to welcome you! 🌿"}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {isSv ? "Christoffer & Karin — Go Glamping Sweden" : "Christoffer & Karin — Go Glamping Sweden"}
+          </p>
+        </div>
+
+        <div className="text-center text-xs text-muted-foreground pt-2">
           <Link to="/" className="underline">goglampingsweden.se</Link>
         </div>
       </main>
