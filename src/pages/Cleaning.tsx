@@ -113,10 +113,9 @@ export default function Cleaning() {
       .select("booking_number, tent_id, checkin_date, checkout_date, guests, children, breakfast, fikapase, late_checkout")
       .or(`checkout_date.eq.${date},checkin_date.eq.${date}`);
     const all = (stayRows ?? []) as Stay[];
-    const depTents = new Set(all.filter((s) => s.checkout_date === date).map((s) => s.tent_id));
     setNextDayArrivals(new Set());
-    // Keep departures + only arrivals that are turnovers (same tent has a departure today)
-    setStays(all.filter((s) => s.checkout_date === date || (s.checkin_date === date && depTents.has(s.tent_id))));
+    // Keep all stays touching today (departures + arrivals, incl. arrival-only days)
+    setStays(all);
     const { data: sessRows } = await (supabase as any)
       .from("cleaning_sessions")
       .select("tent_id, cleaning_date, status")
