@@ -23,7 +23,7 @@ import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 
-const BREAKFAST_EMAIL = "frukost@goglampingsweden.se";
+const BREAKFAST_EMAIL = "Karin@bostallet.se";
 
 const DIET_OPTIONS: { id: string; label: string; icon: typeof Wheat; color: string }[] = [
   { id: "gluten_free", label: "Glutenfritt", icon: Wheat, color: "text-amber-700" },
