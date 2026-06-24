@@ -4,7 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, Key, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette } from "lucide-react";
+import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, Key, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import addonEarlyCheckinImg from "@/assets/glamping-exterior-deck.jpg";
 
