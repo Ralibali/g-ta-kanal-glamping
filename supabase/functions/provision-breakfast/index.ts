@@ -19,11 +19,17 @@ Deno.serve(async () => {
   if (created.data.user) {
     userId = created.data.user.id;
   } else {
-    const { data: list } = await admin.auth.admin.listUsers({ page: 1, perPage: 200 });
-    const existing = list.users.find((u) => u.email === BREAKFAST_EMAIL);
-    if (existing) {
-      userId = existing.id;
-      await admin.auth.admin.updateUserById(existing.id, { password: BREAKFAST_PASSWORD, email_confirm: true });
+    let page = 1;
+    while (true) {
+      const { data: list } = await admin.auth.admin.listUsers({ page, perPage: 1000 });
+      if (!list?.users.length) break;
+      const existing = list.users.find((u) => u.email === BREAKFAST_EMAIL);
+      if (existing) {
+        userId = existing.id;
+        await admin.auth.admin.updateUserById(existing.id, { password: BREAKFAST_PASSWORD, email_confirm: true });
+        break;
+      }
+      page++;
     }
   }
   if (!userId) {
