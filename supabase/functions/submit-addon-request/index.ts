@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
 
   const { data: booking } = await supabase
     .from('bookings')
-    .select('id, guest_name, guest_first_name, tent_name, tent_id, checkin_date, email, phone, language, booking_number, public_token')
+    .select('id, guest_name, guest_first_name, tent_name, tent_id, checkin_date, checkout_date, email, phone, language, booking_number, public_token')
     .eq('public_token', token).maybeSingle()
   if (!booking) {
     return new Response(JSON.stringify({ error: 'not_found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
