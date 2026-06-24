@@ -489,6 +489,32 @@ export function BookingsManager() {
           let staysMsg = "";
           if (stays.length > 0) {
             const today = new Date().toISOString().slice(0, 10);
+            // Preserve any guest-submitted dietary info before delete/upsert
+            const bnList = Array.from(new Set(stays.map((s) => s.booking_number)));
+            const { data: existingStays } = await (supabase as any)
+              .from("tent_stays")
+              .select("booking_number, tent_id, dietary, dietary_note")
+              .in("booking_number", bnList);
+            const existingByKey = new Map<string, { dietary: string[]; dietary_note: string | null }>();
+            for (const r of (existingStays ?? []) as any[]) {
+              existingByKey.set(`${r.booking_number}|${r.tent_id}`, {
+                dietary: r.dietary ?? [],
+                dietary_note: r.dietary_note ?? null,
+              });
+            }
+            for (const s of stays) {
+              const prev = existingByKey.get(`${s.booking_number}|${s.tent_id}`);
+              if (prev) {
+                s.dietary = Array.from(new Set([...(prev.dietary ?? []), ...s.dietary]));
+                const prevNote = (prev.dietary_note ?? "").trim();
+                const csvNote = (s.dietary_note ?? "").trim();
+                s.dietary_note = !prevNote
+                  ? (csvNote || null)
+                  : !csvNote || prevNote.includes(csvNote)
+                    ? prevNote
+                    : `${prevNote}\n${csvNote}`;
+              }
+            }
             await (supabase as any).from("tent_stays").delete().gte("checkout_date", today);
             const { error: stayErr } = await (supabase as any)
               .from("tent_stays")
