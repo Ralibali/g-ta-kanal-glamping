@@ -435,7 +435,7 @@ export default function Stay() {
     setSubmitting(true);
     try {
       const { data: res, error } = await (supabase as any).functions.invoke("submit-addon-request", {
-        body: { public_token: token, items },
+        body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined },
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
       setPaidTotal(total);
