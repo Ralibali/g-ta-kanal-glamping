@@ -174,6 +174,22 @@ function aggregateRows(rawRows: Record<string, string>[]): MappedBooking[] {
 // ─── Sirvoy "booking content" → tent_stays ─────────────────────────────
 const ROOM_TO_TENT_LOCAL: Record<string, string> = { "1": "sjobris", "2": "naturkarnan", "3": "lugnetsyta" };
 
+// Detect dietary needs from free-text fields (Sirvoy notes, guest comments, extras)
+const DIETARY_PATTERNS: { id: string; re: RegExp }[] = [
+  { id: "gluten_free", re: /\b(glutenfri|gluten\s*fri|gluten[-\s]?free|coeliac|celiaki)\b/i },
+  { id: "vegan", re: /\b(vegan|veganskt|veganisch|vegano)\b/i },
+  { id: "vegetarian", re: /\b(vegetar|vegetariskt|veggie)\b/i },
+  { id: "lactose_free", re: /\b(laktosfri|laktos\s*fri|lactose[-\s]?free|mjölkfri|mjolkfri|dairy[-\s]?free)\b/i },
+  { id: "nut_allergy", re: /\b(nötallergi|notallergi|nut\s*allergy|nötter|peanut|jordnöt|hassel|cashew|mandel)\b/i },
+];
+
+function parseDietaryFromText(text: string): string[] {
+  if (!text) return [];
+  const found: string[] = [];
+  for (const { id, re } of DIETARY_PATTERNS) if (re.test(text)) found.push(id);
+  return found;
+}
+
 type TentStayRow = {
   booking_number: string;
   room_id: string | null;
@@ -190,6 +206,8 @@ type TentStayRow = {
   email: string | null;
   lang: string;
   note: string | null;
+  dietary: string[];
+  dietary_note: string | null;
   raw: Record<string, unknown>;
 };
 
@@ -205,21 +223,42 @@ function buildTentStays(rawRows: Record<string, string>[]): TentStayRow[] {
     return "";
   };
 
-  // 1) Aggregate EXTRAS per booking number
+  // 1) Aggregate EXTRAS and free-text dietary hints per booking number
   const extras = new Map<string, { children: number; breakfast: boolean; fikapase: boolean; late_checkout: boolean }>();
+  const dietByBn = new Map<string, Set<string>>();
+  const noteByBn = new Map<string, string[]>();
+  const addDiet = (bn: string, ids: string[]) => {
+    if (!ids.length) return;
+    const set = dietByBn.get(bn) ?? new Set<string>();
+    ids.forEach((id) => set.add(id));
+    dietByBn.set(bn, set);
+  };
+  const addNote = (bn: string, text: string) => {
+    const t = (text ?? "").trim();
+    if (!t) return;
+    const list = noteByBn.get(bn) ?? [];
+    if (!list.includes(t)) list.push(t);
+    noteByBn.set(bn, list);
+  };
   for (const l of lookups) {
     const type = get(l, "type", "typ").toUpperCase();
-    if (type !== "EXTRAS") continue;
     const bn = get(l, "booking no.", "booking no", "bokningsnummer").toUpperCase();
     if (!bn) continue;
-    const spec = get(l, "specification", "kategori").toLowerCase();
-    const units = parseInt(get(l, "units"), 10);
-    const e = extras.get(bn) ?? { children: 0, breakfast: false, fikapase: false, late_checkout: false };
-    if (spec.includes("barn")) e.children += isNaN(units) ? 1 : units;
-    if (spec.includes("frukost")) e.breakfast = true;
-    if (spec.includes("fikapåse") || spec.includes("fikapase")) e.fikapase = true;
-    if (spec.includes("sen utcheck")) e.late_checkout = true;
-    extras.set(bn, e);
+    const spec = get(l, "specification", "kategori");
+    const comments = get(l, "guest comments", "comments", "special requests", "kommentar", "meddelande");
+    const internal = get(l, "internal note", "note", "notering");
+    addDiet(bn, parseDietaryFromText(`${spec} ${comments} ${internal}`));
+    if (comments) addNote(bn, comments);
+    if (type === "EXTRAS") {
+      const specLow = spec.toLowerCase();
+      const units = parseInt(get(l, "units"), 10);
+      const e = extras.get(bn) ?? { children: 0, breakfast: false, fikapase: false, late_checkout: false };
+      if (specLow.includes("barn")) e.children += isNaN(units) ? 1 : units;
+      if (specLow.includes("frukost")) e.breakfast = true;
+      if (specLow.includes("fikapåse") || specLow.includes("fikapase")) e.fikapase = true;
+      if (specLow.includes("sen utcheck")) e.late_checkout = true;
+      extras.set(bn, e);
+    }
   }
 
   // 2) One stay per ACCOMM row
@@ -261,6 +300,8 @@ function buildTentStays(rawRows: Record<string, string>[]): TentStayRow[] {
       email: get(l, "email", "e-post", "epost") || null,
       lang,
       note: get(l, "internal note", "note") || null,
+      dietary: Array.from(dietByBn.get(bn) ?? []),
+      dietary_note: (noteByBn.get(bn) ?? []).join("\n") || null,
       raw: rawRows[i],
     });
   }
@@ -448,6 +489,32 @@ export function BookingsManager() {
           let staysMsg = "";
           if (stays.length > 0) {
             const today = new Date().toISOString().slice(0, 10);
+            // Preserve any guest-submitted dietary info before delete/upsert
+            const bnList = Array.from(new Set(stays.map((s) => s.booking_number)));
+            const { data: existingStays } = await (supabase as any)
+              .from("tent_stays")
+              .select("booking_number, tent_id, dietary, dietary_note")
+              .in("booking_number", bnList);
+            const existingByKey = new Map<string, { dietary: string[]; dietary_note: string | null }>();
+            for (const r of (existingStays ?? []) as any[]) {
+              existingByKey.set(`${r.booking_number}|${r.tent_id}`, {
+                dietary: r.dietary ?? [],
+                dietary_note: r.dietary_note ?? null,
+              });
+            }
+            for (const s of stays) {
+              const prev = existingByKey.get(`${s.booking_number}|${s.tent_id}`);
+              if (prev) {
+                s.dietary = Array.from(new Set([...(prev.dietary ?? []), ...s.dietary]));
+                const prevNote = (prev.dietary_note ?? "").trim();
+                const csvNote = (s.dietary_note ?? "").trim();
+                s.dietary_note = !prevNote
+                  ? (csvNote || null)
+                  : !csvNote || prevNote.includes(csvNote)
+                    ? prevNote
+                    : `${prevNote}\n${csvNote}`;
+              }
+            }
             await (supabase as any).from("tent_stays").delete().gte("checkout_date", today);
             const { error: stayErr } = await (supabase as any)
               .from("tent_stays")
