@@ -718,11 +718,13 @@ export default function Stay() {
                 <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
                   {isSv ? "Detta ingår alltid i din bokning" : "Always included in your booking"}
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="flex items-center gap-2"><Bed className="h-4 w-4 text-primary/70" /><span>{isSv ? "Bäddat tält" : "Made bed"}</span></div>
-                  <div className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary/70" /><span>{isSv ? "Städat & klart" : "Cleaned & ready"}</span></div>
-                  <div className="flex items-center gap-2"><Trees className="h-4 w-4 text-primary/70" /><span>{isSv ? "Egen veranda" : "Private deck"}</span></div>
-                  <div className="flex items-center gap-2"><Coffee className="h-4 w-4 text-primary/70" /><span>{isSv ? "Kaffe & te" : "Coffee & tea"}</span></div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+                  <div className="flex items-start gap-2"><Bed className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Bäddade sängar med sänglinne & handdukar" : "Made beds with linens & towels"}</span></div>
+                  <div className="flex items-start gap-2"><Flame className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "El, värme & fläkt" : "Electricity, heat & fan"}</span></div>
+                  <div className="flex items-start gap-2"><UtensilsCrossed className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Minikylskåp i tältet" : "Mini-fridge in the tent"}</span></div>
+                  <div className="flex items-start gap-2"><Coffee className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Kaffe, te & en flaska vatten" : "Coffee, tea & a bottle of water"}</span></div>
+                  <div className="flex items-start gap-2"><Sparkles className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Städning vid utcheckning" : "Cleaning at check-out"}</span></div>
+                  <div className="flex items-start gap-2"><ShowerHead className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Servicehus: toalett, dusch & skötrum" : "Service house: toilet, shower & changing room"}</span></div>
                 </div>
               </CardContent>
             </Card>
