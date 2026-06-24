@@ -94,7 +94,7 @@ function LoginForm() {
           <Coffee className="h-8 w-8 mx-auto text-primary" />
           <CardTitle>Frukostleverans</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Logga in med lösenordet <strong>karin</strong>
+            Logga in med lösenordet <strong>bostallet</strong>
           </p>
         </CardHeader>
         <CardContent>
