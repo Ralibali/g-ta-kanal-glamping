@@ -33,10 +33,15 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 
-  let body: { public_token?: string; items?: Item[] } = {}
+  let body: { public_token?: string; items?: Item[]; dietary?: string[]; dietary_note?: string } = {}
   try { body = await req.json() } catch {}
   const token = body.public_token
   const items = Array.isArray(body.items) ? body.items.filter(i => i.addon_id && i.quantity > 0) : []
+  const ALLOWED_DIETS = new Set(['gluten_free', 'vegan', 'vegetarian', 'lactose_free', 'nut_allergy'])
+  const dietary = Array.isArray(body.dietary)
+    ? Array.from(new Set(body.dietary.filter((d): d is string => typeof d === 'string' && ALLOWED_DIETS.has(d))))
+    : []
+  const dietaryNote = typeof body.dietary_note === 'string' ? body.dietary_note.trim().slice(0, 500) : ''
   if (!token || items.length === 0) {
     return new Response(JSON.stringify({ error: 'public_token and items required' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
@@ -111,11 +116,25 @@ Deno.serve(async (req) => {
     if (a.slug === 'breakfast') hasBreakfastOrder = true
     if (a.slug === 'fika_bag') hasFikaOrder = true
   }
-  if (hasBreakfastOrder || hasFikaOrder) {
-    const patch: Record<string, boolean> = {}
+  if (hasBreakfastOrder || hasFikaOrder || dietary.length > 0 || dietaryNote) {
+    const patch: Record<string, any> = {}
     if (hasBreakfastOrder) patch.breakfast = true
     if (hasFikaOrder) patch.fikapase = true
     try {
+      // Merge dietary union with existing values so we never clobber prior info.
+      if (dietary.length > 0 || dietaryNote) {
+        const { data: existing } = await supabase.from('tent_stays')
+          .select('dietary, dietary_note')
+          .eq('booking_number', booking.booking_number)
+          .eq('tent_id', booking.tent_id)
+          .maybeSingle()
+        const merged = Array.from(new Set([...(existing?.dietary ?? []), ...dietary]))
+        if (merged.length > 0) patch.dietary = merged
+        if (dietaryNote) {
+          const prev = (existing?.dietary_note ?? '').trim()
+          patch.dietary_note = prev && !prev.includes(dietaryNote) ? `${prev}\n${dietaryNote}` : (prev || dietaryNote)
+        }
+      }
       await supabase.from('tent_stays').update(patch)
         .eq('booking_number', booking.booking_number)
         .eq('tent_id', booking.tent_id)
@@ -169,6 +188,7 @@ Deno.serve(async (req) => {
             hasBreakfast: hasBreakfastOrder, hasFika: hasFikaOrder,
             breakfastDate, fikaDate,
             items: emailItems,
+            dietary, dietaryNote,
           },
         }),
       })
