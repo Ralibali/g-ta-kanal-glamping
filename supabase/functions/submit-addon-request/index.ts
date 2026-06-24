@@ -151,6 +151,30 @@ Deno.serve(async (req) => {
     })
   } catch (err) { console.error('owner email failed', err) }
 
+  // Karin (frukost) notice — only when breakfast/fika ordered
+  if (hasBreakfastOrder || hasFikaOrder) {
+    const breakfastDate = booking.checkout_date ?? null
+    const fikaDate = booking.checkin_date
+    try {
+      await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          templateName: 'breakfast-new-order',
+          recipientEmail: 'frukost@goglampingsweden.se',
+          idempotencyKey: `breakfast-new-${booking.id}-${Date.now()}`,
+          templateData: {
+            guestName: booking.guest_name,
+            tentName, bookingNumber: booking.booking_number,
+            hasBreakfast: hasBreakfastOrder, hasFika: hasFikaOrder,
+            breakfastDate, fikaDate,
+            items: emailItems,
+          },
+        }),
+      })
+    } catch (err) { console.error('breakfast notice failed', err) }
+  }
+
   // Guest email
   if (booking.email) {
     try {
