@@ -517,7 +517,7 @@ export default function Breakfast() {
                               <span className="font-medium">Tält {o.tentNo} – {o.tentName}</span>
                             </div>
                             <div className="text-xs text-muted-foreground mt-1">
-                              {o.guestName ?? "Gäst"} • Bokning {o.booking_number}
+                              Gäst • Bokning {o.booking_number}
                             </div>
                           </div>
                           {done && (
