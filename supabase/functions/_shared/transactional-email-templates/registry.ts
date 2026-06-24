@@ -17,6 +17,8 @@ import { template as tentReadyGuest } from './tent-ready-guest.tsx'
 import { template as prearrivalOffer } from './prearrival-offer.tsx'
 import { template as addonRequestOwner } from './addon-request-owner.tsx'
 import { template as addonRequestGuest } from './addon-request-guest.tsx'
+import { template as breakfastNewOrder } from './breakfast-new-order.tsx'
+import { template as breakfastDigest } from './breakfast-digest.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'chat-notification': chatNotification,
@@ -27,4 +29,6 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'prearrival-offer': prearrivalOffer,
   'addon-request-owner': addonRequestOwner,
   'addon-request-guest': addonRequestGuest,
+  'breakfast-new-order': breakfastNewOrder,
+  'breakfast-digest': breakfastDigest,
 }
