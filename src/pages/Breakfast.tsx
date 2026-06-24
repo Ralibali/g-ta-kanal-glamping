@@ -207,12 +207,10 @@ export default function Breakfast() {
       const d = addDays(today, i);
       const list: Order[] = [];
       stays.forEach((s) => {
-        // Breakfast served the morning(s) you wake up there:
-        // checkin Mon, checkout Wed → breakfast Tue & Wed.
-        if (d <= s.checkin_date || d > s.checkout_date) return;
         const tent = TENT_BY_ID[s.tent_id];
         if (!tent) return;
-        if (s.breakfast) {
+        // Frukost levereras på utcheckningsdagen.
+        if (s.breakfast && d === s.checkout_date) {
           list.push({
             key: `${s.booking_number}_${d}_breakfast`,
             booking_number: s.booking_number,
@@ -229,25 +227,23 @@ export default function Breakfast() {
             delivered: deliveries.find((x) => x.booking_number === s.booking_number && x.delivery_date === d && x.kind === "breakfast"),
           });
         }
-        if (s.fikapase) {
-          const firstMorning = addDays(s.checkin_date, 1);
-          if (d === firstMorning) {
-            list.push({
-              key: `${s.booking_number}_${d}_fikapase`,
-              booking_number: s.booking_number,
-              tent_id: s.tent_id,
-              tentNo: tent.no,
-              tentName: tent.name,
-              guestName: s.guest_name,
-              guests: s.guests ?? s.adults ?? 0,
-              children: s.children ?? 0,
-              kind: "fikapase",
-              deliveryDate: d,
-              dietary: s.dietary ?? [],
-              dietaryNote: s.dietary_note ?? null,
-              delivered: deliveries.find((x) => x.booking_number === s.booking_number && x.delivery_date === d && x.kind === "fikapase"),
-            });
-          }
+        // Fikapåse levereras på incheckningsdagen.
+        if (s.fikapase && d === s.checkin_date) {
+          list.push({
+            key: `${s.booking_number}_${d}_fikapase`,
+            booking_number: s.booking_number,
+            tent_id: s.tent_id,
+            tentNo: tent.no,
+            tentName: tent.name,
+            guestName: s.guest_name,
+            guests: s.guests ?? s.adults ?? 0,
+            children: s.children ?? 0,
+            kind: "fikapase",
+            deliveryDate: d,
+            dietary: s.dietary ?? [],
+            dietaryNote: s.dietary_note ?? null,
+            delivered: deliveries.find((x) => x.booking_number === s.booking_number && x.delivery_date === d && x.kind === "fikapase"),
+          });
         }
       });
       list.sort((a, b) => a.tentNo - b.tentNo || (a.kind === "breakfast" ? -1 : 1));
