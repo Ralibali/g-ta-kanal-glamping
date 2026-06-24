@@ -114,6 +114,20 @@ export default function Breakfast() {
   const [dietDraft, setDietDraft] = useState<string[]>([]);
   const [dietNoteDraft, setDietNoteDraft] = useState<string>("");
   const [savingDiet, setSavingDiet] = useState(false);
+  const [autoLoginTried, setAutoLoginTried] = useState(false);
+
+  // Auto-inloggning – inloggningssidan är tillfälligt borttagen.
+  useEffect(() => {
+    if (loading || user || autoLoginTried) return;
+    setAutoLoginTried(true);
+    supabase.auth.signInWithPassword({
+      email: BREAKFAST_EMAIL,
+      password: BREAKFAST_PASSWORD,
+    }).then(({ error }) => {
+      if (error) toast.error("Kunde inte logga in automatiskt: " + error.message);
+    });
+  }, [loading, user, autoLoginTried]);
+
 
   const openDietEditor = (o: Order) => {
     setDietDraft(o.dietary ?? []);
