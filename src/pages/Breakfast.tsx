@@ -73,7 +73,12 @@ type Order = {
   deliveryDate: string;
   dietary: string[];
   dietaryNote: string | null;
+  delivered?: Delivery;
+};
+
 // Login tillfälligt borttagen – auto-inloggning sker i Breakfast-komponenten nedan.
+
+
 
 
 function fmtDate(d: Date): string {
