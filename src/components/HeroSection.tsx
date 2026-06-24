@@ -60,7 +60,7 @@ const HeroSection = () => {
         >
           {lang === "en"
             ? "Glamping at Bergs Slussar"
-            : "Glamping vid Bergs Slussar"}
+            : "Glamping Bergs Slussar"}
           <span className="block italic font-normal text-white/90 mt-2">
             {lang === "en" ? "– by Göta Canal in Östergötland" : "– vid Göta kanal i Östergötland"}
           </span>
