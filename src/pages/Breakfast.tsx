@@ -249,7 +249,13 @@ export default function Breakfast() {
   const dayOrders = ordersByDate.get(date) ?? [];
   const breakfastCount = dayOrders.filter((o) => o.kind === "breakfast").reduce((sum, o) => sum + o.guests, 0);
   const fikaCount = dayOrders.filter((o) => o.kind === "fikapase").length;
+  const portionsForOrder = (o: Order) => (o.kind === "breakfast" ? o.guests : 1);
+  const totalPortions = dayOrders.reduce((s, o) => s + portionsForOrder(o), 0);
+  const undeliveredPortions = dayOrders
+    .filter((o) => o.delivered?.status !== "delivered")
+    .reduce((s, o) => s + portionsForOrder(o), 0);
   const undeliveredCount = dayOrders.filter((o) => o.delivered?.status !== "delivered").length;
+
 
   // Next upcoming delivery date (the soonest day that still has work)
   const nextDelivery = useMemo(() => {
@@ -503,8 +509,9 @@ export default function Breakfast() {
               <Card className={undeliveredCount > 0 ? "bg-primary/5 border-primary/30" : ""}>
                 <CardContent className="pt-4">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wide font-semibold">Kvar att leverera</div>
-                  <div className="text-3xl font-serif font-semibold">{undeliveredCount}</div>
-                  <div className="text-[10px] text-muted-foreground">av {dayOrders.length}</div>
+                  <div className="text-3xl font-serif font-semibold">{undeliveredPortions}</div>
+                  <div className="text-[10px] text-muted-foreground">av {totalPortions} portioner</div>
+
                 </CardContent>
               </Card>
             </div>
