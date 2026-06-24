@@ -509,8 +509,9 @@ export default function Breakfast() {
               <Card className={undeliveredCount > 0 ? "bg-primary/5 border-primary/30" : ""}>
                 <CardContent className="pt-4">
                   <div className="text-[10px] text-muted-foreground uppercase tracking-wide font-semibold">Kvar att leverera</div>
-                  <div className="text-3xl font-serif font-semibold">{undeliveredCount}</div>
-                  <div className="text-[10px] text-muted-foreground">av {dayOrders.length}</div>
+                  <div className="text-3xl font-serif font-semibold">{undeliveredPortions}</div>
+                  <div className="text-[10px] text-muted-foreground">av {totalPortions} portioner</div>
+
                 </CardContent>
               </Card>
             </div>
