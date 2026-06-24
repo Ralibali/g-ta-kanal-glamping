@@ -102,6 +102,26 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: insertErr.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
+  // Sync tent_stays flags so /frukost picks up the new order automatically.
+  let hasBreakfastOrder = false
+  let hasFikaOrder = false
+  for (const it of items) {
+    const a = addonMap.get(it.addon_id)
+    if (!a) continue
+    if (a.slug === 'breakfast') hasBreakfastOrder = true
+    if (a.slug === 'fika_bag') hasFikaOrder = true
+  }
+  if (hasBreakfastOrder || hasFikaOrder) {
+    const patch: Record<string, boolean> = {}
+    if (hasBreakfastOrder) patch.breakfast = true
+    if (hasFikaOrder) patch.fikapase = true
+    try {
+      await supabase.from('tent_stays').update(patch)
+        .eq('booking_number', booking.booking_number)
+        .eq('tent_id', booking.tent_id)
+    } catch (err) { console.error('tent_stays sync failed', err) }
+  }
+
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   const tentName = booking.tent_name || booking.tent_id
