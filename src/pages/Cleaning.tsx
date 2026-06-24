@@ -139,17 +139,15 @@ export default function Cleaning() {
       .select("tent_id, checkin_date, checkout_date, guests, late_checkout")
       .or(`and(checkin_date.gte.${today},checkin_date.lte.${endStr}),and(checkout_date.gte.${today},checkout_date.lte.${endStr})`);
     const rows = (data ?? []) as Stay[];
-    // Set of "tent|date" where an arrival exists, used to skip redundant departure-only cleanings
-    const arrivalKeys = new Set(rows.map((s) => `${s.tent_id}|${s.checkin_date}`));
     const map = new Map<string, UpcomingRow>();
     const addDate = (d: string) => {
       if (!map.has(d)) map.set(d, { date: d, tents: [] });
       return map.get(d)!;
     };
+    // Departure days (always a cleaning day)
     TENTS.forEach((t) => {
       rows.forEach((s) => {
         if (s.tent_id !== t.id) return;
-        // Cleaning only on departure days
         if (s.checkout_date < today || s.checkout_date > endStr) return;
         const row = addDate(s.checkout_date);
         let existing = row.tents.find((x) => x.tent_id === t.id);
@@ -163,12 +161,32 @@ export default function Cleaning() {
         }
         existing.hasDeparture = true;
         existing.lateCheckout = !!s.late_checkout;
-        // Same-day turnover: incoming guest arrives the day we clean
         const turnover = rows.find((x) => x.tent_id === t.id && x.checkin_date === s.checkout_date);
         if (turnover) {
           existing.hasArrival = true;
           existing.guests = turnover.guests ?? 0;
         }
+      });
+    });
+    // Arrival-only days also need cleaning
+    TENTS.forEach((t) => {
+      rows.forEach((s) => {
+        if (s.tent_id !== t.id) return;
+        if (s.checkin_date < today || s.checkin_date > endStr) return;
+        const hasDepSameDay = rows.some((x) => x.tent_id === t.id && x.checkout_date === s.checkin_date);
+        if (hasDepSameDay) return;
+        const row = addDate(s.checkin_date);
+        let existing = row.tents.find((x) => x.tent_id === t.id);
+        if (!existing) {
+          existing = {
+            tent_id: t.id, tentNo: t.no, tentName: t.name,
+            hasArrival: false, hasDeparture: false,
+            guests: 0, lateCheckout: false,
+          };
+          row.tents.push(existing);
+        }
+        existing.hasArrival = true;
+        existing.guests = s.guests ?? 0;
       });
     });
     const list = Array.from(map.values())
