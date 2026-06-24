@@ -301,14 +301,25 @@ export default function Cleaning() {
         return byDate.get(d)!;
       };
       const arrivalKeys = new Set(rows.map((r) => `${r.tent_id}|${r.checkin_date}`));
+      // Departure days
       rows.forEach((r) => {
-        // Cleaning only on departure days
         if (r.checkout_date >= today && r.checkout_date <= endStr) {
           const b = bump(r.checkout_date);
           b.tents.add(r.tent_id);
           b.departures.add(r.tent_id);
-          // Same-day turnover: count incoming guest too
           if (arrivalKeys.has(`${r.tent_id}|${r.checkout_date}`)) {
+            b.arrivals.add(r.tent_id);
+            b.guests += r.guests ?? 0;
+          }
+        }
+      });
+      // Arrival-only days
+      rows.forEach((r) => {
+        if (r.checkin_date >= today && r.checkin_date <= endStr) {
+          const hasDepSameDay = rows.some((x) => x.tent_id === r.tent_id && x.checkout_date === r.checkin_date);
+          if (!hasDepSameDay) {
+            const b = bump(r.checkin_date);
+            b.tents.add(r.tent_id);
             b.arrivals.add(r.tent_id);
             b.guests += r.guests ?? 0;
           }
