@@ -99,7 +99,7 @@ const COPY = {
     payIntro: "We'll email you a secure payment link within a few hours so you can pay by card. Your request is reserved until then.",
     payAmountLabel: "Amount",
     payRefLabel: "Reference",
-    payContact: "Questions? Email info@auroramedia.se",
+    payContact: "Questions? Email hej@goglampingsweden.se",
     copy: "Copy",
     copied: "Copied!",
   },
@@ -132,7 +132,7 @@ const COPY = {
     payIntro: "Du erhältst innerhalb weniger Stunden einen sicheren Zahlungslink per E-Mail, mit dem du mit Karte bezahlen kannst. Deine Anfrage ist bis dahin reserviert.",
     payAmountLabel: "Betrag",
     payRefLabel: "Referenz",
-    payContact: "Fragen? info@auroramedia.se",
+    payContact: "Fragen? hej@goglampingsweden.se",
     copy: "Kopieren",
     copied: "Kopiert!",
   },
@@ -165,7 +165,7 @@ const COPY = {
     payIntro: "Du får et sikkert betalingslink på mail inden for få timer, så du kan betale med kort. Din bestilling er reserveret indtil da.",
     payAmountLabel: "Beløb",
     payRefLabel: "Reference",
-    payContact: "Spørgsmål? info@auroramedia.se",
+    payContact: "Spørgsmål? hej@goglampingsweden.se",
     copy: "Kopiér",
     copied: "Kopieret!",
   },
@@ -198,7 +198,7 @@ const COPY = {
     payIntro: "Du får en sikker betalingslenke på e-post innen få timer slik at du kan betale med kort. Bestillingen er reservert til da.",
     payAmountLabel: "Beløp",
     payRefLabel: "Referanse",
-    payContact: "Spørsmål? info@auroramedia.se",
+    payContact: "Spørsmål? hej@goglampingsweden.se",
     copy: "Kopier",
     copied: "Kopiert!",
   },
@@ -231,7 +231,7 @@ const COPY = {
     payIntro: "Je ontvangt binnen enkele uren een veilige betaallink per e-mail om met kaart te betalen. Je verzoek blijft tot dan gereserveerd.",
     payAmountLabel: "Bedrag",
     payRefLabel: "Referentie",
-    payContact: "Vragen? info@auroramedia.se",
+    payContact: "Vragen? hej@goglampingsweden.se",
     copy: "Kopiëren",
     copied: "Gekopieerd!",
   },
@@ -264,7 +264,7 @@ const COPY = {
     payIntro: "Vous recevrez sous quelques heures un lien de paiement sécurisé par e-mail pour régler par carte. Votre demande est réservée d'ici là.",
     payAmountLabel: "Montant",
     payRefLabel: "Référence",
-    payContact: "Questions ? info@auroramedia.se",
+    payContact: "Questions ? hej@goglampingsweden.se",
     copy: "Copier",
     copied: "Copié !",
   },
@@ -289,7 +289,7 @@ function iconFor(slug: string) {
 const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: string[]; note?: string }>> = {
   breakfast: {
     sv: {
-      tagline: "Nybakat från lokala Bergs Bageri — levereras direkt till ditt tält.",
+      tagline: "Nybakat från Bostället — levereras direkt till ditt tält.",
       bullets: [
         "Färska frallor & croissant från bageriet",
         "Ost, skinka, smör & marmelad",
@@ -300,7 +300,7 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
       note: "Levereras till tältet kl 08:30. Pris per person.",
     },
     en: {
-      tagline: "Freshly baked from local Bergs Bakery — delivered to your tent.",
+      tagline: "Freshly baked from Bostället — delivered to your tent.",
       bullets: [
         "Fresh rolls & croissant from the bakery",
         "Cheese, ham, butter & jam",
@@ -682,14 +682,14 @@ export default function Stay() {
 
                 <InfoRow icon={<Clock className="h-4 w-4" />} title={isSv ? "Incheckning & utcheckning" : "Check-in & check-out"}>
                   {isSv
-                    ? "Incheckning från kl 15:00, utcheckning senast kl 11:00. Sen utcheckning till 14:00 kan bokas i mån av plats (400 kr). Du checkar in själv — vi mejlar tydliga instruktioner och en kodlås-kod dagen före ankomst."
-                    : "Check-in from 3:00 pm, check-out by 11:00 am. Late check-out until 2:00 pm can be booked subject to availability (400 SEK). Self check-in — we email clear instructions and a lock code the day before arrival."}
+                    ? "Incheckning från kl 15:00, utcheckning senast kl 10:00. Sen utcheckning till kl 12:00 kan bokas i mån av plats (400 kr via Swish — meddela oss i förväg). Du checkar in själv — vi mejlar tydliga instruktioner och en kodlås-kod dagen före ankomst."
+                    : "Check-in from 3:00 pm, check-out by 10:00 am. Late check-out until 12:00 noon can be booked subject to availability (400 SEK via Swish — let us know in advance). Self check-in — we email clear instructions and a lock code the day before arrival."}
                 </InfoRow>
 
                 <InfoRow icon={<ShowerHead className="h-4 w-4" />} title={isSv ? "Servicehus (toalett & dusch)" : "Service house (toilet & shower)"}>
                   {isSv
-                    ? "Fräscht servicehus med varma duschar, toaletter och handfat ca 50 meter från tälten. Öppet dygnet runt under hela din vistelse — koden får du i incheckningsmejlet."
-                    : "Fresh service house with warm showers, toilets and sinks about 50 m from the tents. Open 24/7 throughout your stay — the code arrives with your check-in email."}
+                    ? "Fräscht servicehus med varma duschar, toaletter och handfat ca 150 meter från tälten. Öppet dygnet runt under hela din vistelse — koden får du i incheckningsmejlet."
+                    : "Fresh service house with warm showers, toilets and sinks about 150 m from the tents. Open 24/7 throughout your stay — the code arrives with your check-in email."}
                 </InfoRow>
 
                 <InfoRow icon={<UtensilsCrossed className="h-4 w-4" />} title={isSv ? "Mat & matlagning" : "Food & cooking"}>
@@ -730,9 +730,9 @@ export default function Stay() {
 
                 <InfoRow icon={<Phone className="h-4 w-4" />} title={isSv ? "Kontakt under vistelsen" : "Contact during your stay"}>
                   {isSv ? (
-                    <>Christoffer svarar i mobilen: <a href="tel:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a>. Vi finns nära till hands om något behövs.</>
+                    <>Christoffer svarar i mobilen: <a href="tel:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. Vi finns nära till hands om något behövs.</>
                   ) : (
-                    <>Christoffer is reachable on mobile: <a href="tel:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a>. We're close by if anything comes up.</>
+                    <>Christoffer is reachable on mobile: <a href="tel:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. We're close by if anything comes up.</>
                   )}
                 </InfoRow>
               </CardContent>
