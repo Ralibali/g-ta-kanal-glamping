@@ -2,7 +2,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const BREAKFAST_EMAIL = "karin@bostallet.se";
-const BREAKFAST_PASSWORD = "bostallet";
+const BREAKFAST_PASSWORD = "bostället";
 
 Deno.serve(async () => {
   const admin = createClient(
