@@ -299,11 +299,11 @@ export default function Cleaning() {
     const list = TENTS.map((t) => {
       const arr = stays.find((s) => s.tent_id === t.id && s.checkin_date === date);
       const dep = stays.find((s) => s.tent_id === t.id && s.checkout_date === date);
-      // Clean only on departure days. Arrival-only days are skipped (tent already clean from last departure).
-      if (!dep) return null;
+      // Show any tent with activity today (arrival, departure, or both).
+      if (!dep && !arr) return null;
       return {
         tent_id: t.id, tentNo: t.no, tentName: t.name, position: t.position[lang], date,
-        hasArrival: !!arr, hasDeparture: true,
+        hasArrival: !!arr, hasDeparture: !!dep,
         arrivalBooking: arr?.booking_number,
         guests: arr?.guests ?? 0,
         children: arr?.children ?? 0,
