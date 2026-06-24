@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
 
   const { data: booking } = await supabase
     .from('bookings')
-    .select('id, guest_name, guest_first_name, tent_name, tent_id, checkin_date, email, phone, language, booking_number, public_token')
+    .select('id, guest_name, guest_first_name, tent_name, tent_id, checkin_date, checkout_date, email, phone, language, booking_number, public_token')
     .eq('public_token', token).maybeSingle()
   if (!booking) {
     return new Response(JSON.stringify({ error: 'not_found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
@@ -102,6 +102,26 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: insertErr.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
+  // Sync tent_stays flags so /frukost picks up the new order automatically.
+  let hasBreakfastOrder = false
+  let hasFikaOrder = false
+  for (const it of items) {
+    const a = addonMap.get(it.addon_id)
+    if (!a) continue
+    if (a.slug === 'breakfast') hasBreakfastOrder = true
+    if (a.slug === 'fika_bag') hasFikaOrder = true
+  }
+  if (hasBreakfastOrder || hasFikaOrder) {
+    const patch: Record<string, boolean> = {}
+    if (hasBreakfastOrder) patch.breakfast = true
+    if (hasFikaOrder) patch.fikapase = true
+    try {
+      await supabase.from('tent_stays').update(patch)
+        .eq('booking_number', booking.booking_number)
+        .eq('tent_id', booking.tent_id)
+    } catch (err) { console.error('tent_stays sync failed', err) }
+  }
+
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   const tentName = booking.tent_name || booking.tent_id
@@ -130,6 +150,30 @@ Deno.serve(async (req) => {
       }),
     })
   } catch (err) { console.error('owner email failed', err) }
+
+  // Karin (frukost) notice — only when breakfast/fika ordered
+  if (hasBreakfastOrder || hasFikaOrder) {
+    const breakfastDate = booking.checkout_date ?? null
+    const fikaDate = booking.checkin_date
+    try {
+      await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          templateName: 'breakfast-new-order',
+          recipientEmail: 'frukost@goglampingsweden.se',
+          idempotencyKey: `breakfast-new-${booking.id}-${Date.now()}`,
+          templateData: {
+            guestName: booking.guest_name,
+            tentName, bookingNumber: booking.booking_number,
+            hasBreakfast: hasBreakfastOrder, hasFika: hasFikaOrder,
+            breakfastDate, fikaDate,
+            items: emailItems,
+          },
+        }),
+      })
+    } catch (err) { console.error('breakfast notice failed', err) }
+  }
 
   // Guest email
   if (booking.email) {
