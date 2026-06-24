@@ -174,6 +174,22 @@ function aggregateRows(rawRows: Record<string, string>[]): MappedBooking[] {
 // ─── Sirvoy "booking content" → tent_stays ─────────────────────────────
 const ROOM_TO_TENT_LOCAL: Record<string, string> = { "1": "sjobris", "2": "naturkarnan", "3": "lugnetsyta" };
 
+// Detect dietary needs from free-text fields (Sirvoy notes, guest comments, extras)
+const DIETARY_PATTERNS: { id: string; re: RegExp }[] = [
+  { id: "gluten_free", re: /\b(glutenfri|gluten\s*fri|gluten[-\s]?free|coeliac|celiaki)\b/i },
+  { id: "vegan", re: /\b(vegan|veganskt|veganisch|vegano)\b/i },
+  { id: "vegetarian", re: /\b(vegetar|vegetariskt|veggie)\b/i },
+  { id: "lactose_free", re: /\b(laktosfri|laktos\s*fri|lactose[-\s]?free|mjölkfri|mjolkfri|dairy[-\s]?free)\b/i },
+  { id: "nut_allergy", re: /\b(nötallergi|notallergi|nut\s*allergy|nötter|peanut|jordnöt|hassel|cashew|mandel)\b/i },
+];
+
+function parseDietaryFromText(text: string): string[] {
+  if (!text) return [];
+  const found: string[] = [];
+  for (const { id, re } of DIETARY_PATTERNS) if (re.test(text)) found.push(id);
+  return found;
+}
+
 type TentStayRow = {
   booking_number: string;
   room_id: string | null;
@@ -190,6 +206,8 @@ type TentStayRow = {
   email: string | null;
   lang: string;
   note: string | null;
+  dietary: string[];
+  dietary_note: string | null;
   raw: Record<string, unknown>;
 };
 
