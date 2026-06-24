@@ -827,7 +827,39 @@ export default function Stay() {
           </>
         )}
 
-        <div className="text-center text-xs text-muted-foreground pt-6">
+        {/* Avbokning & villkor — varm sammanfattning, inte juridisk vägg */}
+        <Card className="bg-card border-primary/20">
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-start gap-3">
+              <ShieldCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <div className="flex-1 text-sm">
+                <div className="font-medium text-foreground mb-1">
+                  {isSv ? "Avbokning & villkor" : "Cancellation & terms"}
+                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  {isSv
+                    ? "Avbokning är kostnadsfri fram till 5 dagar före ankomst. Skulle något oförutsett hända — hör av er, så löser vi det tillsammans."
+                    : "Free cancellation up to 5 days before arrival. If something unexpected comes up, just reach out and we'll sort it out together."}
+                </p>
+              </div>
+            </div>
+            <Link to="/bokningsvillkor" className="inline-flex items-center gap-1 text-sm text-primary underline font-medium">
+              {isSv ? "Läs alla bokningsvillkor" : "Read the full booking terms"}
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Avslutande hälsning */}
+        <div className="text-center pt-4 pb-2">
+          <p className="font-serif text-lg text-primary">
+            {isSv ? "Vi ser så fram emot att välkomna er! 🌿" : "We can't wait to welcome you! 🌿"}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {isSv ? "Christoffer & Karin — Go Glamping Sweden" : "Christoffer & Karin — Go Glamping Sweden"}
+          </p>
+        </div>
+
+        <div className="text-center text-xs text-muted-foreground pt-2">
           <Link to="/" className="underline">goglampingsweden.se</Link>
         </div>
       </main>
