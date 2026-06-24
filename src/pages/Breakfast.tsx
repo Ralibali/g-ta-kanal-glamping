@@ -73,51 +73,8 @@ type Order = {
   deliveryDate: string;
   dietary: string[];
   dietaryNote: string | null;
-  delivered?: Delivery;
-};
+// Login tillfälligt borttagen – auto-inloggning sker i Breakfast-komponenten nedan.
 
-function LoginForm() {
-  const [pw, setPw] = useState("");
-  const [busy, setBusy] = useState(false);
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: BREAKFAST_EMAIL,
-      password: normalizeBreakfastPassword(pw),
-    });
-    setBusy(false);
-    if (error) toast.error("Fel lösenord");
-  };
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <Coffee className="h-8 w-8 mx-auto text-primary" />
-          <CardTitle>Frukostleverans</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Logga in med lösenordet <strong>bostället</strong>
-          </p>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={onSubmit} className="space-y-3">
-            <div>
-              <Label>Lösenord</Label>
-              <Input
-                type="password"
-                value={pw}
-                onChange={(e) => setPw(e.target.value)}
-                autoFocus
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={busy}>Logga in</Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 
 function fmtDate(d: Date): string {
   const y = d.getFullYear();
