@@ -815,6 +815,67 @@ export default function Stay() {
               </CardContent>
             </Card>
 
+            {(() => {
+              const foodSelected = data.addons.some(
+                (a) => (a.slug === "breakfast" || a.slug === "fika_bag") && (qty[a.id] ?? 0) > 0
+              );
+              if (!foodSelected) return null;
+              const DIETS: { id: string; sv: string; en: string; Icon: typeof Wheat }[] = [
+                { id: "gluten_free", sv: "Glutenfritt", en: "Gluten-free", Icon: Wheat },
+                { id: "vegan", sv: "Veganskt", en: "Vegan", Icon: Sprout },
+                { id: "vegetarian", sv: "Vegetariskt", en: "Vegetarian", Icon: Leaf },
+                { id: "lactose_free", sv: "Laktosfritt", en: "Lactose-free", Icon: MilkIcon },
+                { id: "nut_allergy", sv: "Nötallergi", en: "Nut allergy", Icon: Nut },
+              ];
+              const toggle = (id: string) =>
+                setDietary((cur) => (cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]));
+              return (
+                <Card className="border-primary/30">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="font-serif text-lg flex items-center gap-2">
+                      <Leaf className="h-5 w-5 text-primary" />
+                      {isSv ? "Specialkost & allergier" : "Dietary needs & allergies"}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      {isSv
+                        ? "Bocka i vad som gäller så anpassar Karin frukosten/fikapåsen."
+                        : "Tick anything that applies — Karin will adapt your breakfast / fika bag."}
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {DIETS.map(({ id, sv, en, Icon }) => {
+                        const active = dietary.includes(id);
+                        return (
+                          <button
+                            type="button"
+                            key={id}
+                            onClick={() => toggle(id)}
+                            className={`flex items-center gap-2 rounded-lg border p-2.5 text-sm text-left transition ${active ? "border-primary bg-primary/10 text-foreground" : "border-border hover:bg-muted/40"}`}
+                          >
+                            <Icon className={`h-4 w-4 shrink-0 ${active ? "text-primary" : "text-muted-foreground"}`} />
+                            <span className="flex-1">{isSv ? sv : en}</span>
+                            {active && <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="dietary-note" className="text-xs text-muted-foreground">
+                        {isSv ? "Övriga önskemål eller allergier (valfritt)" : "Other requests or allergies (optional)"}
+                      </Label>
+                      <Textarea
+                        id="dietary-note"
+                        value={dietaryNote}
+                        onChange={(e) => setDietaryNote(e.target.value.slice(0, 500))}
+                        placeholder={isSv ? "Ex: skaldjursallergi, inga råa lökar…" : "E.g. shellfish allergy, no raw onion…"}
+                        rows={2}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })()}
 
             {itemCount > 0 && (
               <Card className="sticky bottom-4 border-primary shadow-lg">
