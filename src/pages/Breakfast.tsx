@@ -23,12 +23,9 @@ import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 
-const BREAKFAST_EMAIL = "Karin@bostallet.se";
+const BREAKFAST_EMAIL = "karin@bostallet.se";
+const BREAKFAST_PASSWORD = "bostället";
 
-function normalizeBreakfastPassword(password: string) {
-  const normalized = password.trim().normalize("NFC").toLocaleLowerCase("sv-SE");
-  return normalized === "bostället" || normalized === "bostallet" ? "bostället" : password;
-}
 
 const DIET_OPTIONS: { id: string; label: string; icon: typeof Wheat; color: string }[] = [
   { id: "gluten_free", label: "Glutenfritt", icon: Wheat, color: "text-amber-700" },
