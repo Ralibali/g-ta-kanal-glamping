@@ -128,6 +128,22 @@ export default function Breakfast() {
     });
   }, [loading, user, autoLoginTried]);
 
+  // Sätt noindex för frukostsidan – ska aldrig indexeras av sökmotorer.
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = "Frukostleverans";
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, nofollow";
+    document.head.appendChild(meta);
+    return () => {
+      document.title = prevTitle;
+      meta.remove();
+    };
+  }, []);
+
+
+
 
   const openDietEditor = (o: Order) => {
     setDietDraft(o.dietary ?? []);
@@ -517,7 +533,7 @@ export default function Breakfast() {
                               <span className="font-medium">Tält {o.tentNo} – {o.tentName}</span>
                             </div>
                             <div className="text-xs text-muted-foreground mt-1">
-                              {o.guestName ?? "Gäst"} • Bokning {o.booking_number}
+                              Gäst • Bokning {o.booking_number}
                             </div>
                           </div>
                           {done && (
