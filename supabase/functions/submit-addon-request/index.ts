@@ -188,6 +188,7 @@ Deno.serve(async (req) => {
             hasBreakfast: hasBreakfastOrder, hasFika: hasFikaOrder,
             breakfastDate, fikaDate,
             items: emailItems,
+            dietary, dietaryNote,
           },
         }),
       })
