@@ -466,6 +466,60 @@ export default function Stay() {
           </CardContent>
         </Card>
 
+        {/* Det här väntar er — personlig, varm sammanfattning baserat på beställda tillval */}
+        <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-card to-card">
+          <CardHeader className="pb-2">
+            <CardTitle className="font-serif text-lg flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary" />
+              {isSv ? "Det här väntar er" : "Here's what awaits you"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            <p className="text-foreground/85 leading-relaxed">
+              {isSv
+                ? "Vad roligt att ni snart kommer till oss vid kanalen! Här är allt ni behöver inför vistelsen."
+                : "We're so happy you're coming to stay with us by the canal! Here's everything you need before your visit."}
+            </p>
+            <ul className="space-y-2.5">
+              <li className="flex items-start gap-3">
+                <Clock className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <span>
+                  {hasEarly
+                    ? (isSv ? "Tidig incheckning — välkomna redan från kl 12:00 🌅" : "Early check-in — welcome from 12:00 noon 🌅")
+                    : (isSv ? "Incheckning från kl 15:00." : "Check-in from 3:00 pm.")}
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Clock className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                <span>{isSv ? "Utcheckning senast kl 10:00." : "Check-out by 10:00 am."}</span>
+              </li>
+              {hasBreakfast && (
+                <li className="flex items-start gap-3">
+                  <Coffee className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  <span>{isSv ? "Frukost levereras till ert tält kl 08:30 varje morgon. ☕" : "Breakfast delivered to your tent at 8:30 every morning. ☕"}</span>
+                </li>
+              )}
+              {hasFika && (
+                <li className="flex items-start gap-3">
+                  <Cookie className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  <span>{isSv ? "En fikapåse står framme i tältet när ni checkar in. 🍪" : "A fika bag will be waiting in your tent at check-in. 🍪"}</span>
+                </li>
+              )}
+            </ul>
+            {!hasAnyAddon && (
+              <button
+                type="button"
+                onClick={scrollToAddons}
+                className="mt-1 w-full text-left rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors p-3 text-sm text-foreground/90"
+              >
+                {isSv
+                  ? "Vill ni förgylla vistelsen? Lägg till frukost eller fikapåse nedan 👇"
+                  : "Want to make your stay even sweeter? Add breakfast or a fika bag below 👇"}
+              </button>
+            )}
+          </CardContent>
+        </Card>
+
         {data.orders.length > 0 && (
           <Card className="border-primary/40 bg-primary/5">
             <CardHeader className="pb-2">
