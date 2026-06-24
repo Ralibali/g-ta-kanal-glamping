@@ -549,6 +549,18 @@ export default function Breakfast() {
                           )}
                         </div>
 
+                        {/* Fikapåse: hämtas av gästen hos Bostället — behöver inte levereras */}
+                        {!isBreakfast && (
+                          <div className="flex items-center gap-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900 p-3">
+                            <Leaf className="h-6 w-6 text-emerald-700 dark:text-emerald-400 shrink-0" />
+                            <div className="flex-1">
+                              <div className="text-[10px] uppercase tracking-wider text-emerald-800 dark:text-emerald-300 font-semibold">Fikapåse</div>
+                              <div className="text-sm font-medium text-emerald-900 dark:text-emerald-100">Hämtas av gästen hos Bostället</div>
+                              <div className="text-xs text-muted-foreground">Behöver inte levereras till tältet.</div>
+                            </div>
+                          </div>
+                        )}
+
                         {/* Prominent guest count for breakfast */}
                         {isBreakfast && (
                           <div className="flex items-center gap-3 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 p-3">
@@ -565,6 +577,7 @@ export default function Breakfast() {
                             </div>
                           </div>
                         )}
+
 
                         {/* Dietary needs – prominent so Karin never misses them */}
                         {(o.dietary.length > 0 || o.dietaryNote) ? (
