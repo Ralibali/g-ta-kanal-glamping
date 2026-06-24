@@ -82,7 +82,7 @@ function LoginForm() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({
       email: BREAKFAST_EMAIL,
-      password: pw,
+      password: pw.toLowerCase() === "bostallet" ? "bostallet" : pw,
     });
     setBusy(false);
     if (error) toast.error("Fel lösenord");
@@ -94,7 +94,7 @@ function LoginForm() {
           <Coffee className="h-8 w-8 mx-auto text-primary" />
           <CardTitle>Frukostleverans</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Logga in med lösenordet <strong>karin</strong>
+            Logga in med lösenordet <strong>bostallet</strong>
           </p>
         </CardHeader>
         <CardContent>
