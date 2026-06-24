@@ -223,21 +223,42 @@ function buildTentStays(rawRows: Record<string, string>[]): TentStayRow[] {
     return "";
   };
 
-  // 1) Aggregate EXTRAS per booking number
+  // 1) Aggregate EXTRAS and free-text dietary hints per booking number
   const extras = new Map<string, { children: number; breakfast: boolean; fikapase: boolean; late_checkout: boolean }>();
+  const dietByBn = new Map<string, Set<string>>();
+  const noteByBn = new Map<string, string[]>();
+  const addDiet = (bn: string, ids: string[]) => {
+    if (!ids.length) return;
+    const set = dietByBn.get(bn) ?? new Set<string>();
+    ids.forEach((id) => set.add(id));
+    dietByBn.set(bn, set);
+  };
+  const addNote = (bn: string, text: string) => {
+    const t = (text ?? "").trim();
+    if (!t) return;
+    const list = noteByBn.get(bn) ?? [];
+    if (!list.includes(t)) list.push(t);
+    noteByBn.set(bn, list);
+  };
   for (const l of lookups) {
     const type = get(l, "type", "typ").toUpperCase();
-    if (type !== "EXTRAS") continue;
     const bn = get(l, "booking no.", "booking no", "bokningsnummer").toUpperCase();
     if (!bn) continue;
-    const spec = get(l, "specification", "kategori").toLowerCase();
-    const units = parseInt(get(l, "units"), 10);
-    const e = extras.get(bn) ?? { children: 0, breakfast: false, fikapase: false, late_checkout: false };
-    if (spec.includes("barn")) e.children += isNaN(units) ? 1 : units;
-    if (spec.includes("frukost")) e.breakfast = true;
-    if (spec.includes("fikapåse") || spec.includes("fikapase")) e.fikapase = true;
-    if (spec.includes("sen utcheck")) e.late_checkout = true;
-    extras.set(bn, e);
+    const spec = get(l, "specification", "kategori");
+    const comments = get(l, "guest comments", "comments", "special requests", "kommentar", "meddelande");
+    const internal = get(l, "internal note", "note", "notering");
+    addDiet(bn, parseDietaryFromText(`${spec} ${comments} ${internal}`));
+    if (comments) addNote(bn, comments);
+    if (type === "EXTRAS") {
+      const specLow = spec.toLowerCase();
+      const units = parseInt(get(l, "units"), 10);
+      const e = extras.get(bn) ?? { children: 0, breakfast: false, fikapase: false, late_checkout: false };
+      if (specLow.includes("barn")) e.children += isNaN(units) ? 1 : units;
+      if (specLow.includes("frukost")) e.breakfast = true;
+      if (specLow.includes("fikapåse") || specLow.includes("fikapase")) e.fikapase = true;
+      if (specLow.includes("sen utcheck")) e.late_checkout = true;
+      extras.set(bn, e);
+    }
   }
 
   // 2) One stay per ACCOMM row
