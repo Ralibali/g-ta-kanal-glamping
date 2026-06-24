@@ -1,4 +1,4 @@
-// One-shot: skapa delat frukost-konto (frukost@goglampingsweden.se / karin) med rollen breakfast.
+// One-shot: skapa delat frukost-konto (Karin@bostallet.se / karin) med rollen breakfast.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const BREAKFAST_EMAIL = "frukost@goglampingsweden.se";
