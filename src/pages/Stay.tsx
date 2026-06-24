@@ -406,6 +406,22 @@ export default function Stay() {
   const total = data.addons.reduce((sum, a) => sum + (qty[a.id] ?? 0) * a.price_sek, 0);
   const itemCount = Object.values(qty).reduce((s, n) => s + n, 0);
 
+  // Vad gästen redan har beställt — styr personlig text, inte bokningsmöjlighet
+  const orderedSlugs = new Set<string>(
+    (data.orders ?? [])
+      .filter((o) => ["requested", "confirmed", "paid"].includes(o.status))
+      .map((o) => data.addons.find((a) => a.id === o.addon_id)?.slug)
+      .filter((s): s is string => !!s),
+  );
+  const hasBreakfast = orderedSlugs.has("breakfast");
+  const hasFika = orderedSlugs.has("fika_bag");
+  const hasEarly = orderedSlugs.has("early_checkin");
+  const hasAnyAddon = orderedSlugs.size > 0;
+
+  const scrollToAddons = () => {
+    document.getElementById("addons-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const submit = async () => {
     const items = data.addons
       .filter((a) => (qty[a.id] ?? 0) > 0)
