@@ -199,15 +199,25 @@ export default function Cleaning() {
       if (!map.has(d)) map.set(d, new Set());
       map.get(d)!.add(tent);
     };
+    // First pass: departures (always a cleaning day)
     rows.forEach((r: any) => {
       const tent = r.tent_id ?? Math.random().toString();
-      // Cleaning only on departure days
       if (r.checkout_date >= s && r.checkout_date <= e) {
         bump(tentsByDate, r.checkout_date, tent);
         bump(depByDate, r.checkout_date, tent);
-        // Show arrival badge too if same-day turnover
         if (arrivalKeys.has(`${tent}|${r.checkout_date}`)) {
           bump(arrByDate, r.checkout_date, tent);
+        }
+      }
+    });
+    // Second pass: arrival-only days also need cleaning
+    rows.forEach((r: any) => {
+      const tent = r.tent_id ?? Math.random().toString();
+      if (r.checkin_date >= s && r.checkin_date <= e) {
+        const hasDepSameDay = depByDate.get(r.checkin_date)?.has(tent);
+        if (!hasDepSameDay) {
+          bump(tentsByDate, r.checkin_date, tent);
+          bump(arrByDate, r.checkin_date, tent);
         }
       }
     });
