@@ -300,6 +300,8 @@ function buildTentStays(rawRows: Record<string, string>[]): TentStayRow[] {
       email: get(l, "email", "e-post", "epost") || null,
       lang,
       note: get(l, "internal note", "note") || null,
+      dietary: Array.from(dietByBn.get(bn) ?? []),
+      dietary_note: (noteByBn.get(bn) ?? []).join("\n") || null,
       raw: rawRows[i],
     });
   }
