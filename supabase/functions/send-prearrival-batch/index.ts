@@ -101,13 +101,13 @@ function buildBody(name: string | null, link: string | null, lang: Lang, availab
     da: 'Vi ses snart!', no: 'Vi ses snart!', nl: 'Tot snel!', fr: 'À bientôt !',
   }
   const slipperTip: Record<Lang, string> = {
-    sv: 'Tips: ta gärna med tofflor – skönt till och från servicehuset.',
-    en: 'Tip: bring slippers – handy on the way to the service house.',
-    de: 'Tipp: Hausschuhe mitbringen – praktisch fürs Servicehaus.',
-    da: 'Tip: tag tøfler med – rart til og fra servicehuset.',
-    no: 'Tips: ta med tøfler – fint til og fra servicehuset.',
-    nl: 'Tip: neem slippers mee – handig naar het servicehuis.',
-    fr: 'Astuce : pensez aux chaussons – pratique pour la maison de service.',
+    sv: 'Tips: ta gärna med tofflor – fräscht i den allmänna duschen i servicehuset som delas med kanalens övriga gäster.',
+    en: 'Tip: bring slippers – fresh in the shared shower at the service house used by all canal guests.',
+    de: 'Tipp: Hausschuhe mitbringen – angenehm in der Gemeinschaftsdusche des Servicehauses, die alle Kanalgäste nutzen.',
+    da: 'Tip: tag tøfler med – friskt i det fælles bad i servicehuset, som deles med kanalens andre gæster.',
+    no: 'Tips: ta med tøfler – fint i det felles dusjen i servicehuset som deles med kanalens andre gjester.',
+    nl: 'Tip: neem slippers mee – fris in de gemeenschappelijke douche van het servicehuis, gedeeld met alle kanaalgasten.',
+    fr: 'Astuce : pensez aux chaussons – agréable dans la douche commune de la maison de service, partagée avec les autres hôtes du canal.',
   }
 
   const lines: string[] = [`${hi}${leaf}`, '', arrivalLine[lang], '']

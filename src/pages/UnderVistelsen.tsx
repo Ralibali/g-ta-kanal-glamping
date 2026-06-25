@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  MapPin, Phone, Clock, Key, UtensilsCrossed, Trees,
+  MapPin, Phone, Clock, Key, UtensilsCrossed, Trees, Waves,
   Wifi, Flame, Cigarette, Dog, Info, Footprints, CheckCircle2, AlertCircle,
   Coffee, MessageCircle, ShoppingBag, Car
 } from "lucide-react";
@@ -37,15 +37,15 @@ export default function UnderVistelsen() {
     serviceCard: "Servicekortet i tältet",
     serviceCardBody: "Servicekortet som ligger framme i tältet är nyckeln till servicehuset (toalett, dusch, skötrum). Ta gärna med det i fickan – det är ca 150 m gångväg.",
     slippers: "Tofflor är guld värda",
-    slippersBody: "Stigen till servicehuset går över gräs och grus. Ett par tofflor eller slip-in-skor gör nattliga toabesök mycket trevligare.",
-    food: "Mat & matlagning",
-    foodBody: "Matlagning är inte tillåten i eller vid tälten (brandsäkerhet). Kylskåp, kaffe och te finns inne i tältet. Restaurang vid slussarna ligger ca 200 m bort.",
+    slippersBody: "Stigen till servicehuset går över gräs och grus. Dessutom är duschen allmän för alla gäster vid kanalen – ett par tofflor eller slip-in-skor gör både nattliga toabesök och duschen mycket trevligare.",
+    food: "Mat, matvagnar & grillning",
+    foodBody: "Matlagning är inte tillåten i eller vid tälten (brandsäkerhet). Kylskåp, kaffe och te finns inne i tältet. Prova gärna de nya matvagnarna uppe vid bron (Stjärnorpsvägen). Grillning går bra, men vi förespråkar en god hämtmat.",
     wifi: "Wifi & täckning",
     wifiBody: "Inget wifi — platsen är till för att koppla av. 4G/5G fungerar utmärkt.",
     fire: "Eldning, ljus & rökning",
     fireBody: "Öppen eld, marschaller och engångsgrillar är inte tillåtna. Tälten är rökfria – rök gärna utomhus, väl bort från tältduken.",
     pets: "Husdjur",
-    petsBody: "Husdjur är tyvärr inte tillåtna i tälten.",
+    petsBody: "Husdjur är tillåtna mot en avgift som anges vid bokningen.",
     beforeLeave: "Innan ni åker hem",
     beforeIntro: "En liten vänlig påminnelse så att vi kan ta emot nästa gäst i samma fina skick:",
     washUp: "Diska det ni använt (koppar, glas, bestick) och ställ tillbaka i tältet.",
@@ -57,6 +57,8 @@ export default function UnderVistelsen() {
     nearbyTitle: "Att göra i närheten",
     locks: "Se båtar slussa på Göta kanal",
     locksBody: "Slussarna trafikeras hela dagen i sommarsäsongen. Det är 15 trappstegsslussar — en av Sveriges finaste vyer.",
+    sup: "Hyra uppblåsbar SUP",
+    supBody: "Upplev kanalen från vattnet på en uppblåsbar SUP. 100 kr betalas via Swish.",
     rent: "Hyr cykel eller kanot",
     rentBody: "Bergs Slussar Café & Uthyrning ligger 200 m bort. Cykla längs kanalen eller paddla till Roxen.",
     fika: "Fika, lunch & glass",
@@ -70,7 +72,10 @@ export default function UnderVistelsen() {
     maps: "Öppna området i Google Maps →",
     contactTitle: "Hör av er om något behövs",
     contactBody: "Christoffer svarar i mobilen: ",
-    emailPrefix: ". Mejl: ",
+    contactSms: "Sms:a",
+    contactOr: " eller ",
+    contactChat: "chatta",
+    contactEnd: " om ni har frågor. Mejl: ",
     footer: "Tack för att ni valde Go Glamping Sweden",
   } : {
     sub: "During your stay",
@@ -88,15 +93,15 @@ export default function UnderVistelsen() {
     serviceCard: "The service card in the tent",
     serviceCardBody: "The service card in your tent is the key to the service house (toilet, shower, changing room). Keep it in your pocket — it's about a 150 m walk.",
     slippers: "Slippers are gold",
-    slippersBody: "The path to the service house crosses grass and gravel. A pair of slippers or slip-on shoes makes night-time trips much nicer.",
-    food: "Food & cooking",
-    foodBody: "Cooking is not allowed in or next to the tents (fire safety). Fridge, coffee and tea are inside the tent. The restaurant by the locks is ~200 m away.",
+    slippersBody: "The path to the service house crosses grass and gravel. The shower is also shared with all canal guests — a pair of slippers or slip-on shoes makes night-time trips and the shower much nicer.",
+    food: "Food, food trucks & grilling",
+    foodBody: "Cooking is not allowed in or next to the tents (fire safety). Fridge, coffee and tea are inside the tent. Try the new food trucks up by the bridge (Stjärnorpsvägen). Grilling is fine, but we recommend good takeout.",
     wifi: "Wifi & coverage",
     wifiBody: "No wifi — the spot is for unplugging. 4G/5G works great.",
     fire: "Fire, candles & smoking",
     fireBody: "Open fires, torches and disposable BBQs are not permitted. Tents are non-smoking — smoke outside, well away from the canvas.",
     pets: "Pets",
-    petsBody: "Sorry, pets are not allowed in the tents.",
+    petsBody: "Pets are allowed for a fee stated at booking.",
     beforeLeave: "Before you leave",
     beforeIntro: "A friendly reminder so we can welcome the next guest just as nicely:",
     washUp: "Wash up what you've used (cups, glasses, cutlery) and put it back in the tent.",
@@ -108,6 +113,8 @@ export default function UnderVistelsen() {
     nearbyTitle: "Things to do nearby",
     locks: "Watch boats lock through Göta Canal",
     locksBody: "The locks are busy throughout summer days. 15 staircase locks — one of Sweden's loveliest views.",
+    sup: "Rent an inflatable SUP",
+    supBody: "Experience the canal from the water on an inflatable SUP. 100 SEK paid via Swish.",
     rent: "Rent a bike or canoe",
     rentBody: "Bergs Slussar Café & Rentals is 200 m away. Cycle along the canal or paddle out to Lake Roxen.",
     fika: "Coffee, lunch & ice-cream",
@@ -121,7 +128,10 @@ export default function UnderVistelsen() {
     maps: "Open the area in Google Maps →",
     contactTitle: "Reach out if you need anything",
     contactBody: "Christoffer is on the phone: ",
-    emailPrefix: ". Email: ",
+    contactSms: "Text",
+    contactOr: " or ",
+    contactChat: "chat",
+    contactEnd: " if you have questions. Email: ",
     footer: "Thank you for choosing Go Glamping Sweden",
   };
 
@@ -258,6 +268,7 @@ export default function UnderVistelsen() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <NearbyItem icon={<MapPin className="h-4 w-4" />} title={t.locks} body={t.locksBody} />
+            <NearbyItem icon={<Waves className="h-4 w-4" />} title={t.sup} body={t.supBody} />
             <NearbyItem icon={<Car className="h-4 w-4" />} title={t.rent} body={t.rentBody} />
             <NearbyItem icon={<Coffee className="h-4 w-4" />} title={t.fika} body={t.fikaBody} />
             <NearbyItem icon={<Trees className="h-4 w-4" />} title={t.roxen} body={t.roxenBody} />
@@ -284,7 +295,11 @@ export default function UnderVistelsen() {
                 <p className="text-muted-foreground leading-relaxed">
                   {t.contactBody}
                   <a href="tel:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>
-                  {t.emailPrefix}
+                  {t.contactOr}
+                  <a href="sms:+46722254993" className="text-primary underline font-medium">{t.contactSms}</a>
+                  {t.contactOr}
+                  <span className="text-primary underline font-medium cursor-pointer">{t.contactChat}</span>
+                  {t.contactEnd}
                   <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>
                 </p>
               </div>
