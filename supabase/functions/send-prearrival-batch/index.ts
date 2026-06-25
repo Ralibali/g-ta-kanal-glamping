@@ -139,7 +139,7 @@ function buildBody(name: string | null, link: string | null, lang: Lang, availab
     lines.push(offer[lang], '', linkLine[lang], '')
   }
 
-  lines.push(seeYou[lang], '', signature)
+  lines.push(slipperTip[lang], '', seeYou[lang], '', signature)
   return lines.join('\n')
 }
 
