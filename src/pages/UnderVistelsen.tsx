@@ -4,17 +4,31 @@ import { toast } from "sonner";
 import {
   MapPin, Phone, Clock, Key, UtensilsCrossed, Trees, Waves,
   Wifi, Flame, Dog, Info, Footprints, CheckCircle2, AlertCircle,
-  Coffee, MessageCircle, ShoppingBag, Car, Heart, Copy, Star, Instagram, Beer
+  Coffee, MessageCircle, ShoppingBag, Car, Heart, Copy, Star, Instagram, Beer, ArrowRight
 } from "lucide-react";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import ChatWidget from "@/components/ChatWidget";
+import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/glamping-sunset.jpg";
 
 const SWISH = "0722254993";
 const SWISH_INTL = "+46722254993";
 
+const TENT_NAMES: Record<string, string> = {
+  sjobris: "Sjöbrisretreatet (Tält 1)",
+  naturkarnan: "Naturkärnan (Tält 2)",
+  lugnetsyta: "Lugnets Yta (Tält 3)",
+};
+
+interface PersonalData {
+  firstName?: string | null;
+  tentIds: string[];
+  checkoutDate?: string | null;
+}
+
 export default function UnderVistelsen() {
   const [isSv, setIsSv] = useState(true);
+  const [personal, setPersonal] = useState<PersonalData | null>(null);
 
   useEffect(() => {
     const meta = document.createElement("meta");
@@ -26,6 +40,33 @@ export default function UnderVistelsen() {
       : "During your stay · Go Glamping Sweden";
     return () => { document.head.removeChild(meta); };
   }, [isSv]);
+
+  // Personalize via ?t=<public_token>
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("t") || params.get("token");
+    if (!token) return;
+    (async () => {
+      try {
+        const { data, error } = await supabase.rpc("get_stay_by_token", { p_token: token });
+        if (error || !data) return;
+        const booking = (data as any).booking;
+        if (!booking) return;
+        const tentIds: string[] = Array.isArray(booking.tent_ids) && booking.tent_ids.length > 0
+          ? booking.tent_ids
+          : (booking.tent_id ? [booking.tent_id] : []);
+        setPersonal({
+          firstName: booking.guest_first_name,
+          tentIds,
+          checkoutDate: booking.checkout_date,
+        });
+        const lang = String(booking.language || "sv").toLowerCase();
+        setIsSv(lang.startsWith("sv"));
+      } catch (e) {
+        console.error("personalize failed", e);
+      }
+    })();
+  }, []);
 
   const copySwish = async () => {
     try {
@@ -186,7 +227,11 @@ export default function UnderVistelsen() {
               >EN</button>
             </div>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl text-white drop-shadow-md leading-tight">{t.h1}</h1>
+          <h1 className="font-serif text-3xl sm:text-4xl text-white drop-shadow-md leading-tight">
+            {personal?.firstName
+              ? (isSv ? `Hej ${personal.firstName}!` : `Hi ${personal.firstName}!`)
+              : t.h1}
+          </h1>
         </div>
       </header>
 
@@ -200,11 +245,26 @@ export default function UnderVistelsen() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
+            {personal?.tentIds && personal.tentIds.length > 0 && (
+              <div className="rounded-xl bg-muted/40 p-3">
+                <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                  {isSv ? (personal.tentIds.length > 1 ? "Era tält" : "Ert tält") : (personal.tentIds.length > 1 ? "Your tents" : "Your tent")}
+                </div>
+                <ul className="mt-1 space-y-0.5">
+                  {personal.tentIds.map((id) => (
+                    <li key={id} className="font-medium text-foreground">{TENT_NAMES[id] || id}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className="text-muted-foreground">
               {t.checkout} <strong className="text-foreground">10:00</strong>
+              {personal?.checkoutDate ? <span className="text-foreground/70"> · {personal.checkoutDate}</span> : null}
             </div>
             <div className="rounded-xl border border-primary/30 bg-primary/5 p-3">
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">{t.lockCode}</div>
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                {t.lockCode}{personal?.tentIds && personal.tentIds.length > 1 ? (isSv ? " (samma kod till alla era tält)" : " (same code for all your tents)") : ""}
+              </div>
               <div className="font-mono text-2xl tracking-widest text-foreground mt-0.5">2018</div>
             </div>
           </CardContent>
@@ -233,20 +293,12 @@ export default function UnderVistelsen() {
                 >
                   <Copy className="h-4 w-4" /> {t.copySwish}
                 </button>
-                <div className="grid grid-cols-2 gap-2">
-                  <a
-                    href={`sms:${SWISH_INTL}`}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-sm font-medium"
-                  >
-                    <MessageCircle className="h-4 w-4" /> {t.sms}
-                  </a>
-                  <a
-                    href={`tel:${SWISH_INTL}`}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-sm font-medium"
-                  >
-                    <Phone className="h-4 w-4" /> {t.call}
-                  </a>
-                </div>
+                <a
+                  href={`sms:${SWISH_INTL}`}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-sm font-medium"
+                >
+                  <MessageCircle className="h-4 w-4" /> {t.sms}
+                </a>
               </div>
             </div>
           </CardContent>
@@ -347,7 +399,7 @@ export default function UnderVistelsen() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <NearbyItem icon={<MapPin className="h-4 w-4" />} title={t.locks} body={t.locksBody} />
-            <NearbyItem icon={<Waves className="h-4 w-4" />} title={t.sup} body={t.supBody} />
+            <NearbyItem icon={<Waves className="h-4 w-4" />} title={t.sup} body={t.supBody} href="/sup" cta={isSv ? "Hyr SUP →" : "Rent SUP →"} />
             <NearbyItem icon={<Car className="h-4 w-4" />} title={t.rent} body={t.rentBody} />
             <NearbyItem icon={<Trees className="h-4 w-4" />} title={t.roxen} body={t.roxenBody} />
             <NearbyItem icon={<Coffee className="h-4 w-4" />} title={t.vreta} body={t.vretaBody} />
@@ -369,18 +421,12 @@ export default function UnderVistelsen() {
             <div className="flex items-center gap-2 text-foreground font-medium">
               <Phone className="h-5 w-5 text-primary" /> {t.contactTitle}
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2">
               <a
                 href={`sms:${SWISH_INTL}`}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors py-2.5 text-sm font-medium"
               >
                 <MessageCircle className="h-4 w-4" /> {t.sms}
-              </a>
-              <a
-                href={`tel:${SWISH_INTL}`}
-                className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-sm font-medium"
-              >
-                <Phone className="h-4 w-4" /> {t.call}
               </a>
             </div>
           </CardContent>
@@ -418,14 +464,23 @@ function CheckItem({ children }: { children: React.ReactNode }) {
   );
 }
 
-function NearbyItem({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
+function NearbyItem({ icon, title, body, href, cta }: { icon: React.ReactNode; title: string; body: string; href?: string; cta?: string }) {
   return (
     <div className="flex items-start gap-3 rounded-xl bg-muted/30 p-3">
       <div className="rounded-full bg-primary/10 p-1.5 text-primary shrink-0">{icon}</div>
-      <div>
+      <div className="flex-1">
         <div className="font-medium text-foreground">{title}</div>
         <p className="text-muted-foreground leading-relaxed">{body}</p>
+        {href && (
+          <a
+            href={href}
+            className="inline-flex items-center gap-1 mt-2 text-primary font-medium text-xs hover:underline"
+          >
+            {cta ?? "Open →"}
+          </a>
+        )}
       </div>
     </div>
   );
 }
+

@@ -29,6 +29,7 @@ import Boka from "./pages/Boka";
 import Stay from "./pages/Stay";
 import UnderVistelsen from "./pages/UnderVistelsen";
 import ShortRedirect from "./pages/ShortRedirect";
+import Sup from "./pages/Sup";
 
 
 const queryClient = new QueryClient();
@@ -75,6 +76,7 @@ const App = () => (
           <Route path="/stay/:token" element={<Stay />} />
           <Route path="/under-vistelsen" element={<UnderVistelsen />} />
           <Route path="/during-your-stay" element={<UnderVistelsen />} />
+          <Route path="/sup" element={<Sup />} />
           <Route path="/s/:slug" element={<ShortRedirect />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
