@@ -137,7 +137,6 @@ Deno.serve(async (req) => {
       }
       await supabase.from('tent_stays').update(patch)
         .eq('booking_number', booking.booking_number)
-        .eq('tent_id', booking.tent_id)
     } catch (err) { console.error('tent_stays sync failed', err) }
   }
 
