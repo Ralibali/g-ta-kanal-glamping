@@ -107,7 +107,7 @@ export default function UnderVistelsen() {
     pets: "Pets",
     petsBody: "Pets are allowed for a fee stated at booking.",
     beforeLeave: "Before you leave",
-    beforeIntro: "A friendly reminder so we can welcome the next guest just as nicely:",
+    beforeIntro: "A reminder so we can welcome the next guest in the same great condition:",
     washUp: "Wash up what you've used (cups, glasses, cutlery) and put it back in the tent.",
     trash: "Toss rubbish in the bins by the parking lot — don't leave food or trash behind.",
     dontForget: "Don't forget anything! Check under the bed, in the fridge and the outer pocket.",
