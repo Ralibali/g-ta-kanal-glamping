@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   MapPin, Phone, Clock, Key, UtensilsCrossed, Trees, Waves,
   Wifi, Flame, Cigarette, Dog, Info, Footprints, CheckCircle2, AlertCircle,
-  Coffee, MessageCircle, ShoppingBag, Car
+  Coffee, MessageCircle, ShoppingBag, Car, Heart
 } from "lucide-react";
 import heroImg from "@/assets/glamping-sunset.jpg";
 
@@ -39,7 +39,9 @@ export default function UnderVistelsen() {
     slippers: "Tofflor är guld värda",
     slippersBody: "Stigen till servicehuset går över gräs och grus. Dessutom är duschen allmän för alla gäster vid kanalen – ett par tofflor eller slip-in-skor gör både nattliga toabesök och duschen mycket trevligare.",
     food: "Mat, matvagnar & grillning",
-    foodBody: "Matlagning är inte tillåten i eller vid tälten (brandsäkerhet). Kylskåp, kaffe och te finns inne i tältet. Prova gärna de nya matvagnarna uppe vid bron (Stjärnorpsvägen). Grillning går bra, men vi förespråkar en god hämtmat.",
+    foodBody: "Matlagning är inte tillåten i eller vid tälten (brandsäkerhet). Kylskåp, kaffe och te finns inne i tältet. Prova gärna de nya matvagnarna uppe vid bron (Stjärnorpsvägen). Grillning går bra — i det gråa skåpet finns grillkol, gratis. Vi förespråkar ändå en god hämtmat.",
+    consideration: "Visa hänsyn till varandra",
+    considerationBody: "Vi delar platsen med flera gäster — håll ljudnivån nere efter kl 22 och respektera varandras lugn. Lämna tältet i fint skick så att nästa gäst får samma fina mottagande som ni fick.",
     wifi: "Wifi & täckning",
     wifiBody: "Inget wifi — platsen är till för att koppla av. 4G/5G fungerar utmärkt.",
     fire: "Eldning, ljus & rökning",
@@ -95,7 +97,9 @@ export default function UnderVistelsen() {
     slippers: "Slippers are gold",
     slippersBody: "The path to the service house crosses grass and gravel. The shower is also shared with all canal guests — a pair of slippers or slip-on shoes makes night-time trips and the shower much nicer.",
     food: "Food, food trucks & grilling",
-    foodBody: "Cooking is not allowed in or next to the tents (fire safety). Fridge, coffee and tea are inside the tent. Try the new food trucks up by the bridge (Stjärnorpsvägen). Grilling is fine, but we recommend good takeout.",
+    foodBody: "Cooking is not allowed in or next to the tents (fire safety). Fridge, coffee and tea are inside the tent. Try the new food trucks up by the bridge (Stjärnorpsvägen). Grilling is fine — the grey cabinet has free charcoal. We still recommend good takeout.",
+    consideration: "Be considerate of each other",
+    considerationBody: "We share the space with several guests — keep noise down after 22:00 and respect each other's peace. Leave the tent in great shape so the next guest gets the same lovely welcome you did.",
     wifi: "Wifi & coverage",
     wifiBody: "No wifi — the spot is for unplugging. 4G/5G works great.",
     fire: "Fire, candles & smoking",
@@ -228,6 +232,7 @@ export default function UnderVistelsen() {
             <Row icon={<Key className="h-4 w-4" />} title={t.serviceCard}>{t.serviceCardBody}</Row>
             <Row icon={<Footprints className="h-4 w-4" />} title={t.slippers}>{t.slippersBody}</Row>
             <Row icon={<UtensilsCrossed className="h-4 w-4" />} title={t.food}>{t.foodBody}</Row>
+            <Row icon={<Heart className="h-4 w-4" />} title={t.consideration}>{t.considerationBody}</Row>
             <Row icon={<Wifi className="h-4 w-4" />} title={t.wifi}>{t.wifiBody}</Row>
             <Row icon={<Flame className="h-4 w-4" />} title={t.fire}>{t.fireBody}</Row>
             <Row icon={<Dog className="h-4 w-4" />} title={t.pets}>{t.petsBody}</Row>
