@@ -35,11 +35,12 @@ const RomantiskWeekendOstergotland = () => {
             <>
               <p>
                 Det fina med glamping är just kombinationen – ni får
-                naturens lugn utan att kompromissa på sömnen. Våra två
-                tält, Sjöbrisretreatet och Naturkärnan, är båda fina för
-                par. Bäddade sängar med riktigt
+                naturens lugn utan att kompromissa på sömnen. Våra tre
+                tält, Sjöbrisretreatet, Naturkärnan och Lugnets yta, är alla fina för
+                par och familjer. Varje tält har en dubbelsäng och en lite mindre bäddsoffa för två,
+                vilket ger plats för upp till fyra gäster. Bäddade sängar med riktigt
                 sänglinne, en fläkt, en värmare för svala kvällar och kaffe
-                framställt vid ankomst.
+                framställt vid ankomst ingår.
               </p>
               <p>
                 Många väljer glamping för par eftersom det blir en
@@ -135,7 +136,7 @@ const RomantiskWeekendOstergotland = () => {
       faqs={[
         {
           q: "Vilket tält passar bäst för par?",
-          a: "Naturkärnan är vårt mindre tält och passar fint för par som vill ha en mysig och ombonad känsla. Sjöbrisretreatet är något större och rymmer även en bäddsoffa.",
+          a: "Alla tre tält passar fint för par. Varje tält har en dubbelsäng och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster och en mysig, ombonad känsla.",
         },
         {
           q: "Kan ni ordna något extra inför ankomsten?",
@@ -156,7 +157,7 @@ const RomantiskWeekendOstergotland = () => {
       ]}
       cta={{
         heading: "Boka er romantiska weekend",
-        text: "Två nätter vid kanalen, bäddade sängar och en miljö ni inte glömmer. Två tält och en kort säsong – välj era datum medan plats finns.",
+        text: "Två nätter vid kanalen, bäddade sängar och en miljö ni inte glömmer. Tre tält och en kort säsong – välj era datum medan plats finns.",
         button: "Boka weekend",
       }}
     />

@@ -91,7 +91,7 @@ Cirka femton minuter med bil. Bussen tar något längre tid men är ett fungeran
 
 ## Behöver jag boka i förväg?
 
-Ja, särskilt under sommaren. Vi har bara två tält och de fylls snabbt. Boka så tidigt du kan för bästa val av datum.
+Ja, särskilt under sommaren. Vi har tre tält och de fylls snabbt. Boka så tidigt du kan för bästa val av datum.
 
 ## Boka ditt boende vid Bergs Slussar
 
@@ -138,7 +138,7 @@ För dig som vill ha fler tips på området finns en översikt på sidan om [gla
 
 Många familjer som överväger camping landar i glamping istället när de tänker efter. Anledningen är enkel: ni slipper packa madrasser, sovsäckar och köksutrustning. Sängarna är bäddade, det finns värme om kvällen blir sval, minikylskåp för dryck och el för laddning.
 
-Sjöbrisretreatet är vårt största tält och har dubbelsäng plus bäddsoffa, vilket fungerar fint för en familj med ett eller två barn. Servicehuset med dusch och toalett ligger nära. Mer info hittar ni på sidan om [boende vid Bergs Slussar](/boende-bergs-slussar).
+Alla våra tält har samma bekväma upplägg med dubbelsäng och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster. Perfekt för familjer med ett eller två barn. Servicehuset med dusch och toalett ligger nära. Mer info hittar ni på sidan om [boende vid Bergs Slussar](/boende-bergs-slussar).
 
 ## Praktiska tips för en lyckad familjeresa
 
@@ -166,11 +166,11 @@ Det finns inga stora lekplatser direkt vid slussarna, men området självt funge
 
 ## Vilket tält passar bäst för en familj?
 
-Sjöbrisretreatet med sin bäddsoffa fungerar bäst för familjer. Mindre familjer eller en vuxen med ett barn kan gott bo i Naturkärnan.
+Alla tre tält passar utmärkt för familjer. Varje tält har en dubbelsäng och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster – perfekt för en familj med ett eller två barn.
 
 ## Boka familjens glamping vid Bergs Slussar
 
-Två tält och en kort sommarsäsong – välj era datum medan plats finns.
+Tre tält och en kort sommarsäsong – välj era datum medan plats finns.
     `,
   },
   {
@@ -199,7 +199,7 @@ Tre saker brukar avgöra för dem som väljer glamping istället för hotell:
 
 - **Miljön** – kanalen, ängarna och tystnaden.
 - **Friheten** – ni rör er fritt, lagar inget i hast, behöver inte passa måltidstider.
-- **Den lilla skalan** – två tält. Aldrig fullsatt restaurang eller köer till checkin.
+- **Den lilla skalan** – tre tält. Aldrig fullsatt restaurang eller köer till checkin.
 
 Vill du läsa mer om läget och vägen hit finns sidan om [glamping nära Linköping](/glamping-linkoping).
 
@@ -219,7 +219,7 @@ Ingen behöver göra allt. Ofta är det den dag ni inte planerar något som blir
 
 För par är glamping ett av de mer romantiska alternativen i regionen. Bäddade sängar, kvällsljus, kanalen som soundtrack. Mer om det skriver vi på sidan om [romantisk weekend i Östergötland](/romantisk-weekend-ostergotland).
 
-Men det fungerar lika bra för en grupp vänner som vill umgås på ett annat sätt än hemma. Boka båda tälten, planera en gemensam middag, ta med en flaska vin och låt kvällen bli lång.
+Men det fungerar lika bra för en grupp vänner som vill umgås på ett annat sätt än hemma. Boka flera tält, planera en gemensam middag, ta med en flaska vin och låt kvällen bli lång.
 
 ## Vad ni inte behöver oroa er för
 

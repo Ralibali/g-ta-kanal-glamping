@@ -79,11 +79,10 @@ const OvernattningBergsSlussar = () => {
           body: (
             <>
               <p>
-                Våra två tält är olika stora och täcker både par som vill ha
-                en romantisk natt och familjer som behöver lite mer plats.
-                Sjöbrisretreatet har dubbelsäng och bäddsoffa, Naturkärnan
-                är något mindre och passar par eller en
-                vuxen med ett barn. Alla har samma standard på utrustning.
+              Våra tre tält har samma bekväma upplägg – i varje tält finns en dubbelsäng
+                och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster.
+                Oavsett om du reser som par, familj eller med vänner sover ni gott
+                med samma standard på utrustning i alla tält.
               </p>
               <p>
                 Lär känna de olika tälten och området närmare på vår sida om{" "}
@@ -148,7 +147,7 @@ const OvernattningBergsSlussar = () => {
       ]}
       cta={{
         heading: "Boka din övernattning vid Bergs Slussar",
-        text: "Sov en natt eller stanna en hel weekend. Två tält, kanalens lugn och allt förberett när du kommer.",
+        text: "Sov en natt eller stanna en hel weekend. Tre tält, kanalens lugn och allt förberett när du kommer.",
         button: "Boka övernattning",
       }}
     />
