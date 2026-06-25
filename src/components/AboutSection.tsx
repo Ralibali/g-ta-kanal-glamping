@@ -35,7 +35,7 @@ const AboutSection = () => {
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 leading-tight">
               {lang === "en" ? "Glamping at Bergs Slussar" : "Glamping Bergs Slussar"}
               <span className="block italic font-normal text-accent">
-                {lang === "en" ? "– by Göta Canal in Östergötland" : "– vid Göta kanal i Östergötland"}
+              {lang === "en" ? "– by Göta Canal outside Linköping" : "– vid Göta kanal utanför Linköping"}
               </span>
             </h1>
             <p className="text-muted-foreground text-lg leading-relaxed mb-6">
