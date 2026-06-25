@@ -20,8 +20,9 @@ const BoendeGotaKanal = () => {
             kanalpartier.
           </p>
           <p>
-            Vi har två tält i olika storlek, båda med bäddade sängar, värme,
-            el och minikylskåp. Det är ett naturnära boende vid Göta kanal
+Våra tre tält har samma bekväma upplägg – i varje tält finns en dubbelsäng
+            och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster.
+            Dessutom ingår värme, el och minikylskåp. Det är ett naturnära boende vid Göta kanal
             för dig som vill ha lugnet och utsikten utan att kompromissa på
             komforten. Du bor i Vreta Kloster, en kort bilresa från
             Linköping, och har slussarna, Roxen och historiska sevärdheter
