@@ -49,7 +49,7 @@ export default function Sup() {
     waitHint: "Tryck på Swisha ovan så öppnas Swish och koden visas här.",
     codeLabel: "Kod till hänglåset",
     codeHint: "Skåpet står vid bryggan. Lås tillbaka när ni paddlat klart — nästa gäst vill också SUPa.",
-    rulesTitle: "Bra att veta innan ni paddlar",
+    rulesTitle: "Bra att veta innan ni SUPar",
     r1: "Hyrtiden är 24 timmar från upplåsning.",
     r2: "Flytväst ska bäras på vattnet — alltid.",
     r3: "Vuxen ansvarig. Barn paddlar på förälders ansvar.",
