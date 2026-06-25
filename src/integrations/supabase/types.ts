@@ -956,6 +956,10 @@ export type Database = {
           read_ct: number
         }[]
       }
+      recalculate_booking_addon_sync: {
+        Args: { p_booking_id: string; p_slug: string }
+        Returns: undefined
+      }
       set_stay_dietary: {
         Args: {
           p_booking_number: string
