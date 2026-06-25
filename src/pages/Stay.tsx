@@ -744,10 +744,20 @@ export default function Stay() {
                           height={1024}
                           className="w-full h-full object-cover"
                         />
+                        {a.slug === "breakfast" && (
+                          <div className="absolute top-2 left-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-[11px] font-semibold shadow-sm uppercase tracking-wider">
+                            ★ {isSv ? "Mest populärt" : "Most popular"}
+                          </div>
+                        )}
+                        {a.slug === "fika_bag" && (
+                          <div className="absolute top-2 left-2 rounded-full bg-accent text-accent-foreground px-3 py-1 text-[11px] font-semibold shadow-sm uppercase tracking-wider">
+                            {isSv ? "Lokalt bageri" : "Local bakery"}
+                          </div>
+                        )}
                         <div className="absolute top-2 right-2 rounded-full bg-background/90 backdrop-blur px-3 py-1 text-xs font-semibold text-primary shadow-sm">
                           {a.price_sek} {priceLabel}
                         </div>
-                      </div>
+
                     )}
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
