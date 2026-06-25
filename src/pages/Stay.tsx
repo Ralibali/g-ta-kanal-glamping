@@ -10,11 +10,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import addonEarlyCheckinImg from "@/assets/glamping-exterior-deck.jpg";
+import heroImg from "@/assets/glamping-sunset.jpg";
+import addonBreakfastImg from "@/assets/glamping-interior-cozy.jpg";
+import addonFikaImg from "@/assets/glamping-reading.jpg";
 
-// Använder endast riktiga bilder från hemsidan. För frukost & fika saknas äkta foton — ladda upp dem så byter jag in direkt.
+// Använder endast riktiga bilder från hemsidan.
 const ADDON_IMAGES: Record<string, string> = {
   early_checkin: addonEarlyCheckinImg,
+  breakfast: addonBreakfastImg,
+  fika_bag: addonFikaImg,
 };
+
 
 interface Addon {
   id: string; slug: string;
