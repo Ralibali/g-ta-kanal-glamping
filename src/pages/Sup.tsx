@@ -76,9 +76,6 @@ export default function Sup() {
 
   const handlePay = async () => {
     const msg = encodeURIComponent("SUP");
-    const swishUrl = `swish://payment?data=${encodeURIComponent(
-      JSON.stringify({ version: 1, payee: { value: SWISH }, amount: { value: amount }, message: { value: "SUP" } })
-    )}`;
     const webUrl = `https://app.swish.nu/1/p/sw/?sw=${SWISH}&amt=${amount}&cur=SEK&msg=${msg}&src=qr`;
 
     try {
@@ -92,13 +89,7 @@ export default function Sup() {
     setRevealed(true);
     toast.success(t.confirm);
 
-    const start = Date.now();
-    window.open(swishUrl, "_self");
-    setTimeout(() => {
-      if (Date.now() - start < 1600) {
-        window.open(webUrl, "_blank", "noopener,noreferrer");
-      }
-    }, 800);
+    window.open(webUrl, "_blank", "noopener,noreferrer");
     setTimeout(() => {
       document.getElementById("lock-code-block")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 250);
