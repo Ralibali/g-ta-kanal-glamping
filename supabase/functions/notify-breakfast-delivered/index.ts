@@ -99,8 +99,8 @@ Deno.serve(async (req) => {
       : `${name ? `Hi ${name}!` : 'Hi!'} Your fika bag has been delivered and is waiting in the basket at the portal. Enjoy! 🌿\n\nBergs Slussar Glamping`
   } else {
     message = lang === 'sv'
-      ? `${name ? `Hej ${name}!` : 'Hej!'} Frukosten är nu levererad och står i backen vid portalen halvvägs upp i backen. Smaklig frukost! 🥐☕\n\nBergs Slussar Glamping`
-      : `${name ? `Hi ${name}!` : 'Hi!'} Your breakfast has been delivered and is waiting in the basket at the portal halfway up the hill. Enjoy! 🥐☕\n\nBergs Slussar Glamping`
+      ? `${name ? `Hej ${name}!` : 'Hej!'} Frukosten är nu levererad och står i backen vid portalen halvvägs upp i backen. Smaklig frukost!\n\nBergs Slussar Glamping`
+      : `${name ? `Hi ${name}!` : 'Hi!'} Your breakfast has been delivered and is by the gate, halfway up the slope. Enjoy your breakfast! Warm regards, Bergs Slussar Glamping`
   }
 
   const toPhone = normalizePhone(stay.phone)
