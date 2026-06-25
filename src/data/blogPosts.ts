@@ -166,7 +166,7 @@ Det finns inga stora lekplatser direkt vid slussarna, men området självt funge
 
 ## Vilket tält passar bäst för en familj?
 
-Sjöbrisretreatet med sin bäddsoffa fungerar bäst för familjer. Mindre familjer eller en vuxen med ett barn kan gott bo i Naturkärnan.
+Alla tre tält passar utmärkt för familjer. Varje tält har en dubbelsäng och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster – perfekt för en familj med ett eller två barn.
 
 ## Boka familjens glamping vid Bergs Slussar
 
