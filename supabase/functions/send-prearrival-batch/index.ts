@@ -100,8 +100,18 @@ function buildBody(name: string | null, link: string | null, lang: Lang, availab
     sv: 'Snart ses vi!', en: 'See you soon!', de: 'Bis bald!',
     da: 'Vi ses snart!', no: 'Vi ses snart!', nl: 'Tot snel!', fr: 'À bientôt !',
   }
+  const slipperTip: Record<Lang, string> = {
+    sv: 'Tips: ta gärna med tofflor – skönt till och från servicehuset.',
+    en: 'Tip: bring slippers – handy on the way to the service house.',
+    de: 'Tipp: Hausschuhe mitbringen – praktisch fürs Servicehaus.',
+    da: 'Tip: tag tøfler med – rart til og fra servicehuset.',
+    no: 'Tips: ta med tøfler – fint til og fra servicehuset.',
+    nl: 'Tip: neem slippers mee – handig naar het servicehuis.',
+    fr: 'Astuce : pensez aux chaussons – pratique pour la maison de service.',
+  }
 
   const lines: string[] = [`${hi}${leaf}`, '', arrivalLine[lang], '']
+
 
   if (availableSlugs.length > 0 && link) {
     const labels = availableSlugs
