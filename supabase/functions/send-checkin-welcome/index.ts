@@ -71,7 +71,7 @@ function buildBody(name: string | null, link: string, lang: Lang): string {
 
   const welcome: Record<Lang, string> = {
     sv: 'Varmt välkomna till Bergs Slussar Glamping! Vi hoppas att ni får en härlig vistelse och tack för att ni besöker oss!',
-    en: 'Warm welcome to Bergs Slussar Glamping! We hope you have a lovely stay and thank you for visiting us!',
+    en: 'A warm welcome to Bergs Slussar Glamping! We hope you have a lovely stay and thank you for visiting us.',
     de: 'Herzlich willkommen bei Bergs Slussar Glamping! Wir wünschen Ihnen einen schönen Aufenthalt und danken für Ihren Besuch!',
     da: 'Hjertelig velkommen til Bergs Slussar Glamping! Vi håber, I får et dejligt ophold, og tak fordi I besøger os!',
     no: 'Hjertelig velkommen til Bergs Slussar Glamping! Vi håper dere får et fint opphold, og takk for at dere besøker oss!',
