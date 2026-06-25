@@ -157,7 +157,7 @@ const RomantiskWeekendOstergotland = () => {
       ]}
       cta={{
         heading: "Boka er romantiska weekend",
-        text: "Två nätter vid kanalen, bäddade sängar och en miljö ni inte glömmer. Två tält och en kort säsong – välj era datum medan plats finns.",
+        text: "Två nätter vid kanalen, bäddade sängar och en miljö ni inte glömmer. Tre tält och en kort säsong – välj era datum medan plats finns.",
         button: "Boka weekend",
       }}
     />
