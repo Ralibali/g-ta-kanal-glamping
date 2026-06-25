@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { Menu, X, Leaf, BedDouble, Flame, Sparkles, TreePine, Coffee, Waves, ShieldCheck, CalendarCheck, MailCheck, ChevronDown } from "lucide-react";
+import { Menu, X, Leaf, BedDouble, Flame, Sparkles, TreePine, Coffee, Waves, ShieldCheck, CalendarCheck, MailCheck, ChevronDown, Star, Phone, ArrowRight } from "lucide-react";
 import SirvoyBookingWidget from "@/components/SirvoyBookingWidget";
 import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/i18n/LanguageContext";
@@ -117,51 +117,62 @@ const Header = () => {
 
 const StickyMobileCTA = () => {
   const [visible, setVisible] = useState(false);
+  const [overBooking, setOverBooking] = useState(false);
 
   useEffect(() => {
-    const target = document.getElementById("boka");
-    if (!target) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        setVisible(!entry.isIntersecting && window.scrollY > 400);
-      },
-      { threshold: 0.05 }
-    );
-    io.observe(target);
     const onScroll = () => {
-      if (window.scrollY < 400) setVisible(false);
+      setVisible(window.scrollY > 320);
+      const target = document.getElementById("boka");
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        // Hide when the booking widget is on-screen (no need to nudge the user)
+        setOverBooking(rect.top < window.innerHeight * 0.6 && rect.bottom > window.innerHeight * 0.2);
+      }
     };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      io.disconnect();
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  if (!visible) return null;
+  if (!visible || overBooking) return null;
 
   return (
     <div
-      className="md:hidden fixed bottom-0 inset-x-0 z-40 px-4 py-3"
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       style={{
-        background: `${PALETTE.white}f0`,
-        backdropFilter: "blur(12px)",
-        borderTop: `1px solid ${PALETTE.sand}55`,
+        background: `${PALETTE.white}f5`,
+        backdropFilter: "blur(14px)",
+        borderTop: `1px solid ${PALETTE.sand}66`,
+        boxShadow: "0 -10px 30px -10px rgba(36,48,39,0.18)",
       }}
     >
-      <a
-        href="#boka"
-        className="flex items-center justify-center w-full rounded-full text-base font-medium"
-        style={{ background: PALETTE.primary, color: PALETTE.white, minHeight: 52 }}
-      >
-        Se lediga datum
-      </a>
+      <div className="flex items-center gap-2">
+        <a
+          href="#boka"
+          className="flex-1 flex items-center justify-center gap-2 rounded-full text-[15px] font-medium"
+          style={{ background: PALETTE.primary, color: PALETTE.white, minHeight: 52 }}
+        >
+          Se lediga datum
+          <ArrowRight size={17} strokeWidth={1.8} />
+        </a>
+        <a
+          href="tel:+46722254993"
+          aria-label="Ring oss"
+          className="flex items-center justify-center rounded-full"
+          style={{ width: 52, height: 52, border: `1px solid ${PALETTE.primary}55`, color: PALETTE.primary, background: PALETTE.white }}
+        >
+          <Phone size={18} strokeWidth={1.7} />
+        </a>
+      </div>
+      <p className="text-center text-[11px] mt-1.5" style={{ color: "#3a4a3d99" }}>
+        Direktbokning · Bästa pris · Bekräftelse direkt
+      </p>
     </div>
   );
 };
 
 const Hero = () => (
-  <section className="relative w-full" style={{ minHeight: "92vh" }}>
+  <section className="relative w-full min-h-[88vh] md:min-h-[92vh]">
     <img
       src={heroImg}
       alt="Glampingtält vid Göta kanal, Bergs Slussar"
@@ -174,24 +185,63 @@ const Hero = () => (
     <div
       className="absolute inset-0"
       style={{
-        background: `linear-gradient(180deg, rgba(36,48,39,0.45) 0%, rgba(36,48,39,0.35) 45%, rgba(36,48,39,0.65) 100%)`,
+        background: `linear-gradient(180deg, rgba(36,48,39,0.55) 0%, rgba(36,48,39,0.35) 45%, rgba(36,48,39,0.7) 100%)`,
       }}
     />
 
-    <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-8 pt-40 md:pt-48 pb-32 md:pb-56" style={{ color: PALETTE.white }}>
-      <p className="boka-eyebrow mb-6" style={{ color: PALETTE.sand }}>
+    <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-8 pt-32 md:pt-44 pb-28 md:pb-56" style={{ color: PALETTE.white }}>
+      <p className="boka-eyebrow mb-5" style={{ color: PALETTE.sand }}>
         Glamping vid Göta kanal
       </p>
-      <h1 className="text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.02] max-w-3xl mb-7" style={{ color: PALETTE.white }}>
+      <h1 className="text-[2.75rem] sm:text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.02] max-w-3xl mb-6" style={{ color: PALETTE.white }}>
         Sov mjukt.
         <br />
         <em className="not-italic" style={{ fontStyle: "italic", color: PALETTE.white }}>Vakna vid vattnet.</em>
       </h1>
-      <p className="text-base md:text-lg max-w-xl leading-relaxed" style={{ color: "#FFFDF8d9" }}>
-        Ombonade glampingtält med bäddade sängar, värme och el – mitt vid Bergs slussar och bara 15 minuter från Linköping.
+      <p className="text-base md:text-lg max-w-xl leading-relaxed mb-7" style={{ color: "#FFFDF8e0" }}>
+        Ombonade glampingtält med bäddade sängar, värme och el – mitt vid Bergs slussar, 15 minuter från Linköping.
       </p>
 
-      <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm" style={{ color: "#FFFDF8cc" }}>
+      {/* Price + rating chips */}
+      <div className="flex flex-wrap items-center gap-2.5 mb-7">
+        <span
+          className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium"
+          style={{ background: `${PALETTE.white}`, color: PALETTE.text }}
+        >
+          <Sparkles size={15} strokeWidth={1.6} style={{ color: PALETTE.gold }} />
+          Från 1&nbsp;595 kr/natt – allt ingår
+        </span>
+        <span
+          className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm"
+          style={{ background: "rgba(255,253,248,0.14)", color: PALETTE.white, backdropFilter: "blur(6px)", border: `1px solid ${PALETTE.white}33` }}
+        >
+          <Star size={14} fill={PALETTE.gold} strokeWidth={0} />
+          <span className="font-semibold">4,9</span>
+          <span style={{ color: "#FFFDF8b3" }}>· 60+ recensioner</span>
+        </span>
+      </div>
+
+      {/* Dual CTA */}
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <a
+          href="#boka"
+          className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-base font-medium transition-transform hover:scale-[1.02]"
+          style={{ background: PALETTE.primary, color: PALETTE.white, minHeight: 56, boxShadow: "0 14px 30px -10px rgba(36,48,39,0.55)" }}
+        >
+          Se lediga datum
+          <ArrowRight size={18} strokeWidth={1.8} />
+        </a>
+        <a
+          href="tel:+46722254993"
+          className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-base font-medium border transition-colors"
+          style={{ borderColor: `${PALETTE.white}66`, color: PALETTE.white, minHeight: 56, background: "rgba(255,253,248,0.08)", backdropFilter: "blur(6px)" }}
+        >
+          <Phone size={17} strokeWidth={1.6} />
+          072-225 49 93
+        </a>
+      </div>
+
+      <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm" style={{ color: "#FFFDF8cc" }}>
         <span className="inline-flex items-center gap-2"><BedDouble size={16} strokeWidth={1.5} /> Bäddade sängar</span>
         <span className="inline-flex items-center gap-2"><TreePine size={16} strokeWidth={1.5} /> Privat uteplats</span>
         <span className="inline-flex items-center gap-2"><Flame size={16} strokeWidth={1.5} /> Värme och el</span>
