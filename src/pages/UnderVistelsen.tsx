@@ -68,14 +68,28 @@ export default function UnderVistelsen() {
     })();
   }, []);
 
-  const copySwish = async () => {
+  const handleLateCheckout = () => {
+    const amount = 400;
+    const msg = encodeURIComponent("Sen utcheckning");
+    const swishUrl = `swish://payment?data=${encodeURIComponent(
+      JSON.stringify({ version: 1, payee: { value: SWISH }, amount: { value: amount }, message: { value: "Sen utcheckning" } })
+    )}`;
+    const webUrl = `https://app.swish.nu/1/p/sw/?sw=${SWISH}&amt=${amount}&cur=SEK&msg=${msg}&src=qr`;
     try {
-      await navigator.clipboard.writeText(SWISH);
-      toast.success(isSv ? "Swish-nummer kopierat!" : "Swish number copied!");
-    } catch {
-      toast.error(isSv ? "Kunde inte kopiera" : "Could not copy");
-    }
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("t") || params.get("token") || undefined;
+      supabase.functions.invoke("record-purchase", {
+        body: { kind: "late_checkout", quantity: 1, public_token: token },
+      }).catch(() => {});
+    } catch {}
+    toast.success(isSv ? "Tack! Sen utcheckning bokad." : "Thanks! Late check-out booked.");
+    const start = Date.now();
+    window.open(swishUrl, "_self");
+    setTimeout(() => {
+      if (Date.now() - start < 1600) window.open(webUrl, "_blank", "noopener,noreferrer");
+    }, 800);
   };
+
 
   const t = isSv ? {
     sub: "Under er vistelse",
@@ -85,12 +99,13 @@ export default function UnderVistelsen() {
     lockCode: "Kod till hänglåset",
     lateTitle: "Sen utcheckning",
     lateLead: "Vill ni stanna lite längre?",
-    lateBody: "Sen utcheckning till kl 12:00 går bra att boka i mån av plats. En lugn förmiddag vid kanalen utan stress.",
+    lateBody: "Sen utcheckning till kl 12:00 går bra i mån av plats. En lugn förmiddag vid kanalen utan stress.",
     lateItem: "Sen utcheckning till 12:00 – 400 kr",
-    lateHow: "Swisha 400 kr till 072-225 49 93 (Christoffer) och skriv tältets namn + bokningsnummer som meddelande. Sms:a oss gärna också så bekräftar vi direkt.",
-    copySwish: "Kopiera Swish-nummer",
+    lateHow: "Tryck på Swisha så öppnas Swish-appen med 400 kr förifyllt. Vi får en notis direkt och bekräftar er sena utcheckning.",
+    payCta: "Swisha 400 kr",
+    paidToast: "Tack! Sen utcheckning bokad.",
     sms: "Sms:a oss",
-    call: "Ring Christoffer",
+
     truckBadge: "Vårt tips",
     truckTitle: "Bartrucken vid slussarna",
     truckLead: "Vårt hetaste tips",
@@ -151,10 +166,11 @@ export default function UnderVistelsen() {
     lateLead: "Want to stay a little longer?",
     lateBody: "Late check-out until 12:00 noon is available subject to availability — enjoy a calm morning by the canal.",
     lateItem: "Late check-out until 12:00 – 400 SEK",
-    lateHow: "Swish 400 SEK to +46 72-225 49 93 (Christoffer) with your tent name + booking number as message. Or text us and we'll confirm right away.",
-    copySwish: "Copy Swish number",
+    lateHow: "Tap Swish and the Swish app opens with 400 SEK prefilled. We get a notification instantly and confirm your late check-out.",
+    payCta: "Swish 400 SEK",
+    paidToast: "Thanks! Late check-out booked.",
     sms: "Text us",
-    call: "Call Christoffer",
+
     truckBadge: "Our tip",
     truckTitle: "The Bar Truck by the locks",
     truckLead: "Our hottest tip",
@@ -288,21 +304,16 @@ export default function UnderVistelsen() {
               <div className="text-xs text-muted-foreground leading-relaxed">{t.lateHow}</div>
               <div className="flex flex-col gap-2 pt-1">
                 <button
-                  onClick={copySwish}
+                  onClick={handleLateCheckout}
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors py-2.5 text-sm font-medium"
                 >
-                  <Copy className="h-4 w-4" /> {t.copySwish}
+                  {t.payCta}
                 </button>
-                <a
-                  href={`sms:${SWISH_INTL}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-sm font-medium"
-                >
-                  <MessageCircle className="h-4 w-4" /> {t.sms}
-                </a>
               </div>
             </div>
           </CardContent>
         </Card>
+
 
         {/* Bartruck — GULDPÄRLA */}
         <Card className="rounded-2xl shadow-md ring-2 ring-[#C9A227]/60 bg-gradient-to-br from-[#fdf6e1] via-card to-card relative overflow-hidden">

@@ -17,7 +17,7 @@ export type Database = {
       addon_orders: {
         Row: {
           addon_id: string
-          booking_id: string
+          booking_id: string | null
           created_at: string
           id: string
           paid_at: string | null
@@ -31,7 +31,7 @@ export type Database = {
         }
         Insert: {
           addon_id: string
-          booking_id: string
+          booking_id?: string | null
           created_at?: string
           id?: string
           paid_at?: string | null
@@ -45,7 +45,7 @@ export type Database = {
         }
         Update: {
           addon_id?: string
-          booking_id?: string
+          booking_id?: string | null
           created_at?: string
           id?: string
           paid_at?: string | null
