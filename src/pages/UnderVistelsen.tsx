@@ -227,7 +227,11 @@ export default function UnderVistelsen() {
               >EN</button>
             </div>
           </div>
-          <h1 className="font-serif text-3xl sm:text-4xl text-white drop-shadow-md leading-tight">{t.h1}</h1>
+          <h1 className="font-serif text-3xl sm:text-4xl text-white drop-shadow-md leading-tight">
+            {personal?.firstName
+              ? (isSv ? `Hej ${personal.firstName}!` : `Hi ${personal.firstName}!`)
+              : t.h1}
+          </h1>
         </div>
       </header>
 
@@ -241,11 +245,26 @@ export default function UnderVistelsen() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
+            {personal?.tentIds && personal.tentIds.length > 0 && (
+              <div className="rounded-xl bg-muted/40 p-3">
+                <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                  {isSv ? (personal.tentIds.length > 1 ? "Era tält" : "Ert tält") : (personal.tentIds.length > 1 ? "Your tents" : "Your tent")}
+                </div>
+                <ul className="mt-1 space-y-0.5">
+                  {personal.tentIds.map((id) => (
+                    <li key={id} className="font-medium text-foreground">{TENT_NAMES[id] || id}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className="text-muted-foreground">
               {t.checkout} <strong className="text-foreground">10:00</strong>
+              {personal?.checkoutDate ? <span className="text-foreground/70"> · {personal.checkoutDate}</span> : null}
             </div>
             <div className="rounded-xl border border-primary/30 bg-primary/5 p-3">
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">{t.lockCode}</div>
+              <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                {t.lockCode}{personal?.tentIds && personal.tentIds.length > 1 ? (isSv ? " (samma kod till alla era tält)" : " (same code for all your tents)") : ""}
+              </div>
               <div className="font-mono text-2xl tracking-widest text-foreground mt-0.5">2018</div>
             </div>
           </CardContent>
