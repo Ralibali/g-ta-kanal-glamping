@@ -27,7 +27,9 @@ import Cleaning from "./pages/Cleaning";
 import Breakfast from "./pages/Breakfast";
 import Boka from "./pages/Boka";
 import Stay from "./pages/Stay";
+import UnderVistelsen from "./pages/UnderVistelsen";
 import ShortRedirect from "./pages/ShortRedirect";
+
 
 const queryClient = new QueryClient();
 
@@ -71,7 +73,10 @@ const App = () => (
           <Route path="/breakfast" element={<Breakfast />} />
           <Route path="/boka" element={<Boka />} />
           <Route path="/stay/:token" element={<Stay />} />
+          <Route path="/under-vistelsen/:token" element={<UnderVistelsen />} />
+          <Route path="/during-your-stay/:token" element={<UnderVistelsen />} />
           <Route path="/s/:slug" element={<ShortRedirect />} />
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
