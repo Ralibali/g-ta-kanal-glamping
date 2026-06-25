@@ -211,14 +211,6 @@ const Hero = () => (
           <Sparkles size={15} strokeWidth={1.6} style={{ color: PALETTE.gold }} />
           Från 1&nbsp;595 kr/natt – allt ingår
         </span>
-        <span
-          className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm"
-          style={{ background: "rgba(255,253,248,0.14)", color: PALETTE.white, backdropFilter: "blur(6px)", border: `1px solid ${PALETTE.white}33` }}
-        >
-          <Star size={14} fill={PALETTE.gold} strokeWidth={0} />
-          <span className="font-semibold">4,9</span>
-          <span style={{ color: "#FFFDF8b3" }}>· 60+ recensioner</span>
-        </span>
       </div>
 
       {/* Dual CTA */}
