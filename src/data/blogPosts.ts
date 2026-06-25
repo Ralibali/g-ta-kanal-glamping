@@ -199,7 +199,7 @@ Tre saker brukar avgöra för dem som väljer glamping istället för hotell:
 
 - **Miljön** – kanalen, ängarna och tystnaden.
 - **Friheten** – ni rör er fritt, lagar inget i hast, behöver inte passa måltidstider.
-- **Den lilla skalan** – två tält. Aldrig fullsatt restaurang eller köer till checkin.
+- **Den lilla skalan** – tre tält. Aldrig fullsatt restaurang eller köer till checkin.
 
 Vill du läsa mer om läget och vägen hit finns sidan om [glamping nära Linköping](/glamping-linkoping).
 
