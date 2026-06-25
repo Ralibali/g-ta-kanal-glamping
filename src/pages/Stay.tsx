@@ -770,7 +770,13 @@ export default function Stay() {
                               {a.price_sek} {priceLabel}
                             </div>
                           </div>
+                          {a.slug === "breakfast" && (
+                            <p className="text-xs text-primary/80 font-medium mb-2">
+                              {isSv ? "7 av 10 gäster väljer frukosten — och tackar oss efteråt 🥐" : "7 in 10 guests pick breakfast — and thank us afterwards 🥐"}
+                            </p>
+                          )}
                           {(() => {
+
                             const details = getDetails(a.slug, lang);
                             if (details) {
                               return (
