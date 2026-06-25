@@ -4,17 +4,31 @@ import { toast } from "sonner";
 import {
   MapPin, Phone, Clock, Key, UtensilsCrossed, Trees, Waves,
   Wifi, Flame, Dog, Info, Footprints, CheckCircle2, AlertCircle,
-  Coffee, MessageCircle, ShoppingBag, Car, Heart, Copy, Star, Instagram, Beer
+  Coffee, MessageCircle, ShoppingBag, Car, Heart, Copy, Star, Instagram, Beer, ArrowRight
 } from "lucide-react";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import ChatWidget from "@/components/ChatWidget";
+import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/glamping-sunset.jpg";
 
 const SWISH = "0722254993";
 const SWISH_INTL = "+46722254993";
 
+const TENT_NAMES: Record<string, string> = {
+  sjobris: "Sjöbrisretreatet (Tält 1)",
+  naturkarnan: "Naturkärnan (Tält 2)",
+  lugnetsyta: "Lugnets Yta (Tält 3)",
+};
+
+interface PersonalData {
+  firstName?: string | null;
+  tentIds: string[];
+  checkoutDate?: string | null;
+}
+
 export default function UnderVistelsen() {
   const [isSv, setIsSv] = useState(true);
+  const [personal, setPersonal] = useState<PersonalData | null>(null);
 
   useEffect(() => {
     const meta = document.createElement("meta");
@@ -26,6 +40,33 @@ export default function UnderVistelsen() {
       : "During your stay · Go Glamping Sweden";
     return () => { document.head.removeChild(meta); };
   }, [isSv]);
+
+  // Personalize via ?t=<public_token>
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("t") || params.get("token");
+    if (!token) return;
+    (async () => {
+      try {
+        const { data, error } = await supabase.rpc("get_stay_by_token", { p_token: token });
+        if (error || !data) return;
+        const booking = (data as any).booking;
+        if (!booking) return;
+        const tentIds: string[] = Array.isArray(booking.tent_ids) && booking.tent_ids.length > 0
+          ? booking.tent_ids
+          : (booking.tent_id ? [booking.tent_id] : []);
+        setPersonal({
+          firstName: booking.guest_first_name,
+          tentIds,
+          checkoutDate: booking.checkout_date,
+        });
+        const lang = String(booking.language || "sv").toLowerCase();
+        setIsSv(lang.startsWith("sv"));
+      } catch (e) {
+        console.error("personalize failed", e);
+      }
+    })();
+  }, []);
 
   const copySwish = async () => {
     try {
