@@ -376,16 +376,26 @@ export default function Stay() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [paidTotal, setPaidTotal] = useState<number>(0);
+  const [extraTents, setExtraTents] = useState<string[]>([]);
 
   useEffect(() => {
     if (!token) { setLoading(false); return; }
     (async () => {
       const { data: rpc, error } = await (supabase as any).rpc("get_stay_by_token", { p_token: token });
       if (error) console.error(error);
-      setData(rpc as StayData | null);
+      const sd = rpc as StayData | null;
+      setData(sd);
+      if (sd?.booking?.booking_number) {
+        const { data: stays } = await (supabase as any)
+          .from("tent_stays")
+          .select("tent_id")
+          .eq("booking_number", sd.booking.booking_number);
+        if (stays) setExtraTents((stays as { tent_id: string }[]).map(s => s.tent_id));
+      }
       setLoading(false);
     })();
   }, [token]);
+
 
   if (loading) return <Centered>{COPY.sv.loading}</Centered>;
   if (!data || !data.booking) return <Centered>{COPY.sv.notFound}</Centered>;
