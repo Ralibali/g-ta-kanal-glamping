@@ -147,7 +147,7 @@ const OvernattningBergsSlussar = () => {
       ]}
       cta={{
         heading: "Boka din övernattning vid Bergs Slussar",
-        text: "Sov en natt eller stanna en hel weekend. Två tält, kanalens lugn och allt förberett när du kommer.",
+        text: "Sov en natt eller stanna en hel weekend. Tre tält, kanalens lugn och allt förberett när du kommer.",
         button: "Boka övernattning",
       }}
     />
