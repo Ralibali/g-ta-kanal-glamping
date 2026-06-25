@@ -219,7 +219,7 @@ Ingen behöver göra allt. Ofta är det den dag ni inte planerar något som blir
 
 För par är glamping ett av de mer romantiska alternativen i regionen. Bäddade sängar, kvällsljus, kanalen som soundtrack. Mer om det skriver vi på sidan om [romantisk weekend i Östergötland](/romantisk-weekend-ostergotland).
 
-Men det fungerar lika bra för en grupp vänner som vill umgås på ett annat sätt än hemma. Boka båda tälten, planera en gemensam middag, ta med en flaska vin och låt kvällen bli lång.
+Men det fungerar lika bra för en grupp vänner som vill umgås på ett annat sätt än hemma. Boka flera tält, planera en gemensam middag, ta med en flaska vin och låt kvällen bli lång.
 
 ## Vad ni inte behöver oroa er för
 
