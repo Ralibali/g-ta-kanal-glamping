@@ -34,12 +34,14 @@ interface BookingInfo {
   tent_id: string; tent_name: string;
   checkin_date: string; checkout_date: string;
   nights: number; language: string;
+  tent_ids?: string[] | null;
 }
 interface Order { id: string; addon_id: string; quantity: number; total_sek: number; status: string }
 interface StayData {
   booking: BookingInfo & { booking_number?: string };
   addons: Addon[];
   orders: Order[];
+
   settings: { order_cutoff_days?: number; swish_number?: string; swish_payee?: string };
 }
 
