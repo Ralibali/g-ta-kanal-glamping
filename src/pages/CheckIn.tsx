@@ -295,15 +295,24 @@ const CheckIn = () => {
     if (allTermsAccepted && tentId) {
       setStep("code");
       // Logga incheckning (fire-and-forget)
+      const bn = bookingNumber.trim().toUpperCase();
       try {
         await supabase.from("check_ins").insert({
-          booking_number: bookingNumber.trim().toUpperCase(),
+          booking_number: bn,
           tent_id: tentId,
           lang,
           user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
         });
       } catch (err) {
         console.error("Failed to log check-in", err);
+      }
+      // Fire-and-forget welcome SMS with personal link to /under-vistelsen
+      try {
+        supabase.functions.invoke("send-checkin-welcome", {
+          body: { booking_number: bn },
+        });
+      } catch (err) {
+        console.error("Failed to send check-in welcome SMS", err);
       }
     }
   };
