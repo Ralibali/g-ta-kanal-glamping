@@ -136,7 +136,7 @@ const RomantiskWeekendOstergotland = () => {
       faqs={[
         {
           q: "Vilket tält passar bäst för par?",
-          a: "Naturkärnan är vårt mindre tält och passar fint för par som vill ha en mysig och ombonad känsla. Sjöbrisretreatet är något större och rymmer även en bäddsoffa.",
+          a: "Alla tre tält passar fint för par. Varje tält har en dubbelsäng och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster och en mysig, ombonad känsla.",
         },
         {
           q: "Kan ni ordna något extra inför ankomsten?",
