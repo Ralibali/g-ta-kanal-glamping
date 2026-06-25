@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { Menu, X, Leaf, BedDouble, Flame, Sparkles, TreePine, Coffee, Waves, ShieldCheck, CalendarCheck, MailCheck, ChevronDown, Star, Phone, ArrowRight } from "lucide-react";
+import { Menu, X, Leaf, BedDouble, Flame, Sparkles, TreePine, Coffee, Waves, ShieldCheck, CalendarCheck, MailCheck, ChevronDown, Phone, ArrowRight } from "lucide-react";
 import SirvoyBookingWidget from "@/components/SirvoyBookingWidget";
 import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/i18n/LanguageContext";
@@ -210,14 +210,6 @@ const Hero = () => (
         >
           <Sparkles size={15} strokeWidth={1.6} style={{ color: PALETTE.gold }} />
           Från 1&nbsp;595 kr/natt – allt ingår
-        </span>
-        <span
-          className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm"
-          style={{ background: "rgba(255,253,248,0.14)", color: PALETTE.white, backdropFilter: "blur(6px)", border: `1px solid ${PALETTE.white}33` }}
-        >
-          <Star size={14} fill={PALETTE.gold} strokeWidth={0} />
-          <span className="font-semibold">4,9</span>
-          <span style={{ color: "#FFFDF8b3" }}>· 60+ recensioner</span>
         </span>
       </div>
 
