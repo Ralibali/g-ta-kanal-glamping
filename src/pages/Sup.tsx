@@ -46,7 +46,7 @@ export default function Sup() {
     paySub: "Koden visas direkt efteråt",
     paid: "Betalt — koden är upplåst",
     waitTitle: "Koden låses upp efter betalning",
-    waitHint: "Tryck på Swisha ovan så öppnas Swish och koden visas här.",
+    waitHint: "Tryck på Swisha ovan så öppnas Swish och koden visas här när betalning är genomförd.",
     codeLabel: "Kod till hänglåset",
     codeHint: "Skåpet står vid bryggan. Lås tillbaka när ni paddlat klart — nästa gäst vill också SUPa.",
     rulesTitle: "Bra att veta innan ni SUPar",
