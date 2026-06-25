@@ -376,16 +376,26 @@ export default function Stay() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [paidTotal, setPaidTotal] = useState<number>(0);
+  const [extraTents, setExtraTents] = useState<string[]>([]);
 
   useEffect(() => {
     if (!token) { setLoading(false); return; }
     (async () => {
       const { data: rpc, error } = await (supabase as any).rpc("get_stay_by_token", { p_token: token });
       if (error) console.error(error);
-      setData(rpc as StayData | null);
+      const sd = rpc as StayData | null;
+      setData(sd);
+      if (sd?.booking?.booking_number) {
+        const { data: stays } = await (supabase as any)
+          .from("tent_stays")
+          .select("tent_id")
+          .eq("booking_number", sd.booking.booking_number);
+        if (stays) setExtraTents((stays as { tent_id: string }[]).map(s => s.tent_id));
+      }
       setLoading(false);
     })();
   }, [token]);
+
 
   if (loading) return <Centered>{COPY.sv.loading}</Centered>;
   if (!data || !data.booking) return <Centered>{COPY.sv.notFound}</Centered>;
@@ -459,17 +469,52 @@ export default function Stay() {
       </header>
 
       <main className="max-w-2xl mx-auto p-4 space-y-5">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="font-serif text-lg">{t.stayInfo}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1 text-sm">
-            <div className="font-medium text-base">{({sjobris:'Sjöbrisretreatet',naturkarnan:'Naturkärnan',lugnetsyta:'Lugnets Yta'} as Record<string,string>)[data.booking.tent_id] || data.booking.tent_name}</div>
-            <div className="text-muted-foreground">
-              {ci} → {co} · {t.nights(data.booking.nights ?? 1)}
-            </div>
-          </CardContent>
-        </Card>
+        {(() => {
+          const TENT_NAMES: Record<string,string> = { sjobris: 'Sjöbrisretreatet', naturkarnan: 'Naturkärnan', lugnetsyta: 'Lugnets Yta' };
+          const allTents = Array.from(new Set([data.booking.tent_id, ...extraTents])).filter(Boolean);
+          const tentNames = allTents.map(id => TENT_NAMES[id] || id);
+          const multi = tentNames.length > 1;
+          return (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="font-serif text-lg">{t.stayInfo}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm">
+                {multi ? (
+                  <>
+                    <div className="font-medium text-base">
+                      {isSv ? `Era ${tentNames.length} tält` : `Your ${tentNames.length} tents`}
+                    </div>
+                    <ul className="space-y-1 pl-1">
+                      {tentNames.map(n => (
+                        <li key={n} className="flex items-center gap-2">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
+                          <span>{n}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                ) : (
+                  <div className="font-medium text-base">{tentNames[0] || data.booking.tent_name}</div>
+                )}
+                <div className="text-muted-foreground">
+                  {ci} → {co} · {t.nights(data.booking.nights ?? 1)}
+                </div>
+                <div className="mt-3 rounded-md border border-primary/30 bg-primary/5 p-3">
+                  <div className="font-medium text-foreground">
+                    🔒 {isSv ? "Kod till hänglåset" : "Code for the lock"}: <span className="font-mono text-lg tracking-widest">2018</span>
+                  </div>
+                  {multi && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {isSv ? "Samma kod till båda tälten." : "Same code for both tents."}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
+
 
         {/* Det här väntar er — personlig, varm sammanfattning baserat på beställda tillval */}
         <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-card to-card">
