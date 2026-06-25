@@ -89,7 +89,7 @@ function buildBody(name: string | null, link: string | null, lang: Lang, availab
 
   const arrivalLine: Record<Lang, string> = {
     sv: 'Om fem dagar väntar en mysig vistelse vid kanalen, med bäddat tält och skön ro vid vattnet.',
-    en: 'In five days a cozy stay by the canal awaits, with a made bed and peaceful moments by the water.',
+    en: 'In five days a cosy stay by the canal awaits, with a freshly made-up tent and peaceful calm by the water.',
     de: 'In fünf Tagen erwartet Sie ein gemütlicher Aufenthalt am Kanal, mit gemachtem Bett und Ruhe am Wasser.',
     da: 'Om fem dage venter et hyggeligt ophold ved kanalen med redt telt og ro ved vandet.',
     no: 'Om fem dager venter et koselig opphold ved kanalen, med oppredd telt og ro ved vannet.',
