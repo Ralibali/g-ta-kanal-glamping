@@ -80,7 +80,7 @@ function buildBody(name: string | null, link: string, lang: Lang): string {
   }
   const info: Record<Lang, string> = {
     sv: `Här hittar ni allt ni behöver under vistelsen - tips och bra att veta: ${link}`,
-    en: `Here you'll find everything you need during your stay - tips and good to know: ${link}`,
+    en: `Everything you need during your stay - tips and good to know: ${link}`,
     de: `Hier finden Sie alles für Ihren Aufenthalt - Tipps und Wissenswertes: ${link}`,
     da: `Her finder I alt, hvad I har brug for under opholdet - tips og godt at vide: ${link}`,
     no: `Her finner dere alt dere trenger under oppholdet - tips og godt å vite: ${link}`,
