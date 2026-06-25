@@ -757,8 +757,9 @@ export default function Stay() {
                         <div className="absolute top-2 right-2 rounded-full bg-background/90 backdrop-blur px-3 py-1 text-xs font-semibold text-primary shadow-sm">
                           {a.price_sek} {priceLabel}
                         </div>
-
+                      </div>
                     )}
+
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
                         <div className="rounded-full bg-primary/10 p-2.5 text-primary shrink-0">{iconFor(a.slug)}</div>
