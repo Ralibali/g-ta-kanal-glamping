@@ -393,7 +393,11 @@ export default function Stay() {
       if (error) console.error(error);
       const sd = rpc as StayData | null;
       setData(sd);
-      if (sd?.booking?.booking_number) {
+      // Tält-IDs kommer nu direkt från RPC:n (tent_ids); fall back till legacy-query för säkerhets skull.
+      const fromRpc = sd?.booking?.tent_ids;
+      if (Array.isArray(fromRpc) && fromRpc.length > 0) {
+        setExtraTents(fromRpc);
+      } else if (sd?.booking?.booking_number) {
         const { data: stays } = await (supabase as any)
           .from("tent_stays")
           .select("tent_id")
@@ -403,6 +407,7 @@ export default function Stay() {
       setLoading(false);
     })();
   }, [token]);
+
 
 
   if (loading) return <Centered>{COPY.sv.loading}</Centered>;
