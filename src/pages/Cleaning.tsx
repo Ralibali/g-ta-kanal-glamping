@@ -285,18 +285,8 @@ export default function Cleaning() {
           }
         }
       });
-      // Arrival-only days
-      rows.forEach((r) => {
-        if (r.checkin_date >= today && r.checkin_date <= endStr) {
-          const hasDepSameDay = rows.some((x) => x.tent_id === r.tent_id && x.checkout_date === r.checkin_date);
-          if (!hasDepSameDay) {
-            const b = bump(r.checkin_date);
-            b.tents.add(r.tent_id);
-            b.arrivals.add(r.tent_id);
-            b.guests += r.guests ?? 0;
-          }
-        }
-      });
+      // Arrival-only days are NOT cleaning days (previous departure already cleaned the tent).
+
       const sorted = Array.from(byDate.entries())
         .filter(([d, info]) => !selfCleanDates.has(d) && info.tents.size > 0)
         .sort((a, b) => a[0].localeCompare(b[0]));
