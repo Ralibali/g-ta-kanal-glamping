@@ -75,41 +75,40 @@ export default function Sup() {
   };
 
 
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(SWISH);
-      toast.success(t.copied);
-    } catch {
-      toast.error(t.copyFail);
-    }
-  };
-
-  const handlePay = () => {
+  const handlePay = async () => {
     // Try to open Swish app with prefilled payment
     const msg = encodeURIComponent("SUP");
     const swishUrl = `swish://payment?data=${encodeURIComponent(
       JSON.stringify({ version: 1, payee: { value: SWISH }, amount: { value: amount }, message: { value: "SUP" } })
     )}`;
-    // Fallback web link for desktop
     const webUrl = `https://app.swish.nu/1/p/sw/?sw=${SWISH}&amt=${amount}&cur=SEK&msg=${msg}&src=qr`;
 
-    // Reveal the code regardless — guest confirms they paid by pressing.
-    setRevealed(true);
+    // Record purchase (owner email + admin order) — fire-and-forget
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("t") || params.get("token") || undefined;
+      supabase.functions.invoke("record-purchase", {
+        body: { kind: "sup_rental", quantity: qty, public_token: token },
+      }).catch(() => {});
+    } catch {}
 
-    // Open Swish (mobile deep link). Fallback to web after a moment.
+    setRevealed(true);
+    toast.success(isSv("Beställning registrerad — visar koden", "Booked — showing your code"));
+
     const start = Date.now();
-    const w = window.open(swishUrl, "_self");
+    window.open(swishUrl, "_self");
     setTimeout(() => {
       if (Date.now() - start < 1600) {
         window.open(webUrl, "_blank", "noopener,noreferrer");
       }
     }, 800);
-
-    // Scroll to revealed code
     setTimeout(() => {
       document.getElementById("lock-code-block")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 200);
   };
+
+  function isSv(sv: string, en: string) { return lang === "sv" ? sv : en; }
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -175,12 +174,7 @@ export default function Sup() {
               {t.payCta}
             </button>
             <p className="text-xs text-muted-foreground leading-relaxed">{t.payHint}</p>
-            <button
-              onClick={copy}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-xs font-medium"
-            >
-              <Copy className="h-3.5 w-3.5" /> {t.copy}
-            </button>
+
           </CardContent>
         </Card>
 
