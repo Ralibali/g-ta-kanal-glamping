@@ -566,6 +566,26 @@ export default function Stay() {
           );
         })()}
 
+        {/* Social proof — bygger tillit direkt under huvudinfo */}
+        <div className="rounded-lg border bg-card p-3">
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div>
+              <div className="font-serif text-lg text-primary leading-none">4,9★</div>
+              <div className="text-[11px] text-muted-foreground mt-1">{isSv ? "Google-betyg" : "Google rating"}</div>
+            </div>
+            <div className="border-x">
+              <div className="font-serif text-lg text-primary leading-none">9,4</div>
+              <div className="text-[11px] text-muted-foreground mt-1">Booking.com</div>
+            </div>
+            <div>
+              <div className="font-serif text-lg text-primary leading-none">500+</div>
+              <div className="text-[11px] text-muted-foreground mt-1">{isSv ? "nöjda gäster" : "happy guests"}</div>
+            </div>
+          </div>
+        </div>
+
+
+
 
         {/* Det här väntar er — personlig, varm sammanfattning baserat på beställda tillval */}
         <Card className="border-primary/30 bg-gradient-to-br from-primary/5 via-card to-card">
@@ -724,11 +744,22 @@ export default function Stay() {
                           height={1024}
                           className="w-full h-full object-cover"
                         />
+                        {a.slug === "breakfast" && (
+                          <div className="absolute top-2 left-2 rounded-full bg-primary text-primary-foreground px-3 py-1 text-[11px] font-semibold shadow-sm uppercase tracking-wider">
+                            ★ {isSv ? "Mest populärt" : "Most popular"}
+                          </div>
+                        )}
+                        {a.slug === "fika_bag" && (
+                          <div className="absolute top-2 left-2 rounded-full bg-accent text-accent-foreground px-3 py-1 text-[11px] font-semibold shadow-sm uppercase tracking-wider">
+                            {isSv ? "Lokalt bageri" : "Local bakery"}
+                          </div>
+                        )}
                         <div className="absolute top-2 right-2 rounded-full bg-background/90 backdrop-blur px-3 py-1 text-xs font-semibold text-primary shadow-sm">
                           {a.price_sek} {priceLabel}
                         </div>
                       </div>
                     )}
+
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
                         <div className="rounded-full bg-primary/10 p-2.5 text-primary shrink-0">{iconFor(a.slug)}</div>
@@ -739,7 +770,13 @@ export default function Stay() {
                               {a.price_sek} {priceLabel}
                             </div>
                           </div>
+                          {a.slug === "breakfast" && (
+                            <p className="text-xs text-primary/80 font-medium mb-2">
+                              {isSv ? "7 av 10 gäster väljer frukosten — och tackar oss efteråt 🥐" : "7 in 10 guests pick breakfast — and thank us afterwards 🥐"}
+                            </p>
+                          )}
                           {(() => {
+
                             const details = getDetails(a.slug, lang);
                             if (details) {
                               return (
