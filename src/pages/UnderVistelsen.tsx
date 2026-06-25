@@ -68,14 +68,28 @@ export default function UnderVistelsen() {
     })();
   }, []);
 
-  const copySwish = async () => {
+  const handleLateCheckout = () => {
+    const amount = 400;
+    const msg = encodeURIComponent("Sen utcheckning");
+    const swishUrl = `swish://payment?data=${encodeURIComponent(
+      JSON.stringify({ version: 1, payee: { value: SWISH }, amount: { value: amount }, message: { value: "Sen utcheckning" } })
+    )}`;
+    const webUrl = `https://app.swish.nu/1/p/sw/?sw=${SWISH}&amt=${amount}&cur=SEK&msg=${msg}&src=qr`;
     try {
-      await navigator.clipboard.writeText(SWISH);
-      toast.success(isSv ? "Swish-nummer kopierat!" : "Swish number copied!");
-    } catch {
-      toast.error(isSv ? "Kunde inte kopiera" : "Could not copy");
-    }
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("t") || params.get("token") || undefined;
+      supabase.functions.invoke("record-purchase", {
+        body: { kind: "late_checkout", quantity: 1, public_token: token },
+      }).catch(() => {});
+    } catch {}
+    toast.success(isSv ? "Tack! Sen utcheckning bokad." : "Thanks! Late check-out booked.");
+    const start = Date.now();
+    window.open(swishUrl, "_self");
+    setTimeout(() => {
+      if (Date.now() - start < 1600) window.open(webUrl, "_blank", "noopener,noreferrer");
+    }, 800);
   };
+
 
   const t = isSv ? {
     sub: "Under er vistelse",
