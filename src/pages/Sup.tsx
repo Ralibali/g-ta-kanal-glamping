@@ -48,7 +48,7 @@ export default function Sup() {
     waitTitle: "Koden låses upp efter betalning",
     waitHint: "Tryck på Swisha ovan så öppnas Swish och koden visas här.",
     codeLabel: "Kod till hänglåset",
-    codeHint: "Skåpet står vid bryggan. Lås tillbaka när ni paddlat klart — nästa gäst vill också ut.",
+    codeHint: "Skåpet står vid bryggan. Lås tillbaka när ni paddlat klart — nästa gäst vill också SUPa.",
     rulesTitle: "Bra att veta innan ni paddlar",
     r1: "Hyrtiden är 24 timmar från upplåsning.",
     r2: "Flytväst ska bäras på vattnet — alltid.",
