@@ -473,15 +473,26 @@ export default function Stay() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="max-w-2xl mx-auto px-4 py-6">
-          <h1 className="font-serif text-2xl md:text-3xl text-primary">
+      {/* Hero — riktig bild från hemsidan med varm välkomst */}
+      <header className="relative h-[260px] sm:h-[320px] w-full overflow-hidden">
+        <img
+          src={heroImg}
+          alt="Glamping vid Göta kanal, Bergs Slussar"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-background" />
+        <div className="relative h-full max-w-2xl mx-auto px-4 flex flex-col justify-end pb-6">
+          <p className="text-white/80 text-xs uppercase tracking-[0.2em] mb-2 font-sans">
+            {isSv ? "Välkomna till" : "Welcome to"} Go Glamping Sweden
+          </p>
+          <h1 className="font-serif text-3xl md:text-4xl text-white drop-shadow-md">
             {firstName ? t.welcome(firstName) : t.welcomeNoName}
           </h1>
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto p-4 space-y-5">
+      <main className="max-w-2xl mx-auto p-4 space-y-5 -mt-4 relative">
+
         {(() => {
           const TENT_NAMES: Record<string,string> = { sjobris: 'Sjöbrisretreatet', naturkarnan: 'Naturkärnan', lugnetsyta: 'Lugnets Yta' };
           const allTents = Array.from(new Set([data.booking.tent_id, ...extraTents])).filter(Boolean);
