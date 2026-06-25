@@ -27,7 +27,9 @@ import Cleaning from "./pages/Cleaning";
 import Breakfast from "./pages/Breakfast";
 import Boka from "./pages/Boka";
 import Stay from "./pages/Stay";
+import UnderVistelsen from "./pages/UnderVistelsen";
 import ShortRedirect from "./pages/ShortRedirect";
+
 
 const queryClient = new QueryClient();
 
