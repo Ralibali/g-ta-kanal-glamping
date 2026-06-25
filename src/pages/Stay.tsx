@@ -530,10 +530,37 @@ export default function Stay() {
                   </div>
                   {multi && (
                     <div className="text-xs text-muted-foreground mt-1">
-                      {isSv ? "Samma kod till båda tälten." : "Same code for both tents."}
+                      {isSv ? `Samma kod till alla ${tentNames.length} tälten.` : `Same code for all ${tentNames.length} tents.`}
                     </div>
                   )}
                 </div>
+                {/* Snabbåtgärder — direkt access till det gästen behöver mest */}
+                <div className="grid grid-cols-3 gap-2 pt-1">
+                  <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=Go+Glamping+Sweden+Bergs+Slussar"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center gap-1 rounded-lg border bg-card hover:bg-muted/40 transition-colors p-2.5 text-center"
+                  >
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-medium">{isSv ? "Hitta hit" : "Directions"}</span>
+                  </a>
+                  <a
+                    href="tel:+46722254993"
+                    className="flex flex-col items-center gap-1 rounded-lg border bg-card hover:bg-muted/40 transition-colors p-2.5 text-center"
+                  >
+                    <Phone className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-medium">{isSv ? "Ring oss" : "Call us"}</span>
+                  </a>
+                  <a
+                    href="mailto:hej@goglampingsweden.se"
+                    className="flex flex-col items-center gap-1 rounded-lg border bg-card hover:bg-muted/40 transition-colors p-2.5 text-center"
+                  >
+                    <MessageCircle className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-medium">{isSv ? "Mejla" : "Email"}</span>
+                  </a>
+                </div>
+
               </CardContent>
             </Card>
           );
