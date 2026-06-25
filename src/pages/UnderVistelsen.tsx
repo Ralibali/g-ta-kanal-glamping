@@ -5,6 +5,8 @@ import {
   Wifi, Flame, Cigarette, Dog, Info, Footprints, CheckCircle2, AlertCircle,
   Coffee, MessageCircle, ShoppingBag, Car, Heart
 } from "lucide-react";
+import { LanguageProvider } from "@/i18n/LanguageContext";
+import ChatWidget from "@/components/ChatWidget";
 import heroImg from "@/assets/glamping-sunset.jpg";
 
 export default function UnderVistelsen() {
