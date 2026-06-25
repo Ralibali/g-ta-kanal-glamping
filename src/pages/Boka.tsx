@@ -261,7 +261,7 @@ const BookingCard = () => (
           <p className="boka-eyebrow mb-3" style={{ color: PALETTE.gold }}>Bokning</p>
           <h2 className="text-4xl md:text-5xl mb-3">Hitta din vistelse</h2>
           <p className="text-base md:text-lg" style={{ color: "#3a4a3d" }}>
-            Välj datum och antal gäster för att se lediga tält och aktuellt pris.
+            Välj datum och antal gäster för att se lediga tält och aktuellt pris. Alla tre tält passar upp till fyra personer – en dubbelsäng och en mindre bäddsoffa för två.
           </p>
         </div>
 
@@ -413,7 +413,7 @@ const faqs = [
   { q: "När behöver vi checka ut?", a: "Utcheckning sker senast klockan 11:00. Vill ni stanna längre kan sen utcheckning ofta läggas till mot en tilläggsavgift." },
   { q: "Finns det toalett och dusch?", a: "Ja, det finns ett servicehus med moderna toaletter och duschar i närheten av tälten." },
   { q: "Kan vi lägga till frukost?", a: "Ja, frukost kan läggas till vid bokningen som ett tillval och serveras vid Bergs slussar." },
-  { q: "Får barn bo i tälten?", a: "Ja, barn är varmt välkomna. Kontakta oss gärna om ni behöver en extra bädd så löser vi det." },
+  { q: "Får barn bo i tälten?", a: "Ja, barn är varmt välkomna. Alla tält har en dubbelsäng och en mindre bäddsoffa för två, så det finns plats för upp till fyra gäster." },
   { q: "Finns det värme och el?", a: "Ja, alla tält har värme och eluttag så att vistelsen blir behaglig oavsett väder." },
   { q: "Hur fungerar incheckningen?", a: "Incheckningen är digital. Ni får en kod via e-post i god tid innan ankomst och kan checka in själva när det passar er." },
   { q: "Finns parkering?", a: "Ja, det finns parkering i anslutning till Bergs slussar inom kort gångavstånd från glampingen." },

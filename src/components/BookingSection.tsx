@@ -41,8 +41,8 @@ const BookingSection = () => {
           </h2>
           <p className="text-primary-foreground/70 text-lg max-w-lg mx-auto">
             {lang === "en"
-              ? "Select dates and number of guests below to reserve your glamping experience by Göta Canal."
-              : "Välj datum och antal gäster nedan för att reservera din glamping-upplevelse vid Göta kanal."}
+              ? "Select dates and number of guests below. All three tents fit up to four guests with a double bed and a smaller sofa bed for two."
+              : "Välj datum och antal gäster nedan. Alla tre tält passar upp till fyra personer med en dubbelsäng och en mindre bäddsoffa för två."}
           </p>
         </div>
 
