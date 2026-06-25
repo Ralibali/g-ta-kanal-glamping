@@ -70,7 +70,7 @@ function buildBody(name: string | null, link: string, lang: Lang): string {
   const hi = name && name.trim() ? greetings[lang](name.trim()) : noName[lang]
 
   const welcome: Record<Lang, string> = {
-    sv: 'Välkommen till Bergs Slussar Glamping! Hoppas ni får en härlig vistelse.',
+    sv: 'Du är nu incheckad och varmt välkomna till Bergs Slussar Glamping! Vi hoppas så att ni får en härlig vistelse och tack för att ni besöker oss!',
     en: 'Welcome to Bergs Slussar Glamping! Hope you have a lovely stay.',
     de: 'Willkommen bei Bergs Slussar Glamping! Wir wünschen einen schönen Aufenthalt.',
     da: 'Velkommen til Bergs Slussar Glamping! Vi håber, I får et dejligt ophold.',
@@ -79,7 +79,7 @@ function buildBody(name: string | null, link: string, lang: Lang): string {
     fr: 'Bienvenue à Bergs Slussar Glamping ! Nous vous souhaitons un excellent séjour.',
   }
   const info: Record<Lang, string> = {
-    sv: `Här hittar ni allt ni behöver under vistelsen – kod, tips och bra att veta: ${link}`,
+    sv: `Här hittar ni allt ni behöver under vistelsen – tips och bra att veta: ${link}`,
     en: `Here's everything you need during your stay – code, tips and good to know: ${link}`,
     de: `Hier finden Sie alles für Ihren Aufenthalt – Code, Tipps und Wissenswertes: ${link}`,
     da: `Her finder I alt til opholdet – kode, tips og godt at vide: ${link}`,
@@ -87,9 +87,17 @@ function buildBody(name: string | null, link: string, lang: Lang): string {
     nl: `Hier vind je alles voor je verblijf – code, tips en goed om te weten: ${link}`,
     fr: `Voici tout ce qu'il vous faut pendant votre séjour – code, conseils et infos : ${link}`,
   }
-  const signature = '/Bergs Slussar Glamping'
+  const signature: Record<Lang, string> = {
+    sv: 'Soliga hälsningar,\nBergs Slussar Glamping',
+    en: '/Bergs Slussar Glamping',
+    de: '/Bergs Slussar Glamping',
+    da: '/Bergs Slussar Glamping',
+    no: '/Bergs Slussar Glamping',
+    nl: '/Bergs Slussar Glamping',
+    fr: '/Bergs Slussar Glamping',
+  }
 
-  return [hi, '', welcome[lang], '', info[lang], '', signature].join('\n')
+  return [hi, '', welcome[lang], '', info[lang], '', signature[lang]].join('\n')
 }
 
 Deno.serve(async (req) => {
