@@ -168,27 +168,8 @@ export default function Cleaning() {
         }
       });
     });
-    // Arrival-only days also need cleaning
-    TENTS.forEach((t) => {
-      rows.forEach((s) => {
-        if (s.tent_id !== t.id) return;
-        if (s.checkin_date < today || s.checkin_date > endStr) return;
-        const hasDepSameDay = rows.some((x) => x.tent_id === t.id && x.checkout_date === s.checkin_date);
-        if (hasDepSameDay) return;
-        const row = addDate(s.checkin_date);
-        let existing = row.tents.find((x) => x.tent_id === t.id);
-        if (!existing) {
-          existing = {
-            tent_id: t.id, tentNo: t.no, tentName: t.name,
-            hasArrival: false, hasDeparture: false,
-            guests: 0, lateCheckout: false,
-          };
-          row.tents.push(existing);
-        }
-        existing.hasArrival = true;
-        existing.guests = s.guests ?? 0;
-      });
-    });
+    // Note: arrival-only days are NOT cleaning days. Cleaning happens only when a guest leaves.
+
     const list = Array.from(map.values())
       .filter((r) => r.tents.length > 0)
       .sort((a, b) => a.date.localeCompare(b.date));
