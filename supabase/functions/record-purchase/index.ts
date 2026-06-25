@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
   const lines = [
     kind === 'late_checkout' ? 'En gäst har just bokat sen utcheckning till kl 12:00 (400 kr).' : `En gäst har just hyrt ${qty} SUP (${total} kr) i 24 timmar.`,
     '',
-    `Belopp: ${total} kr (Swish till 0722254993)`,
+    `Belopp: ${total} kr (Swish till 1230628289)`,
     booking ? `Gäst: ${booking.guest_name ?? '—'}` : 'Gäst: SUP-walk-in (ingen bokning kopplad)',
     booking ? `Bokningsnummer: ${booking.booking_number}` : '',
     booking ? `Tält: ${booking.tent_name ?? booking.tent_id}` : '',
