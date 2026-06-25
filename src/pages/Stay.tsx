@@ -10,11 +10,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import addonEarlyCheckinImg from "@/assets/glamping-exterior-deck.jpg";
+import heroImg from "@/assets/glamping-sunset.jpg";
+import addonBreakfastImg from "@/assets/glamping-interior-cozy.jpg";
+import addonFikaImg from "@/assets/glamping-reading.jpg";
 
-// Använder endast riktiga bilder från hemsidan. För frukost & fika saknas äkta foton — ladda upp dem så byter jag in direkt.
+// Använder endast riktiga bilder från hemsidan.
 const ADDON_IMAGES: Record<string, string> = {
   early_checkin: addonEarlyCheckinImg,
+  breakfast: addonBreakfastImg,
+  fika_bag: addonFikaImg,
 };
+
 
 interface Addon {
   id: string; slug: string;
@@ -28,12 +34,14 @@ interface BookingInfo {
   tent_id: string; tent_name: string;
   checkin_date: string; checkout_date: string;
   nights: number; language: string;
+  tent_ids?: string[] | null;
 }
 interface Order { id: string; addon_id: string; quantity: number; total_sek: number; status: string }
 interface StayData {
   booking: BookingInfo & { booking_number?: string };
   addons: Addon[];
   orders: Order[];
+
   settings: { order_cutoff_days?: number; swish_number?: string; swish_payee?: string };
 }
 
@@ -385,7 +393,11 @@ export default function Stay() {
       if (error) console.error(error);
       const sd = rpc as StayData | null;
       setData(sd);
-      if (sd?.booking?.booking_number) {
+      // Tält-IDs kommer nu direkt från RPC:n (tent_ids); fall back till legacy-query för säkerhets skull.
+      const fromRpc = sd?.booking?.tent_ids;
+      if (Array.isArray(fromRpc) && fromRpc.length > 0) {
+        setExtraTents(fromRpc);
+      } else if (sd?.booking?.booking_number) {
         const { data: stays } = await (supabase as any)
           .from("tent_stays")
           .select("tent_id")
@@ -395,6 +407,7 @@ export default function Stay() {
       setLoading(false);
     })();
   }, [token]);
+
 
 
   if (loading) return <Centered>{COPY.sv.loading}</Centered>;
@@ -460,15 +473,26 @@ export default function Stay() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="max-w-2xl mx-auto px-4 py-6">
-          <h1 className="font-serif text-2xl md:text-3xl text-primary">
+      {/* Hero — riktig bild från hemsidan med varm välkomst */}
+      <header className="relative h-[260px] sm:h-[320px] w-full overflow-hidden">
+        <img
+          src={heroImg}
+          alt="Glamping vid Göta kanal, Bergs Slussar"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-background" />
+        <div className="relative h-full max-w-2xl mx-auto px-4 flex flex-col justify-end pb-6">
+          <p className="text-white/80 text-xs uppercase tracking-[0.2em] mb-2 font-sans">
+            {isSv ? "Välkomna till" : "Welcome to"} Go Glamping Sweden
+          </p>
+          <h1 className="font-serif text-3xl md:text-4xl text-white drop-shadow-md">
             {firstName ? t.welcome(firstName) : t.welcomeNoName}
           </h1>
         </div>
       </header>
 
-      <main className="max-w-2xl mx-auto p-4 space-y-5">
+      <main className="max-w-2xl mx-auto p-4 space-y-5 -mt-4 relative">
+
         {(() => {
           const TENT_NAMES: Record<string,string> = { sjobris: 'Sjöbrisretreatet', naturkarnan: 'Naturkärnan', lugnetsyta: 'Lugnets Yta' };
           const allTents = Array.from(new Set([data.booking.tent_id, ...extraTents])).filter(Boolean);
@@ -506,10 +530,37 @@ export default function Stay() {
                   </div>
                   {multi && (
                     <div className="text-xs text-muted-foreground mt-1">
-                      {isSv ? "Samma kod till båda tälten." : "Same code for both tents."}
+                      {isSv ? `Samma kod till alla ${tentNames.length} tälten.` : `Same code for all ${tentNames.length} tents.`}
                     </div>
                   )}
                 </div>
+                {/* Snabbåtgärder — direkt access till det gästen behöver mest */}
+                <div className="grid grid-cols-3 gap-2 pt-1">
+                  <a
+                    href="https://www.google.com/maps/dir/?api=1&destination=Go+Glamping+Sweden+Bergs+Slussar"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center gap-1 rounded-lg border bg-card hover:bg-muted/40 transition-colors p-2.5 text-center"
+                  >
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-medium">{isSv ? "Hitta hit" : "Directions"}</span>
+                  </a>
+                  <a
+                    href="tel:+46722254993"
+                    className="flex flex-col items-center gap-1 rounded-lg border bg-card hover:bg-muted/40 transition-colors p-2.5 text-center"
+                  >
+                    <Phone className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-medium">{isSv ? "Ring oss" : "Call us"}</span>
+                  </a>
+                  <a
+                    href="mailto:hej@goglampingsweden.se"
+                    className="flex flex-col items-center gap-1 rounded-lg border bg-card hover:bg-muted/40 transition-colors p-2.5 text-center"
+                  >
+                    <MessageCircle className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-medium">{isSv ? "Mejla" : "Email"}</span>
+                  </a>
+                </div>
+
               </CardContent>
             </Card>
           );
@@ -762,103 +813,7 @@ export default function Stay() {
               </div>
             </div>
 
-            {/* "Ingår redan" — positionerar tillvalen som extra lyx, inte basbehov */}
-            <Card className="bg-muted/40 border-dashed">
-              <CardContent className="p-4">
-                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
-                  {isSv ? "Detta ingår alltid i din bokning" : "Always included in your booking"}
-                </div>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
-                  <div className="flex items-start gap-2"><Bed className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Bäddade sängar med sänglinne & handdukar" : "Made beds with linens & towels"}</span></div>
-                  <div className="flex items-start gap-2"><Flame className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "El, värme & fläkt" : "Electricity, heat & fan"}</span></div>
-                  <div className="flex items-start gap-2"><UtensilsCrossed className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Minikylskåp i tältet" : "Mini-fridge in the tent"}</span></div>
-                  <div className="flex items-start gap-2"><Coffee className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Kaffe, te & en flaska vatten" : "Coffee, tea & a bottle of water"}</span></div>
-                  <div className="flex items-start gap-2"><Sparkles className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Städning vid utcheckning" : "Cleaning at check-out"}</span></div>
-                  <div className="flex items-start gap-2"><ShowerHead className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Servicehus: toalett, dusch & skötrum" : "Service house: toilet, shower & changing room"}</span></div>
-                </div>
-              </CardContent>
-            </Card>
 
-            {/* Mer information om ditt besök */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="font-serif text-xl flex items-center gap-2">
-                  <Info className="h-5 w-5 text-primary" />
-                  {isSv ? "Mer information om ditt besök" : "More info about your visit"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-sm">
-                <InfoRow icon={<MapPin className="h-4 w-4" />} title={isSv ? "Adress & hitta hit" : "Address & getting here"}>
-                  {isSv ? (
-                    <>Bergs Slussar, 590 77 Vreta Kloster. Sök på <strong>"Go Glamping Sweden, Bergs Slussar"</strong> i Google Maps eller Waze — du kommer rätt fram till parkeringen.</>
-                  ) : (
-                    <>Bergs Slussar, 590 77 Vreta Kloster, Sweden. Search <strong>"Go Glamping Sweden, Bergs Slussar"</strong> in Google Maps or Waze — it leads straight to the parking lot.</>
-                  )}
-                </InfoRow>
-
-                <InfoRow icon={<Car className="h-4 w-4" />} title={isSv ? "Parkering" : "Parking"}>
-                  {isSv
-                    ? "Gratis parkering finns i direkt anslutning till slussområdet, ca 100 meter från tälten. Sommartid kan det vara fullt mitt på dagen — kom du gärna lite tidigare eller senare på eftermiddagen. Ingen parkering vid själva tälten (det är gångavstånd med era väskor)."
-                    : "Free parking is available right by the lock area, about 100 m from the tents. In peak summer the lot can fill up midday — arrive a little earlier or later in the afternoon. No parking next to the tents themselves (short walk with your bags)."}
-                </InfoRow>
-
-                <InfoRow icon={<Clock className="h-4 w-4" />} title={isSv ? "Incheckning & utcheckning" : "Check-in & check-out"}>
-                  {isSv
-                    ? "Incheckning från kl 15:00, utcheckning senast kl 10:00. Sen utcheckning till kl 12:00 kan bokas i mån av plats (400 kr via Swish — meddela oss i förväg). Du checkar in själv — vi mejlar tydliga instruktioner och en kodlås-kod dagen före ankomst."
-                    : "Check-in from 3:00 pm, check-out by 10:00 am. Late check-out until 12:00 noon can be booked subject to availability (400 SEK via Swish — let us know in advance). Self check-in — we email clear instructions and a lock code the day before arrival."}
-                </InfoRow>
-
-                <InfoRow icon={<ShowerHead className="h-4 w-4" />} title={isSv ? "Servicehus (toalett & dusch)" : "Service house (toilet & shower)"}>
-                  {isSv
-                    ? "Fräscht servicehus med varma duschar, toaletter och handfat ca 150 meter från tälten. Öppet dygnet runt under hela din vistelse — koden får du i incheckningsmejlet."
-                    : "Fresh service house with warm showers, toilets and sinks about 150 m from the tents. Open 24/7 throughout your stay — the code arrives with your check-in email."}
-                </InfoRow>
-
-                <InfoRow icon={<UtensilsCrossed className="h-4 w-4" />} title={isSv ? "Mat & matlagning" : "Food & cooking"}>
-                  {isSv
-                    ? "Av brandsäkerhetsskäl är matlagning inte tillåten i eller vid tälten. Beställ vår frukost eller fikapåse — eller gå till restaurangen vid slussarna (ca 200 m). I Berg och Vreta Kloster finns även café, glasskiosk och livsmedelsbutik."
-                    : "For fire safety reasons, cooking is not allowed in or next to the tents. Order our breakfast or fika bag — or walk to the restaurant by the locks (~200 m). The villages of Berg and Vreta Kloster also have a café, ice-cream kiosk and grocery store nearby."}
-                </InfoRow>
-
-                <InfoRow icon={<Wifi className="h-4 w-4" />} title={isSv ? "Wifi & täckning" : "Wifi & coverage"}>
-                  {isSv
-                    ? "Vi har medvetet valt att inte installera wifi — platsen är till för att koppla av från skärmar. 4G/5G-täckningen är dock utmärkt om du behöver vara uppkopplad."
-                    : "We've intentionally skipped wifi — this place is for unplugging. 4G/5G coverage is excellent if you do need to stay connected."}
-                </InfoRow>
-
-                <InfoRow icon={<Flame className="h-4 w-4" />} title={isSv ? "Eldning & grill" : "Fire & BBQ"}>
-                  {isSv
-                    ? "Öppen eld, marschaller och engångsgrillar är inte tillåtna. Under sommaren råder ofta eldningsförbud i Östergötland — vi följer länsstyrelsens beslut."
-                    : "Open fires, torches and disposable BBQs are not permitted. Fire bans are common in Östergötland during summer — we follow the county board's regulations."}
-                </InfoRow>
-
-                <InfoRow icon={<Cigarette className="h-4 w-4" />} title={isSv ? "Rökning" : "Smoking"}>
-                  {isSv
-                    ? "Tälten är helt rökfria. Rökning är endast tillåten utomhus, väl bort från tältdukar — och fimpa alltid i medhavd asköra."
-                    : "All tents are strictly non-smoking. Smoking is only allowed outdoors, well away from the canvas — and always extinguish butts properly."}
-                </InfoRow>
-
-                <InfoRow icon={<Dog className="h-4 w-4" />} title={isSv ? "Husdjur" : "Pets"}>
-                  {isSv
-                    ? "Tyvärr tar vi inte emot husdjur i tälten — av hänsyn till allergiker och tältdukens skick."
-                    : "Sorry, pets are not allowed in the tents — out of consideration for allergy-sensitive guests and to protect the canvas."}
-                </InfoRow>
-
-                <InfoRow icon={<Trees className="h-4 w-4" />} title={isSv ? "Att göra i närheten" : "Things to do nearby"}>
-                  {isSv
-                    ? "Se båtarna slussa på Göta kanal, hyr cykel eller kanot, vandra till Roxen, besök Vreta klosterkyrka eller åk in till Linköping (20 min med bil)."
-                    : "Watch boats pass through the Göta Canal locks, rent a bike or canoe, hike to Lake Roxen, visit Vreta Abbey Church, or drive into Linköping (20 min by car)."}
-                </InfoRow>
-
-                <InfoRow icon={<Phone className="h-4 w-4" />} title={isSv ? "Kontakt under vistelsen" : "Contact during your stay"}>
-                  {isSv ? (
-                    <>Christoffer svarar i mobilen: <a href="tel:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. Vi finns nära till hands om något behövs.</>
-                  ) : (
-                    <>Christoffer is reachable on mobile: <a href="tel:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. We're close by if anything comes up.</>
-                  )}
-                </InfoRow>
-              </CardContent>
-            </Card>
 
             {(() => {
               const foodSelected = data.addons.some(
@@ -937,6 +892,106 @@ export default function Stay() {
             )}
           </>
         )}
+
+        {/* "Ingår redan" — positionerar tillvalen som extra lyx, inte basbehov. Visas alltid. */}
+        <Card className="bg-muted/40 border-dashed">
+          <CardContent className="p-4">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">
+              {isSv ? "Detta ingår alltid i din bokning" : "Always included in your booking"}
+            </div>
+            <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+              <div className="flex items-start gap-2"><Bed className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Bäddade sängar med sänglinne & handdukar" : "Made beds with linens & towels"}</span></div>
+              <div className="flex items-start gap-2"><Flame className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "El, värme & fläkt" : "Electricity, heat & fan"}</span></div>
+              <div className="flex items-start gap-2"><UtensilsCrossed className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Minikylskåp i tältet" : "Mini-fridge in the tent"}</span></div>
+              <div className="flex items-start gap-2"><Coffee className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Kaffe, te & en flaska vatten" : "Coffee, tea & a bottle of water"}</span></div>
+              <div className="flex items-start gap-2"><Sparkles className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Städning vid utcheckning" : "Cleaning at check-out"}</span></div>
+              <div className="flex items-start gap-2"><ShowerHead className="h-4 w-4 text-primary/70 mt-0.5 shrink-0" /><span>{isSv ? "Servicehus: toalett, dusch & skötrum" : "Service house: toilet, shower & changing room"}</span></div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Mer information om ditt besök — visas alltid, även efter cutoff. */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="font-serif text-xl flex items-center gap-2">
+              <Info className="h-5 w-5 text-primary" />
+              {isSv ? "Mer information om ditt besök" : "More info about your visit"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm">
+            <InfoRow icon={<MapPin className="h-4 w-4" />} title={isSv ? "Adress & hitta hit" : "Address & getting here"}>
+              {isSv ? (
+                <>Bergs Slussar, 590 77 Vreta Kloster. Sök på <strong>"Go Glamping Sweden, Bergs Slussar"</strong> i Google Maps eller Waze — du kommer rätt fram till parkeringen. <a href="https://www.google.com/maps/dir/?api=1&destination=Go+Glamping+Sweden+Bergs+Slussar" target="_blank" rel="noopener noreferrer" className="text-primary underline font-medium">Öppna i Google Maps →</a></>
+              ) : (
+                <>Bergs Slussar, 590 77 Vreta Kloster, Sweden. Search <strong>"Go Glamping Sweden, Bergs Slussar"</strong> in Google Maps or Waze — it leads straight to the parking lot. <a href="https://www.google.com/maps/dir/?api=1&destination=Go+Glamping+Sweden+Bergs+Slussar" target="_blank" rel="noopener noreferrer" className="text-primary underline font-medium">Open in Google Maps →</a></>
+              )}
+            </InfoRow>
+
+            <InfoRow icon={<Car className="h-4 w-4" />} title={isSv ? "Parkering" : "Parking"}>
+              {isSv
+                ? "Gratis parkering finns i direkt anslutning till slussområdet, ca 100 meter från tälten. Sommartid kan det vara fullt mitt på dagen — kom du gärna lite tidigare eller senare på eftermiddagen. Ingen parkering vid själva tälten (det är gångavstånd med era väskor)."
+                : "Free parking is available right by the lock area, about 100 m from the tents. In peak summer the lot can fill up midday — arrive a little earlier or later in the afternoon. No parking next to the tents themselves (short walk with your bags)."}
+            </InfoRow>
+
+            <InfoRow icon={<Clock className="h-4 w-4" />} title={isSv ? "Incheckning & utcheckning" : "Check-in & check-out"}>
+              {isSv
+                ? "Incheckning från kl 15:00, utcheckning senast kl 10:00. Sen utcheckning till kl 12:00 kan bokas i mån av plats (400 kr via Swish — meddela oss i förväg). Du checkar in själv — vi mejlar tydliga instruktioner och en kodlås-kod dagen före ankomst."
+                : "Check-in from 3:00 pm, check-out by 10:00 am. Late check-out until 12:00 noon can be booked subject to availability (400 SEK via Swish — let us know in advance). Self check-in — we email clear instructions and a lock code the day before arrival."}
+            </InfoRow>
+
+            <InfoRow icon={<ShowerHead className="h-4 w-4" />} title={isSv ? "Servicehus (toalett & dusch)" : "Service house (toilet & shower)"}>
+              {isSv
+                ? "Fräscht servicehus med varma duschar, toaletter och handfat ca 150 meter från tälten. Öppet dygnet runt under hela din vistelse — koden får du i incheckningsmejlet."
+                : "Fresh service house with warm showers, toilets and sinks about 150 m from the tents. Open 24/7 throughout your stay — the code arrives with your check-in email."}
+            </InfoRow>
+
+            <InfoRow icon={<UtensilsCrossed className="h-4 w-4" />} title={isSv ? "Mat & matlagning" : "Food & cooking"}>
+              {isSv
+                ? "Av brandsäkerhetsskäl är matlagning inte tillåten i eller vid tälten. Beställ vår frukost eller fikapåse — eller gå till restaurangen vid slussarna (ca 200 m). I Berg och Vreta Kloster finns även café, glasskiosk och livsmedelsbutik."
+                : "For fire safety reasons, cooking is not allowed in or next to the tents. Order our breakfast or fika bag — or walk to the restaurant by the locks (~200 m). The villages of Berg and Vreta Kloster also have a café, ice-cream kiosk and grocery store nearby."}
+            </InfoRow>
+
+            <InfoRow icon={<Wifi className="h-4 w-4" />} title={isSv ? "Wifi & täckning" : "Wifi & coverage"}>
+              {isSv
+                ? "Vi har medvetet valt att inte installera wifi — platsen är till för att koppla av från skärmar. 4G/5G-täckningen är dock utmärkt om du behöver vara uppkopplad."
+                : "We've intentionally skipped wifi — this place is for unplugging. 4G/5G coverage is excellent if you do need to stay connected."}
+            </InfoRow>
+
+            <InfoRow icon={<Flame className="h-4 w-4" />} title={isSv ? "Eldning & grill" : "Fire & BBQ"}>
+              {isSv
+                ? "Öppen eld, marschaller och engångsgrillar är inte tillåtna. Under sommaren råder ofta eldningsförbud i Östergötland — vi följer länsstyrelsens beslut."
+                : "Open fires, torches and disposable BBQs are not permitted. Fire bans are common in Östergötland during summer — we follow the county board's regulations."}
+            </InfoRow>
+
+            <InfoRow icon={<Cigarette className="h-4 w-4" />} title={isSv ? "Rökning" : "Smoking"}>
+              {isSv
+                ? "Tälten är helt rökfria. Rökning är endast tillåten utomhus, väl bort från tältdukar — och fimpa alltid i medhavd asköra."
+                : "All tents are strictly non-smoking. Smoking is only allowed outdoors, well away from the canvas — and always extinguish butts properly."}
+            </InfoRow>
+
+            <InfoRow icon={<Dog className="h-4 w-4" />} title={isSv ? "Husdjur" : "Pets"}>
+              {isSv
+                ? "Tyvärr tar vi inte emot husdjur i tälten — av hänsyn till allergiker och tältdukens skick."
+                : "Sorry, pets are not allowed in the tents — out of consideration for allergy-sensitive guests and to protect the canvas."}
+            </InfoRow>
+
+            <InfoRow icon={<Trees className="h-4 w-4" />} title={isSv ? "Att göra i närheten" : "Things to do nearby"}>
+              {isSv
+                ? "Se båtarna slussa på Göta kanal, hyr cykel eller kanot, vandra till Roxen, besök Vreta klosterkyrka eller åk in till Linköping (20 min med bil)."
+                : "Watch boats pass through the Göta Canal locks, rent a bike or canoe, hike to Lake Roxen, visit Vreta Abbey Church, or drive into Linköping (20 min by car)."}
+            </InfoRow>
+
+            <InfoRow icon={<Phone className="h-4 w-4" />} title={isSv ? "Kontakt under vistelsen" : "Contact during your stay"}>
+              {isSv ? (
+                <>Christoffer svarar i mobilen: <a href="tel:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. Vi finns nära till hands om något behövs.</>
+              ) : (
+                <>Christoffer is reachable on mobile: <a href="tel:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. We're close by if anything comes up.</>
+              )}
+            </InfoRow>
+          </CardContent>
+        </Card>
+
+
 
         {/* Avbokning & villkor — varm sammanfattning, inte juridisk vägg */}
         <Card className="bg-card border-primary/20">
