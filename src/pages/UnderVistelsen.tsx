@@ -49,7 +49,7 @@ export default function UnderVistelsen() {
     pets: "Husdjur",
     petsBody: "Husdjur är tillåtna mot en avgift som anges vid bokningen.",
     beforeLeave: "Innan ni åker hem",
-    beforeIntro: "En liten vänlig påminnelse så att vi kan ta emot nästa gäst i samma fina skick:",
+    beforeIntro: "En påminnelse så att vi kan ta emot nästa gäst i samma fina skick:",
     washUp: "Diska det ni använt (koppar, glas, bestick) och ställ tillbaka i tältet.",
     trash: "Kasta sopor i kärlen vid parkeringen — låt inte mat eller skräp ligga kvar.",
     dontForget: "Glöm inte saker! Kolla under sängen, i kylen och i tältets ytterfack.",
