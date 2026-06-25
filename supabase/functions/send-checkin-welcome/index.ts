@@ -70,22 +70,22 @@ function buildBody(name: string | null, link: string, lang: Lang): string {
   const hi = name && name.trim() ? greetings[lang](name.trim()) : noName[lang]
 
   const welcome: Record<Lang, string> = {
-    sv: 'Du är nu incheckad och varmt välkomna till Bergs Slussar Glamping! Vi hoppas så att ni får en härlig vistelse och tack för att ni besöker oss!',
-    en: 'Welcome to Bergs Slussar Glamping! Hope you have a lovely stay.',
-    de: 'Willkommen bei Bergs Slussar Glamping! Wir wünschen einen schönen Aufenthalt.',
-    da: 'Velkommen til Bergs Slussar Glamping! Vi håber, I får et dejligt ophold.',
-    no: 'Velkommen til Bergs Slussar Glamping! Vi håper dere får et fint opphold.',
-    nl: 'Welkom bij Bergs Slussar Glamping! We hopen dat jullie een fijn verblijf hebben.',
-    fr: 'Bienvenue à Bergs Slussar Glamping ! Nous vous souhaitons un excellent séjour.',
+    sv: 'Varmt välkomna till Bergs Slussar Glamping! Vi hoppas att ni får en härlig vistelse och tack för att ni besöker oss!',
+    en: 'Warm welcome to Bergs Slussar Glamping! We hope you have a lovely stay and thank you for visiting us!',
+    de: 'Herzlich willkommen bei Bergs Slussar Glamping! Wir wünschen Ihnen einen schönen Aufenthalt und danken für Ihren Besuch!',
+    da: 'Hjertelig velkommen til Bergs Slussar Glamping! Vi håber, I får et dejligt ophold, og tak fordi I besøger os!',
+    no: 'Hjertelig velkommen til Bergs Slussar Glamping! Vi håper dere får et fint opphold, og takk for at dere besøker oss!',
+    nl: 'Hartelijk welkom bij Bergs Slussar Glamping! We hopen dat jullie een fijn verblijf hebben en bedankt voor jullie bezoek!',
+    fr: 'Bienvenue chaleureuse à Bergs Slussar Glamping ! Nous vous souhaitons un excellent séjour et vous remercions de votre visite !',
   }
   const info: Record<Lang, string> = {
-    sv: `Här hittar ni allt ni behöver under vistelsen – tips och bra att veta: ${link}`,
-    en: `Here's everything you need during your stay – code, tips and good to know: ${link}`,
-    de: `Hier finden Sie alles für Ihren Aufenthalt – Code, Tipps und Wissenswertes: ${link}`,
-    da: `Her finder I alt til opholdet – kode, tips og godt at vide: ${link}`,
-    no: `Her finner dere alt dere trenger under oppholdet – kode, tips og godt å vite: ${link}`,
-    nl: `Hier vind je alles voor je verblijf – code, tips en goed om te weten: ${link}`,
-    fr: `Voici tout ce qu'il vous faut pendant votre séjour – code, conseils et infos : ${link}`,
+    sv: `Här hittar ni allt ni behöver under vistelsen - tips och bra att veta: ${link}`,
+    en: `Here you'll find everything you need during your stay - tips and good to know: ${link}`,
+    de: `Hier finden Sie alles für Ihren Aufenthalt - Tipps und Wissenswertes: ${link}`,
+    da: `Her finder I alt, hvad I har brug for under opholdet - tips og godt at vide: ${link}`,
+    no: `Her finner dere alt dere trenger under oppholdet - tips og godt å vite: ${link}`,
+    nl: `Hier vind je alles wat je nodig hebt tijdens je verblijf - tips en goed om te weten: ${link}`,
+    fr: `Vous trouverez ici tout ce qu'il vous faut pendant votre séjour - conseils et infos utiles : ${link}`,
   }
   const signature: Record<Lang, string> = {
     sv: 'Soliga hälsningar,\nBergs Slussar Glamping',
