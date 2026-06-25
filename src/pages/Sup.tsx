@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Waves, ShieldCheck, Clock, Lock, CheckCircle2, Zap, MapPin, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import ChatWidget from "@/components/ChatWidget";
 import heroImg from "@/assets/sup-canal.jpg";
 
 const SWISH = "0722254993";
