@@ -30,7 +30,7 @@ export default function Sup() {
 
   const t = lang === "sv" ? {
     sub: "SUP-uthyrning",
-    h1: "Paddla på kanalen",
+    h1: "SUPa på kanalen",
     intro: "Hyr en SUP ett helt dygn — flytväst ingår. Vi har två stycken, först till kvarn.",
     chooseTitle: "Hur många SUP:ar?",
     one: "1 SUP",
