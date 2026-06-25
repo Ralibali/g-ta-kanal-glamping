@@ -117,45 +117,56 @@ const Header = () => {
 
 const StickyMobileCTA = () => {
   const [visible, setVisible] = useState(false);
+  const [overBooking, setOverBooking] = useState(false);
 
   useEffect(() => {
-    const target = document.getElementById("boka");
-    if (!target) return;
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        setVisible(!entry.isIntersecting && window.scrollY > 400);
-      },
-      { threshold: 0.05 }
-    );
-    io.observe(target);
     const onScroll = () => {
-      if (window.scrollY < 400) setVisible(false);
+      setVisible(window.scrollY > 320);
+      const target = document.getElementById("boka");
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        // Hide when the booking widget is on-screen (no need to nudge the user)
+        setOverBooking(rect.top < window.innerHeight * 0.6 && rect.bottom > window.innerHeight * 0.2);
+      }
     };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      io.disconnect();
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  if (!visible) return null;
+  if (!visible || overBooking) return null;
 
   return (
     <div
-      className="md:hidden fixed bottom-0 inset-x-0 z-40 px-4 py-3"
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
       style={{
-        background: `${PALETTE.white}f0`,
-        backdropFilter: "blur(12px)",
-        borderTop: `1px solid ${PALETTE.sand}55`,
+        background: `${PALETTE.white}f5`,
+        backdropFilter: "blur(14px)",
+        borderTop: `1px solid ${PALETTE.sand}66`,
+        boxShadow: "0 -10px 30px -10px rgba(36,48,39,0.18)",
       }}
     >
-      <a
-        href="#boka"
-        className="flex items-center justify-center w-full rounded-full text-base font-medium"
-        style={{ background: PALETTE.primary, color: PALETTE.white, minHeight: 52 }}
-      >
-        Se lediga datum
-      </a>
+      <div className="flex items-center gap-2">
+        <a
+          href="#boka"
+          className="flex-1 flex items-center justify-center gap-2 rounded-full text-[15px] font-medium"
+          style={{ background: PALETTE.primary, color: PALETTE.white, minHeight: 52 }}
+        >
+          Se lediga datum
+          <ArrowRight size={17} strokeWidth={1.8} />
+        </a>
+        <a
+          href="tel:+46722254993"
+          aria-label="Ring oss"
+          className="flex items-center justify-center rounded-full"
+          style={{ width: 52, height: 52, border: `1px solid ${PALETTE.primary}55`, color: PALETTE.primary, background: PALETTE.white }}
+        >
+          <Phone size={18} strokeWidth={1.7} />
+        </a>
+      </div>
+      <p className="text-center text-[11px] mt-1.5" style={{ color: "#3a4a3d99" }}>
+        Direktbokning · Bästa pris · Bekräftelse direkt
+      </p>
     </div>
   );
 };
