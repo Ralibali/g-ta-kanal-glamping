@@ -293,20 +293,12 @@ export default function UnderVistelsen() {
                 >
                   <Copy className="h-4 w-4" /> {t.copySwish}
                 </button>
-                <div className="grid grid-cols-2 gap-2">
-                  <a
-                    href={`sms:${SWISH_INTL}`}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-sm font-medium"
-                  >
-                    <MessageCircle className="h-4 w-4" /> {t.sms}
-                  </a>
-                  <a
-                    href={`tel:${SWISH_INTL}`}
-                    className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-sm font-medium"
-                  >
-                    <Phone className="h-4 w-4" /> {t.call}
-                  </a>
-                </div>
+                <a
+                  href={`sms:${SWISH_INTL}`}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-sm font-medium"
+                >
+                  <MessageCircle className="h-4 w-4" /> {t.sms}
+                </a>
               </div>
             </div>
           </CardContent>
@@ -429,18 +421,12 @@ export default function UnderVistelsen() {
             <div className="flex items-center gap-2 text-foreground font-medium">
               <Phone className="h-5 w-5 text-primary" /> {t.contactTitle}
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2">
               <a
                 href={`sms:${SWISH_INTL}`}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors py-2.5 text-sm font-medium"
               >
                 <MessageCircle className="h-4 w-4" /> {t.sms}
-              </a>
-              <a
-                href={`tel:${SWISH_INTL}`}
-                className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-sm font-medium"
-              >
-                <Phone className="h-4 w-4" /> {t.call}
               </a>
             </div>
           </CardContent>
