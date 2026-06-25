@@ -71,9 +71,6 @@ export default function UnderVistelsen() {
   const handleLateCheckout = () => {
     const amount = 400;
     const msg = encodeURIComponent("Sen utcheckning");
-    const swishUrl = `swish://payment?data=${encodeURIComponent(
-      JSON.stringify({ version: 1, payee: { value: SWISH }, amount: { value: amount }, message: { value: "Sen utcheckning" } })
-    )}`;
     const webUrl = `https://app.swish.nu/1/p/sw/?sw=${SWISH}&amt=${amount}&cur=SEK&msg=${msg}&src=qr`;
     try {
       const params = new URLSearchParams(window.location.search);
@@ -83,11 +80,7 @@ export default function UnderVistelsen() {
       }).catch(() => {});
     } catch {}
     toast.success(isSv ? "Tack! Sen utcheckning bokad." : "Thanks! Late check-out booked.");
-    const start = Date.now();
-    window.open(swishUrl, "_self");
-    setTimeout(() => {
-      if (Date.now() - start < 1600) window.open(webUrl, "_blank", "noopener,noreferrer");
-    }, 800);
+    window.open(webUrl, "_blank", "noopener,noreferrer");
   };
 
 
