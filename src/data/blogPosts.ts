@@ -170,7 +170,7 @@ Alla tre tält passar utmärkt för familjer. Varje tält har en dubbelsäng och
 
 ## Boka familjens glamping vid Bergs Slussar
 
-Två tält och en kort sommarsäsong – välj era datum medan plats finns.
+Tre tält och en kort sommarsäsong – välj era datum medan plats finns.
     `,
   },
   {
