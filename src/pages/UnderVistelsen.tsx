@@ -318,6 +318,9 @@ export default function UnderVistelsen() {
           {t.footer}
         </p>
       </main>
+      <LanguageProvider value={isSv ? "sv" : "en"}>
+        <ChatWidget />
+      </LanguageProvider>
     </div>
   );
 }
