@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Waves, ShieldCheck, Clock, Lock, Copy, CheckCircle2, Info } from "lucide-react";
+import { Waves, ShieldCheck, Clock, Lock, CheckCircle2, Info } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-const SWISH = "0722254993";
+const SWISH = "0722254993"; // never shown to guests
 const LOCK_CODE = "1234";
 
 type Lang = "sv" | "en";
+
 
 export default function Sup() {
   const [lang, setLang] = useState<Lang>("sv");
@@ -36,10 +38,10 @@ export default function Sup() {
     perDay: "/ dygn",
     incl: "Flytväst ingår",
     totalLabel: "Att swisha",
-    payCta: `Swisha Christoffer ${amount} kr`,
-    payHint: `Skicka ${amount} kr till ${SWISH} (Christoffer). Skriv "SUP" som meddelande.`,
-    afterPaid: "När du swishat – tryck här för att låsa upp",
-    revealCta: "Visa kod till hänglåset",
+    payCta: `Swisha ${amount} kr`,
+    payHint: `Swish-appen öppnas med ${amount} kr förifyllt. När du betalat dyker koden upp automatiskt här nedanför.`,
+    afterPaid: "Tryck Swisha först – sedan visas koden",
+    revealCta: "Jag har redan swishat – visa koden",
     revealedTitle: "Koden till hänglåset",
     revealedHint: "Lås upp skåpet vid bryggan. SUP:arna ligger uppblåsta tillsammans med pump och flytvästar. Lås tillbaka när ni är klara — nästa gäst kommer också vilja paddla.",
     rules: "Bra att veta",
@@ -48,9 +50,6 @@ export default function Sup() {
     r3: "Flytväst ska bäras på vattnet.",
     r4: "Skölj av SUP:en innan ni lägger tillbaka den.",
     r5: "Skador eller borttappad utrustning ersätts av hyrestagaren.",
-    copy: "Kopiera Swish-nummer",
-    copied: "Swish-nummer kopierat!",
-    copyFail: "Kunde inte kopiera",
   } : {
     sub: "SUP rental",
     h1: "Rent a SUP on the canal",
@@ -61,10 +60,10 @@ export default function Sup() {
     perDay: "/ 24h",
     incl: "Life vest included",
     totalLabel: "To Swish",
-    payCta: `Swish Christoffer ${amount} SEK`,
-    payHint: `Send ${amount} SEK to ${SWISH} (Christoffer). Write "SUP" as the message.`,
-    afterPaid: "Once you've paid — tap to unlock",
-    revealCta: "Show lock code",
+    payCta: `Swish ${amount} SEK`,
+    payHint: `The Swish app opens with ${amount} SEK prefilled. Once paid the lock code appears below automatically.`,
+    afterPaid: "Tap Swish first — then the code appears",
+    revealCta: "I've already paid — show the code",
     revealedTitle: "Lock code",
     revealedHint: "Unlock the cabinet by the jetty. The SUPs are inflated and stored with pumps and life vests. Lock it back when you're done — the next guest will want to paddle too.",
     rules: "Good to know",
@@ -73,10 +72,8 @@ export default function Sup() {
     r3: "Life vest must be worn on the water.",
     r4: "Rinse the SUP before putting it back.",
     r5: "Damage or lost gear is covered by the renter.",
-    copy: "Copy Swish number",
-    copied: "Swish number copied!",
-    copyFail: "Could not copy",
   };
+
 
   const copy = async () => {
     try {
