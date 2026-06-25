@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import ChatWidget from "@/components/ChatWidget";
 import heroImg from "@/assets/sup-canal.jpg";
 
-const SWISH = "0722254993";
+const SWISH = "1230628289";
 const LOCK_CODE = "1234";
 
 type Lang = "sv" | "en";
