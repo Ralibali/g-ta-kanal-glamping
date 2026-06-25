@@ -42,13 +42,9 @@ interface Addons {
   fikapase: boolean
 }
 
-function svMessage(name: string | null, tentName: string, flags: Addons): string {
+function svMessage(name: string | null, tentName: string, _flags: Addons): string {
   const greet = name ? `Hej ${name}` : 'Hej'
-  let s = `${greet} och välkommen till oss på Bergs Slussar Glamping!\n\nVåra städare har markerat ${tentName} som klart, så ni är välkomna att checka in från nu. Incheckning sker via QR-koden vid entrén – där kan ni checka in med namn eller bokningsnummer, och får sedan koden till tältet.`
-  if (flags.breakfast) s += `\n\nNi har frukost inkluderat. Den serveras mellan 08:30–09:00 vid portalen halvvägs upp i backen.`
-  if (flags.fikapase) s += `\n\nErt välkomst-fika-paket (fikapåse) står redo i tältet.`
-  s += `\n\nHar ni några frågor? Hör av er till Christoffer per SMS på 0722254993.\n\nVänligen\nBergs Slussar Glamping`
-  return s
+  return `${greet} och välkommen till oss på Bergs Slussar Glamping! Våra städare har markerat ${tentName} som klart, så ni är välkomna att checka in från nu. Incheckning sker via QR-koden vid entrén, där kan ni checka in med namn eller bokningsnummer och får sedan koden till tältet. Soliga hälsningar, Bergs Slussar Glamping`
 }
 
 function enMessage(name: string | null, tentName: string, _flags: Addons): string {
