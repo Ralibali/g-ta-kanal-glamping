@@ -155,7 +155,7 @@ const BoendeBergsSlussar = () => {
       ]}
       cta={{
         heading: "Boka ditt boende vid Bergs Slussar",
-        text: "Två tält, en av Östergötlands vackraste platser och allt du behöver för en avkopplande vistelse. Säsongen är kort – välj dina datum medan plats finns.",
+        text: "Tre tält, en av Östergötlands vackraste platser och allt du behöver för en avkopplande vistelse. Säsongen är kort – välj dina datum medan plats finns.",
         button: "Boka nu",
       }}
     />
