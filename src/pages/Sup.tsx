@@ -76,7 +76,7 @@ export default function Sup() {
     paySub: "Code reveals right after",
     paid: "Paid — code unlocked",
     waitTitle: "Code unlocks after payment",
-    waitHint: "Tap Swish above — Swish opens and the code appears here.",
+    waitHint: "Tap Swish above — Swish opens and the code appears here once payment is complete.",
     codeLabel: "Lock code",
     codeHint: "The cabinet is by the jetty. Lock it back when you're done — the next guest wants to SUP too.",
     rulesTitle: "Good to know before you paddle",
