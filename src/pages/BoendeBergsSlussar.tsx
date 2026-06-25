@@ -57,10 +57,10 @@ const BoendeBergsSlussar = () => {
           body: (
             <>
               <p>
-                Vi har två tält med olika storlek, båda utrustade för att du
-                ska kunna kliva direkt in i en ombonad miljö. Sängarna är
-                bäddade vid ankomst, med riktigt sänglinne och rena
-                handdukar. I tältet finns el för laddning, värme för svala
+                Våra tre tält har samma bekväma upplägg – i varje tält finns en dubbelsäng
+                och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster.
+                Sängarna är bäddade vid ankomst, med riktigt sänglinne och rena
+                handdukar. I varje tält finns el för laddning, värme för svala
                 kvällar, ett minikylskåp och en fläkt för varma dagar. Kaffe,
                 te och en flaska vatten står framme.
               </p>
