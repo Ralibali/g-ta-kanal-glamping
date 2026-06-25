@@ -27,7 +27,7 @@ const FAQSection = () => {
     { q: "Hur långt är det från Linköping?", a: "Det tar cirka femton minuter med bil från centrala Linköping till glampingen. Östgötatrafikens bussar trafikerar också området med hållplats nära." },
     { q: "Vad ingår i tälten?", a: "I varje tält ingår bäddade sängar med sänglinne, handdukar, värme, el, minikylskåp, fläkt samt kaffe, te och en flaska vatten. Städning vid utcheckning ingår också." },
     { q: "Finns dusch och toalett?", a: "Ja, ett fräscht servicehus med dusch och toalett ligger cirka 150 meter från tälten." },
-    { q: "Kan barn bo på glampingen?", a: "Absolut. Barn upp till tolv år har rabatterade priser och kan sova tillsammans med vuxna i dubbelsängen. Sjöbrisretreatet har även en bäddsoffa för extra plats." },
+    { q: "Kan barn bo på glampingen?", a: "Absolut. Barn upp till tolv år har rabatterade priser och kan sova tillsammans med vuxna i dubbelsängen eller på bäddsoffan. Alla tre tält har plats för upp till fyra gäster med en dubbelsäng och en lite mindre bäddsoffa för två." },
     { q: "När är glampingsäsongen?", a: "Säsongen löper från maj till september. Juli och tidig augusti är intensivast medan juni och slutet av augusti ger en lugnare upplevelse." },
     { q: "Hur bokar vi glamping vid Bergs Slussar?", a: "Det är enkelt! Scrolla upp till bokningssektionen på sidan, välj datum och antal gäster, och följ instruktionerna. Vi erbjuder glamping i Östergötland vid Göta kanal, strax utanför Linköping." },
     { q: "Vad kostar glamping och vad ingår i priset?", a: "I priset ingår städning, bäddade sängar, sänglinne, handdukar, el, fläkt, minikylskåp, gasolvärmare, kaffe, te och en flaska vatten. Se aktuella priser i bokningswidgeten ovan." },
