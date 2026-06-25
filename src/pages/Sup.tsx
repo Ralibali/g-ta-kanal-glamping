@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Waves, ShieldCheck, Clock, Lock, CheckCircle2, Zap, MapPin, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import ChatWidget from "@/components/ChatWidget";
 import heroImg from "@/assets/sup-canal.jpg";
 
 const SWISH = "0722254993";
@@ -39,7 +40,7 @@ export default function Sup() {
     perTwo: "200 kr / dygn",
     popular: "Vanligast",
     incl1: "Flytväst",
-    incl2: "Paddel & pump",
+    incl2: "Paddel ingår",
     incl3: "24 timmar",
     payCta: "Swisha",
     paySub: "Koden visas direkt efteråt",
@@ -47,7 +48,7 @@ export default function Sup() {
     waitTitle: "Koden låses upp efter betalning",
     waitHint: "Tryck på Swisha ovan så öppnas Swish och koden visas här.",
     codeLabel: "Kod till hänglåset",
-    codeHint: "Skåpet står vid bryggan. Lås tillbaka när ni paddlat klart — nästa gäst vill också ut.",
+    codeHint: "Skåpet står vid bryggan. Lås tillbaka när ni paddlat klart — nästa gäst vill också SUPa.",
     rulesTitle: "Bra att veta innan ni paddlar",
     r1: "Hyrtiden är 24 timmar från upplåsning.",
     r2: "Flytväst ska bäras på vattnet — alltid.",
@@ -69,7 +70,7 @@ export default function Sup() {
     perTwo: "200 kr / 24h",
     popular: "Most popular",
     incl1: "Life vest",
-    incl2: "Paddle & pump",
+    incl2: "Paddle included",
     incl3: "24 hours",
     payCta: "Swish",
     paySub: "Code reveals right after",
@@ -77,7 +78,7 @@ export default function Sup() {
     waitTitle: "Code unlocks after payment",
     waitHint: "Tap Swish above — Swish opens and the code appears here.",
     codeLabel: "Lock code",
-    codeHint: "The cabinet is by the jetty. Lock it back when you're done — the next guest wants to paddle too.",
+    codeHint: "The cabinet is by the jetty. Lock it back when you're done — the next guest wants to SUP too.",
     rulesTitle: "Good to know before you paddle",
     r1: "Rental period is 24 hours from unlock.",
     r2: "Life vest must be worn on the water — always.",
@@ -252,6 +253,8 @@ export default function Sup() {
           </button>
         </div>
       </div>
+
+      <ChatWidget />
     </div>
   );
 }
