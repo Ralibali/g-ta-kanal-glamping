@@ -399,7 +399,7 @@ export default function UnderVistelsen() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <NearbyItem icon={<MapPin className="h-4 w-4" />} title={t.locks} body={t.locksBody} />
-            <NearbyItem icon={<Waves className="h-4 w-4" />} title={t.sup} body={t.supBody} />
+            <NearbyItem icon={<Waves className="h-4 w-4" />} title={t.sup} body={t.supBody} href="/sup" cta={isSv ? "Hyr SUP →" : "Rent SUP →"} />
             <NearbyItem icon={<Car className="h-4 w-4" />} title={t.rent} body={t.rentBody} />
             <NearbyItem icon={<Trees className="h-4 w-4" />} title={t.roxen} body={t.roxenBody} />
             <NearbyItem icon={<Coffee className="h-4 w-4" />} title={t.vreta} body={t.vretaBody} />
