@@ -584,7 +584,7 @@ const CheckIn = () => {
               </p>
               <div className="flex gap-2">
                 <a
-                  href="https://app.swish.nu/1/p/sw/?token=0722254993&amt=400&msg=Sen%20utcheckning&edit=msg,amt"
+                  href="https://app.swish.nu/1/p/sw/?token=1230628289&amt=400&msg=Sen%20utcheckning&edit=msg,amt"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 border border-border text-foreground py-2.5 px-4 rounded-lg font-medium hover:bg-muted transition-colors text-sm"

@@ -11,8 +11,8 @@ import ChatWidget from "@/components/ChatWidget";
 import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/glamping-sunset.jpg";
 
-const SWISH = "0722254993";
-const SWISH_INTL = "+46722254993";
+const SWISH = "1230628289";
+const SWISH_INTL = "1230628289";
 
 const TENT_NAMES: Record<string, string> = {
   sjobris: "Sjöbrisretreatet (Tält 1)",
