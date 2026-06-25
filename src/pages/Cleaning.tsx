@@ -168,27 +168,8 @@ export default function Cleaning() {
         }
       });
     });
-    // Arrival-only days also need cleaning
-    TENTS.forEach((t) => {
-      rows.forEach((s) => {
-        if (s.tent_id !== t.id) return;
-        if (s.checkin_date < today || s.checkin_date > endStr) return;
-        const hasDepSameDay = rows.some((x) => x.tent_id === t.id && x.checkout_date === s.checkin_date);
-        if (hasDepSameDay) return;
-        const row = addDate(s.checkin_date);
-        let existing = row.tents.find((x) => x.tent_id === t.id);
-        if (!existing) {
-          existing = {
-            tent_id: t.id, tentNo: t.no, tentName: t.name,
-            hasArrival: false, hasDeparture: false,
-            guests: 0, lateCheckout: false,
-          };
-          row.tents.push(existing);
-        }
-        existing.hasArrival = true;
-        existing.guests = s.guests ?? 0;
-      });
-    });
+    // Note: arrival-only days are NOT cleaning days. Cleaning happens only when a guest leaves.
+
     const list = Array.from(map.values())
       .filter((r) => r.tents.length > 0)
       .sort((a, b) => a.date.localeCompare(b.date));
@@ -228,17 +209,8 @@ export default function Cleaning() {
         }
       }
     });
-    // Second pass: arrival-only days also need cleaning
-    rows.forEach((r: any) => {
-      const tent = r.tent_id ?? Math.random().toString();
-      if (r.checkin_date >= s && r.checkin_date <= e) {
-        const hasDepSameDay = depByDate.get(r.checkin_date)?.has(tent);
-        if (!hasDepSameDay) {
-          bump(tentsByDate, r.checkin_date, tent);
-          bump(arrByDate, r.checkin_date, tent);
-        }
-      }
-    });
+    // Arrival-only days are NOT cleaning days.
+
     const m = new Map<string, { arrivals: number; departures: number; total: number }>();
     tentsByDate.forEach((set, d) => {
       m.set(d, {
@@ -313,18 +285,8 @@ export default function Cleaning() {
           }
         }
       });
-      // Arrival-only days
-      rows.forEach((r) => {
-        if (r.checkin_date >= today && r.checkin_date <= endStr) {
-          const hasDepSameDay = rows.some((x) => x.tent_id === r.tent_id && x.checkout_date === r.checkin_date);
-          if (!hasDepSameDay) {
-            const b = bump(r.checkin_date);
-            b.tents.add(r.tent_id);
-            b.arrivals.add(r.tent_id);
-            b.guests += r.guests ?? 0;
-          }
-        }
-      });
+      // Arrival-only days are NOT cleaning days (previous departure already cleaned the tent).
+
       const sorted = Array.from(byDate.entries())
         .filter(([d, info]) => !selfCleanDates.has(d) && info.tents.size > 0)
         .sort((a, b) => a[0].localeCompare(b[0]));
@@ -338,8 +300,8 @@ export default function Cleaning() {
     const list = TENTS.map((t) => {
       const arr = stays.find((s) => s.tent_id === t.id && s.checkin_date === date);
       const dep = stays.find((s) => s.tent_id === t.id && s.checkout_date === date);
-      // Show any tent with activity today (arrival, departure, or both).
-      if (!dep && !arr) return null;
+      // Cleaning days = departure days only. Skip tents with arrival-only (previous departure already cleaned).
+      if (!dep) return null;
       return {
         tent_id: t.id, tentNo: t.no, tentName: t.name, position: t.position[lang], date,
         hasArrival: !!arr, hasDeparture: !!dep,
