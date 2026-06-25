@@ -464,14 +464,23 @@ function CheckItem({ children }: { children: React.ReactNode }) {
   );
 }
 
-function NearbyItem({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
+function NearbyItem({ icon, title, body, href, cta }: { icon: React.ReactNode; title: string; body: string; href?: string; cta?: string }) {
   return (
     <div className="flex items-start gap-3 rounded-xl bg-muted/30 p-3">
       <div className="rounded-full bg-primary/10 p-1.5 text-primary shrink-0">{icon}</div>
-      <div>
+      <div className="flex-1">
         <div className="font-medium text-foreground">{title}</div>
         <p className="text-muted-foreground leading-relaxed">{body}</p>
+        {href && (
+          <a
+            href={href}
+            className="inline-flex items-center gap-1 mt-2 text-primary font-medium text-xs hover:underline"
+          >
+            {cta ?? "Open →"}
+          </a>
+        )}
       </div>
     </div>
   );
 }
+
