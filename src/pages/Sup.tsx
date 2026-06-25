@@ -253,6 +253,8 @@ export default function Sup() {
           </button>
         </div>
       </div>
+
+      <ChatWidget />
     </div>
   );
 }
