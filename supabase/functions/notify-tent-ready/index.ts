@@ -51,13 +51,9 @@ function svMessage(name: string | null, tentName: string, flags: Addons): string
   return s
 }
 
-function enMessage(name: string | null, tentName: string, flags: Addons): string {
+function enMessage(name: string | null, tentName: string, _flags: Addons): string {
   const greet = name ? `Hi ${name}` : 'Hi'
-  let s = `${greet} and welcome to Bergs Slussar Glamping!\n\nOur cleaners have marked ${tentName} as ready, so you are welcome to check in from now. Please check in via the QR code at the entrance — you can check in using your name or booking number, and you will then receive the code to your tent.`
-  if (flags.breakfast) s += `\n\nYou have breakfast included. It is served between 08:30–09:00 at the portal halfway up the hill.`
-  if (flags.fikapase) s += `\n\nYour welcome fika bag is ready inside your tent.`
-  s += `\n\nAny questions? Text Christoffer on +46 722 25 49 93.\n\nKind regards\nBergs Slussar Glamping`
-  return s
+  return `${greet} and welcome to Bergs Slussar Glamping! Our cleaners have marked ${tentName} as ready, so you are welcome to check in from now. Check in via the QR code at the entrance, where you can use your name or booking number, and you will then get the code to your tent. Kind regards, Bergs Slussar Glamping`
 }
 
 function deMessage(name: string | null, tentName: string, flags: Addons): string {
