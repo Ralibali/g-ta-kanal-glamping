@@ -209,17 +209,8 @@ export default function Cleaning() {
         }
       }
     });
-    // Second pass: arrival-only days also need cleaning
-    rows.forEach((r: any) => {
-      const tent = r.tent_id ?? Math.random().toString();
-      if (r.checkin_date >= s && r.checkin_date <= e) {
-        const hasDepSameDay = depByDate.get(r.checkin_date)?.has(tent);
-        if (!hasDepSameDay) {
-          bump(tentsByDate, r.checkin_date, tent);
-          bump(arrByDate, r.checkin_date, tent);
-        }
-      }
-    });
+    // Arrival-only days are NOT cleaning days.
+
     const m = new Map<string, { arrivals: number; departures: number; total: number }>();
     tentsByDate.forEach((set, d) => {
       m.set(d, {
