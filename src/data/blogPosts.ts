@@ -91,7 +91,7 @@ Cirka femton minuter med bil. Bussen tar något längre tid men är ett fungeran
 
 ## Behöver jag boka i förväg?
 
-Ja, särskilt under sommaren. Vi har bara två tält och de fylls snabbt. Boka så tidigt du kan för bästa val av datum.
+Ja, särskilt under sommaren. Vi har tre tält och de fylls snabbt. Boka så tidigt du kan för bästa val av datum.
 
 ## Boka ditt boende vid Bergs Slussar
 
