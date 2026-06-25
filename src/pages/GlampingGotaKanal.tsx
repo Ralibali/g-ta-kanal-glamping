@@ -73,7 +73,7 @@ const GlampingGotaKanal = () => {
             <h2 className="font-serif text-2xl font-bold text-foreground mb-4">Aktiviteter vid kanalen</h2>
             <div className="grid sm:grid-cols-2 gap-4 mb-8">
               {[
-                { icon: Waves, title: "SUP & paddling", text: "Hyr en SUP-bräda direkt på plats och glid fram på det lugna kanalvattnet. En unik upplevelse!" },
+                { icon: Waves, title: "SUP & paddling", text: "Hyr SUP-bräda direkt på plats och glid fram på det lugna kanalvattnet. En unik upplevelse!" },
                 { icon: Footprints, title: "Vandring", text: "Stjärnorpsravinen och kanalpromenaden bjuder på varierande terräng och vacker natur." },
                 { icon: Ship, title: "Båttrafik", text: "Följ båtarna genom de sju slussarna – ett fascinerande skådespel varje dag under sommaren." },
                 { icon: Waves, title: "Bad i Roxen", text: "Sjön Roxen ligger alldeles intill med badplatser och klart vatten för ett uppfriskande dopp." },
