@@ -57,9 +57,8 @@ async function sendSms(toPhone: string, body: string): Promise<{ id: string } | 
 
 // Per-language addon labels keyed by slug
 const ADDON_LABELS: Record<string, Record<string, string>> = {
-  breakfast:     { sv: 'frukost från bageriet', en: 'breakfast from the bakery', de: 'Frühstück von der Bäckerei', da: 'morgenmad fra bageriet', no: 'frokost fra bakeriet', nl: 'ontbijt van de bakkerij', fr: 'petit-déjeuner de la boulangerie' },
-  fika_bag:      { sv: 'en fikapåse i tältet',  en: 'a fika bag in the tent',    de: 'eine Fika-Tüte im Zelt',      da: 'en fika-pose i teltet',  no: 'en fika-pose i teltet',  nl: 'een fika-tas in de tent',     fr: 'un sac fika dans la tente' },
-  early_checkin: { sv: 'tidig incheckning',     en: 'early check-in',            de: 'früher Check-in',             da: 'tidlig check-in',        no: 'tidlig innsjekk',        nl: 'vroeg inchecken',             fr: 'arrivée anticipée' },
+  breakfast:     { sv: 'frukost', en: 'breakfast', de: 'Frühstück', da: 'morgenmad', no: 'frokost', nl: 'ontbijt', fr: 'petit-déjeuner' },
+  early_checkin: { sv: 'tidig incheckning', en: 'early check-in', de: 'früher Check-in', da: 'tidlig check-in', no: 'tidlig innsjekk', nl: 'vroeg inchecken', fr: 'arrivée anticipée' },
 }
 
 function joinList(items: string[], lang: string): string {
@@ -83,35 +82,26 @@ function buildBody(name: string | null, link: string | null, lang: Lang, availab
   }
   const noName: Record<Lang, string> = { sv: 'Hej!', en: 'Hi!', de: 'Hallo!', da: 'Hej!', no: 'Hei!', nl: 'Hoi!', fr: 'Bonjour !' }
   const hi = name && name.trim() ? greetings[lang](name.trim()) : noName[lang]
-  const leaf = USE_EMOJI ? ' 🌿' : ''
-  const tent = USE_EMOJI ? '🏕️ ' : ''
-  const signature = `${tent}/Bergs Slussar Glamping`
 
   const arrivalLine: Record<Lang, string> = {
-    sv: 'Om fem dagar väntar en mysig vistelse vid kanalen, med bäddat tält och skön ro vid vattnet.',
+    sv: 'Om fem dagar vantar en mysig vistelse vid kanalen, med baddat talt och skon ro vid vattnet.',
     en: 'In five days a cosy stay by the canal awaits, with a freshly made-up tent and peaceful calm by the water.',
-    de: 'In fünf Tagen erwartet Sie ein gemütlicher Aufenthalt am Kanal, mit gemachtem Bett und Ruhe am Wasser.',
+    de: 'In funf Tagen erwartet Sie ein gemutlicher Aufenthalt am Kanal, mit gemachtem Bett und Ruhe am Wasser.',
     da: 'Om fem dage venter et hyggeligt ophold ved kanalen med redt telt og ro ved vandet.',
     no: 'Om fem dager venter et koselig opphold ved kanalen, med oppredd telt og ro ved vannet.',
     nl: 'Over vijf dagen wacht een gezellig verblijf aan het kanaal, met opgemaakt bed en rust aan het water.',
-    fr: 'Dans cinq jours, un séjour cosy vous attend au bord du canal, avec un lit fait et le calme près de l\'eau.',
+    fr: "Dans cinq jours, un sejour cosy vous attend au bord du canal, avec un lit fait et le calme pres de l'eau.",
   }
+  // restore Swedish accents (they are GSM-7 safe)
+  arrivalLine.sv = 'Om fem dagar väntar en mysig vistelse vid kanalen, med bäddat tält och skön ro vid vattnet.'
+
   const seeYou: Record<Lang, string> = {
     sv: 'Snart ses vi!', en: 'See you soon!', de: 'Bis bald!',
-    da: 'Vi ses snart!', no: 'Vi ses snart!', nl: 'Tot snel!', fr: 'À bientôt !',
+    da: 'Vi ses snart!', no: 'Vi ses snart!', nl: 'Tot snel!', fr: 'A bientot !',
   }
-  const slipperTip: Record<Lang, string> = {
-    sv: 'Tips: ta gärna med tofflor – fräscht i den allmänna duschen i servicehuset som delas med kanalens övriga gäster.',
-    en: 'Tip: bring slippers – fresh in the shared shower at the service house used by all canal guests.',
-    de: 'Tipp: Hausschuhe mitbringen – angenehm in der Gemeinschaftsdusche des Servicehauses, die alle Kanalgäste nutzen.',
-    da: 'Tip: tag tøfler med – friskt i det fælles bad i servicehuset, som deles med kanalens andre gæster.',
-    no: 'Tips: ta med tøfler – fint i det felles dusjen i servicehuset som deles med kanalens andre gjester.',
-    nl: 'Tip: neem slippers mee – fris in de gemeenschappelijke douche van het servicehuis, gedeeld met alle kanaalgasten.',
-    fr: 'Astuce : pensez aux chaussons – agréable dans la douche commune de la maison de service, partagée avec les autres hôtes du canal.',
-  }
+  const signature = '/Bergs Slussar Glamping'
 
-  const lines: string[] = [`${hi}${leaf}`, '', arrivalLine[lang], '']
-
+  const parts: string[] = [`${hi} ${arrivalLine[lang]}`]
 
   if (availableSlugs.length > 0 && link) {
     const labels = availableSlugs
@@ -121,26 +111,37 @@ function buildBody(name: string | null, link: string | null, lang: Lang, availab
     const offer: Record<Lang, string> = {
       sv: `Gör den extra fin med ${list}. Tillvalen bokar du senast 2 dagar före ankomst.`,
       en: `Make it extra special with ${list}. Add-ons can be booked up to 2 days before arrival.`,
-      de: `Machen Sie ihn besonders schön mit ${list}. Extras sind spätestens 2 Tage vor Anreise zu buchen.`,
-      da: `Gør det ekstra dejligt med ${list}. Tilvalg skal bestilles senest 2 dage før ankomst.`,
-      no: `Gjør det ekstra fint med ${list}. Tillegg må bestilles senest 2 dager før ankomst.`,
+      de: `Machen Sie ihn besonders schon mit ${list}. Extras sind spatestens 2 Tage vor Anreise zu buchen.`,
+      da: `Gor det ekstra dejligt med ${list}. Tilvalg skal bestilles senest 2 dage for ankomst.`,
+      no: `Gjor det ekstra fint med ${list}. Tillegg ma bestilles senest 2 dager for ankomst.`,
       nl: `Maak het extra leuk met ${list}. Extra's moet u uiterlijk 2 dagen voor aankomst boeken.`,
-      fr: `Rendez-le encore plus agréable avec ${list}. Les options doivent être réservées au moins 2 jours avant l'arrivée.`,
+      fr: `Rendez-le encore plus agreable avec ${list}. Les options doivent etre reservees au moins 2 jours avant l'arrivee.`,
     }
     const linkLine: Record<Lang, string> = {
-      sv: `Se dina tillval här: ${link}`,
-      en: `See your add-ons here: ${link}`,
-      de: `Ihre Extras hier: ${link}`,
-      da: `Se dine tilvalg her: ${link}`,
-      no: `Se dine tillegg her: ${link}`,
-      nl: `Bekijk je extra's hier: ${link}`,
-      fr: `Voir vos options ici : ${link}`,
+      sv: `Se dina tillval här och annan viktig information: ${link}`,
+      en: `See your add-ons and other useful info here: ${link}`,
+      de: `Ihre Extras und weitere Infos hier: ${link}`,
+      da: `Se dine tilvalg og anden nyttig info her: ${link}`,
+      no: `Se dine tillegg og annen nyttig info her: ${link}`,
+      nl: `Bekijk je extra's en andere info hier: ${link}`,
+      fr: `Voir vos options et autres infos utiles ici : ${link}`,
     }
-    lines.push(offer[lang], '', linkLine[lang], '')
+    parts.push(offer[lang], linkLine[lang])
+  } else if (link) {
+    const linkOnly: Record<Lang, string> = {
+      sv: `Här hittar du viktig information inför vistelsen: ${link}`,
+      en: `Useful info for your stay: ${link}`,
+      de: `Wichtige Infos fur Ihren Aufenthalt: ${link}`,
+      da: `Nyttig info til dit ophold: ${link}`,
+      no: `Nyttig info til oppholdet: ${link}`,
+      nl: `Nuttige info voor je verblijf: ${link}`,
+      fr: `Infos utiles pour votre sejour : ${link}`,
+    }
+    parts.push(linkOnly[lang])
   }
 
-  lines.push(slipperTip[lang], '', seeYou[lang], '', signature)
-  return lines.join('\n')
+  parts.push(`${seeYou[lang]} ${signature}`)
+  return parts.join(' ')
 }
 
 Deno.serve(async (req) => {

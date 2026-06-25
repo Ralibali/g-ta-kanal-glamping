@@ -95,12 +95,12 @@ Deno.serve(async (req) => {
   let message: string
   if (kind === 'fikapase') {
     message = lang === 'sv'
-      ? `${name ? `Hej ${name}!` : 'Hej!'} Din fikapåse är nu levererad och finns i backen vid portalen. Smaklig fika! 🌿\n\nBergs Slussar Glamping`
-      : `${name ? `Hi ${name}!` : 'Hi!'} Your fika bag has been delivered and is waiting in the basket at the portal. Enjoy! 🌿\n\nBergs Slussar Glamping`
+      ? `${name ? `Hej ${name}!` : 'Hej!'} Din fikapåse är nu levererad och finns vid portalen, halvvägs upp i backen. Smaklig fika! Bergs Slussar Glamping`
+      : `${name ? `Hi ${name}!` : 'Hi!'} Your fika bag has been delivered and is at the portal, halfway up the slope. Enjoy! Bergs Slussar Glamping`
   } else {
     message = lang === 'sv'
-      ? `${name ? `Hej ${name}!` : 'Hej!'} Frukosten är nu levererad och står i backen vid portalen halvvägs upp i backen. Smaklig frukost!\n\nBergs Slussar Glamping`
-      : `${name ? `Hi ${name}!` : 'Hi!'} Your breakfast has been delivered and is by the gate, halfway up the slope. Enjoy your breakfast! Warm regards, Bergs Slussar Glamping`
+      ? `${name ? `Hej ${name}!` : 'Hej!'} Frukosten är nu levererad och står vid portalen, halvvägs upp i backen. Smaklig frukost! Bergs Slussar Glamping`
+      : `${name ? `Hi ${name}!` : 'Hi!'} Your breakfast has been delivered and is at the portal, halfway up the slope. Enjoy your breakfast! Bergs Slussar Glamping`
   }
 
   const toPhone = normalizePhone(stay.phone)
