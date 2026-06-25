@@ -44,55 +44,55 @@ interface Addons {
 
 function svMessage(name: string | null, tentName: string, flags: Addons): string {
   const greet = name ? `Hej ${name}` : 'Hej'
-  let s = `${greet} och välkommen till oss på Bergs Slussar Glamping! ☀️🏕️\n\nVåra städare har markerat ${tentName} som klart, så ni är välkomna att checka in från nu. Incheckning sker via QR-koden vid entrén – där kan ni checka in med namn eller bokningsnummer, och får sedan koden till tältet. 🔑`
-  if (flags.breakfast) s += `\n\nNi har frukost inkluderat. Den serveras mellan 08:30–09:00 vid portalen halvvägs upp i backen. 🥐☕`
-  if (flags.fikapase) s += `\n\nErt välkomst-fika-paket (fikapåse) står redo i tältet. 🍪☕`
-  s += `\n\nHar ni några frågor? Hör av er till Christoffer per SMS på 0722254993.\n\nVänligen\nBergs Slussar Glamping 🌿`
+  let s = `${greet} och välkommen till oss på Bergs Slussar Glamping!\n\nVåra städare har markerat ${tentName} som klart, så ni är välkomna att checka in från nu. Incheckning sker via QR-koden vid entrén – där kan ni checka in med namn eller bokningsnummer, och får sedan koden till tältet.`
+  if (flags.breakfast) s += `\n\nNi har frukost inkluderat. Den serveras mellan 08:30–09:00 vid portalen halvvägs upp i backen.`
+  if (flags.fikapase) s += `\n\nErt välkomst-fika-paket (fikapåse) står redo i tältet.`
+  s += `\n\nHar ni några frågor? Hör av er till Christoffer per SMS på 0722254993.\n\nVänligen\nBergs Slussar Glamping`
   return s
 }
 
 function enMessage(name: string | null, tentName: string, flags: Addons): string {
   const greet = name ? `Hi ${name}` : 'Hi'
-  let s = `${greet} and welcome to Bergs Slussar Glamping! ☀️🏕️\n\nOur cleaners have marked ${tentName} as ready, so you are welcome to check in from now. Please check in via the QR code at the entrance — you can check in using your name or booking number, and you will then receive the code to your tent. 🔑`
-  if (flags.breakfast) s += `\n\nYou have breakfast included. It is served between 08:30–09:00 at the portal halfway up the hill. 🥐☕`
-  if (flags.fikapase) s += `\n\nYour welcome fika bag is ready inside your tent. 🍪☕`
-  s += `\n\nAny questions? Text Christoffer on +46 722 25 49 93.\n\nKind regards\nBergs Slussar Glamping 🌿`
+  let s = `${greet} and welcome to Bergs Slussar Glamping!\n\nOur cleaners have marked ${tentName} as ready, so you are welcome to check in from now. Please check in via the QR code at the entrance — you can check in using your name or booking number, and you will then receive the code to your tent.`
+  if (flags.breakfast) s += `\n\nYou have breakfast included. It is served between 08:30–09:00 at the portal halfway up the hill.`
+  if (flags.fikapase) s += `\n\nYour welcome fika bag is ready inside your tent.`
+  s += `\n\nAny questions? Text Christoffer on +46 722 25 49 93.\n\nKind regards\nBergs Slussar Glamping`
   return s
 }
 
 function deMessage(name: string | null, tentName: string, flags: Addons): string {
   const greet = name ? `Hallo ${name}` : 'Hallo'
-  let s = `${greet} und herzlich willkommen im Bergs Slussar Glamping! ☀️🏕️\n\nUnsere Reinigungskräfte haben ${tentName} als fertig markiert, sodass Sie ab sofort einchecken können. Der Check-in erfolgt über den QR-Code am Eingang – dort können Sie mit Name oder Buchungsnummer einchecken und erhalten dann den Code zu Ihrem Zelt. 🔑`
-  if (flags.breakfast) s += `\n\nSie haben Frühstück inklusive. Es wird zwischen 08:30–09:00 am Portal auf halbem Weg den Hügel hinauf serviert. 🥐☕`
-  if (flags.fikapase) s += `\n\nIhre Willkommens-Fika-Tüte steht in Ihrem Zelt bereit. 🍪☕`
-  s += `\n\nBei Fragen? Schreiben Sie Christoffer per SMS an +46 722 25 49 93.\n\nFreundliche Grüße\nBergs Slussar Glamping 🌿`
+  let s = `${greet} und herzlich willkommen im Bergs Slussar Glamping!\n\nUnsere Reinigungskräfte haben ${tentName} als fertig markiert, sodass Sie ab sofort einchecken können. Der Check-in erfolgt über den QR-Code am Eingang – dort können Sie mit Name oder Buchungsnummer einchecken und erhalten dann den Code zu Ihrem Zelt.`
+  if (flags.breakfast) s += `\n\nSie haben Frühstück inklusive. Es wird zwischen 08:30–09:00 am Portal auf halbem Weg den Hügel hinauf serviert.`
+  if (flags.fikapase) s += `\n\nIhre Willkommens-Fika-Tüte steht in Ihrem Zelt bereit.`
+  s += `\n\nBei Fragen? Schreiben Sie Christoffer per SMS an +46 722 25 49 93.\n\nFreundliche Grüße\nBergs Slussar Glamping`
   return s
 }
 
 function noMessage(name: string | null, tentName: string, flags: Addons): string {
   const greet = name ? `Hei ${name}` : 'Hei'
-  let s = `${greet} og velkommen til Bergs Slussar Glamping! ☀️🏕️\n\nRengjøringspersonalet vårt har markert ${tentName} som klart, så du kan sjekke inn fra nå av. Innsjekking skjer via QR-koden ved inngangen – der kan du sjekke inn med navn eller bestillingsnummer, og får deretter koden til teltet. 🔑`
-  if (flags.breakfast) s += `\n\nDu har frokost inkludert. Den serveres mellom 08:30–09:00 ved portalen halvveis opp bakken. 🥐☕`
-  if (flags.fikapase) s += `\n\nVelkomst-fikaposen din ligger klar i teltet ditt. 🍪☕`
-  s += `\n\nHar du spørsmål? Send SMS til Christoffer på +46 722 25 49 93.\n\nVennlig hilsen\nBergs Slussar Glamping 🌿`
+  let s = `${greet} og velkommen til Bergs Slussar Glamping!\n\nRengjøringspersonalet vårt har markert ${tentName} som klart, så du kan sjekke inn fra nå av. Innsjekking skjer via QR-koden ved inngangen – der kan du sjekke inn med navn eller bestillingsnummer, og får deretter koden til teltet.`
+  if (flags.breakfast) s += `\n\nDu har frokost inkludert. Den serveres mellom 08:30–09:00 ved portalen halvveis opp bakken.`
+  if (flags.fikapase) s += `\n\nVelkomst-fikaposen din ligger klar i teltet ditt.`
+  s += `\n\nHar du spørsmål? Send SMS til Christoffer på +46 722 25 49 93.\n\nVennlig hilsen\nBergs Slussar Glamping`
   return s
 }
 
 function daMessage(name: string | null, tentName: string, flags: Addons): string {
   const greet = name ? `Hej ${name}` : 'Hej'
-  let s = `${greet} og velkommen til Bergs Slussar Glamping! ☀️🏕️\n\nVores rengøringspersonale har markeret ${tentName} som klar, så du er velkommen til at tjekke ind fra nu. Tjek ind via QR-koden ved indgangen – der kan du tjekke ind med navn eller bookingsnummer, og får derefter koden til dit telt. 🔑`
-  if (flags.breakfast) s += `\n\nDu har morgenmad inkluderet. Den serveres mellem 08:30–09:00 ved portalen halvvejs op ad bakken. 🥐☕`
-  if (flags.fikapase) s += `\n\nDin velkomst-fikapose ligger klar i dit telt. 🍪☕`
-  s += `\n\nHar du spørgsmål? Skriv til Christoffer på SMS +46 722 25 49 93.\n\nVenlig hilsen\nBergs Slussar Glamping 🌿`
+  let s = `${greet} og velkommen til Bergs Slussar Glamping!\n\nVores rengøringspersonale har markeret ${tentName} som klar, så du er velkommen til at tjekke ind fra nu. Tjek ind via QR-koden ved indgangen – der kan du tjekke ind med navn eller bookingsnummer, og får derefter koden til dit telt.`
+  if (flags.breakfast) s += `\n\nDu har morgenmad inkluderet. Den serveres mellem 08:30–09:00 ved portalen halvvejs op ad bakken.`
+  if (flags.fikapase) s += `\n\nDin velkomst-fikapose ligger klar i dit telt.`
+  s += `\n\nHar du spørgsmål? Skriv til Christoffer på SMS +46 722 25 49 93.\n\nVenlig hilsen\nBergs Slussar Glamping`
   return s
 }
 
 function nlMessage(name: string | null, tentName: string, flags: Addons): string {
   const greet = name ? `Hoi ${name}` : 'Hoi'
-  let s = `${greet} en welkom bij Bergs Slussar Glamping! ☀️🏕️\n\nOnze schoonmakers hebben ${tentName} als klaar gemarkeerd, dus je kunt vanaf nu inchecken. Check in via de QR-code bij de ingang – daar kun je inchecken met naam of boekingsnummer, en ontvang dan de code voor je tent. 🔑`
-  if (flags.breakfast) s += `\n\nJe hebt ontbijt inbegrepen. Het wordt tussen 08:30–09:00 geserveerd bij het portaal halverwege de heuvel. 🥐☕`
-  if (flags.fikapase) s += `\n\nJe welkomst-fikatas staat klaar in je tent. 🍪☕`
-  s += `\n\nVragen? Stuur Christoffer een sms op +46 722 25 49 93.\n\nMet vriendelijke groet\nBergs Slussar Glamping 🌿`
+  let s = `${greet} en welkom bij Bergs Slussar Glamping!\n\nOnze schoonmakers hebben ${tentName} als klaar gemarkeerd, dus je kunt vanaf nu inchecken. Check in via de QR-code bij de ingang – daar kun je inchecken met naam of boekingsnummer, en ontvang dan de code voor je tent.`
+  if (flags.breakfast) s += `\n\nJe hebt ontbijt inbegrepen. Het wordt tussen 08:30–09:00 geserveerd bij het portaal halverwege de heuvel.`
+  if (flags.fikapase) s += `\n\nJe welkomst-fikatas staat klaar in je tent.`
+  s += `\n\nVragen? Stuur Christoffer een sms op +46 722 25 49 93.\n\nMet vriendelijke groet\nBergs Slussar Glamping`
   return s
 }
 
