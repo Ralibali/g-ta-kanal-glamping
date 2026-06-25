@@ -5,6 +5,8 @@ import {
   Wifi, Flame, Cigarette, Dog, Info, Footprints, CheckCircle2, AlertCircle,
   Coffee, MessageCircle, ShoppingBag, Car, Heart
 } from "lucide-react";
+import { LanguageProvider } from "@/i18n/LanguageContext";
+import ChatWidget from "@/components/ChatWidget";
 import heroImg from "@/assets/glamping-sunset.jpg";
 
 export default function UnderVistelsen() {
@@ -49,7 +51,7 @@ export default function UnderVistelsen() {
     pets: "Husdjur",
     petsBody: "Husdjur är tillåtna mot en avgift som anges vid bokningen.",
     beforeLeave: "Innan ni åker hem",
-    beforeIntro: "En liten vänlig påminnelse så att vi kan ta emot nästa gäst i samma fina skick:",
+    beforeIntro: "En påminnelse så att vi kan ta emot nästa gäst i samma fina skick:",
     washUp: "Diska det ni använt (koppar, glas, bestick) och ställ tillbaka i tältet.",
     trash: "Kasta sopor i kärlen vid parkeringen — låt inte mat eller skräp ligga kvar.",
     dontForget: "Glöm inte saker! Kolla under sängen, i kylen och i tältets ytterfack.",
@@ -107,7 +109,7 @@ export default function UnderVistelsen() {
     pets: "Pets",
     petsBody: "Pets are allowed for a fee stated at booking.",
     beforeLeave: "Before you leave",
-    beforeIntro: "A friendly reminder so we can welcome the next guest just as nicely:",
+    beforeIntro: "A reminder so we can welcome the next guest in the same great condition:",
     washUp: "Wash up what you've used (cups, glasses, cutlery) and put it back in the tent.",
     trash: "Toss rubbish in the bins by the parking lot — don't leave food or trash behind.",
     dontForget: "Don't forget anything! Check under the bed, in the fridge and the outer pocket.",
@@ -316,6 +318,9 @@ export default function UnderVistelsen() {
           {t.footer}
         </p>
       </main>
+      <LanguageProvider value={isSv ? "sv" : "en"}>
+        <ChatWidget />
+      </LanguageProvider>
     </div>
   );
 }
