@@ -566,23 +566,6 @@ export default function Stay() {
           );
         })()}
 
-        {/* Social proof — bygger tillit direkt under huvudinfo */}
-        <div className="rounded-lg border bg-card p-3">
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div>
-              <div className="font-serif text-lg text-primary leading-none">4,9★</div>
-              <div className="text-[11px] text-muted-foreground mt-1">{isSv ? "Google-betyg" : "Google rating"}</div>
-            </div>
-            <div className="border-x">
-              <div className="font-serif text-lg text-primary leading-none">9,4</div>
-              <div className="text-[11px] text-muted-foreground mt-1">Booking.com</div>
-            </div>
-            <div>
-              <div className="font-serif text-lg text-primary leading-none">500+</div>
-              <div className="text-[11px] text-muted-foreground mt-1">{isSv ? "nöjda gäster" : "happy guests"}</div>
-            </div>
-          </div>
-        </div>
 
 
 
