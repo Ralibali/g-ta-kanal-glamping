@@ -304,21 +304,16 @@ export default function UnderVistelsen() {
               <div className="text-xs text-muted-foreground leading-relaxed">{t.lateHow}</div>
               <div className="flex flex-col gap-2 pt-1">
                 <button
-                  onClick={copySwish}
+                  onClick={handleLateCheckout}
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors py-2.5 text-sm font-medium"
                 >
-                  <Copy className="h-4 w-4" /> {t.copySwish}
+                  {t.payCta}
                 </button>
-                <a
-                  href={`sms:${SWISH_INTL}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border-2 border-primary text-primary hover:bg-primary/5 transition-colors py-2 text-sm font-medium"
-                >
-                  <MessageCircle className="h-4 w-4" /> {t.sms}
-                </a>
               </div>
             </div>
           </CardContent>
         </Card>
+
 
         {/* Bartruck — GULDPÄRLA */}
         <Card className="rounded-2xl shadow-md ring-2 ring-[#C9A227]/60 bg-gradient-to-br from-[#fdf6e1] via-card to-card relative overflow-hidden">
