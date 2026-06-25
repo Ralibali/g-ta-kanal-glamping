@@ -89,12 +89,12 @@ function buildBody(name: string | null, link: string, lang: Lang): string {
   }
   const signature: Record<Lang, string> = {
     sv: 'Soliga hälsningar,\nBergs Slussar Glamping',
-    en: '/Bergs Slussar Glamping',
-    de: '/Bergs Slussar Glamping',
-    da: '/Bergs Slussar Glamping',
-    no: '/Bergs Slussar Glamping',
-    nl: '/Bergs Slussar Glamping',
-    fr: '/Bergs Slussar Glamping',
+    en: 'Sunny greetings,\nBergs Slussar Glamping',
+    de: 'Sonnige Grüße,\nBergs Slussar Glamping',
+    da: 'Solrige hilsner,\nBergs Slussar Glamping',
+    no: 'Solrike hilsener,\nBergs Slussar Glamping',
+    nl: 'Zonnige groeten,\nBergs Slussar Glamping',
+    fr: 'Salutations ensoleillées,\nBergs Slussar Glamping',
   }
 
   return [hi, '', welcome[lang], '', info[lang], '', signature[lang]].join('\n')
