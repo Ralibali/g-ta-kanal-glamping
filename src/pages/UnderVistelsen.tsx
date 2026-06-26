@@ -24,6 +24,8 @@ interface PersonalData {
   firstName?: string | null;
   tentIds: string[];
   checkoutDate?: string | null;
+  checkinDate?: string | null;
+  bookingNumber?: string | null;
 }
 
 export default function UnderVistelsen() {
