@@ -61,6 +61,8 @@ export default function UnderVistelsen() {
           firstName: booking.guest_first_name,
           tentIds,
           checkoutDate: booking.checkout_date,
+          checkinDate: booking.checkin_date,
+          bookingNumber: booking.booking_number,
         });
         const lang = String(booking.language || "sv").toLowerCase();
         setIsSv(lang.startsWith("sv"));
