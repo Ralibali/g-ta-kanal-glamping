@@ -24,6 +24,8 @@ interface PersonalData {
   firstName?: string | null;
   tentIds: string[];
   checkoutDate?: string | null;
+  checkinDate?: string | null;
+  bookingNumber?: string | null;
 }
 
 export default function UnderVistelsen() {
@@ -59,6 +61,8 @@ export default function UnderVistelsen() {
           firstName: booking.guest_first_name,
           tentIds,
           checkoutDate: booking.checkout_date,
+          checkinDate: booking.checkin_date,
+          bookingNumber: booking.booking_number,
         });
         const lang = String(booking.language || "sv").toLowerCase();
         setIsSv(lang.startsWith("sv"));
@@ -110,6 +114,12 @@ export default function UnderVistelsen() {
     truckOutro: "Lokala smaker, skön stämning och kanalen alldeles intill. Det här är Berg när det är som allra bäst.",
     truckMap: "Hitta hit",
     truckIg: "Följ på Instagram",
+    discountTitle: "10% rabatt på mat",
+    discountSub: "Exklusivt för våra glampinggäster",
+    discountHow: "Visa det här kortet i bartrucken så får ni 10% rabatt på maten. Giltigt under hela er vistelse.",
+    discountGuest: "Gäst",
+    discountBooking: "Bokning",
+    discountValid: "Giltigt",
     knowTitle: "Bra att veta i tältet",
     serviceCard: "Servicekortet i tältet",
     serviceCardBody: "Servicekortet som ligger framme i tältet är nyckeln till servicehuset (toalett, dusch, skötrum). Ta gärna med det i fickan – det är ca 150 m gångväg.",
@@ -175,6 +185,12 @@ export default function UnderVistelsen() {
     truckOutro: "Local flavours, lovely atmosphere and the canal right next to you. This is Berg at its very best.",
     truckMap: "Find it on the map",
     truckIg: "Follow on Instagram",
+    discountTitle: "10% off food",
+    discountSub: "Exclusive for our glamping guests",
+    discountHow: "Show this card at the bar truck to get 10% off food. Valid throughout your stay.",
+    discountGuest: "Guest",
+    discountBooking: "Booking",
+    discountValid: "Valid",
     knowTitle: "Good to know in the tent",
     serviceCard: "The service card in the tent",
     serviceCardBody: "The service card in your tent is the key to the service house (toilet, shower, changing room). Keep it in your pocket — it's about a 150 m walk.",
@@ -331,6 +347,47 @@ export default function UnderVistelsen() {
               </ul>
             </div>
             <p className="leading-relaxed text-foreground/85 italic">{t.truckOutro}</p>
+
+            {/* Rabattkort — 10% på mat */}
+            <div className="rounded-2xl border-2 border-dashed border-[#C9A227] bg-white/70 p-4 mt-2 relative overflow-hidden">
+              <div className="absolute -top-3 -right-3 bg-[#C9A227] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-xl shadow">
+                -10%
+              </div>
+              <div className="text-[10px] uppercase tracking-[0.18em] text-[#8a6a14] font-semibold">
+                {isSv ? "Glampingrabatt" : "Glamping discount"}
+              </div>
+              <div className="font-serif text-xl text-foreground mt-0.5 leading-tight">
+                {t.discountTitle}
+              </div>
+              <div className="text-xs text-foreground/70 mt-0.5">{t.discountSub}</div>
+              <p className="text-xs text-foreground/85 leading-relaxed mt-2">{t.discountHow}</p>
+              {(personal?.firstName || personal?.bookingNumber || personal?.checkinDate) && (
+                <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-[#C9A227]/30 text-[11px]">
+                  {personal?.firstName && (
+                    <div>
+                      <div className="text-muted-foreground uppercase tracking-wide">{t.discountGuest}</div>
+                      <div className="font-medium text-foreground truncate">{personal.firstName}</div>
+                    </div>
+                  )}
+                  {personal?.bookingNumber && (
+                    <div>
+                      <div className="text-muted-foreground uppercase tracking-wide">{t.discountBooking}</div>
+                      <div className="font-mono font-medium text-foreground truncate">{personal.bookingNumber}</div>
+                    </div>
+                  )}
+                  {(personal?.checkinDate || personal?.checkoutDate) && (
+                    <div>
+                      <div className="text-muted-foreground uppercase tracking-wide">{t.discountValid}</div>
+                      <div className="font-medium text-foreground truncate">
+                        {personal?.checkinDate ? personal.checkinDate.slice(5) : "—"}
+                        {personal?.checkoutDate ? `→${personal.checkoutDate.slice(5)}` : ""}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="grid grid-cols-2 gap-2 pt-1">
               <a
                 href="https://maps.app.goo.gl/Lj2yw1otjMWpNt5e6"
