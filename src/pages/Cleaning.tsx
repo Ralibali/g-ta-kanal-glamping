@@ -280,7 +280,7 @@ export default function Cleaning() {
         earlyCheckin: earlyTents.has(tent.id),
       } satisfies TentDayData;
     })
-      .filter((card): card is TentDayData => card != null)
+      .filter((card): card is NonNullable<typeof card> => card != null)
       .sort((a, b) => Number(b.earlyCheckin) - Number(a.earlyCheckin) || a.tentNo - b.tentNo);
   }, [stays, futureStays, date, lang, earlyTents]);
 
