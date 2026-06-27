@@ -99,6 +99,7 @@ export default function CleaningV3() {
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
   const [view, setView] = useState<"day" | "overview">("day");
   const [date, setDate] = useState(todayInStockholm());
+  const [month, setMonth] = useState(monthAnchor(todayInStockholm()));
   const [stays, setStays] = useState<Stay[]>([]);
   const [futureStays, setFutureStays] = useState<Stay[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -129,15 +130,15 @@ export default function CleaningV3() {
 
   const loadUpcoming = async () => {
     setDataLoading(true);
-    const today = todayInStockholm();
-    const end = addDays(today, 60);
-    const { data, error } = await (supabase as any).from("tent_stays").select("booking_number, tent_id, checkin_date, checkout_date, guests").or(`and(checkin_date.gte.${today},checkin_date.lte.${end}),and(checkout_date.gte.${today},checkout_date.lte.${end})`);
+    const start = month;
+    const end = shiftMonth(month, 1);
+    const { data, error } = await (supabase as any).from("tent_stays").select("booking_number, tent_id, checkin_date, checkout_date, guests").or(`and(checkin_date.gte.${start},checkin_date.lt.${end}),and(checkout_date.gte.${start},checkout_date.lt.${end})`);
     if (error) { toast.error(error.message); setDataLoading(false); return; }
     const rows = (data ?? []) as Stay[];
     const arrivals = new Map(rows.map((row) => [`${row.tent_id}|${row.checkin_date}`, row]));
     const map = new Map<string, Upcoming>();
     for (const departure of rows) {
-      if (departure.checkout_date < today || departure.checkout_date > end) continue;
+      if (departure.checkout_date < start || departure.checkout_date >= end) continue;
       const item = map.get(departure.checkout_date) ?? { date: departure.checkout_date, tents: [], arrivals: 0, departures: 0, guests: 0 };
       if (!item.tents.includes(departure.tent_id)) { item.tents.push(departure.tent_id); item.departures += 1; }
       const arrival = arrivals.get(`${departure.tent_id}|${departure.checkout_date}`);
@@ -151,7 +152,9 @@ export default function CleaningV3() {
   useEffect(() => {
     if (!isCleaner) return;
     if (view === "day") void loadDay(); else void loadUpcoming();
-  }, [isCleaner, view, date]);
+  }, [isCleaner, view, date, month]);
+
+
 
   const sessionByTent = useMemo(() => new Map(sessions.map((session) => [session.tent_id, session])), [sessions]);
 
