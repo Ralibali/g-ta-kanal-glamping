@@ -132,7 +132,7 @@ export default function CleaningV3() {
       lateCheckout: !!departure.late_checkout,
       earlyCheckin: earlyTents.has(tent.id),
     } satisfies TentDayDataV2;
-  }).filter((card): card is TentDayDataV2 => !!card).sort((a, b) => Number(b.lateCheckout) - Number(a.lateCheckout) || Number(b.earlyCheckin) - Number(a.earlyCheckin) || a.tentNo - b.tentNo), [stays, futureStays, date, lang, earlyTents]);
+  }).filter((card): card is NonNullable<typeof card> => !!card).sort((a, b) => Number(b.lateCheckout) - Number(a.lateCheckout) || Number(b.earlyCheckin) - Number(a.earlyCheckin) || a.tentNo - b.tentNo), [stays, futureStays, date, lang, earlyTents]);
 
   if (loading) return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   if (!user) return <CleaningLogin lang={lang} />;
