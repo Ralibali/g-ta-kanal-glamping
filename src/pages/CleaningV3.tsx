@@ -37,37 +37,6 @@ function prettyDate(date: string, lang: CleanLang) {
   return new Date(`${date}T12:00:00`).toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
 }
 
-function monthAnchor(date: string) {
-  return `${date.slice(0, 7)}-01`;
-}
-
-function shiftMonth(anchor: string, delta: number) {
-  const value = new Date(`${anchor}T12:00:00`);
-  value.setMonth(value.getMonth() + delta);
-  return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-01`;
-}
-
-function monthLabel(anchor: string, lang: CleanLang) {
-  const locale = lang === "sv" ? "sv-SE" : lang === "si" ? "si-LK" : "en-GB";
-  return new Date(`${anchor}T12:00:00`).toLocaleDateString(locale, { month: "long", year: "numeric" });
-}
-
-function buildMonthGrid(anchor: string): (string | null)[] {
-  const start = new Date(`${anchor}T12:00:00`);
-  const year = start.getFullYear();
-  const month = start.getMonth();
-  const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7; // Monday=0
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const cells: (string | null)[] = [];
-  for (let i = 0; i < firstWeekday; i += 1) cells.push(null);
-  for (let day = 1; day <= daysInMonth; day += 1) {
-    cells.push(`${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
-  }
-  while (cells.length % 7 !== 0) cells.push(null);
-  return cells;
-}
-
-
 function CleaningLogin({ lang }: { lang: CleanLang }) {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -78,20 +47,7 @@ function CleaningLogin({ lang }: { lang: CleanLang }) {
     setBusy(false);
     if (error) toast.error(tr(lang, "loginFailed"));
   };
-  return (
-    <div className="min-h-screen bg-background p-4 flex items-center justify-center">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center"><Sparkles className="mx-auto h-8 w-8 text-primary" /><CardTitle>{tr(lang, "loginTitle")}</CardTitle></CardHeader>
-        <CardContent><form className="space-y-4" onSubmit={login}><div className="space-y-2"><Label>{tr(lang, "password")}</Label><Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoFocus required /></div><Button className="w-full" disabled={busy}>{busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}{tr(lang, "signIn")}</Button></form></CardContent>
-      </Card>
-    </div>
-  );
-}
-
-function statusLabel(status: string | undefined, lang: CleanLang) {
-  if (status === "completed") return tr(lang, "done");
-  if (status === "in_progress") return tr(lang, "inProgress");
-  return tr(lang, "notStarted");
+  return <div className="flex min-h-screen items-center justify-center bg-background p-4"><Card className="w-full max-w-sm"><CardHeader className="text-center"><Sparkles className="mx-auto h-8 w-8 text-primary" /><CardTitle>{tr(lang, "loginTitle")}</CardTitle></CardHeader><CardContent><form className="space-y-4" onSubmit={login}><div className="space-y-2"><Label>{tr(lang, "password")}</Label><Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoFocus required /></div><Button className="w-full" disabled={busy}>{busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}{tr(lang, "signIn")}</Button></form></CardContent></Card></div>;
 }
 
 export default function CleaningV3() {
@@ -99,7 +55,6 @@ export default function CleaningV3() {
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
   const [view, setView] = useState<"day" | "overview">("day");
   const [date, setDate] = useState(todayInStockholm());
-  const [month, setMonth] = useState(monthAnchor(todayInStockholm()));
   const [stays, setStays] = useState<Stay[]>([]);
   const [futureStays, setFutureStays] = useState<Stay[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -130,15 +85,15 @@ export default function CleaningV3() {
 
   const loadUpcoming = async () => {
     setDataLoading(true);
-    const start = month;
-    const end = shiftMonth(month, 1);
-    const { data, error } = await (supabase as any).from("tent_stays").select("booking_number, tent_id, checkin_date, checkout_date, guests").or(`and(checkin_date.gte.${start},checkin_date.lt.${end}),and(checkout_date.gte.${start},checkout_date.lt.${end})`);
+    const today = todayInStockholm();
+    const end = addDays(today, 60);
+    const { data, error } = await (supabase as any).from("tent_stays").select("booking_number, tent_id, checkin_date, checkout_date, guests").or(`and(checkin_date.gte.${today},checkin_date.lte.${end}),and(checkout_date.gte.${today},checkout_date.lte.${end})`);
     if (error) { toast.error(error.message); setDataLoading(false); return; }
     const rows = (data ?? []) as Stay[];
     const arrivals = new Map(rows.map((row) => [`${row.tent_id}|${row.checkin_date}`, row]));
     const map = new Map<string, Upcoming>();
     for (const departure of rows) {
-      if (departure.checkout_date < start || departure.checkout_date >= end) continue;
+      if (departure.checkout_date < today || departure.checkout_date > end) continue;
       const item = map.get(departure.checkout_date) ?? { date: departure.checkout_date, tents: [], arrivals: 0, departures: 0, guests: 0 };
       if (!item.tents.includes(departure.tent_id)) { item.tents.push(departure.tent_id); item.departures += 1; }
       const arrival = arrivals.get(`${departure.tent_id}|${departure.checkout_date}`);
@@ -152,9 +107,7 @@ export default function CleaningV3() {
   useEffect(() => {
     if (!isCleaner) return;
     if (view === "day") void loadDay(); else void loadUpcoming();
-  }, [isCleaner, view, date, month]);
-
-
+  }, [isCleaner, view, date]);
 
   const sessionByTent = useMemo(() => new Map(sessions.map((session) => [session.tent_id, session])), [sessions]);
 
@@ -178,78 +131,23 @@ export default function CleaningV3() {
       fikapase: Number(arrival?.fikapase_csv_quantity ?? 0) + Number(arrival?.fikapase_addon_quantity ?? 0) > 0,
       lateCheckout: !!departure.late_checkout,
       earlyCheckin: earlyTents.has(tent.id),
-    } as TentDayDataV2;
-  }).filter((card): card is TentDayDataV2 => card != null).sort((a, b) => {
-    const priority = (card: TentDayDataV2) => card.earlyCheckin ? 0 : card.hasArrival && !card.lateCheckout ? 1 : card.lateCheckout ? 3 : 2;
-    return priority(a) - priority(b) || a.tentNo - b.tentNo;
-  }), [stays, futureStays, date, lang, earlyTents]);
+    } satisfies TentDayDataV2;
+  }).filter((card): card is TentDayDataV2 => !!card).sort((a, b) => Number(b.lateCheckout) - Number(a.lateCheckout) || Number(b.earlyCheckin) - Number(a.earlyCheckin) || a.tentNo - b.tentNo), [stays, futureStays, date, lang, earlyTents]);
 
-  const completed = cards.filter((card) => sessionByTent.get(card.tent_id)?.status === "completed").length;
-  const changeovers = cards.filter((card) => card.hasArrival).length;
-  const late = cards.filter((card) => card.lateCheckout).length;
-  const early = cards.filter((card) => card.earlyCheckin).length;
-
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
+  if (loading) return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   if (!user) return <CleaningLogin lang={lang} />;
-  if (!isCleaner) return <div className="min-h-screen flex flex-col items-center justify-center gap-3"><p>{tr(lang, "noAccess")}</p><Button variant="outline" onClick={signOut}>{tr(lang, "signOut")}</Button></div>;
+  if (!isCleaner) return <div className="flex min-h-screen flex-col items-center justify-center gap-3"><p>{tr(lang, "noAccess")}</p><Button variant="outline" onClick={signOut}>{tr(lang, "signOut")}</Button></div>;
 
-  return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur"><div className="mx-auto flex max-w-2xl items-center justify-between gap-3 p-4"><h1 className="font-serif text-lg">Städning – Bergs Slussar</h1><div className="flex items-center gap-2"><select value={lang} onChange={(event) => changeLanguage(event.target.value as CleanLang)} className="rounded border bg-transparent px-2 py-1 text-sm">{CLEAN_LANGS.map((option) => <option key={option.code} value={option.code}>{option.label}</option>)}</select><Button variant="ghost" size="icon" onClick={signOut}><LogOut className="h-4 w-4" /></Button></div></div></header>
-      <main className="mx-auto max-w-2xl space-y-4 p-4 pb-24">
-        {selected ? <CleaningChecklistV2 data={selected} lang={lang} onBack={() => setSelected(null)} onCompleted={() => { setSelected(null); void loadDay(); }} /> : <>
-          <div className="grid grid-cols-2 gap-2"><Button variant={view === "day" ? "default" : "outline"} onClick={() => setView("day")}>{tr(lang, "dayView")}</Button><Button variant={view === "overview" ? "default" : "outline"} onClick={() => setView("overview")}>{tr(lang, "overview")}</Button></div>
-          {view === "day" ? <>
-            <Card><CardContent className="pt-4"><div className="flex items-center justify-between gap-2"><Button variant="outline" size="icon" onClick={() => setDate(addDays(date, -1))}><ChevronLeft className="h-4 w-4" /></Button><div className="text-center"><div className="font-medium capitalize">{prettyDate(date, lang)}</div><div className="text-xs text-muted-foreground">{date}</div></div><Button variant="outline" size="icon" onClick={() => setDate(addDays(date, 1))}><ChevronRight className="h-4 w-4" /></Button></div><div className="mt-3 flex justify-center gap-2"><Button size="sm" variant={date === todayInStockholm() ? "default" : "outline"} onClick={() => setDate(todayInStockholm())}>{tr(lang, "today")}</Button><Button size="sm" variant={date === addDays(todayInStockholm(), 1) ? "default" : "outline"} onClick={() => setDate(addDays(todayInStockholm(), 1))}>{tr(lang, "tomorrow")}</Button></div></CardContent></Card>
-
-            {cards.length > 0 && <Card><CardContent className="py-3 text-center text-sm"><strong>{cards.length} tält att städa</strong> • {changeovers} växlingar{early > 0 ? ` • ${early} tidig incheckning` : ""}{late > 0 ? ` • ${late} efter kl. 12` : ""}<div className="mt-1 text-xs text-muted-foreground">{completed} av {cards.length} klara</div></CardContent></Card>}
-
-            {dataLoading ? <Card><CardContent className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin" /></CardContent></Card> : cards.length === 0 ? <Card><CardContent className="py-10 text-center text-sm text-muted-foreground">{tr(lang, "noTentsToday")}</CardContent></Card> : cards.map((card) => {
-              const status = sessionByTent.get(card.tent_id)?.status;
-              return <button key={card.tent_id} onClick={() => setSelected(card)} className="w-full text-left"><Card className={card.earlyCheckin ? "border-2 border-orange-500" : card.lateCheckout ? "border-2 border-red-500" : status === "completed" ? "border-primary/30 bg-primary/5" : status === "in_progress" ? "border-blue-300 bg-blue-50/40" : ""}><CardContent className="space-y-3 pt-4"><div className="flex items-start justify-between gap-3"><div><div className="font-serif text-xl">Tält {card.tentNo} – {card.tentName}</div><div className="text-xs text-muted-foreground">{card.position}</div></div><Badge variant={status === "completed" ? "default" : "outline"}>{statusLabel(status, lang)}</Badge></div><div className="flex flex-wrap gap-2"><Badge variant="secondary">{card.hasArrival ? tr(lang, "changeover") : tr(lang, "departure")}</Badge>{card.guests > 0 && <Badge variant="outline"><Users className="mr-1 h-3 w-3" />{card.guests} {tr(lang, "guests")}</Badge>}{card.earlyCheckin && <Badge className="bg-orange-600">Tidig incheckning</Badge>}{card.lateCheckout && <Badge className="bg-red-600"><Clock3 className="mr-1 h-3 w-3" />Sen utcheckning kl. 12.00</Badge>}</div>{card.guests > 0 && <div className="rounded-md bg-muted p-3 text-sm font-medium">{towelInstruction(card.guests, lang)}{!card.hasArrival && card.nextArrivalDate ? ` • Nästa ankomst ${card.nextArrivalDate}` : ""}</div>}</CardContent></Card></button>;
-            })}
-          </> : (() => {
-            const countByDate = new Map(upcoming.map((item) => [item.date, item.tents.length]));
-            const grid = buildMonthGrid(month);
-            const weekdayLabels = lang === "sv" ? ["Mån","Tis","Ons","Tor","Fre","Lör","Sön"] : lang === "si" ? ["සඳු","අඟ","බදා","බ්‍රහ","සිකු","සෙන","ඉරි"] : ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
-            const today = todayInStockholm();
-            return <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2"><CalendarDays className="h-5 w-5" />{tr(lang, "calendar")}</CardTitle>
-                <div className="mt-2 flex items-center justify-between gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setMonth(shiftMonth(month, -1))}><ChevronLeft className="h-4 w-4 mr-1" />{tr(lang, "prevMonth")}</Button>
-                  <div className="text-center font-medium capitalize">{monthLabel(month, lang)}</div>
-                  <Button variant="outline" size="sm" onClick={() => setMonth(shiftMonth(month, 1))}>{tr(lang, "nextMonth")}<ChevronRight className="h-4 w-4 ml-1" /></Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {dataLoading ? <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin" /></div> : <>
-                  <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
-                    {weekdayLabels.map((label) => <div key={label}>{label}</div>)}
-                  </div>
-                  <div className="grid grid-cols-7 gap-1">
-                    {grid.map((cell, idx) => {
-                      if (!cell) return <div key={idx} />;
-                      const count = countByDate.get(cell) ?? 0;
-                      const isToday = cell === today;
-                      const dayNum = Number(cell.slice(8, 10));
-                      return <button
-                        key={cell}
-                        disabled={count === 0}
-                        onClick={() => { setDate(cell); setView("day"); }}
-                        className={`aspect-square rounded-md border text-xs flex flex-col items-center justify-center p-1 ${count > 0 ? "bg-primary/10 border-primary/40 hover:bg-primary/20 cursor-pointer" : "bg-muted/30 text-muted-foreground"} ${isToday ? "ring-2 ring-primary" : ""}`}
-                      >
-                        <span className="font-medium">{dayNum}</span>
-                        {count > 0 && <span className="text-[10px] mt-0.5 font-bold text-primary">{count} {tr(lang, "tentsShort")}</span>}
-                      </button>;
-                    })}
-                  </div>
-                </>}
-              </CardContent>
-            </Card>;
-          })()}
-        </>}
-      </main>
-    </div>
-  );
+  return <div className="min-h-screen bg-background"><header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur"><div className="mx-auto flex max-w-2xl items-center justify-between gap-3 p-4"><h1 className="font-serif text-lg">{tr(lang, "appTitle")}</h1><div className="flex items-center gap-2"><select value={lang} onChange={(event) => changeLanguage(event.target.value as CleanLang)} className="rounded border bg-transparent px-2 py-1 text-sm">{CLEAN_LANGS.map((option) => <option key={option.code} value={option.code}>{option.label}</option>)}</select><Button variant="ghost" size="icon" onClick={signOut}><LogOut className="h-4 w-4" /></Button></div></div></header><main className="mx-auto max-w-2xl space-y-4 p-4 pb-24">
+    {selected ? <CleaningChecklistV2 data={selected} lang={lang} onBack={() => setSelected(null)} onCompleted={() => { setSelected(null); void loadDay(); }} /> : <>
+      <div className="grid grid-cols-2 gap-2"><Button variant={view === "day" ? "default" : "outline"} onClick={() => setView("day")}>{tr(lang, "dayView")}</Button><Button variant={view === "overview" ? "default" : "outline"} onClick={() => setView("overview")}>{tr(lang, "overview")}</Button></div>
+      {view === "day" ? <>
+        <Card><CardContent className="pt-4"><div className="flex items-center justify-between gap-2"><Button variant="outline" size="icon" onClick={() => setDate(addDays(date, -1))}><ChevronLeft className="h-4 w-4" /></Button><div className="text-center"><div className="font-medium capitalize">{prettyDate(date, lang)}</div><div className="text-xs text-muted-foreground">{date}</div></div><Button variant="outline" size="icon" onClick={() => setDate(addDays(date, 1))}><ChevronRight className="h-4 w-4" /></Button></div><div className="mt-3 flex justify-center gap-2"><Button size="sm" variant={date === todayInStockholm() ? "default" : "outline"} onClick={() => setDate(todayInStockholm())}>{tr(lang, "today")}</Button><Button size="sm" variant={date === addDays(todayInStockholm(), 1) ? "default" : "outline"} onClick={() => setDate(addDays(todayInStockholm(), 1))}>{tr(lang, "tomorrow")}</Button></div></CardContent></Card>
+        {dataLoading ? <Card><CardContent className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin" /></CardContent></Card> : cards.length === 0 ? <Card><CardContent className="py-10 text-center text-sm text-muted-foreground">{tr(lang, "noTentsToday")}</CardContent></Card> : cards.map((card) => {
+          const session = sessionByTent.get(card.tent_id);
+          return <button key={card.tent_id} onClick={() => setSelected(card)} className="w-full text-left"><Card className={card.lateCheckout ? "border-2 border-red-500" : card.earlyCheckin ? "border-amber-500/60" : session?.status === "completed" ? "border-primary/30 bg-primary/5" : ""}><CardContent className="space-y-3 pt-4"><div className="flex items-start justify-between gap-3"><div><div className="font-serif text-xl">Tält {card.tentNo} – {card.tentName}</div><div className="text-xs text-muted-foreground">{card.position}</div></div><Badge variant={session?.status === "completed" ? "default" : "outline"}>{session?.status === "completed" ? tr(lang, "done") : tr(lang, "notStarted")}</Badge></div><div className="flex flex-wrap gap-2"><Badge variant="secondary">{card.hasArrival ? tr(lang, "changeover") : tr(lang, "departure")}</Badge>{card.guests > 0 && <Badge variant="outline"><Users className="mr-1 h-3 w-3" />{card.guests} {tr(lang, "guests")}</Badge>}{card.lateCheckout && <Badge className="bg-red-600"><Clock3 className="mr-1 h-3 w-3" />Sen utcheckning kl. 12.00</Badge>}</div>{card.guests > 0 && <div className="rounded-md bg-muted p-3 text-sm font-medium">{towelInstruction(card.guests, lang)}{!card.hasArrival && card.nextArrivalDate ? ` • Nästa ankomst ${card.nextArrivalDate}` : ""}</div>}</CardContent></Card></button>;
+        })}
+      </> : <Card><CardHeader><CardTitle className="flex items-center gap-2"><CalendarDays className="h-5 w-5" />{tr(lang, "upcomingDates")}</CardTitle></CardHeader><CardContent className="space-y-2">{dataLoading ? <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin" /></div> : upcoming.length === 0 ? <p className="text-sm text-muted-foreground">{tr(lang, "noUpcoming")}</p> : upcoming.map((item) => <button key={item.date} className="w-full rounded-lg border p-3 text-left hover:bg-muted/40" onClick={() => { setDate(item.date); setView("day"); }}><div className="flex items-center justify-between"><div className="font-medium capitalize">{prettyDate(item.date, lang)}</div><Badge>{item.tents.length} {tr(lang, "tentsShort")}</Badge></div><div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground"><span>{item.departures} {tr(lang, "departures")}</span><span>{item.arrivals} {tr(lang, "arrivals")}</span>{item.guests > 0 && <span>{item.guests} {tr(lang, "totalGuests")}</span>}</div></button>)}</CardContent></Card>}
+    </>}
+  </main></div>;
 }
