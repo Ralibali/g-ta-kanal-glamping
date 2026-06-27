@@ -225,6 +225,9 @@ export type Database = {
           id: string
           kind: string
           note: string | null
+          prepared_at: string | null
+          prepared_by: string | null
+          prepared_quantity: number | null
           sms_error: string | null
           sms_status: string | null
           status: string
@@ -240,6 +243,9 @@ export type Database = {
           id?: string
           kind?: string
           note?: string | null
+          prepared_at?: string | null
+          prepared_by?: string | null
+          prepared_quantity?: number | null
           sms_error?: string | null
           sms_status?: string | null
           status?: string
@@ -255,6 +261,9 @@ export type Database = {
           id?: string
           kind?: string
           note?: string | null
+          prepared_at?: string | null
+          prepared_by?: string | null
+          prepared_quantity?: number | null
           sms_error?: string | null
           sms_status?: string | null
           status?: string
@@ -797,6 +806,8 @@ export type Database = {
           adults: number
           booking_number: string
           breakfast: boolean
+          breakfast_addon_quantity: number
+          breakfast_csv_quantity: number
           checkin_date: string
           checkout_date: string
           children: number
@@ -805,11 +816,17 @@ export type Database = {
           dietary_note: string | null
           email: string | null
           fikapase: boolean
+          fikapase_addon_quantity: number
+          fikapase_csv_quantity: number
           guest_name: string | null
           guests: number | null
           id: string
+          import_source: string
+          imported_at: string
           lang: string
           late_checkout: boolean
+          late_checkout_addon: boolean
+          late_checkout_csv: boolean
           note: string | null
           phone: string | null
           raw: Json | null
@@ -820,6 +837,8 @@ export type Database = {
           adults?: number
           booking_number: string
           breakfast?: boolean
+          breakfast_addon_quantity?: number
+          breakfast_csv_quantity?: number
           checkin_date: string
           checkout_date: string
           children?: number
@@ -828,11 +847,17 @@ export type Database = {
           dietary_note?: string | null
           email?: string | null
           fikapase?: boolean
+          fikapase_addon_quantity?: number
+          fikapase_csv_quantity?: number
           guest_name?: string | null
           guests?: number | null
           id?: string
+          import_source?: string
+          imported_at?: string
           lang?: string
           late_checkout?: boolean
+          late_checkout_addon?: boolean
+          late_checkout_csv?: boolean
           note?: string | null
           phone?: string | null
           raw?: Json | null
@@ -843,6 +868,8 @@ export type Database = {
           adults?: number
           booking_number?: string
           breakfast?: boolean
+          breakfast_addon_quantity?: number
+          breakfast_csv_quantity?: number
           checkin_date?: string
           checkout_date?: string
           children?: number
@@ -851,11 +878,17 @@ export type Database = {
           dietary_note?: string | null
           email?: string | null
           fikapase?: boolean
+          fikapase_addon_quantity?: number
+          fikapase_csv_quantity?: number
           guest_name?: string | null
           guests?: number | null
           id?: string
+          import_source?: string
+          imported_at?: string
           lang?: string
           late_checkout?: boolean
+          late_checkout_addon?: boolean
+          late_checkout_csv?: boolean
           note?: string | null
           phone?: string | null
           raw?: Json | null
@@ -894,6 +927,14 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      get_breakfast_booking_notes: {
+        Args: { p_booking_numbers: string[] }
+        Returns: {
+          booking_number: string
+          guest_name: string
+          raw: Json
+        }[]
       }
       get_chat_by_token: { Args: { p_token: string }; Returns: Json }
       get_stay_by_token: { Args: { p_token: string }; Returns: Json }
@@ -958,6 +999,14 @@ export type Database = {
       }
       recalculate_booking_addon_sync: {
         Args: { p_booking_id: string; p_slug: string }
+        Returns: undefined
+      }
+      recalculate_booking_operation_quantities: {
+        Args: { p_booking_id: string }
+        Returns: undefined
+      }
+      recalculate_operations_for_booking_numbers: {
+        Args: { p_booking_numbers: string[] }
         Returns: undefined
       }
       set_stay_dietary: {
