@@ -136,7 +136,6 @@ export default function CleaningV3() {
       position: tent.position[lang],
       date,
       hasArrival: !!arrival,
-      hasDeparture: true,
       arrivalBooking: arrival?.booking_number,
       nextArrivalDate: arrival ? date : preparation?.checkin_date,
       guests: Number(preparation?.guests ?? 0),
