@@ -144,8 +144,8 @@ export default function CleaningV3() {
       fikapase: Number(arrival?.fikapase_csv_quantity ?? 0) + Number(arrival?.fikapase_addon_quantity ?? 0) > 0,
       lateCheckout: !!departure.late_checkout,
       earlyCheckin: earlyTents.has(tent.id),
-    } satisfies TentDayDataV2;
-  }).filter((card): card is TentDayDataV2 => !!card).sort((a, b) => {
+    } as TentDayDataV2;
+  }).filter((card): card is TentDayDataV2 => card != null).sort((a, b) => {
     const priority = (card: TentDayDataV2) => card.earlyCheckin ? 0 : card.hasArrival && !card.lateCheckout ? 1 : card.lateCheckout ? 3 : 2;
     return priority(a) - priority(b) || a.tentNo - b.tentNo;
   }), [stays, futureStays, date, lang, earlyTents]);
