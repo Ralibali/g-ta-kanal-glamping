@@ -37,6 +37,37 @@ function prettyDate(date: string, lang: CleanLang) {
   return new Date(`${date}T12:00:00`).toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
 }
 
+function monthAnchor(date: string) {
+  return `${date.slice(0, 7)}-01`;
+}
+
+function shiftMonth(anchor: string, delta: number) {
+  const value = new Date(`${anchor}T12:00:00`);
+  value.setMonth(value.getMonth() + delta);
+  return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-01`;
+}
+
+function monthLabel(anchor: string, lang: CleanLang) {
+  const locale = lang === "sv" ? "sv-SE" : lang === "si" ? "si-LK" : "en-GB";
+  return new Date(`${anchor}T12:00:00`).toLocaleDateString(locale, { month: "long", year: "numeric" });
+}
+
+function buildMonthGrid(anchor: string): (string | null)[] {
+  const start = new Date(`${anchor}T12:00:00`);
+  const year = start.getFullYear();
+  const month = start.getMonth();
+  const firstWeekday = (new Date(year, month, 1).getDay() + 6) % 7; // Monday=0
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells: (string | null)[] = [];
+  for (let i = 0; i < firstWeekday; i += 1) cells.push(null);
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    cells.push(`${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`);
+  }
+  while (cells.length % 7 !== 0) cells.push(null);
+  return cells;
+}
+
+
 function CleaningLogin({ lang }: { lang: CleanLang }) {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
