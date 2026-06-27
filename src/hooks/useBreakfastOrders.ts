@@ -51,10 +51,9 @@ export function useBreakfastOrders(active: boolean) {
     const numbers = Array.from(new Set(nextStays.map((stay) => stay.booking_number)));
     let nextBookings: BreakfastBookingInput[] = [];
     if (numbers.length > 0) {
-      const result = await (supabase as any)
-        .from("bookings")
-        .select("booking_number, guest_name, raw")
-        .in("booking_number", numbers);
+      const result = await (supabase as any).rpc("get_breakfast_booking_notes", {
+        p_booking_numbers: numbers,
+      });
       if (result.error) toast.error(`Kunde inte läsa bokningsanteckningar: ${result.error.message}`);
       nextBookings = (result.data ?? []) as BreakfastBookingInput[];
     }
