@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, ChefHat, MessageSquareWarning, Send, Users } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ChefHat, MessageSquareWarning, Send } from "lucide-react";
 import { TENT_BY_ID, type TentMeta } from "@/cleaning/config";
 import type { BreakfastOrder } from "@/lib/breakfast-orders";
 import { Badge } from "@/components/ui/badge";
@@ -54,46 +54,34 @@ export function BreakfastOrderCardV2({
       <CardContent className="space-y-3 pt-4">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge className={isBreakfast ? "bg-amber-600" : "bg-emerald-700"}>{isBreakfast ? "Frukost" : "Fikapåse"}</Badge>
-              <span className="font-medium">{breakfastTentLabelV2(order.tentIds)}</span>
-            </div>
-            <div className="mt-1 text-xs text-muted-foreground">{order.guestName ?? "Gäst"} • Bokning {order.bookingNumber}</div>
+            <div className="font-semibold">{breakfastTentLabelV2(order.tentIds)}</div>
+            <div className="text-sm text-muted-foreground">{order.guestName ?? "Gäst"}</div>
           </div>
-          {delivered ? <Badge className="bg-emerald-700">Levererad</Badge> : prepared ? <Badge className="bg-blue-700">Förberedd</Badge> : <Badge variant="outline">Ej påbörjad</Badge>}
+          <Badge className={isBreakfast ? "bg-amber-600" : "bg-emerald-700"}>{isBreakfast ? "Frukost" : "Fikapåse"}</Badge>
         </div>
 
-        <div className={`rounded-lg border p-3 ${isBreakfast ? "border-amber-200 bg-amber-50 dark:bg-amber-950/20" : "border-emerald-200 bg-emerald-50 dark:bg-emerald-950/20"}`}>
-          <div className="flex items-center gap-3">
-            <Users className="h-7 w-7" />
-            <div><div className="text-xs uppercase tracking-wide text-muted-foreground">Antal att leverera</div><div className="text-3xl font-bold">{order.quantity}</div></div>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2 text-xs text-muted-foreground">
-            {order.csvQuantity > 0 && <Badge variant="outline">Sirvoy: {order.csvQuantity}</Badge>}
-            {order.addonQuantity > 0 && <Badge variant="outline">Webbtillägg: {order.addonQuantity}</Badge>}
-          </div>
+        <div className={`rounded-lg border p-4 text-center ${isBreakfast ? "border-amber-200 bg-amber-50" : "border-emerald-200 bg-emerald-50"}`}>
+          <div className="text-sm text-muted-foreground">Antal</div>
+          <div className="text-4xl font-bold">{order.quantity}</div>
         </div>
 
         {order.warning && <div className="flex gap-2 rounded-lg border border-amber-400 bg-amber-50 p-3 text-sm text-amber-950"><AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" /><span>{order.warning}</span></div>}
-        {changedAfterPrepared && <div className="flex gap-2 rounded-lg border-2 border-orange-500 bg-orange-50 p-3 text-sm font-medium text-orange-950"><MessageSquareWarning className="mt-0.5 h-4 w-4 shrink-0" /><span>ÄNDRAT EFTER FÖRBEREDELSE: tidigare {order.delivery?.prepared_quantity}, nu {order.quantity}. Kontrollera innehållet igen.</span></div>}
+        {changedAfterPrepared && <div className="flex gap-2 rounded-lg border-2 border-orange-500 bg-orange-50 p-3 text-sm font-medium text-orange-950"><MessageSquareWarning className="mt-0.5 h-4 w-4 shrink-0" /><span>Antalet har ändrats efter förberedelsen. Kontrollera leveransen igen.</span></div>}
         {(order.dietary.length > 0 || order.dietaryNote) && (
           <div className="rounded-lg border-2 border-red-500 bg-red-50 p-3 text-sm text-red-950">
-            <strong>VIKTIG KOSTANPASSNING:</strong> {[...order.dietary.map((id) => DIETARY_LABELS[id] ?? id), order.dietaryNote].filter(Boolean).join(" • ")}
+            <strong>SPECIALKOST/ALLERGI:</strong> {[...order.dietary.map((id) => DIETARY_LABELS[id] ?? id), order.dietaryNote].filter(Boolean).join(" • ")}
           </div>
         )}
 
         {delivered ? (
-          <div className="space-y-1 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1"><CheckCircle2 className="h-4 w-4" /> Levererad {time(order.delivery?.delivered_at)}</div>
-            {sms && <div>{sms}</div>}
+          <div className="rounded-lg bg-primary/5 p-3 text-sm">
+            <div className="flex items-center gap-2 font-medium"><CheckCircle2 className="h-4 w-4" /> Levererad {time(order.delivery?.delivered_at)}</div>
+            {sms && <div className="mt-1 text-xs text-muted-foreground">{sms}</div>}
           </div>
         ) : prepared ? (
-          <div className="space-y-2">
-            <div className="text-xs text-blue-900">Förberedd {time(order.delivery?.prepared_at)} • {order.delivery?.prepared_quantity ?? order.quantity} st</div>
-            <Button className="w-full" onClick={() => onDeliver(order)}><Send className="mr-2 h-4 w-4" /> Markera levererad och skicka SMS</Button>
-          </div>
+          <Button className="w-full" size="lg" onClick={() => onDeliver(order)}><Send className="mr-2 h-4 w-4" /> Levererad – skicka SMS</Button>
         ) : (
-          <Button className="w-full" variant="secondary" onClick={() => onPrepare(order)}><ChefHat className="mr-2 h-4 w-4" /> Markera förberedd</Button>
+          <Button className="w-full" size="lg" variant="secondary" onClick={() => onPrepare(order)}><ChefHat className="mr-2 h-4 w-4" /> Förberedd</Button>
         )}
       </CardContent>
     </Card>
