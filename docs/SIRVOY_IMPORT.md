@@ -30,8 +30,9 @@ Den filen är källa för:
 - språk
 - namn
 - adress och land
+- gästkommentar och intern notering, bland annat allergier och önskemål om flera frukostmorgnar
 
-Tom telefon eller e-post får inte radera ett redan sparat fungerande värde.
+Basic infos rådata ska slås ihop med Booking content och får inte skrivas över när båda filerna importeras samtidigt. Tom telefon eller e-post får inte radera ett redan sparat fungerande värde.
 
 ## Telefonnummer
 
@@ -42,6 +43,16 @@ Telefon lagras i E.164-liknande format:
 - svenskt nummer med inledande `0` blir `+46` utan nollan
 - internationellt landsnummer ska aldrig bytas till `+46`
 
+## Frukost per morgon
+
+`Units` är alltid det beställda totalantalet och är facit. Antalet får aldrig räknas fram genom att summera gästkolumner över flera tält.
+
+- En natt: hela antalet levereras på utcheckningsmorgonen.
+- Flera nätter och totalen är gästantal × antal nätter: fördela lika på varje morgon.
+- En uttrycklig kommentar, exempelvis ”2 personer frukost för två dagar”, styr fördelningen per morgon.
+- Om en flernättersbokning inte kan fördelas säkert ska `/frukost` visa en gul kontrollvarning. Systemet får inte hitta på en fördelning.
+- Allergier och kostönskemål ska läsas både från Booking content och Basic infos gästkommentar. De ska visas tydligt i rött.
+
 ## Tillval från två källor
 
 CSV och webbens `addon_orders` hålls isär:
@@ -51,7 +62,7 @@ CSV och webbens `addon_orders` hålls isär:
 - `fikapase_csv_quantity`
 - `fikapase_addon_quantity`
 
-På `/frukost` visas summan, men även uppdelningen mellan Sirvoy CSV och webbtillägg. Det gör dubbla beställningar synliga och felsökbara.
+På `/frukost` visas summan för aktuell morgon, men även uppdelningen mellan Sirvoy CSV och webbtillägg. Det gör dubbla beställningar synliga och felsökbara.
 
 ## Städ
 
