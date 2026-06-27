@@ -102,7 +102,7 @@ function prettyDate(d: string): string {
 }
 
 function getStayGuests(s: Stay): number {
-  return Number(s.guests ?? ((s.adults ?? 0) + (s.children ?? 0)) ?? 0);
+  return Number(s.guests ?? ((s.adults ?? 0) + (s.children ?? 0)));
 }
 
 function sumBookingPeople(rows: Stay[], pick: (s: Stay) => number): number {
@@ -232,7 +232,6 @@ export default function Breakfast() {
       const breakfastByBooking = new Map<string, Stay[]>();
 
       stays.forEach((s) => {
-        if (!tent) return;
         // Frukost levereras på utcheckningsdagen.
         if (s.breakfast && d === s.checkout_date) {
           const key = `${s.booking_number}_${s.checkout_date}`;
