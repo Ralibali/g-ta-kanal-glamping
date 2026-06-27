@@ -5,7 +5,6 @@ import { useCleaner } from "@/hooks/useCleaner";
 import { TENTS, todayInStockholm } from "@/cleaning/config";
 import { CLEAN_LANGS, getStoredLang, setStoredLang, tr, type CleanLang } from "@/cleaning/i18n";
 import { CleaningChecklistV2, type TentDayDataV2 } from "@/components/cleaning/CleaningChecklistV2";
-import { CleaningStatusSummary, type CleaningStatusFilter } from "@/components/cleaning/CleaningStatusSummary";
 import { pickPreparationStay, towelInstruction, type CleaningStayLike } from "@/lib/cleaning-operations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -68,7 +67,6 @@ export default function CleaningV3() {
   const { user, isCleaner, loading, signOut } = useCleaner();
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
   const [view, setView] = useState<"day" | "overview">("day");
-  const [filter, setFilter] = useState<CleaningStatusFilter>("all");
   const [date, setDate] = useState(todayInStockholm());
   const [stays, setStays] = useState<Stay[]>([]);
   const [futureStays, setFutureStays] = useState<Stay[]>([]);
@@ -154,14 +152,9 @@ export default function CleaningV3() {
   }), [stays, futureStays, date, lang, earlyTents]);
 
   const completed = cards.filter((card) => sessionByTent.get(card.tent_id)?.status === "completed").length;
-  const inProgress = cards.filter((card) => sessionByTent.get(card.tent_id)?.status === "in_progress").length;
-  const notStarted = cards.length - completed - inProgress;
-  const filteredCards = cards.filter((card) => {
-    if (filter === "all") return true;
-    const status = sessionByTent.get(card.tent_id)?.status;
-    if (filter === "not_started") return !status;
-    return status === filter;
-  });
+  const changeovers = cards.filter((card) => card.hasArrival).length;
+  const late = cards.filter((card) => card.lateCheckout).length;
+  const early = cards.filter((card) => card.earlyCheckin).length;
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
   if (!user) return <CleaningLogin lang={lang} />;
@@ -169,14 +162,16 @@ export default function CleaningV3() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur"><div className="mx-auto flex max-w-2xl items-center justify-between gap-3 p-4"><div><h1 className="font-serif text-lg">Topstäd – Bergs Slussar</h1><p className="text-xs text-muted-foreground">Städning sker alltid på avresedagen</p></div><div className="flex items-center gap-2"><select value={lang} onChange={(event) => changeLanguage(event.target.value as CleanLang)} className="rounded border bg-transparent px-2 py-1 text-sm">{CLEAN_LANGS.map((option) => <option key={option.code} value={option.code}>{option.label}</option>)}</select><Button variant="ghost" size="icon" onClick={signOut}><LogOut className="h-4 w-4" /></Button></div></div></header>
+      <header className="sticky top-0 z-10 border-b bg-background/95 backdrop-blur"><div className="mx-auto flex max-w-2xl items-center justify-between gap-3 p-4"><h1 className="font-serif text-lg">Städning – Bergs Slussar</h1><div className="flex items-center gap-2"><select value={lang} onChange={(event) => changeLanguage(event.target.value as CleanLang)} className="rounded border bg-transparent px-2 py-1 text-sm">{CLEAN_LANGS.map((option) => <option key={option.code} value={option.code}>{option.label}</option>)}</select><Button variant="ghost" size="icon" onClick={signOut}><LogOut className="h-4 w-4" /></Button></div></div></header>
       <main className="mx-auto max-w-2xl space-y-4 p-4 pb-24">
         {selected ? <CleaningChecklistV2 data={selected} lang={lang} onBack={() => setSelected(null)} onCompleted={() => { setSelected(null); void loadDay(); }} /> : <>
           <div className="grid grid-cols-2 gap-2"><Button variant={view === "day" ? "default" : "outline"} onClick={() => setView("day")}>{tr(lang, "dayView")}</Button><Button variant={view === "overview" ? "default" : "outline"} onClick={() => setView("overview")}>{tr(lang, "overview")}</Button></div>
           {view === "day" ? <>
             <Card><CardContent className="pt-4"><div className="flex items-center justify-between gap-2"><Button variant="outline" size="icon" onClick={() => setDate(addDays(date, -1))}><ChevronLeft className="h-4 w-4" /></Button><div className="text-center"><div className="font-medium capitalize">{prettyDate(date, lang)}</div><div className="text-xs text-muted-foreground">{date}</div></div><Button variant="outline" size="icon" onClick={() => setDate(addDays(date, 1))}><ChevronRight className="h-4 w-4" /></Button></div><div className="mt-3 flex justify-center gap-2"><Button size="sm" variant={date === todayInStockholm() ? "default" : "outline"} onClick={() => setDate(todayInStockholm())}>{tr(lang, "today")}</Button><Button size="sm" variant={date === addDays(todayInStockholm(), 1) ? "default" : "outline"} onClick={() => setDate(addDays(todayInStockholm(), 1))}>{tr(lang, "tomorrow")}</Button></div></CardContent></Card>
-            <CleaningStatusSummary total={cards.length} changeovers={cards.filter((card) => card.hasArrival).length} late={cards.filter((card) => card.lateCheckout).length} early={cards.filter((card) => card.earlyCheckin).length} notStarted={notStarted} inProgress={inProgress} completed={completed} filter={filter} onFilter={setFilter} />
-            {dataLoading ? <Card><CardContent className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin" /></CardContent></Card> : filteredCards.length === 0 ? <Card><CardContent className="py-10 text-center text-sm text-muted-foreground">Inga tält i detta urval.</CardContent></Card> : filteredCards.map((card) => {
+
+            {cards.length > 0 && <Card><CardContent className="py-3 text-center text-sm"><strong>{cards.length} tält att städa</strong> • {changeovers} växlingar{early > 0 ? ` • ${early} tidig incheckning` : ""}{late > 0 ? ` • ${late} efter kl. 12` : ""}<div className="mt-1 text-xs text-muted-foreground">{completed} av {cards.length} klara</div></CardContent></Card>}
+
+            {dataLoading ? <Card><CardContent className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin" /></CardContent></Card> : cards.length === 0 ? <Card><CardContent className="py-10 text-center text-sm text-muted-foreground">{tr(lang, "noTentsToday")}</CardContent></Card> : cards.map((card) => {
               const status = sessionByTent.get(card.tent_id)?.status;
               return <button key={card.tent_id} onClick={() => setSelected(card)} className="w-full text-left"><Card className={card.earlyCheckin ? "border-2 border-orange-500" : card.lateCheckout ? "border-2 border-red-500" : status === "completed" ? "border-primary/30 bg-primary/5" : status === "in_progress" ? "border-blue-300 bg-blue-50/40" : ""}><CardContent className="space-y-3 pt-4"><div className="flex items-start justify-between gap-3"><div><div className="font-serif text-xl">Tält {card.tentNo} – {card.tentName}</div><div className="text-xs text-muted-foreground">{card.position}</div></div><Badge variant={status === "completed" ? "default" : "outline"}>{statusLabel(status, lang)}</Badge></div><div className="flex flex-wrap gap-2"><Badge variant="secondary">{card.hasArrival ? tr(lang, "changeover") : tr(lang, "departure")}</Badge>{card.guests > 0 && <Badge variant="outline"><Users className="mr-1 h-3 w-3" />{card.guests} {tr(lang, "guests")}</Badge>}{card.earlyCheckin && <Badge className="bg-orange-600">Tidig incheckning</Badge>}{card.lateCheckout && <Badge className="bg-red-600"><Clock3 className="mr-1 h-3 w-3" />Sen utcheckning kl. 12.00</Badge>}</div>{card.guests > 0 && <div className="rounded-md bg-muted p-3 text-sm font-medium">{towelInstruction(card.guests, lang)}{!card.hasArrival && card.nextArrivalDate ? ` • Nästa ankomst ${card.nextArrivalDate}` : ""}</div>}</CardContent></Card></button>;
             })}
