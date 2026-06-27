@@ -1,1 +1,1 @@
-export { default } from './BreakfastV3';
+export { default } from './BreakfastV4';
