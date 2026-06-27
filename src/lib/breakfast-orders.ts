@@ -26,6 +26,9 @@ export type BreakfastDeliveryInput = {
   status: string;
   sms_status: string | null;
   delivered_at: string | null;
+  prepared_at: string | null;
+  prepared_by: string | null;
+  prepared_quantity: number | null;
 };
 
 export type BreakfastOrder = {
@@ -180,7 +183,6 @@ export function planBreakfastDates(args: {
     }
   }
 
-  // Webbtillägget saknar ett särskilt leveransdatum. Behåll tidigare regel: sista morgonen.
   if (addonQuantity > 0) add(checkout, "addon", addonQuantity);
 
   return Array.from(byDate.values()).sort((a, b) => a.date.localeCompare(b.date));
