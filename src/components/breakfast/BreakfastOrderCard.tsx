@@ -1,5 +1,5 @@
 import { AlertTriangle, Send, Users } from "lucide-react";
-import { TENT_BY_ID } from "@/cleaning/config";
+import { TENT_BY_ID, type TentMeta } from "@/cleaning/config";
 import type { BreakfastOrder } from "@/lib/breakfast-orders";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ const DIETARY_LABELS: Record<string, string> = {
 export function breakfastTentLabel(tentIds: string[]) {
   return tentIds
     .map((id) => TENT_BY_ID[id])
-    .filter(Boolean)
+    .filter((tent): tent is TentMeta => !!tent)
     .sort((a, b) => a.no - b.no)
     .map((tent) => `Tält ${tent.no} – ${tent.name}`)
     .join(" + ");
