@@ -27,7 +27,9 @@ export function BreakfastLogin() {
         <CardHeader className="text-center">
           <Coffee className="mx-auto h-8 w-8 text-primary" />
           <CardTitle>Frukostleverans</CardTitle>
+          <p className="text-sm text-muted-foreground">Lösenord: <strong>Bostället</strong></p>
         </CardHeader>
+
         <CardContent>
           <form className="space-y-4" onSubmit={login}>
             <div className="space-y-2">
