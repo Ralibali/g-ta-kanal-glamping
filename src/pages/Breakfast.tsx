@@ -64,8 +64,10 @@ type Order = {
   key: string;
   booking_number: string;
   tent_id: string;
+  tentIds: string[];
   tentNo: number;
   tentName: string;
+  tentLabel: string;
   guestName: string | null;
   guests: number;
   children: number;
@@ -97,6 +99,31 @@ function addDays(d: string, n: number): string {
 function prettyDate(d: string): string {
   const dt = new Date(d + "T12:00:00");
   return dt.toLocaleDateString("sv-SE", { weekday: "long", day: "numeric", month: "long" });
+}
+
+function getStayGuests(s: Stay): number {
+  return Number(s.guests ?? ((s.adults ?? 0) + (s.children ?? 0)));
+}
+
+function sumBookingPeople(rows: Stay[], pick: (s: Stay) => number): number {
+  const values = rows.map(pick).filter((n) => Number.isFinite(n) && n > 0);
+  if (values.length === 0) return 0;
+
+  // Sirvoy exports multi-tent bookings as one row per tent. In those rows the
+  // guest count can be the booking total repeated on every tent row, not a
+  // per-tent split. If all rows have the same count, treat it as one total.
+  if (rows.length > 1 && new Set(values).size === 1) return values[0];
+
+  return values.reduce((sum, n) => sum + n, 0);
+}
+
+function buildTentLabel(rows: Stay[]): string {
+  const tents = rows
+    .map((s) => TENT_BY_ID[s.tent_id])
+    .filter(Boolean)
+    .sort((a, b) => a.no - b.no);
+  if (tents.length === 0) return "Tält";
+  return tents.map((t) => `Tält ${t.no} – ${t.name}`).join(" + ");
 }
 
 export default function Breakfast() {
@@ -155,13 +182,15 @@ export default function Breakfast() {
     if (!editDiet) return;
     setSavingDiet(true);
     try {
-      const { error } = await (supabase as any).rpc("set_stay_dietary", {
-        p_booking_number: editDiet.booking_number,
-        p_tent_id: editDiet.tent_id,
-        p_dietary: dietDraft,
-        p_dietary_note: dietNoteDraft || null,
-      });
-      if (error) throw error;
+      for (const tentId of editDiet.tentIds.length ? editDiet.tentIds : [editDiet.tent_id]) {
+        const { error } = await (supabase as any).rpc("set_stay_dietary", {
+          p_booking_number: editDiet.booking_number,
+          p_tent_id: tentId,
+          p_dietary: dietDraft,
+          p_dietary_note: dietNoteDraft || null,
+        });
+        if (error) throw error;
+      }
       toast.success("Kostanpassning sparad");
       setEditDiet(null);
       await load();
@@ -200,37 +229,28 @@ export default function Breakfast() {
     for (let i = 0; i < upcomingWindow; i++) {
       const d = addDays(today, i);
       const list: Order[] = [];
+      const breakfastByBooking = new Map<string, Stay[]>();
+
       stays.forEach((s) => {
-        const tent = TENT_BY_ID[s.tent_id];
-        if (!tent) return;
         // Frukost levereras på utcheckningsdagen.
         if (s.breakfast && d === s.checkout_date) {
-          list.push({
-            key: `${s.booking_number}_${d}_breakfast`,
-            booking_number: s.booking_number,
-            tent_id: s.tent_id,
-            tentNo: tent.no,
-            tentName: tent.name,
-            guestName: s.guest_name,
-            guests: s.guests ?? s.adults ?? 0,
-            children: s.children ?? 0,
-            kind: "breakfast",
-            deliveryDate: d,
-            dietary: s.dietary ?? [],
-            dietaryNote: s.dietary_note ?? null,
-            delivered: deliveries.find((x) => x.booking_number === s.booking_number && x.delivery_date === d && x.kind === "breakfast"),
-          });
+          const key = `${s.booking_number}_${s.checkout_date}`;
+          breakfastByBooking.set(key, [...(breakfastByBooking.get(key) ?? []), s]);
         }
         // Fikapåse levereras på incheckningsdagen.
         if (s.fikapase && d === s.checkin_date) {
+          const tent = TENT_BY_ID[s.tent_id];
+          if (!tent) return;
           list.push({
             key: `${s.booking_number}_${d}_fikapase`,
             booking_number: s.booking_number,
             tent_id: s.tent_id,
+            tentIds: [s.tent_id],
             tentNo: tent.no,
             tentName: tent.name,
+            tentLabel: `Tält ${tent.no} – ${tent.name}`,
             guestName: s.guest_name,
-            guests: s.guests ?? s.adults ?? 0,
+            guests: getStayGuests(s),
             children: s.children ?? 0,
             kind: "fikapase",
             deliveryDate: d,
@@ -239,6 +259,32 @@ export default function Breakfast() {
             delivered: deliveries.find((x) => x.booking_number === s.booking_number && x.delivery_date === d && x.kind === "fikapase"),
           });
         }
+      });
+      breakfastByBooking.forEach((rows) => {
+        const sortedRows = [...rows].sort((a, b) => (TENT_BY_ID[a.tent_id]?.no ?? 99) - (TENT_BY_ID[b.tent_id]?.no ?? 99));
+        const first = sortedRows[0];
+        const firstTent = TENT_BY_ID[first.tent_id];
+        if (!firstTent) return;
+        const dietary = Array.from(new Set(sortedRows.flatMap((s) => s.dietary ?? [])));
+        const notes = sortedRows.map((s) => s.dietary_note).filter(Boolean) as string[];
+
+        list.push({
+          key: `${first.booking_number}_${d}_breakfast`,
+          booking_number: first.booking_number,
+          tent_id: first.tent_id,
+          tentIds: sortedRows.map((s) => s.tent_id),
+          tentNo: firstTent.no,
+          tentName: firstTent.name,
+          tentLabel: buildTentLabel(sortedRows),
+          guestName: first.guest_name,
+          guests: sumBookingPeople(sortedRows, getStayGuests),
+          children: sumBookingPeople(sortedRows, (s) => Number(s.children ?? 0)),
+          kind: "breakfast",
+          deliveryDate: d,
+          dietary,
+          dietaryNote: notes.length ? Array.from(new Set(notes)).join(" • ") : null,
+          delivered: deliveries.find((x) => x.booking_number === first.booking_number && x.delivery_date === d && x.kind === "breakfast"),
+        });
       });
       list.sort((a, b) => a.tentNo - b.tentNo || (a.kind === "breakfast" ? -1 : 1));
       if (list.length) map.set(d, list);
@@ -537,7 +583,7 @@ export default function Breakfast() {
                               <Badge className={isBreakfast ? "bg-amber-600 hover:bg-amber-600" : "bg-emerald-700 hover:bg-emerald-700"}>
                                 {isBreakfast ? <><Croissant className="h-3 w-3 mr-1" /> Frukost</> : <><Leaf className="h-3 w-3 mr-1" /> Fikapåse</>}
                               </Badge>
-                              <span className="font-medium">Tält {o.tentNo} – {o.tentName}</span>
+                              <span className="font-medium">{o.tentLabel}</span>
                             </div>
                             <div className="text-xs text-muted-foreground mt-1">
                               Gäst • Bokning {o.booking_number}
