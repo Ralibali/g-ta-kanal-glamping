@@ -72,7 +72,9 @@ function LoginForm({ lang }: { lang: CleanLang }) {
           <Sparkles className="h-8 w-8 mx-auto text-primary" />
           <CardTitle>{tr(lang, "loginTitle")}</CardTitle>
           <p className="text-sm text-muted-foreground">{tr(lang, "loginHint")}</p>
+          <p className="text-xs text-muted-foreground mt-1">Lösenord: <strong>topstäd</strong></p>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={login} className="space-y-3">
             <div><Label>{tr(lang, "password")}</Label><Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoFocus required /></div>
