@@ -208,7 +208,46 @@ export default function CleaningV3() {
               const status = sessionByTent.get(card.tent_id)?.status;
               return <button key={card.tent_id} onClick={() => setSelected(card)} className="w-full text-left"><Card className={card.earlyCheckin ? "border-2 border-orange-500" : card.lateCheckout ? "border-2 border-red-500" : status === "completed" ? "border-primary/30 bg-primary/5" : status === "in_progress" ? "border-blue-300 bg-blue-50/40" : ""}><CardContent className="space-y-3 pt-4"><div className="flex items-start justify-between gap-3"><div><div className="font-serif text-xl">Tält {card.tentNo} – {card.tentName}</div><div className="text-xs text-muted-foreground">{card.position}</div></div><Badge variant={status === "completed" ? "default" : "outline"}>{statusLabel(status, lang)}</Badge></div><div className="flex flex-wrap gap-2"><Badge variant="secondary">{card.hasArrival ? tr(lang, "changeover") : tr(lang, "departure")}</Badge>{card.guests > 0 && <Badge variant="outline"><Users className="mr-1 h-3 w-3" />{card.guests} {tr(lang, "guests")}</Badge>}{card.earlyCheckin && <Badge className="bg-orange-600">Tidig incheckning</Badge>}{card.lateCheckout && <Badge className="bg-red-600"><Clock3 className="mr-1 h-3 w-3" />Sen utcheckning kl. 12.00</Badge>}</div>{card.guests > 0 && <div className="rounded-md bg-muted p-3 text-sm font-medium">{towelInstruction(card.guests, lang)}{!card.hasArrival && card.nextArrivalDate ? ` • Nästa ankomst ${card.nextArrivalDate}` : ""}</div>}</CardContent></Card></button>;
             })}
-          </> : <Card><CardHeader><CardTitle className="flex items-center gap-2"><CalendarDays className="h-5 w-5" />{tr(lang, "upcomingDates")}</CardTitle></CardHeader><CardContent className="space-y-2">{dataLoading ? <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin" /></div> : upcoming.length === 0 ? <p className="text-sm text-muted-foreground">{tr(lang, "noUpcoming")}</p> : upcoming.map((item) => <button key={item.date} className="w-full rounded-lg border p-3 text-left hover:bg-muted/40" onClick={() => { setDate(item.date); setView("day"); }}><div className="flex items-center justify-between"><div className="font-medium capitalize">{prettyDate(item.date, lang)}</div><Badge>{item.tents.length} {tr(lang, "tentsShort")}</Badge></div><div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground"><span>{item.departures} {tr(lang, "departures")}</span><span>{item.arrivals} {tr(lang, "arrivals")}</span>{item.guests > 0 && <span>{item.guests} {tr(lang, "totalGuests")}</span>}</div></button>)}</CardContent></Card>}
+          </> : (() => {
+            const countByDate = new Map(upcoming.map((item) => [item.date, item.tents.length]));
+            const grid = buildMonthGrid(month);
+            const weekdayLabels = lang === "sv" ? ["Mån","Tis","Ons","Tor","Fre","Lör","Sön"] : lang === "si" ? ["සඳු","අඟ","බදා","බ්‍රහ","සිකු","සෙන","ඉරි"] : ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+            const today = todayInStockholm();
+            return <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><CalendarDays className="h-5 w-5" />{tr(lang, "calendar")}</CardTitle>
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setMonth(shiftMonth(month, -1))}><ChevronLeft className="h-4 w-4 mr-1" />{tr(lang, "prevMonth")}</Button>
+                  <div className="text-center font-medium capitalize">{monthLabel(month, lang)}</div>
+                  <Button variant="outline" size="sm" onClick={() => setMonth(shiftMonth(month, 1))}>{tr(lang, "nextMonth")}<ChevronRight className="h-4 w-4 ml-1" /></Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {dataLoading ? <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin" /></div> : <>
+                  <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1">
+                    {weekdayLabels.map((label) => <div key={label}>{label}</div>)}
+                  </div>
+                  <div className="grid grid-cols-7 gap-1">
+                    {grid.map((cell, idx) => {
+                      if (!cell) return <div key={idx} />;
+                      const count = countByDate.get(cell) ?? 0;
+                      const isToday = cell === today;
+                      const dayNum = Number(cell.slice(8, 10));
+                      return <button
+                        key={cell}
+                        disabled={count === 0}
+                        onClick={() => { setDate(cell); setView("day"); }}
+                        className={`aspect-square rounded-md border text-xs flex flex-col items-center justify-center p-1 ${count > 0 ? "bg-primary/10 border-primary/40 hover:bg-primary/20 cursor-pointer" : "bg-muted/30 text-muted-foreground"} ${isToday ? "ring-2 ring-primary" : ""}`}
+                      >
+                        <span className="font-medium">{dayNum}</span>
+                        {count > 0 && <span className="text-[10px] mt-0.5 font-bold text-primary">{count} {tr(lang, "tentsShort")}</span>}
+                      </button>;
+                    })}
+                  </div>
+                </>}
+              </CardContent>
+            </Card>;
+          })()}
         </>}
       </main>
     </div>
