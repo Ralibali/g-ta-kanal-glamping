@@ -194,9 +194,9 @@ export default function CleaningV2() {
         fikapase: fika,
         lateCheckout: !!departure.late_checkout,
         earlyCheckin: earlyTents.has(tent.id),
-      } satisfies TentDayData;
+      } as TentDayData;
     })
-      .filter((card): card is TentDayData => !!card)
+      .filter((card): card is TentDayData => card != null)
       .sort((a, b) => Number(b.earlyCheckin) - Number(a.earlyCheckin) || a.tentNo - b.tentNo);
   }, [stays, date, lang, earlyTents]);
 
