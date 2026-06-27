@@ -66,6 +66,12 @@ På `/frukost` visas summan för aktuell morgon, men även uppdelningen mellan S
 
 ## Städ
 
-Städning sker på avresedagen. Vid växling samma dag ska gästantal och barn hämtas från den ankommande vistelsen i samma tält, inte från den avresande bokningen.
+Städning sker alltid på avresedagen, även om nästa bokning börjar flera dagar senare. Städningen får aldrig flyttas fram till nästa ankomstdag.
+
+Vid växling samma dag ska gästantal och barn hämtas från den ankommande vistelsen i samma tält, inte från den avresande bokningen. Om tältet står tomt efter avresan ska handduksantal och bäddning i stället hämtas från tältets närmast kommande bokning.
+
+Checklistan ska ange exakt antal: `Lägg in X stora och X små handdukar`, där X är antalet gäster i den bokning som tältet förbereds för.
+
+Sen utcheckning ska visas tydligt som `Sen utcheckning kl. 12.00`, och städningen ska påbörjas först efter klockan 12.00.
 
 Sirvoy anger inte vilket tält barnen sover i på en flertältsbokning. För att inte dubblera barnen placeras bokningens barn deterministiskt på första tältet. Detta är en teknisk fördelning; ändra manuellt om gästens faktiska rumsfördelning är känd.
