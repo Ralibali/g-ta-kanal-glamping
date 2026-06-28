@@ -1,0 +1,1 @@
+UPDATE public.tent_stays SET tent_id='naturkarnan' WHERE id='23810cd6-ff3e-4887-a04f-b1420e902381';
