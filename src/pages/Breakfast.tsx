@@ -236,8 +236,7 @@ export default function Breakfast() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Laddar…</div>;
-  if (!user) return <BreakfastLogin />;
+  if (loading || !user) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Laddar…</div>;
   if (!isBreakfast) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
