@@ -20,7 +20,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useBreakfast } from "@/hooks/useBreakfast";
 import { useBreakfastOrders } from "@/hooks/useBreakfastOrders";
-import { BreakfastLogin } from "@/components/breakfast/BreakfastLogin";
+
 import { TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
 import type { BreakfastOrder } from "@/lib/breakfast-orders";
 import { Badge } from "@/components/ui/badge";
@@ -116,6 +116,23 @@ export default function Breakfast() {
   const [dietDraft, setDietDraft] = useState<string[]>([]);
   const [dietNoteDraft, setDietNoteDraft] = useState("");
   const [savingDiet, setSavingDiet] = useState(false);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      (async () => {
+        const tryLogin = async (password: string) =>
+          await supabase.auth.signInWithPassword({ email: "karin@bostallet.se", password });
+        let result = await tryLogin("bostället");
+        if (result.error) result = await tryLogin("Bostället");
+        if (result.error) {
+          try {
+            await supabase.functions.invoke("provision-breakfast");
+            await tryLogin("bostället");
+          } catch {}
+        }
+      })();
+    }
+  }, [loading, user]);
 
   useEffect(() => {
     const previousTitle = document.title;
@@ -219,8 +236,7 @@ export default function Breakfast() {
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Laddar…</div>;
-  if (!user) return <BreakfastLogin />;
+  if (loading || !user) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Laddar…</div>;
   if (!isBreakfast) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4">
