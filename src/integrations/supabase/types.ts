@@ -920,6 +920,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auto_assign_missing_tents: {
+        Args: never
+        Returns: {
+          assigned_tent: string
+          booking_number: string
+        }[]
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -927,6 +934,14 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      find_free_tent: {
+        Args: {
+          p_checkin: string
+          p_checkout: string
+          p_exclude_booking?: string
+        }
+        Returns: string
       }
       get_breakfast_booking_notes: {
         Args: { p_booking_numbers: string[] }
