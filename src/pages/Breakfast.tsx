@@ -20,7 +20,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useBreakfast } from "@/hooks/useBreakfast";
 import { useBreakfastOrders } from "@/hooks/useBreakfastOrders";
-import { BreakfastLogin } from "@/components/breakfast/BreakfastLogin";
+
 import { TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
 import type { BreakfastOrder } from "@/lib/breakfast-orders";
 import { Badge } from "@/components/ui/badge";
