@@ -11,20 +11,23 @@ Deno.serve(async (req) => {
     })
   }
 
-  let body: { to?: string; name?: string; tent?: string; lang?: string } = {}
+  let body: { to?: string; name?: string; tent?: string; lang?: string; breakfast?: boolean } = {}
   try { body = await req.json() } catch { /* ignore */ }
   const to = body.to
   const name = body.name ?? null
   const tent = body.tent ?? 'erat tält'
   const lang = (body.lang ?? 'sv').toLowerCase()
+  const breakfast = !!body.breakfast
   if (!to) {
     return new Response(JSON.stringify({ error: 'to required' }), {
       status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 
-  const sv = `${name ? `Hej ${name}` : 'Hej'} och välkommen till oss på Bergs Slussar Glamping! Våra städare har markerat ${tent} som klart, så ni är välkomna att checka in från nu. Incheckning sker via QR-koden vid entrén, där kan ni checka in med namn eller bokningsnummer och får sedan koden till tältet. Soliga hälsningar, Bergs Slussar Glamping`
-  const en = `${name ? `Hi ${name}` : 'Hi'} and welcome to Bergs Slussar Glamping! Our cleaners have marked ${tent} as ready, so you are welcome to check in from now. Check in via the QR code at the entrance, where you can use your name or booking number, and you will then get the code to your tent. Kind regards, Bergs Slussar Glamping`
+  const svBreakfast = breakfast ? ' Frukost serveras 08:30-09:00 vid portalen och ni får ett SMS när den levererats från bageriet.' : ''
+  const enBreakfast = breakfast ? ' Breakfast is served 08:30-09:00 at the portal and you will get an SMS when it is delivered from the bakery.' : ''
+  const sv = `${name ? `Hej ${name}` : 'Hej'} och välkommen till oss på Bergs Slussar Glamping! Våra städare har markerat ${tent} som klart, så ni är välkomna att checka in från nu. Incheckning sker via QR-koden vid entrén, där kan ni checka in med namn eller bokningsnummer och får sedan koden till tältet.${svBreakfast} Soliga hälsningar, Bergs Slussar Glamping`
+  const en = `${name ? `Hi ${name}` : 'Hi'} and welcome to Bergs Slussar Glamping! Our cleaners have marked ${tent} as ready, so you are welcome to check in from now. Check in via the QR code at the entrance, where you can use your name or booking number, and you will then get the code to your tent.${enBreakfast} Kind regards, Bergs Slussar Glamping`
   const message = lang.startsWith('sv') ? sv : en
 
   const fromRaw = Deno.env.get('ELKS46_FROM') || 'Glamping'
