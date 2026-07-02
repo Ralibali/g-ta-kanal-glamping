@@ -180,8 +180,10 @@ export function planBreakfastDates(args: {
     }
   }
 
-  // Webbtillägget saknar ett särskilt leveransdatum. Behåll tidigare regel: sista morgonen.
-  if (addonQuantity > 0) add(checkout, "addon", addonQuantity);
+  // Webbtillägg = portioner per morgon. Levereras varje morgon under vistelsen (checkin+1 … checkout).
+  if (addonQuantity > 0) {
+    for (let day = 1; day <= nights; day += 1) add(addDays(checkin, day), "addon", addonQuantity);
+  }
 
   return Array.from(byDate.values()).sort((a, b) => a.date.localeCompare(b.date));
 }
