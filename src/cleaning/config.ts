@@ -19,7 +19,7 @@ export interface TentMeta {
 
 export const TENTS: TentMeta[] = [
   { id: "sjobris", no: 1, name: "Sjöbrisretreatet", position: {
-    sv: "Längst till höger", en: "Far right", si: "දකුණු කෙළවරේ",
+    sv: "Rakt fram", en: "Straight ahead", si: "ඉදිරියෙන්",
   }},
   { id: "naturkarnan", no: 2, name: "Naturkärnan", position: {
     sv: "Längst till vänster", en: "Far left", si: "වම් කෙළවරේ",
