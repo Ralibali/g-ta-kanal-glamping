@@ -134,6 +134,45 @@ Deno.serve(async (req) => {
     })
   }
 
+  // Fire-and-forget admin notification email
+  const tentLabels: Record<string, string> = {
+    sjobris: 'Tält 1 – Sjöbrisretreatet',
+    naturkarnan: 'Tält 2 – Naturkärnan',
+    lugnetsyta: 'Tält 3 – Lugnets Yta',
+  }
+  try {
+    const { data: bFull } = await supabase
+      .from('bookings')
+      .select('tent_id, checkin_date, checkout_date, email')
+      .eq('booking_number', bookingNumber)
+      .maybeSingle()
+    const tentLabel = bFull?.tent_id ? (tentLabels[bFull.tent_id] ?? bFull.tent_id) : '(okänt tält)'
+    const stockholmTime = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Stockholm' })
+    const bodyText = [
+      `Bokning: ${bookingNumber}`,
+      `Gäst: ${b.guest_name ?? '-'}`,
+      `Tält: ${tentLabel}`,
+      `Telefon: ${b.phone ?? '-'}`,
+      `E-post: ${bFull?.email ?? '-'}`,
+      `Vistelse: ${bFull?.checkin_date ?? '?'} → ${bFull?.checkout_date ?? '?'}`,
+      `Språk: ${b.language ?? '-'}`,
+      `Tid: ${stockholmTime}`,
+    ].join('\n')
+    supabase.functions.invoke('send-transactional-email', {
+      body: {
+        templateName: 'simple-owner-notice',
+        recipientEmail: 'info@auroramedia.se',
+        idempotencyKey: `checkin-notify-${bookingNumber}-${Date.now()}`,
+        templateData: {
+          subject: `Incheckning: ${bookingNumber} (${tentLabel})`,
+          body: bodyText,
+        },
+      },
+    }).catch((err) => console.error('checkin admin email failed', err))
+  } catch (err) {
+    console.error('checkin admin email prep failed', err)
+  }
+
   const toPhone = normalizePhone(b.phone)
   if (!toPhone) {
     return new Response(JSON.stringify({ status: 'skipped_no_phone' }), {
