@@ -197,9 +197,9 @@ Deno.serve(async (req) => {
     timeZone: 'Europe/Stockholm', year: 'numeric', month: '2-digit', day: '2-digit',
   }).format(new Date())
 
-  if (cleaning_date < todayStockholm) {
+  if (cleaning_date !== todayStockholm) {
     smsStatus = 'skipped'
-    smsReason = 'back_dated_cleaning'
+    smsReason = 'not_today'
   } else if (!arrival) {
     smsStatus = 'skipped'
     smsReason = 'no_arrival_today'
