@@ -29,14 +29,23 @@
     {
       "@context": "https://schema.org",
       "@type": "LodgingBusiness",
+      "@id": "https://goglampingsweden.se/#lodging",
       "name": "Bergs Slussar Glamping",
-      "alternateName": ["GoGlamping Sweden", "Glamping Bergs Slussar", "Glamping Göta kanal", "Glamping Östergötland"],
+      "legalName": "Go Glamping Sweden",
+      "alternateName": ["GoGlamping Sweden", "Go Glamping Sweden", "Glamping Bergs Slussar", "Glamping Göta kanal", "Glamping Östergötland"],
       "description": "Glamping vid Bergs Slussar och Göta kanal i Östergötland. Ombonade tält med dubbelsäng, värme, kylskåp och el – 15 minuter från Linköping. Frukost som tillval.",
+      "disambiguatingDescription": "Bergs Slussar Glamping (Go Glamping Sweden) är en fristående glampinganläggning som drivs av Aurora Media AB. Verksamheten är inte samma företag som, ägs inte av och har ingen affärsrelation med Bergs Slussar Vandrarhem eller någon annan aktör vid Bergs Slussar.",
       "url": "https://goglampingsweden.se",
       "email": "info@auroramedia.se",
       "priceRange": "$$",
       "checkinTime": "15:00",
       "checkoutTime": "11:00",
+      "brand": {
+        "@type": "Brand",
+        "name": "Go Glamping Sweden"
+      },
+      "parentOrganization": { "@id": "https://goglampingsweden.se/#org" },
+      "provider": { "@id": "https://goglampingsweden.se/#org" },
       "openingHoursSpecification": [
         {
           "@type": "OpeningHoursSpecification",
@@ -49,7 +58,7 @@
       ],
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "Bergs Slussar",
+        "streetAddress": "Oscars Slussar 2",
         "addressLocality": "Vreta Kloster",
         "addressRegion": "Östergötland",
         "postalCode": "590 74",
@@ -79,6 +88,36 @@
       "photo": [
         {"@type": "ImageObject", "url": "https://goglampingsweden.se/og-image.jpg"}
       ],
+      "sameAs": [
+        "https://www.facebook.com/goglampingsweden",
+        "https://www.instagram.com/goglampingsweden",
+        "https://www.gotakanal.se/sv/boka/glamping/ostergotland"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://goglampingsweden.se/#org",
+      "name": "Go Glamping Sweden",
+      "legalName": "Aurora Media AB",
+      "alternateName": "Bergs Slussar Glamping",
+      "description": "Aurora Media AB driver glampinganläggningen Bergs Slussar Glamping (Go Glamping Sweden) vid Göta kanal i Vreta Kloster, Östergötland.",
+      "disambiguatingDescription": "Aurora Media AB och varumärket Go Glamping Sweden / Bergs Slussar Glamping är helt fristående från Bergs Slussar Vandrarhem. Vi äger inte, ägs inte av och samarbetar inte affärsmässigt med vandrarhemmet.",
+      "url": "https://goglampingsweden.se",
+      "email": "info@auroramedia.se",
+      "telephone": "+46722254993",
+      "founder": { "@type": "Person", "name": "Christoffer Carlsson" },
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Oscars Slussar 2",
+        "addressLocality": "Vreta Kloster",
+        "addressRegion": "Östergötland",
+        "postalCode": "590 74",
+        "addressCountry": "SE"
+      },
+      "knowsAbout": ["Glamping", "Göta kanal", "Bergs Slussar", "Boende Östergötland"],
       "sameAs": [
         "https://www.facebook.com/goglampingsweden",
         "https://www.instagram.com/goglampingsweden",
@@ -167,6 +206,14 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "Säsongen löper från maj till september. Juli och tidig augusti är intensivast medan juni och slutet av augusti ger en lugnare upplevelse."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Är ni samma verksamhet som Bergs Slussar Vandrarhem?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nej. Bergs Slussar Glamping (Go Glamping Sweden) är en fristående glampinganläggning som drivs av Aurora Media AB. Vi ägs inte av, är inte en del av och samarbetar inte affärsmässigt med Bergs Slussar Vandrarhem eller något annat boende vid slussarna – vi råkar bara dela den vackra platsen vid Göta kanal."
           }
         }
       ]
