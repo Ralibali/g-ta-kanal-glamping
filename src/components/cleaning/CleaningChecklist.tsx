@@ -149,7 +149,7 @@ export function CleaningChecklist({ data, lang, onBack, onCompleted }: Props) {
       const todayStockholm = new Intl.DateTimeFormat("sv-SE", {
         timeZone: "Europe/Stockholm", year: "numeric", month: "2-digit", day: "2-digit",
       }).format(new Date());
-      if (data.date >= todayStockholm) {
+      if (data.date === todayStockholm) {
         const { data: { session } } = await supabase.auth.getSession();
         await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/notify-tent-ready`, {
           method: "POST",
