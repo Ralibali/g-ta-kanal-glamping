@@ -716,6 +716,20 @@ export default function Stay() {
               );
             })()}
 
+            {stayHasMondayMorning && !data.orders.some((o) => {
+              const a = data.addons.find((x) => x.id === o.addon_id);
+              return a?.slug === 'breakfast' && ['requested','confirmed','paid'].includes(o.status);
+            }) && (
+              <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-3 flex items-start gap-3">
+                <Info className="h-5 w-5 shrink-0 text-amber-700 mt-0.5" />
+                <div className="text-sm text-amber-900">
+                  {isSv
+                    ? "Frukost går tyvärr inte att beställa denna vistelse — vårt lokala bageri levererar inte på måndagar. Fikapåsen finns fortfarande som ett mysigt alternativ. 🍪"
+                    : "Breakfast can't be ordered for this stay — our local bakery doesn't deliver on Mondays. The fika bag is still available as a cozy alternative. 🍪"}
+                </div>
+              </div>
+            )}
+
             <div className="space-y-3">
               {data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).map((a) => {
                 const q = qty[a.id] ?? 0;
