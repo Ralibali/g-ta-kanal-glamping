@@ -35,6 +35,7 @@ const FAQSection = () => {
     { q: "Finns det parkering vid Bergs Slussar?", a: "Ja, parkering finns på plats mot en liten avgift, bara en kort promenad från glampingtälten." },
     { q: "Får vi ta med husdjur?", a: "Hör av er innan bokning om ni vill ta med husdjur. Beroende på tillgänglighet och säsong kan vi eventuellt ordna det." },
     { q: "Vilka bokningsvillkor gäller?", a: <>Incheckning från kl. 15:00, utcheckning senast kl. 10:00. Kostnadsfri avbokning upp till fem dagar före ankomst. Sen utcheckning till kl. 12:00 kan erbjudas mot 400 kr. Vill du vara helt trygg kan du lägga till avbokningsskydd för 399 kr vid bokning – då får du full återbetalning oavsett anledning, ända fram till ankomstdagen. <a href="/bokningsvillkor" className="text-accent font-medium underline underline-offset-4 hover:no-underline">Läs alla bokningsvillkor →</a></> },
+    { q: "Är ni samma verksamhet som Bergs Slussar Vandrarhem?", a: "Nej. Bergs Slussar Glamping (Go Glamping Sweden) är en fristående glampinganläggning som drivs av Aurora Media AB. Vi ägs inte av, är inte en del av och samarbetar inte affärsmässigt med Bergs Slussar Vandrarhem eller något annat boende vid slussarna – vi råkar bara dela den vackra platsen vid Göta kanal." },
   ];
 
   return (
