@@ -77,6 +77,20 @@ Deno.serve(async (req) => {
   const { data: addons } = await supabase.from('addons').select('id, slug, name_sv, name_en, price_sek, unit, max_quantity, active').in('id', addonIds)
   const addonMap = new Map((addons ?? []).map(a => [a.id, a]))
 
+  // Frukostregel: levereras inte på måndagar. Blockera frukostbeställning om
+  // vistelsen innehåller en måndagsmorgon (checkin+1 … checkout).
+  const stayHasMondayMorning = (() => {
+    const start = new Date(`${booking.checkin_date}T12:00:00Z`).getTime()
+    const end = new Date(`${booking.checkout_date}T12:00:00Z`).getTime()
+    for (let t = start + 86400000; t <= end; t += 86400000) {
+      if (new Date(t).getUTCDay() === 1) return true
+    }
+    return false
+  })()
+  if (stayHasMondayMorning && items.some(it => addonMap.get(it.addon_id)?.slug === 'breakfast')) {
+    return new Response(JSON.stringify({ error: 'breakfast_unavailable_monday' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+  }
+
   const rawLang = (booking.language ?? 'sv').toLowerCase().slice(0, 2)
   const supportedLangs = ['sv', 'en', 'de', 'da', 'no', 'nl', 'fr']
   const lang: string = supportedLangs.includes(rawLang) ? rawLang : (rawLang === 'nb' || rawLang === 'nn' ? 'no' : 'en')

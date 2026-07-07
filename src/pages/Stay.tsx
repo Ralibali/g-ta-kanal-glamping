@@ -422,6 +422,18 @@ export default function Stay() {
   const daysLeft = Math.floor((checkinMs - todayMs) / 86400000);
   const tooLate = daysLeft < cutoff;
 
+  // Frukost levereras inte på måndagar. Om vistelsen innehåller en måndagsmorgon
+  // (checkin+1 … checkout) kan gästen inte beställa frukost alls.
+  const stayHasMondayMorning = (() => {
+    const start = new Date(`${data.booking.checkin_date}T12:00:00Z`);
+    const end = new Date(`${data.booking.checkout_date}T12:00:00Z`);
+    for (let d = new Date(start.getTime() + 86400000); d.getTime() <= end.getTime(); d = new Date(d.getTime() + 86400000)) {
+      if (d.getUTCDay() === 1) return true;
+    }
+    return false;
+  })();
+
+
   const firstName = data.booking.guest_first_name;
   const dateLocale = ({ sv: "sv-SE", en: "en-GB", de: "de-DE", da: "da-DK", no: "nb-NO", nl: "nl-NL", fr: "fr-FR" } as Record<LangKey, string>)[lang];
   const ci = new Date(data.booking.checkin_date).toLocaleDateString(dateLocale, { weekday: "short", day: "numeric", month: "short" });
@@ -667,7 +679,7 @@ export default function Stay() {
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
           </Card>
-        ) : data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status))).length === 0 ? null : (
+        ) : data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).length === 0 ? null : (
           <>
             <div id="addons-section" className="scroll-mt-4">
               <h2 className="font-serif text-xl text-primary mb-1">{t.addons}</h2>
@@ -704,8 +716,22 @@ export default function Stay() {
               );
             })()}
 
+            {stayHasMondayMorning && !data.orders.some((o) => {
+              const a = data.addons.find((x) => x.id === o.addon_id);
+              return a?.slug === 'breakfast' && ['requested','confirmed','paid'].includes(o.status);
+            }) && (
+              <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-3 flex items-start gap-3">
+                <Info className="h-5 w-5 shrink-0 text-amber-700 mt-0.5" />
+                <div className="text-sm text-amber-900">
+                  {isSv
+                    ? "Frukost går tyvärr inte att beställa denna vistelse — vårt lokala bageri levererar inte på måndagar. Fikapåsen finns fortfarande som ett mysigt alternativ. 🍪"
+                    : "Breakfast can't be ordered for this stay — our local bakery doesn't deliver on Mondays. The fika bag is still available as a cozy alternative. 🍪"}
+                </div>
+              </div>
+            )}
+
             <div className="space-y-3">
-              {data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status))).map((a) => {
+              {data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).map((a) => {
                 const q = qty[a.id] ?? 0;
                 const name = isSv ? a.name_sv : a.name_en;
                 const desc = isSv ? a.description_sv : a.description_en;
