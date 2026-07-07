@@ -145,16 +145,22 @@ export function CleaningChecklist({ data, lang, onBack, onCompleted }: Props) {
       setSessionId(row.id);
       setStatus("completed");
 
-      const { data: { session } } = await supabase.auth.getSession();
-      await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/notify-tent-ready`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
-        },
-        body: JSON.stringify({ tent_id: data.tent_id, cleaning_date: data.date, session_id: row.id }),
-      });
+      // Skip guest notification if the cleaning date is in the past (back-dated bookkeeping).
+      const todayStockholm = new Intl.DateTimeFormat("sv-SE", {
+        timeZone: "Europe/Stockholm", year: "numeric", month: "2-digit", day: "2-digit",
+      }).format(new Date());
+      if (data.date >= todayStockholm) {
+        const { data: { session } } = await supabase.auth.getSession();
+        await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/notify-tent-ready`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
+          },
+          body: JSON.stringify({ tent_id: data.tent_id, cleaning_date: data.date, session_id: row.id }),
+        });
+      }
 
       toast.success("✓");
       onCompleted();
