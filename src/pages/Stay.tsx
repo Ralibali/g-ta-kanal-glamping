@@ -422,6 +422,18 @@ export default function Stay() {
   const daysLeft = Math.floor((checkinMs - todayMs) / 86400000);
   const tooLate = daysLeft < cutoff;
 
+  // Frukost levereras inte på måndagar. Om vistelsen innehåller en måndagsmorgon
+  // (checkin+1 … checkout) kan gästen inte beställa frukost alls.
+  const stayHasMondayMorning = (() => {
+    const start = new Date(`${data.booking.checkin_date}T12:00:00Z`);
+    const end = new Date(`${data.booking.checkout_date}T12:00:00Z`);
+    for (let d = new Date(start.getTime() + 86400000); d.getTime() <= end.getTime(); d = new Date(d.getTime() + 86400000)) {
+      if (d.getUTCDay() === 1) return true;
+    }
+    return false;
+  })();
+
+
   const firstName = data.booking.guest_first_name;
   const dateLocale = ({ sv: "sv-SE", en: "en-GB", de: "de-DE", da: "da-DK", no: "nb-NO", nl: "nl-NL", fr: "fr-FR" } as Record<LangKey, string>)[lang];
   const ci = new Date(data.booking.checkin_date).toLocaleDateString(dateLocale, { weekday: "short", day: "numeric", month: "short" });
