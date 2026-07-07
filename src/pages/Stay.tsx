@@ -717,7 +717,7 @@ export default function Stay() {
             })()}
 
             <div className="space-y-3">
-              {data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status))).map((a) => {
+              {data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).map((a) => {
                 const q = qty[a.id] ?? 0;
                 const name = isSv ? a.name_sv : a.name_en;
                 const desc = isSv ? a.description_sv : a.description_en;
