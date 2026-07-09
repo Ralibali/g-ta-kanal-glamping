@@ -49,6 +49,7 @@ const contentItems = [
   { title: "Tillval", url: "/admin/addons", icon: PackagePlus },
   { title: "Tillvalsbeställningar", url: "/admin/addon-orders", icon: ShoppingBag },
   { title: "SMS", url: "/admin/sms", icon: MessageSquare },
+  { title: "Anställda", url: "/admin/employees", icon: Briefcase },
   { title: "Blogginlägg", url: "/admin/blog", icon: FileText },
   { title: "Bildgalleri", url: "/admin/gallery", icon: Image },
   { title: "Priser & Tält", url: "/admin/pricing", icon: Tag },
