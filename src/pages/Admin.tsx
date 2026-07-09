@@ -18,6 +18,7 @@ import { CleaningManager } from "@/components/admin/CleaningManager";
 import { AddonsManager } from "@/components/admin/AddonsManager";
 import { AddonOrdersManager } from "@/components/admin/AddonOrdersManager";
 import { SmsManager } from "@/components/admin/SmsManager";
+import { EmployeeManager } from "@/components/admin/EmployeeManager";
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdmin();
