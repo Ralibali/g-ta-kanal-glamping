@@ -605,6 +605,33 @@ export type Database = {
         }
         Relationships: []
       }
+      employee_availability: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          updated_at: string
+          user_id: string
+          work_date: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          updated_at?: string
+          user_id: string
+          work_date: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          updated_at?: string
+          user_id?: string
+          work_date?: string
+        }
+        Relationships: []
+      }
       page_views: {
         Row: {
           country: string | null
@@ -894,6 +921,51 @@ export type Database = {
           raw?: Json | null
           room_id?: string | null
           tent_id?: string
+        }
+        Relationships: []
+      }
+      time_entries: {
+        Row: {
+          approved: boolean
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          ended_at: string | null
+          hours: number | null
+          id: string
+          note: string | null
+          source: string
+          started_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approved?: boolean
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          ended_at?: string | null
+          hours?: number | null
+          id?: string
+          note?: string | null
+          source?: string
+          started_at: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approved?: boolean
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          ended_at?: string | null
+          hours?: number | null
+          id?: string
+          note?: string | null
+          source?: string
+          started_at?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
