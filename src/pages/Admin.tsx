@@ -65,6 +65,7 @@ const Admin = () => {
               <Route path="addons" element={<AddonsManager />} />
               <Route path="addon-orders" element={<AddonOrdersManager />} />
               <Route path="sms" element={<SmsManager />} />
+              <Route path="employees" element={<EmployeeManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </main>
