@@ -299,7 +299,7 @@ export default function BreakfastV2() {
             <Card key={order.key} className={done ? "border-primary/30 bg-primary/5" : ""}>
               <CardContent className="space-y-3 pt-4">
                 <div className="flex items-start justify-between gap-3">
-                  <div><div className="flex flex-wrap items-center gap-2"><Badge className={breakfast ? "bg-amber-600" : "bg-emerald-700"}>{breakfast ? "Frukost" : "Fikapåse"}</Badge><span className="font-medium">{order.tentLabel}</span></div><div className="mt-1 text-xs text-muted-foreground">{order.guestName ?? "Gäst"} • Bokning {order.bookingNumber}</div></div>
+                  <div><div className="flex flex-wrap items-center gap-2"><Badge className={breakfast ? "bg-amber-600" : "bg-emerald-700"}>{breakfast ? "Frukost" : "Fikapåse"}</Badge><span className="font-medium">{order.tentLabel}</span></div><div className="mt-1 text-xs text-muted-foreground">Bokning {order.bookingNumber}</div></div>
                   {done && <Badge variant="outline">Klar</Badge>}
                 </div>
 

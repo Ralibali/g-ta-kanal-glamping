@@ -35,7 +35,7 @@ export function BreakfastOrderCard({ order, onDeliver }: { order: BreakfastOrder
               <Badge className={isBreakfast ? "bg-amber-600" : "bg-emerald-700"}>{isBreakfast ? "Frukost" : "Fikapåse"}</Badge>
               <span className="font-medium">{breakfastTentLabel(order.tentIds)}</span>
             </div>
-            <div className="mt-1 text-xs text-muted-foreground">{order.guestName ?? "Gäst"} • Bokning {order.bookingNumber}</div>
+            <div className="mt-1 text-xs text-muted-foreground">Bokning {order.bookingNumber}</div>
           </div>
           {done && <Badge variant="outline">Klar</Badge>}
         </div>
