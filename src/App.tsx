@@ -30,6 +30,7 @@ import Stay from "./pages/Stay";
 import UnderVistelsen from "./pages/UnderVistelsen";
 import ShortRedirect from "./pages/ShortRedirect";
 import Sup from "./pages/Sup";
+import Employee from "./pages/Employee";
 
 
 const queryClient = new QueryClient();
@@ -77,6 +78,7 @@ const App = () => (
           <Route path="/under-vistelsen" element={<UnderVistelsen />} />
           <Route path="/during-your-stay" element={<UnderVistelsen />} />
           <Route path="/sup" element={<Sup />} />
+          <Route path="/jobb" element={<Employee />} />
           <Route path="/s/:slug" element={<ShortRedirect />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
