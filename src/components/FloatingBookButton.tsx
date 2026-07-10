@@ -32,9 +32,9 @@ const FloatingBookButton = () => {
             return (
               <span
                 key={i}
-                className="absolute left-1/2 top-1/2 h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_6px_rgba(201,168,76,0.9)]"
+                className="absolute left-1/2 top-1/2 h-2 w-2 rounded-full bg-accent shadow-[0_0_6px_rgba(201,168,76,0.9)]"
                 style={{
-                  transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-42px)`,
+                  transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-20px)`,
                 }}
               />
             );
