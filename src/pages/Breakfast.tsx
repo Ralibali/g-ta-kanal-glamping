@@ -377,7 +377,7 @@ export default function Breakfast() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap"><Badge className={breakfast ? "bg-amber-600" : "bg-emerald-700"}>{breakfast ? <><Croissant className="h-3 w-3 mr-1" /> Frukost</> : <><Leaf className="h-3 w-3 mr-1" /> Fikapåse</>}</Badge><span className="font-medium">{tentLabel(order.tentIds)}</span></div>
-                            <div className="text-xs text-muted-foreground mt-1">Bokning {order.bookingNumber}</div>
+                            <div className="text-xs text-muted-foreground mt-1">Bokning {order.bookingNumber}{order.guestName ? ` • ${order.guestName}` : ""}</div>
                           </div>
                           {done && <Badge variant="outline" className="border-primary text-primary shrink-0"><CheckCircle2 className="h-3 w-3 mr-1" /> Klar</Badge>}
                         </div>
