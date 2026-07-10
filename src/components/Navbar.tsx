@@ -137,6 +137,15 @@ const Navbar = () => {
                 {link.label}
               </a>
             ))}
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                openChat();
+              }}
+              className="text-foreground text-lg font-medium py-2 border-b border-border/50 text-left"
+            >
+              {lang === "en" ? "Contact us" : "Kontakta oss"}
+            </button>
             <a
               href="#boka"
               onClick={() => setMenuOpen(false)}
