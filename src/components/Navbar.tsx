@@ -82,6 +82,14 @@ const Navbar = () => {
             <span className="text-base">{flagEmoji}</span>
             <span className="uppercase text-xs">{otherLang.toUpperCase()}</span>
           </button>
+          <button
+            onClick={openChat}
+            className={`text-sm font-medium transition-all hover:opacity-80 ${
+              scrolled ? "text-foreground" : "text-white/90"
+            }`}
+          >
+            {lang === "en" ? "Contact us" : "Kontakta oss"}
+          </button>
           <motion.a
             href="#boka"
             whileHover={{ scale: 1.02 }}
