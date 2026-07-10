@@ -2,10 +2,18 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
+export type CleanerProfile = {
+  user_id: string;
+  display_name: string;
+  hourly_rate: number;
+  vacation_pct: number;
+};
+
 export function useCleaner() {
   const [user, setUser] = useState<User | null>(null);
   const [isCleaner, setIsCleaner] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [profile, setProfile] = useState<CleanerProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -13,6 +21,7 @@ export function useCleaner() {
       if (!u) {
         setIsCleaner(false);
         setIsAdmin(false);
+        setProfile(null);
         setLoading(false);
         return;
       }
@@ -23,6 +32,13 @@ export function useCleaner() {
       const roles = (data ?? []).map((r: { role: string }) => r.role);
       setIsCleaner(roles.includes("cleaner") || roles.includes("admin"));
       setIsAdmin(roles.includes("admin"));
+
+      const { data: p } = await (supabase as any)
+        .from("cleaner_profiles")
+        .select("user_id, display_name, hourly_rate, vacation_pct")
+        .eq("user_id", u.id)
+        .maybeSingle();
+      setProfile(p ?? null);
       setLoading(false);
     };
 
@@ -42,7 +58,8 @@ export function useCleaner() {
     setUser(null);
     setIsCleaner(false);
     setIsAdmin(false);
+    setProfile(null);
   };
 
-  return { user, isCleaner, isAdmin, loading, signOut };
+  return { user, isCleaner, isAdmin, profile, loading, signOut };
 }
