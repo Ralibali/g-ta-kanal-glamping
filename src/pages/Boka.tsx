@@ -410,7 +410,7 @@ const Steps = () => {
 
 const faqs = [
   { q: "När kan vi checka in?", a: "Incheckning sker från klockan 15:00. Du får en personlig incheckningslänk via e-post med kod och praktisk information innan ankomst." },
-  { q: "När behöver vi checka ut?", a: "Utcheckning sker senast klockan 11:00. Vill ni stanna längre kan sen utcheckning ofta läggas till mot en tilläggsavgift." },
+  { q: "När behöver vi checka ut?", a: "Utcheckning sker senast klockan 10:00. Vill ni stanna längre kan sen utcheckning ofta läggas till mot en tilläggsavgift." },
   { q: "Finns det toalett och dusch?", a: "Ja, det finns ett servicehus med moderna toaletter och duschar i närheten av tälten." },
   { q: "Kan vi lägga till frukost?", a: "Ja, frukost kan läggas till vid bokningen som ett tillval och serveras vid Bergs slussar." },
   { q: "Får barn bo i tälten?", a: "Ja, barn är varmt välkomna. Alla tält har en dubbelsäng och en mindre bäddsoffa för två, så det finns plats för upp till fyra gäster." },
