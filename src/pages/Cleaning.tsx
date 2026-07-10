@@ -70,10 +70,13 @@ function monthCells(month: Date): (Date | null)[] {
   return cells;
 }
 
+type Assignment = { work_date: string; assigned_user_id: string };
+type CleanerName = { user_id: string; display_name: string };
+
 export default function Cleaning() {
-  const { user, isCleaner, isAdmin, loading, signOut } = useCleaner();
+  const { user, isCleaner, isAdmin, profile, loading, signOut } = useCleaner();
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
-  const [view, setView] = useState<"calendar" | "overview" | "day">("calendar");
+  const [view, setView] = useState<"calendar" | "overview" | "day" | "time" | "salary">("calendar");
   const [calendarMonth, setCalendarMonth] = useState(() => {
     const value = new Date(`${todayInStockholm()}T12:00:00`);
     value.setDate(1);
@@ -88,6 +91,12 @@ export default function Cleaning() {
   const [overview, setOverview] = useState<OverviewRow[]>([]);
   const [calendarData, setCalendarData] = useState<Map<string, CalendarInfo>>(new Map());
   const [selfCleanDates, setSelfCleanDates] = useState<Set<string>>(new Set());
+  const [assignments, setAssignments] = useState<Map<string, string>>(new Map());
+  const [cleanerNames, setCleanerNames] = useState<Map<string, string>>(new Map());
+  const [interests, setInterests] = useState<Map<string, Set<string>>>(new Map());
+  const [savingAssignment, setSavingAssignment] = useState(false);
+  const [togglingInterest, setTogglingInterest] = useState(false);
+
   const [togglingSelfClean, setTogglingSelfClean] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
 
