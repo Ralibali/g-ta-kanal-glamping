@@ -24,6 +24,8 @@ const Navbar = () => {
         { label: "Hitta hit", href: "#kontakt" },
       ];
 
+  const openChat = () => window.dispatchEvent(new CustomEvent("open-chat"));
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
