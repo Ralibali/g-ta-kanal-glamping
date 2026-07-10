@@ -175,23 +175,27 @@ export default function Breakfast() {
     .reduce((sum, order) => sum + order.quantity, 0);
 
   const nextDelivery = useMemo(() => {
-    const sorted = Array.from(ordersByDate.entries()).sort(([a], [b]) => a.localeCompare(b));
+    const sorted = Array.from(ordersByDate.entries())
+      .filter(([deliveryDate]) => deliveryDate >= today)
+      .sort(([a], [b]) => a.localeCompare(b));
     for (const [deliveryDate, list] of sorted) {
       const remaining = list.filter((order) => order.delivery?.status !== "delivered");
       if (remaining.length === 0) continue;
+      const breakfast = remaining
+        .filter((order) => order.kind === "breakfast")
+        .reduce((sum, order) => sum + order.quantity, 0);
+      const fika = remaining
+        .filter((order) => order.kind === "fikapase")
+        .reduce((sum, order) => sum + order.quantity, 0);
       return {
         date: deliveryDate,
-        breakfast: remaining
-          .filter((order) => order.kind === "breakfast")
-          .reduce((sum, order) => sum + order.quantity, 0),
-        fika: remaining
-          .filter((order) => order.kind === "fikapase")
-          .reduce((sum, order) => sum + order.quantity, 0),
-        total: remaining.length,
+        breakfast,
+        fika,
+        total: breakfast + fika,
       };
     }
     return null;
-  }, [ordersByDate]);
+  }, [ordersByDate, today]);
 
   const openDietEditor = (order: BreakfastOrder) => {
     setDietDraft(order.dietary ?? []);
