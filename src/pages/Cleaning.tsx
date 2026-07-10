@@ -268,7 +268,7 @@ export default function Cleaning() {
   }, [user, isCleaner]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">…</div>;
-  if (!user) return <LoginForm lang={lang} />;
+  if (!user) return <CleanerLoginForm />;
   if (!isCleaner) return <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-3 text-center"><p>{tr(lang, "noAccess")}</p><Button variant="outline" onClick={signOut}>{tr(lang, "signOut")}</Button></div>;
 
   const cells = monthCells(calendarMonth);
