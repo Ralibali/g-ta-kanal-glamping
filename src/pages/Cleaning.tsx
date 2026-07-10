@@ -298,7 +298,11 @@ export default function Cleaning() {
   useEffect(() => {
     if (!user || !isCleaner) return;
     void loadSelfClean();
-  }, [user, isCleaner]);
+    void loadCleanerNames();
+    void loadAssignments();
+    void loadInterests();
+  }, [user, isCleaner, isAdmin]);
+
 
   useEffect(() => {
     if (!user || !isCleaner) return;
