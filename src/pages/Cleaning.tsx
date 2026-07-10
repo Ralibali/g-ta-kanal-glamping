@@ -56,38 +56,6 @@ function formatDate(value: Date): string {
   return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`;
 }
 
-function LoginForm({ lang }: { lang: CleanLang }) {
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  const login = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: CLEANER_EMAIL, password });
-    setBusy(false);
-    if (error) toast.error(tr(lang, "loginFailed"));
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <Sparkles className="h-8 w-8 mx-auto text-primary" />
-          <CardTitle>{tr(lang, "loginTitle")}</CardTitle>
-          <p className="text-sm text-muted-foreground">{tr(lang, "loginHint")}</p>
-          <p className="text-xs text-muted-foreground mt-1">Lösenord: <strong>topstäd</strong></p>
-        </CardHeader>
-
-        <CardContent>
-          <form onSubmit={login} className="space-y-3">
-            <div><Label>{tr(lang, "password")}</Label><Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoFocus required /></div>
-            <Button type="submit" className="w-full" disabled={busy}>{tr(lang, "signIn")}</Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 
 function monthCells(month: Date): (Date | null)[] {
   const year = month.getFullYear();
