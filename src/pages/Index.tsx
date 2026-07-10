@@ -45,6 +45,7 @@ const Index = ({ lang = "sv" }: IndexProps) => {
       </main>
       <MobileBookingBar />
       <ChatWidget />
+      <FloatingBookButton />
       <Footer />
     </LanguageProvider>
   );
