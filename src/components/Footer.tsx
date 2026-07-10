@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
 import { useLang } from "@/i18n/LanguageContext";
 
 const Footer = () => {
