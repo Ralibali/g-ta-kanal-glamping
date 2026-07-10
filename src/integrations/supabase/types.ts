@@ -361,6 +361,78 @@ export type Database = {
         }
         Relationships: []
       }
+      cleaner_profiles: {
+        Row: {
+          active: boolean
+          bank_account: string | null
+          created_at: string
+          display_name: string
+          email: string | null
+          full_name: string | null
+          hourly_rate: number
+          personnummer: string | null
+          sort_order: number
+          updated_at: string
+          user_id: string
+          vacation_pct: number
+        }
+        Insert: {
+          active?: boolean
+          bank_account?: string | null
+          created_at?: string
+          display_name: string
+          email?: string | null
+          full_name?: string | null
+          hourly_rate?: number
+          personnummer?: string | null
+          sort_order?: number
+          updated_at?: string
+          user_id: string
+          vacation_pct?: number
+        }
+        Update: {
+          active?: boolean
+          bank_account?: string | null
+          created_at?: string
+          display_name?: string
+          email?: string | null
+          full_name?: string | null
+          hourly_rate?: number
+          personnummer?: string | null
+          sort_order?: number
+          updated_at?: string
+          user_id?: string
+          vacation_pct?: number
+        }
+        Relationships: []
+      }
+      cleaning_assignments: {
+        Row: {
+          assigned_user_id: string
+          created_at: string
+          created_by: string | null
+          note: string | null
+          updated_at: string
+          work_date: string
+        }
+        Insert: {
+          assigned_user_id: string
+          created_at?: string
+          created_by?: string | null
+          note?: string | null
+          updated_at?: string
+          work_date: string
+        }
+        Update: {
+          assigned_user_id?: string
+          created_at?: string
+          created_by?: string | null
+          note?: string | null
+          updated_at?: string
+          work_date?: string
+        }
+        Relationships: []
+      }
       cleaning_issues: {
         Row: {
           created_at: string
@@ -1024,6 +1096,17 @@ export type Database = {
         }[]
       }
       get_chat_by_token: { Args: { p_token: string }; Returns: Json }
+      get_cleaner_salary: {
+        Args: { p_from: string; p_to: string; p_user_id: string }
+        Returns: {
+          gross: number
+          hourly_rate: number
+          hours: number
+          total: number
+          vacation_pay: number
+          vacation_pct: number
+        }[]
+      }
       get_stay_by_token: { Args: { p_token: string }; Returns: Json }
       has_role: {
         Args: {
@@ -1046,6 +1129,14 @@ export type Database = {
           has_phone: boolean
           id: string
           tent_id: string
+        }[]
+      }
+      list_cleaner_display_names: {
+        Args: never
+        Returns: {
+          display_name: string
+          sort_order: number
+          user_id: string
         }[]
       }
       lookup_booking_for_checkin: {
