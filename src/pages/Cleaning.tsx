@@ -1,19 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
-import { CalendarDays, CheckCircle2, Clock3, LogOut, Sparkles, Users } from "lucide-react";
+import { CalendarDays, CheckCircle2, Clock, Clock3, Heart, LogOut, Sparkles, Users, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCleaner } from "@/hooks/useCleaner";
 import { TENTS, todayInStockholm } from "@/cleaning/config";
 import { CLEAN_LANGS, getStoredLang, setStoredLang, tr, type CleanLang } from "@/cleaning/i18n";
 import { CleaningChecklist, type TentDayData } from "@/components/cleaning/CleaningChecklist";
+import { CleanerLoginForm } from "@/components/cleaning/CleanerLoginForm";
+import { TimeTracker } from "@/components/cleaning/TimeTracker";
+import { SalaryPanel } from "@/components/cleaning/SalaryPanel";
 import { pickPreparationStay, towelInstruction, type CleaningStayLike } from "@/lib/cleaning-operations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
-const CLEANER_EMAIL = "stadare@goglampingsweden.se";
 
 type Stay = CleaningStayLike & {
   breakfast_csv_quantity: number | null;
