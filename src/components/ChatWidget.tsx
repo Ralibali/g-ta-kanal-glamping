@@ -89,6 +89,13 @@ const ChatWidget = () => {
     }
   }, [messages, open]);
 
+  // Öppna chatten via globalt event (från "Kontakta oss"-knappar överallt)
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener("open-chat", handler);
+    return () => window.removeEventListener("open-chat", handler);
+  }, []);
+
   const startConversation = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
