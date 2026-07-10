@@ -1,19 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
-import { CalendarDays, CheckCircle2, Clock3, LogOut, Sparkles, Users } from "lucide-react";
+import { CalendarDays, CheckCircle2, Clock, Clock3, Heart, LogOut, Sparkles, Users, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCleaner } from "@/hooks/useCleaner";
 import { TENTS, todayInStockholm } from "@/cleaning/config";
 import { CLEAN_LANGS, getStoredLang, setStoredLang, tr, type CleanLang } from "@/cleaning/i18n";
 import { CleaningChecklist, type TentDayData } from "@/components/cleaning/CleaningChecklist";
+import { CleanerLoginForm } from "@/components/cleaning/CleanerLoginForm";
+import { TimeTracker } from "@/components/cleaning/TimeTracker";
+import { SalaryPanel } from "@/components/cleaning/SalaryPanel";
 import { pickPreparationStay, towelInstruction, type CleaningStayLike } from "@/lib/cleaning-operations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
-const CLEANER_EMAIL = "stadare@goglampingsweden.se";
 
 type Stay = CleaningStayLike & {
   breakfast_csv_quantity: number | null;
@@ -53,38 +56,6 @@ function formatDate(value: Date): string {
   return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`;
 }
 
-function LoginForm({ lang }: { lang: CleanLang }) {
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  const login = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setBusy(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: CLEANER_EMAIL, password });
-    setBusy(false);
-    if (error) toast.error(tr(lang, "loginFailed"));
-  };
-
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <Sparkles className="h-8 w-8 mx-auto text-primary" />
-          <CardTitle>{tr(lang, "loginTitle")}</CardTitle>
-          <p className="text-sm text-muted-foreground">{tr(lang, "loginHint")}</p>
-          <p className="text-xs text-muted-foreground mt-1">Lösenord: <strong>topstäd</strong></p>
-        </CardHeader>
-
-        <CardContent>
-          <form onSubmit={login} className="space-y-3">
-            <div><Label>{tr(lang, "password")}</Label><Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoFocus required /></div>
-            <Button type="submit" className="w-full" disabled={busy}>{tr(lang, "signIn")}</Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
 
 function monthCells(month: Date): (Date | null)[] {
   const year = month.getFullYear();
@@ -99,10 +70,13 @@ function monthCells(month: Date): (Date | null)[] {
   return cells;
 }
 
+type Assignment = { work_date: string; assigned_user_id: string };
+type CleanerName = { user_id: string; display_name: string };
+
 export default function Cleaning() {
-  const { user, isCleaner, isAdmin, loading, signOut } = useCleaner();
+  const { user, isCleaner, isAdmin, profile, loading, signOut } = useCleaner();
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
-  const [view, setView] = useState<"calendar" | "overview" | "day">("calendar");
+  const [view, setView] = useState<"calendar" | "overview" | "day" | "time" | "salary">("calendar");
   const [calendarMonth, setCalendarMonth] = useState(() => {
     const value = new Date(`${todayInStockholm()}T12:00:00`);
     value.setDate(1);
@@ -117,6 +91,12 @@ export default function Cleaning() {
   const [overview, setOverview] = useState<OverviewRow[]>([]);
   const [calendarData, setCalendarData] = useState<Map<string, CalendarInfo>>(new Map());
   const [selfCleanDates, setSelfCleanDates] = useState<Set<string>>(new Set());
+  const [assignments, setAssignments] = useState<Map<string, string>>(new Map());
+  const [cleanerNames, setCleanerNames] = useState<Map<string, string>>(new Map());
+  const [interests, setInterests] = useState<Map<string, Set<string>>>(new Map());
+  const [savingAssignment, setSavingAssignment] = useState(false);
+  const [togglingInterest, setTogglingInterest] = useState(false);
+
   const [togglingSelfClean, setTogglingSelfClean] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
 
@@ -129,6 +109,95 @@ export default function Cleaning() {
     const { data } = await (supabase as any).from("self_clean_dates").select("date");
     setSelfCleanDates(new Set((data ?? []).map((row: { date: string }) => row.date)));
   };
+
+  const loadCleanerNames = async () => {
+    const { data } = await (supabase as any).rpc("list_cleaner_display_names");
+    const map = new Map<string, string>();
+    for (const row of (data ?? []) as CleanerName[]) map.set(row.user_id, row.display_name);
+    setCleanerNames(map);
+  };
+
+  const loadAssignments = async () => {
+    const { data } = await (supabase as any)
+      .from("cleaning_assignments")
+      .select("work_date, assigned_user_id");
+    const map = new Map<string, string>();
+    for (const row of (data ?? []) as Assignment[]) map.set(row.work_date, row.assigned_user_id);
+    setAssignments(map);
+  };
+
+  const loadInterests = async () => {
+    // Cleaner sees own + admin sees all
+    let query = (supabase as any)
+      .from("employee_availability")
+      .select("work_date, user_id");
+    if (!isAdmin && user) query = query.eq("user_id", user.id);
+    const { data } = await query;
+    const map = new Map<string, Set<string>>();
+    for (const row of (data ?? []) as { work_date: string; user_id: string }[]) {
+      if (!map.has(row.work_date)) map.set(row.work_date, new Set());
+      map.get(row.work_date)!.add(row.user_id);
+    }
+    setInterests(map);
+  };
+
+  const assignDay = async (targetDate: string, userId: string | null) => {
+    if (!isAdmin) return;
+    setSavingAssignment(true);
+    try {
+      if (!userId) {
+        const { error } = await (supabase as any)
+          .from("cleaning_assignments")
+          .delete()
+          .eq("work_date", targetDate);
+        if (error) throw error;
+      } else {
+        const { error } = await (supabase as any)
+          .from("cleaning_assignments")
+          .upsert(
+            { work_date: targetDate, assigned_user_id: userId, created_by: user?.id },
+            { onConflict: "work_date" },
+          );
+        if (error) throw error;
+      }
+      await loadAssignments();
+      toast.success("Tilldelning uppdaterad");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Kunde inte tilldela");
+    } finally {
+      setSavingAssignment(false);
+    }
+  };
+
+  const toggleInterest = async (targetDate: string) => {
+    if (!user || togglingInterest) return;
+    const already = interests.get(targetDate)?.has(user.id) ?? false;
+    setTogglingInterest(true);
+    try {
+      if (already) {
+        const { error } = await (supabase as any)
+          .from("employee_availability")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("work_date", targetDate);
+        if (error) throw error;
+      } else {
+        const { error } = await (supabase as any)
+          .from("employee_availability")
+          .upsert(
+            { user_id: user.id, work_date: targetDate },
+            { onConflict: "user_id,work_date" },
+          );
+        if (error) throw error;
+      }
+      await loadInterests();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Kunde inte spara intresse");
+    } finally {
+      setTogglingInterest(false);
+    }
+  };
+
 
   const loadDay = async () => {
     setDataLoading(true);
@@ -229,7 +298,11 @@ export default function Cleaning() {
   useEffect(() => {
     if (!user || !isCleaner) return;
     void loadSelfClean();
-  }, [user, isCleaner]);
+    void loadCleanerNames();
+    void loadAssignments();
+    void loadInterests();
+  }, [user, isCleaner, isAdmin]);
+
 
   useEffect(() => {
     if (!user || !isCleaner) return;
@@ -297,7 +370,7 @@ export default function Cleaning() {
   }, [user, isCleaner]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">…</div>;
-  if (!user) return <LoginForm lang={lang} />;
+  if (!user) return <CleanerLoginForm />;
   if (!isCleaner) return <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-3 text-center"><p>{tr(lang, "noAccess")}</p><Button variant="outline" onClick={signOut}>{tr(lang, "signOut")}</Button></div>;
 
   const cells = monthCells(calendarMonth);
@@ -308,13 +381,22 @@ export default function Cleaning() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b">
         <div className="max-w-2xl mx-auto p-4 flex items-center justify-between gap-3">
-          <h1 className="font-serif text-lg">{tr(lang, "appTitle")}</h1>
-          <div className="flex items-center gap-2">
+          <div className="min-w-0">
+            <h1 className="font-serif text-lg leading-tight truncate">{tr(lang, "appTitle")}</h1>
+            {profile?.display_name && (
+              <p className="text-xs text-muted-foreground">Inloggad som <strong>{profile.display_name}</strong>{isAdmin ? " • admin" : ""}</p>
+            )}
+            {!profile?.display_name && isAdmin && (
+              <p className="text-xs text-muted-foreground">Inloggad som <strong>admin</strong></p>
+            )}
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
             <select aria-label={tr(lang, "language")} value={lang} onChange={(event) => changeLanguage(event.target.value as CleanLang)} className="text-sm bg-transparent border rounded px-2 py-1">{CLEAN_LANGS.map((item) => <option key={item.code} value={item.code}>{item.label}</option>)}</select>
             <Button variant="ghost" size="icon" onClick={signOut}><LogOut className="h-4 w-4" /></Button>
           </div>
         </div>
       </header>
+
 
       <main className="max-w-2xl mx-auto p-4 space-y-4 pb-24">
         {selected ? (
@@ -341,51 +423,172 @@ export default function Cleaning() {
               );
             })()}
 
-            <div className="flex gap-2">
-              <Button variant={view === "calendar" ? "default" : "outline"} size="sm" className="flex-1" onClick={() => setView("calendar")}>{tr(lang, "calendar")}</Button>
-              <Button variant={view === "overview" ? "default" : "outline"} size="sm" className="flex-1" onClick={() => setView("overview")}>{tr(lang, "overview")}</Button>
-              <Button variant={view === "day" ? "default" : "outline"} size="sm" className="flex-1" onClick={() => setView("day")}>{tr(lang, "dayView")}</Button>
-            </div>
+            {(() => {
+              const isMelvinLike = (profile?.hourly_rate ?? 0) > 0;
+              let melvinId: string | null = null;
+              for (const [id, name] of cleanerNames.entries()) if (name === "Melvin") melvinId = id;
+              const salaryTargetId = isMelvinLike ? user?.id ?? null : isAdmin ? melvinId : null;
+              const showTime = isMelvinLike;
+              const showSalary = !!salaryTargetId;
+              const cleanerOptions = Array.from(cleanerNames.entries()).map(([id, name]) => ({ id, name }));
+              const assignedId = assignments.get(date) ?? null;
+              const assignedName = assignedId ? cleanerNames.get(assignedId) ?? "?" : null;
+              const interestedSet = interests.get(date) ?? new Set<string>();
+              const myInterested = user ? interestedSet.has(user.id) : false;
 
-            {view === "day" && (
-              <div className="space-y-2">
-                <div><Label className="text-xs">{tr(lang, "date")}</Label><Input type="date" value={date} onChange={(event) => setDate(event.target.value)} /><p className="text-xs text-muted-foreground mt-1">{cards.length} {tr(lang, "tentsToHandle")}</p></div>
-                {selfCleanDates.has(date) && <div className="rounded-lg border-2 border-blue-500/50 bg-blue-500/10 p-3 text-sm"><div className="font-semibold text-blue-900">🧹 {tr(lang, "selfClean")}</div><div className="text-xs text-blue-900/80 mt-1">{tr(lang, "selfCleanBannerDay")}</div></div>}
-                {isAdmin && <Button variant={selfCleanDates.has(date) ? "outline" : "secondary"} size="sm" className="w-full" disabled={togglingSelfClean} onClick={() => void toggleSelfClean(date)}>{selfCleanDates.has(date) ? tr(lang, "unmarkSelfClean") : tr(lang, "markSelfClean")}</Button>}
-              </div>
-            )}
+              return (
+                <>
+                  <div className="flex gap-2 flex-wrap">
+                    <Button variant={view === "calendar" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("calendar")}>{tr(lang, "calendar")}</Button>
+                    <Button variant={view === "overview" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("overview")}>{tr(lang, "overview")}</Button>
+                    <Button variant={view === "day" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("day")}>{tr(lang, "dayView")}</Button>
+                    {showTime && <Button variant={view === "time" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("time")}><Clock className="h-3.5 w-3.5 mr-1" />Tidbok</Button>}
+                    {showSalary && <Button variant={view === "salary" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("salary")}><Wallet className="h-3.5 w-3.5 mr-1" />Lön</Button>}
+                  </div>
 
-            {view === "calendar" ? (
-              <Card>
-                <CardContent className="p-4 space-y-3">
-                  <div className="flex items-center justify-between"><Button variant="ghost" size="sm" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1))}>‹</Button><div className="font-medium capitalize">{calendarMonth.toLocaleDateString(locale, { month: "long", year: "numeric" })}</div><Button variant="ghost" size="sm" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1))}>›</Button></div>
-                  <div className="grid grid-cols-7 gap-1.5 text-xs text-muted-foreground text-center font-medium">{dayNames.map((name) => <div key={name} className="py-1">{name}</div>)}</div>
-                  <div className="grid grid-cols-7 gap-1.5">{cells.map((cell, index) => {
-                    if (!cell) return <div key={`empty-${index}`} className="min-h-[64px]" />;
-                    const key = formatDate(cell);
-                    const info = calendarData.get(key);
-                    const work = info?.total ?? 0;
-                    const isToday = key === todayInStockholm();
-                    const isSelf = selfCleanDates.has(key) && work > 0;
-                    return <button key={key} onClick={() => { setDate(key); setView("day"); }} className={`min-h-[78px] rounded-lg border p-1 flex flex-col items-stretch text-xs transition hover:bg-muted active:scale-95 overflow-hidden ${isToday ? "ring-2 ring-primary" : ""} ${isSelf ? "bg-blue-500/10 border-blue-500/60" : work > 0 ? "bg-emerald-500/10 border-emerald-500/50" : "border-border/60"}`}><div className="flex items-center justify-between px-0.5"><span className={`text-sm font-semibold ${isSelf ? "text-blue-700" : work > 0 ? "text-emerald-700" : isToday ? "text-primary" : ""}`}>{cell.getDate()}</span>{work > 0 && <span className={`text-[10px] font-bold ${isSelf ? "text-blue-700" : "text-emerald-700"}`}>{work}</span>}</div>{work > 0 && <div className="mt-auto flex flex-col items-center gap-0.5"><span className={`w-full rounded text-[9px] font-bold uppercase tracking-tight py-0.5 text-center ${isSelf ? "bg-blue-500 text-white" : "bg-emerald-600 text-white"}`}>{isSelf ? `👤 ${tr(lang, "christofferLabel")}` : `🧹 ${tr(lang, "topstadLabel")}`}</span><div className="flex gap-1">{(info?.arrivals ?? 0) > 0 && <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-emerald-700"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{info?.arrivals}</span>}{(info?.departures ?? 0) > 0 && <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-700"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{info?.departures}</span>}</div></div>}</button>;
-                  })}</div>
-                  <div className="pt-2 border-t space-y-2"><div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tr(lang, "whoCleansLegend")}</div><div className="flex gap-2 flex-wrap text-xs"><span className="rounded bg-emerald-600 text-white text-[9px] font-bold px-1.5 py-0.5">🧹 {tr(lang, "topstadLabel")}</span><span className="rounded bg-blue-500 text-white text-[9px] font-bold px-1.5 py-0.5">👤 {tr(lang, "christofferLabel")}</span></div></div>
-                </CardContent>
-              </Card>
-            ) : view === "overview" ? (
-              dataLoading ? <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">Laddar…</CardContent></Card> : overview.length === 0 ? <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noUpcoming")}</CardContent></Card> : <div className="space-y-3"><h2 className="font-serif text-lg">{tr(lang, "upcomingDates")}</h2>{overview.map((row) => <Card key={row.date} className="cursor-pointer" onClick={() => { setDate(row.date); setView("day"); }}><CardContent className="p-4 flex items-center justify-between"><div><div className="font-medium capitalize">{new Date(`${row.date}T12:00:00`).toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" })}</div><div className="text-xs text-muted-foreground">{row.date}</div></div><Badge variant="secondary">{row.tents.length} {tr(lang, "tentsShort")}</Badge></CardContent></Card>)}</div>
-            ) : dataLoading ? (
-              <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">Laddar…</CardContent></Card>
-            ) : cards.length === 0 ? (
-              <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noTentsToday")}</CardContent></Card>
-            ) : (
-              <div className="space-y-3">{cards.map((card) => {
-                const session = sessionByTent.get(card.tent_id);
-                const done = session?.status === "completed";
-                const inProgress = session?.status === "in_progress";
-                return <Card key={card.tent_id} className={`cursor-pointer ${done ? "border-green-500/50 bg-green-500/5" : card.earlyCheckin ? "border-2 border-amber-500 bg-amber-500/5" : card.lateCheckout ? "border-2 border-red-500/70" : ""}`} onClick={() => setSelected(card)}>{card.earlyCheckin && <div className="px-4 py-2 bg-amber-500 text-white text-xs font-bold uppercase tracking-wide rounded-t-lg">⏰ {lang === "sv" ? "Tidig incheckning kl. 12.00 – städa detta tält först" : "Early check-in 12:00 – clean this tent first"}</div>}<CardContent className="p-4"><div className="flex items-start justify-between gap-3"><div className="flex-1 min-w-0"><h3 className="font-serif text-xl">{card.tentName}</h3><p className="text-xs text-muted-foreground">{tr(lang, "tentLabel")} {card.tentNo} – {card.position}</p><div className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs font-medium">🔒 {lang === "sv" ? "Kod till hänglåset" : lang === "si" ? "අගුළු කේතය" : "Lock code"}: <span className="font-mono tracking-widest">2018</span></div>{card.guests > 0 && <div className="mt-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30 p-3"><Users className="h-7 w-7 text-primary shrink-0" /><div className="flex-1"><div className="text-[10px] uppercase tracking-wider text-primary font-semibold">{tr(lang, "guestsLabel")}</div><div className="flex items-baseline gap-1.5"><span className="text-3xl font-bold text-primary leading-none">{card.guests}</span><span className="text-sm text-muted-foreground">{tr(lang, "guests").toLowerCase()}</span>{card.children > 0 && <span className="text-xs text-muted-foreground ml-1">({card.children} {tr(lang, "children").toLowerCase()})</span>}</div></div></div>}<div className="mt-2 rounded-md bg-muted p-3 text-sm font-medium">{towelInstruction(card.guests, lang)}</div><div className="flex flex-wrap gap-1.5 mt-2">{card.hasArrival ? <Badge className="bg-amber-500">{tr(lang, "changeover")}</Badge> : <Badge variant="secondary">{tr(lang, "departure")}</Badge>}{card.guests > 2 && <Badge variant="outline">{tr(lang, "sofaBed")}</Badge>}{card.breakfast && <Badge variant="outline">{tr(lang, "breakfast")}</Badge>}{card.fikapase && <Badge variant="outline">{tr(lang, "fika")}</Badge>}{card.lateCheckout && <Badge className="bg-red-600"><Clock3 className="mr-1 h-3 w-3" />Sen utcheckning kl. 12.00</Badge>}</div></div>{done ? <CheckCircle2 className="h-6 w-6 text-green-600" /> : inProgress ? <Badge>{tr(lang, "inProgress")}</Badge> : <Badge variant="outline">{tr(lang, "notStarted")}</Badge>}</div></CardContent></Card>;
-              })}</div>
-            )}
+                  {view === "day" && (
+                    <div className="space-y-2">
+                      <div>
+                        <Label className="text-xs">{tr(lang, "date")}</Label>
+                        <Input type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+                        <p className="text-xs text-muted-foreground mt-1">{cards.length} {tr(lang, "tentsToHandle")}</p>
+                      </div>
+
+                      {selfCleanDates.has(date) && (
+                        <div className="rounded-lg border-2 border-blue-500/50 bg-blue-500/10 p-3 text-sm">
+                          <div className="font-semibold text-blue-900">🧹 {tr(lang, "selfClean")}</div>
+                          <div className="text-xs text-blue-900/80 mt-1">{tr(lang, "selfCleanBannerDay")}</div>
+                        </div>
+                      )}
+
+                      {!selfCleanDates.has(date) && cards.length > 0 && (
+                        <div className="rounded-lg border p-3 space-y-2">
+                          <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Vem städar denna dag?</div>
+                          {isAdmin ? (
+                            <Select
+                              value={assignedId ?? "none"}
+                              onValueChange={(value) => void assignDay(date, value === "none" ? null : value)}
+                              disabled={savingAssignment}
+                            >
+                              <SelectTrigger className="h-9">
+                                <SelectValue placeholder="Ej tilldelad" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">Ej tilldelad (default: F)</SelectItem>
+                                {cleanerOptions.map((option) => (
+                                  <SelectItem key={option.id} value={option.id}>{option.name}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <div className="text-sm">
+                              <strong>{assignedName ?? "F"}</strong>
+                              {!assignedName && <span className="text-muted-foreground"> (ej tilldelad – F är default)</span>}
+                            </div>
+                          )}
+                          {interestedSet.size > 0 && (
+                            <div className="text-xs text-muted-foreground">
+                              Intresserade: {Array.from(interestedSet).map((id) => cleanerNames.get(id) ?? "?").join(", ")}
+                            </div>
+                          )}
+                          <Button
+                            variant={myInterested ? "default" : "outline"}
+                            size="sm"
+                            className="w-full"
+                            disabled={togglingInterest}
+                            onClick={() => void toggleInterest(date)}
+                          >
+                            <Heart className={`h-3.5 w-3.5 mr-1 ${myInterested ? "fill-current" : ""}`} />
+                            {myInterested ? "Du har markerat intresse" : "Jag vill jobba denna dag"}
+                          </Button>
+                        </div>
+                      )}
+
+                      {isAdmin && <Button variant={selfCleanDates.has(date) ? "outline" : "secondary"} size="sm" className="w-full" disabled={togglingSelfClean} onClick={() => void toggleSelfClean(date)}>{selfCleanDates.has(date) ? tr(lang, "unmarkSelfClean") : tr(lang, "markSelfClean")}</Button>}
+                    </div>
+                  )}
+
+                  {view === "calendar" ? (
+                    <Card>
+                      <CardContent className="p-4 space-y-3">
+                        <div className="flex items-center justify-between"><Button variant="ghost" size="sm" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1))}>‹</Button><div className="font-medium capitalize">{calendarMonth.toLocaleDateString(locale, { month: "long", year: "numeric" })}</div><Button variant="ghost" size="sm" onClick={() => setCalendarMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1))}>›</Button></div>
+                        <div className="grid grid-cols-7 gap-1.5 text-xs text-muted-foreground text-center font-medium">{dayNames.map((name) => <div key={name} className="py-1">{name}</div>)}</div>
+                        <div className="grid grid-cols-7 gap-1.5">{cells.map((cell, index) => {
+                          if (!cell) return <div key={`empty-${index}`} className="min-h-[64px]" />;
+                          const key = formatDate(cell);
+                          const info = calendarData.get(key);
+                          const work = info?.total ?? 0;
+                          const isToday = key === todayInStockholm();
+                          const isSelf = selfCleanDates.has(key) && work > 0;
+                          const dayAssignedId = assignments.get(key) ?? null;
+                          const dayAssignedName = dayAssignedId ? cleanerNames.get(dayAssignedId) ?? "?" : "F";
+                          const myInterest = user ? (interests.get(key)?.has(user.id) ?? false) : false;
+                          const bgClass = isSelf
+                            ? "bg-blue-500 text-white"
+                            : dayAssignedName === "Melvin"
+                              ? "bg-amber-600 text-white"
+                              : "bg-emerald-600 text-white";
+                          return (
+                            <button key={key} onClick={() => { setDate(key); setView("day"); }} className={`min-h-[78px] rounded-lg border p-1 flex flex-col items-stretch text-xs transition hover:bg-muted active:scale-95 overflow-hidden ${isToday ? "ring-2 ring-primary" : ""} ${isSelf ? "bg-blue-500/10 border-blue-500/60" : work > 0 ? "bg-emerald-500/10 border-emerald-500/50" : "border-border/60"}`}>
+                              <div className="flex items-center justify-between px-0.5">
+                                <span className={`text-sm font-semibold ${isSelf ? "text-blue-700" : work > 0 ? "text-emerald-700" : isToday ? "text-primary" : ""}`}>{cell.getDate()}</span>
+                                <div className="flex items-center gap-0.5">
+                                  {myInterest && <Heart className="h-2.5 w-2.5 fill-red-500 text-red-500" />}
+                                  {work > 0 && <span className={`text-[10px] font-bold ${isSelf ? "text-blue-700" : "text-emerald-700"}`}>{work}</span>}
+                                </div>
+                              </div>
+                              {work > 0 && (
+                                <div className="mt-auto flex flex-col items-center gap-0.5">
+                                  <span className={`w-full rounded text-[9px] font-bold uppercase tracking-tight py-0.5 text-center ${bgClass}`}>
+                                    {isSelf ? `👤 ${tr(lang, "christofferLabel")}` : `🧹 ${dayAssignedName}`}
+                                  </span>
+                                  <div className="flex gap-1">
+                                    {(info?.arrivals ?? 0) > 0 && <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-emerald-700"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />{info?.arrivals}</span>}
+                                    {(info?.departures ?? 0) > 0 && <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-700"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" />{info?.departures}</span>}
+                                  </div>
+                                </div>
+                              )}
+                            </button>
+                          );
+                        })}</div>
+                        <div className="pt-2 border-t space-y-2">
+                          <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{tr(lang, "whoCleansLegend")}</div>
+                          <div className="flex gap-2 flex-wrap text-xs">
+                            <span className="rounded bg-emerald-600 text-white text-[9px] font-bold px-1.5 py-0.5">🧹 F</span>
+                            <span className="rounded bg-amber-600 text-white text-[9px] font-bold px-1.5 py-0.5">🧹 Melvin</span>
+                            <span className="rounded bg-blue-500 text-white text-[9px] font-bold px-1.5 py-0.5">👤 {tr(lang, "christofferLabel")}</span>
+                            <span className="inline-flex items-center gap-1 text-muted-foreground"><Heart className="h-3 w-3 fill-red-500 text-red-500" /> Din intresseanmälan</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ) : view === "overview" ? (
+                    dataLoading ? <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">Laddar…</CardContent></Card> : overview.length === 0 ? <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noUpcoming")}</CardContent></Card> : <div className="space-y-3"><h2 className="font-serif text-lg">{tr(lang, "upcomingDates")}</h2>{overview.map((row) => { const rowAssignedId = assignments.get(row.date) ?? null; const rowAssignedName = rowAssignedId ? cleanerNames.get(rowAssignedId) ?? "?" : "F"; return <Card key={row.date} className="cursor-pointer" onClick={() => { setDate(row.date); setView("day"); }}><CardContent className="p-4 flex items-center justify-between"><div><div className="font-medium capitalize">{new Date(`${row.date}T12:00:00`).toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" })}</div><div className="text-xs text-muted-foreground">{row.date} • Städas av {rowAssignedName}</div></div><Badge variant="secondary">{row.tents.length} {tr(lang, "tentsShort")}</Badge></CardContent></Card>; })}</div>
+                  ) : view === "time" && showTime && user ? (
+                    <TimeTracker userId={user.id} />
+                  ) : view === "salary" && showSalary && salaryTargetId ? (
+                    <>
+                      {isAdmin && !isMelvinLike && <div className="text-xs text-muted-foreground">Visar lön för <strong>Melvin</strong></div>}
+                      <SalaryPanel userId={salaryTargetId} />
+                    </>
+                  ) : view === "day" ? (
+                    dataLoading ? (
+                      <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">Laddar…</CardContent></Card>
+                    ) : cards.length === 0 ? (
+                      <Card><CardContent className="p-6 text-center text-muted-foreground text-sm">{tr(lang, "noTentsToday")}</CardContent></Card>
+                    ) : (
+                      <div className="space-y-3">{cards.map((card) => {
+                        const session = sessionByTent.get(card.tent_id);
+                        const done = session?.status === "completed";
+                        const inProgress = session?.status === "in_progress";
+                        return <Card key={card.tent_id} className={`cursor-pointer ${done ? "border-green-500/50 bg-green-500/5" : card.earlyCheckin ? "border-2 border-amber-500 bg-amber-500/5" : card.lateCheckout ? "border-2 border-red-500/70" : ""}`} onClick={() => setSelected(card)}>{card.earlyCheckin && <div className="px-4 py-2 bg-amber-500 text-white text-xs font-bold uppercase tracking-wide rounded-t-lg">⏰ {lang === "sv" ? "Tidig incheckning kl. 12.00 – städa detta tält först" : "Early check-in 12:00 – clean this tent first"}</div>}<CardContent className="p-4"><div className="flex items-start justify-between gap-3"><div className="flex-1 min-w-0"><h3 className="font-serif text-xl">{card.tentName}</h3><p className="text-xs text-muted-foreground">{tr(lang, "tentLabel")} {card.tentNo} – {card.position}</p><div className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs font-medium">🔒 {lang === "sv" ? "Kod till hänglåset" : lang === "si" ? "අගුළු කේතය" : "Lock code"}: <span className="font-mono tracking-widest">2018</span></div>{card.guests > 0 && <div className="mt-3 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30 p-3"><Users className="h-7 w-7 text-primary shrink-0" /><div className="flex-1"><div className="text-[10px] uppercase tracking-wider text-primary font-semibold">{tr(lang, "guestsLabel")}</div><div className="flex items-baseline gap-1.5"><span className="text-3xl font-bold text-primary leading-none">{card.guests}</span><span className="text-sm text-muted-foreground">{tr(lang, "guests").toLowerCase()}</span>{card.children > 0 && <span className="text-xs text-muted-foreground ml-1">({card.children} {tr(lang, "children").toLowerCase()})</span>}</div></div></div>}<div className="mt-2 rounded-md bg-muted p-3 text-sm font-medium">{towelInstruction(card.guests, lang)}</div><div className="flex flex-wrap gap-1.5 mt-2">{card.hasArrival ? <Badge className="bg-amber-500">{tr(lang, "changeover")}</Badge> : <Badge variant="secondary">{tr(lang, "departure")}</Badge>}{card.guests > 2 && <Badge variant="outline">{tr(lang, "sofaBed")}</Badge>}{card.breakfast && <Badge variant="outline">{tr(lang, "breakfast")}</Badge>}{card.fikapase && <Badge variant="outline">{tr(lang, "fika")}</Badge>}{card.lateCheckout && <Badge className="bg-red-600"><Clock3 className="mr-1 h-3 w-3" />Sen utcheckning kl. 12.00</Badge>}</div></div>{done ? <CheckCircle2 className="h-6 w-6 text-green-600" /> : inProgress ? <Badge>{tr(lang, "inProgress")}</Badge> : <Badge variant="outline">{tr(lang, "notStarted")}</Badge>}</div></CardContent></Card>;
+                      })}</div>
+                    )
+                  ) : null}
+                </>
+              );
+            })()}
+
           </>
         )}
       </main>
