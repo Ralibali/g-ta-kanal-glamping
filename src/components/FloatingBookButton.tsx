@@ -18,23 +18,23 @@ const FloatingBookButton = () => {
       <Link
         to="/boka"
         aria-label={lang === "en" ? "Book now" : "Boka nu"}
-        className="relative h-20 w-20 md:h-24 md:w-24 flex items-center justify-center group"
+        className="relative h-24 w-24 md:h-28 md:w-28 flex items-center justify-center group"
       >
         {/* Pulserande yttre glow */}
         <motion.span
           aria-hidden
-          className="absolute inset-2 rounded-full bg-primary/30 blur-md z-10"
+          className="absolute inset-3 rounded-full bg-primary/30 blur-md z-10"
           animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
           transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
         />
 
         {/* Grön bakgrund */}
-        <span className="absolute h-14 w-14 md:h-16 md:w-16 rounded-full bg-primary border-2 border-accent shadow-xl group-hover:scale-105 transition-transform z-10" />
+        <span className="absolute h-16 w-16 md:h-20 md:w-20 rounded-full bg-primary border-2 border-accent shadow-xl group-hover:scale-105 transition-transform z-10" />
 
         {/* Roterande prickar ovanpå det gröna */}
         <motion.div
           aria-hidden
-          className="absolute h-14 w-14 md:h-16 md:w-16 z-20"
+          className="absolute h-16 w-16 md:h-20 md:w-20 z-20"
           animate={{ rotate: 360 }}
           transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
         >
@@ -43,9 +43,9 @@ const FloatingBookButton = () => {
             return (
               <span
                 key={i}
-                className="absolute left-1/2 top-1/2 h-2.5 w-2.5 rounded-full bg-accent shadow-[0_0_6px_rgba(201,168,76,0.9)]"
+                className="absolute left-1/2 top-1/2 h-3 w-3 rounded-full bg-accent shadow-[0_0_8px_rgba(201,168,76,0.9)]"
                 style={{
-                  transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-22px)`,
+                  transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-26px)`,
                 }}
               />
             );
