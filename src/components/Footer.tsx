@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
 import { useLang } from "@/i18n/LanguageContext";
 
 const Footer = () => {
@@ -36,6 +36,12 @@ const Footer = () => {
           <div>
             <p className="font-semibold mb-4 text-white/90">{lang === "en" ? "Contact" : "Kontakt"}</p>
             <div className="flex flex-col gap-3 text-sm text-white/60">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent("open-chat"))}
+                className="hover:text-white flex items-center gap-2 transition-colors text-left"
+              >
+                <MessageCircle size={14} /> {lang === "en" ? "Contact us (chat)" : "Kontakta oss (chatt)"}
+              </button>
               <a href="mailto:hej@goglampingsweden.se" className="hover:text-white flex items-center gap-2 transition-colors">
                 <Mail size={14} /> hej@goglampingsweden.se
               </a>

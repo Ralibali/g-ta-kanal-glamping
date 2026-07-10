@@ -24,6 +24,8 @@ const Navbar = () => {
         { label: "Hitta hit", href: "#kontakt" },
       ];
 
+  const openChat = () => window.dispatchEvent(new CustomEvent("open-chat"));
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
@@ -80,6 +82,14 @@ const Navbar = () => {
             <span className="text-base">{flagEmoji}</span>
             <span className="uppercase text-xs">{otherLang.toUpperCase()}</span>
           </button>
+          <button
+            onClick={openChat}
+            className={`text-sm font-medium transition-all hover:opacity-80 ${
+              scrolled ? "text-foreground" : "text-white/90"
+            }`}
+          >
+            {lang === "en" ? "Contact us" : "Kontakta oss"}
+          </button>
           <motion.a
             href="#boka"
             whileHover={{ scale: 1.02 }}
@@ -127,6 +137,15 @@ const Navbar = () => {
                 {link.label}
               </a>
             ))}
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                openChat();
+              }}
+              className="text-foreground text-lg font-medium py-2 border-b border-border/50 text-left"
+            >
+              {lang === "en" ? "Contact us" : "Kontakta oss"}
+            </button>
             <a
               href="#boka"
               onClick={() => setMenuOpen(false)}

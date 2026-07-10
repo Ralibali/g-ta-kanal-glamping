@@ -16,6 +16,7 @@ import MapSection from "@/components/MapSection";
 import Footer from "@/components/Footer";
 import MobileBookingBar from "@/components/MobileBookingBar";
 import ChatWidget from "@/components/ChatWidget";
+import FloatingBookButton from "@/components/FloatingBookButton";
 import { LanguageProvider, type Lang } from "@/i18n/LanguageContext";
 
 interface IndexProps {
@@ -44,6 +45,7 @@ const Index = ({ lang = "sv" }: IndexProps) => {
       </main>
       <MobileBookingBar />
       <ChatWidget />
+      <FloatingBookButton />
       <Footer />
     </LanguageProvider>
   );
