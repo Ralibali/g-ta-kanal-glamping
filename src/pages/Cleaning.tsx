@@ -110,6 +110,95 @@ export default function Cleaning() {
     setSelfCleanDates(new Set((data ?? []).map((row: { date: string }) => row.date)));
   };
 
+  const loadCleanerNames = async () => {
+    const { data } = await (supabase as any).rpc("list_cleaner_display_names");
+    const map = new Map<string, string>();
+    for (const row of (data ?? []) as CleanerName[]) map.set(row.user_id, row.display_name);
+    setCleanerNames(map);
+  };
+
+  const loadAssignments = async () => {
+    const { data } = await (supabase as any)
+      .from("cleaning_assignments")
+      .select("work_date, assigned_user_id");
+    const map = new Map<string, string>();
+    for (const row of (data ?? []) as Assignment[]) map.set(row.work_date, row.assigned_user_id);
+    setAssignments(map);
+  };
+
+  const loadInterests = async () => {
+    // Cleaner sees own + admin sees all
+    let query = (supabase as any)
+      .from("employee_availability")
+      .select("work_date, user_id");
+    if (!isAdmin && user) query = query.eq("user_id", user.id);
+    const { data } = await query;
+    const map = new Map<string, Set<string>>();
+    for (const row of (data ?? []) as { work_date: string; user_id: string }[]) {
+      if (!map.has(row.work_date)) map.set(row.work_date, new Set());
+      map.get(row.work_date)!.add(row.user_id);
+    }
+    setInterests(map);
+  };
+
+  const assignDay = async (targetDate: string, userId: string | null) => {
+    if (!isAdmin) return;
+    setSavingAssignment(true);
+    try {
+      if (!userId) {
+        const { error } = await (supabase as any)
+          .from("cleaning_assignments")
+          .delete()
+          .eq("work_date", targetDate);
+        if (error) throw error;
+      } else {
+        const { error } = await (supabase as any)
+          .from("cleaning_assignments")
+          .upsert(
+            { work_date: targetDate, assigned_user_id: userId, created_by: user?.id },
+            { onConflict: "work_date" },
+          );
+        if (error) throw error;
+      }
+      await loadAssignments();
+      toast.success("Tilldelning uppdaterad");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Kunde inte tilldela");
+    } finally {
+      setSavingAssignment(false);
+    }
+  };
+
+  const toggleInterest = async (targetDate: string) => {
+    if (!user || togglingInterest) return;
+    const already = interests.get(targetDate)?.has(user.id) ?? false;
+    setTogglingInterest(true);
+    try {
+      if (already) {
+        const { error } = await (supabase as any)
+          .from("employee_availability")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("work_date", targetDate);
+        if (error) throw error;
+      } else {
+        const { error } = await (supabase as any)
+          .from("employee_availability")
+          .upsert(
+            { user_id: user.id, work_date: targetDate },
+            { onConflict: "user_id,work_date" },
+          );
+        if (error) throw error;
+      }
+      await loadInterests();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Kunde inte spara intresse");
+    } finally {
+      setTogglingInterest(false);
+    }
+  };
+
+
   const loadDay = async () => {
     setDataLoading(true);
     const columns = "booking_number, tent_id, checkin_date, checkout_date, guests, children, breakfast_csv_quantity, breakfast_addon_quantity, fikapase_csv_quantity, fikapase_addon_quantity, late_checkout";
