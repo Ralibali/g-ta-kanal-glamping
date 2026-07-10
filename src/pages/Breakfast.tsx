@@ -287,7 +287,7 @@ export default function Breakfast() {
                 </div>
                 <div className="text-right shrink-0">
                   <div className="text-2xl font-bold text-primary leading-none">{nextDelivery.total}</div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">leveranser</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">att leverera</div>
                 </div>
               </div>
               <div className="flex gap-3 mt-3 pt-3 border-t border-primary/20 text-xs">
