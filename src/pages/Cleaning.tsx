@@ -381,13 +381,22 @@ export default function Cleaning() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b">
         <div className="max-w-2xl mx-auto p-4 flex items-center justify-between gap-3">
-          <h1 className="font-serif text-lg">{tr(lang, "appTitle")}</h1>
-          <div className="flex items-center gap-2">
+          <div className="min-w-0">
+            <h1 className="font-serif text-lg leading-tight truncate">{tr(lang, "appTitle")}</h1>
+            {profile?.display_name && (
+              <p className="text-xs text-muted-foreground">Inloggad som <strong>{profile.display_name}</strong>{isAdmin ? " • admin" : ""}</p>
+            )}
+            {!profile?.display_name && isAdmin && (
+              <p className="text-xs text-muted-foreground">Inloggad som <strong>admin</strong></p>
+            )}
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
             <select aria-label={tr(lang, "language")} value={lang} onChange={(event) => changeLanguage(event.target.value as CleanLang)} className="text-sm bg-transparent border rounded px-2 py-1">{CLEAN_LANGS.map((item) => <option key={item.code} value={item.code}>{item.label}</option>)}</select>
             <Button variant="ghost" size="icon" onClick={signOut}><LogOut className="h-4 w-4" /></Button>
           </div>
         </div>
       </header>
+
 
       <main className="max-w-2xl mx-auto p-4 space-y-4 pb-24">
         {selected ? (
