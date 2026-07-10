@@ -175,23 +175,27 @@ export default function Breakfast() {
     .reduce((sum, order) => sum + order.quantity, 0);
 
   const nextDelivery = useMemo(() => {
-    const sorted = Array.from(ordersByDate.entries()).sort(([a], [b]) => a.localeCompare(b));
+    const sorted = Array.from(ordersByDate.entries())
+      .filter(([deliveryDate]) => deliveryDate >= today)
+      .sort(([a], [b]) => a.localeCompare(b));
     for (const [deliveryDate, list] of sorted) {
       const remaining = list.filter((order) => order.delivery?.status !== "delivered");
       if (remaining.length === 0) continue;
+      const breakfast = remaining
+        .filter((order) => order.kind === "breakfast")
+        .reduce((sum, order) => sum + order.quantity, 0);
+      const fika = remaining
+        .filter((order) => order.kind === "fikapase")
+        .reduce((sum, order) => sum + order.quantity, 0);
       return {
         date: deliveryDate,
-        breakfast: remaining
-          .filter((order) => order.kind === "breakfast")
-          .reduce((sum, order) => sum + order.quantity, 0),
-        fika: remaining
-          .filter((order) => order.kind === "fikapase")
-          .reduce((sum, order) => sum + order.quantity, 0),
-        total: remaining.length,
+        breakfast,
+        fika,
+        total: breakfast + fika,
       };
     }
     return null;
-  }, [ordersByDate]);
+  }, [ordersByDate, today]);
 
   const openDietEditor = (order: BreakfastOrder) => {
     setDietDraft(order.dietary ?? []);
@@ -283,7 +287,7 @@ export default function Breakfast() {
                 </div>
                 <div className="text-right shrink-0">
                   <div className="text-2xl font-bold text-primary leading-none">{nextDelivery.total}</div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">leveranser</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">att leverera</div>
                 </div>
               </div>
               <div className="flex gap-3 mt-3 pt-3 border-t border-primary/20 text-xs">
@@ -373,7 +377,7 @@ export default function Breakfast() {
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 flex-wrap"><Badge className={breakfast ? "bg-amber-600" : "bg-emerald-700"}>{breakfast ? <><Croissant className="h-3 w-3 mr-1" /> Frukost</> : <><Leaf className="h-3 w-3 mr-1" /> Fikapåse</>}</Badge><span className="font-medium">{tentLabel(order.tentIds)}</span></div>
-                            <div className="text-xs text-muted-foreground mt-1">Bokning {order.bookingNumber}</div>
+                            <div className="text-xs text-muted-foreground mt-1">Bokning {order.bookingNumber}{order.guestName ? ` • ${order.guestName}` : ""}</div>
                           </div>
                           {done && <Badge variant="outline" className="border-primary text-primary shrink-0"><CheckCircle2 className="h-3 w-3 mr-1" /> Klar</Badge>}
                         </div>
