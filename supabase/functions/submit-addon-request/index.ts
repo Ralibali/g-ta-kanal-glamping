@@ -149,6 +149,7 @@ Deno.serve(async (req) => {
       payment_intent_data: {
         description: isSv ? `Tillval Go Glamping · ${ref}` : `Extras Go Glamping · ${ref}`,
         metadata: { booking_id: booking.id, reference: ref },
+        receipt_email: booking.email || undefined,
       },
       success_url: `${origin}/stay/${token}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/stay/${token}?payment=cancelled`,
