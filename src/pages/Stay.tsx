@@ -989,6 +989,12 @@ export default function Stay() {
                 : "If you've ordered breakfast, it's baked and delivered by Bostället Vedungsbageri and waits for you at the portal around 8:30 — we'll ping you by text as soon as it's there. Prefer to sort food yourselves? The restaurant by the locks (~200 m), the food trucks up by the bridge and the café in Vreta Kloster are all lovely options. We leave cooking inside the tents alone — but the BBQ is happy to be used, and there's free charcoal in the grey cabinet."}
             </InfoRow>
 
+            <InfoRow icon={<Droplets className="h-4 w-4" />} title={isSv ? "Diska i servicehuset" : "Washing up in the service house"}>
+              {isSv
+                ? "Det finns inget kök vid tälten, men det går fint att diska i servicehuset — vid tvättmaskinerna, genom dörren till höger sett framifrån. I det gråa skåpet till vänster hittar ni diskmedel, diskborste och en bärkasse att ta med koppar och glas i. Enkelt och nära."
+                : "There's no kitchen by the tents, but you're very welcome to wash up in the service house — over by the washing machines, through the door on the right as you face the building. In the grey cabinet on the left you'll find washing-up liquid, a brush and a bag to carry cups and glasses in. Simple and just around the corner."}
+            </InfoRow>
+
             <InfoRow icon={<Volume2 className="h-4 w-4" />} title={isSv ? "Gräsklippning dagtid" : "Lawn mowing in the daytime"}>
               {isSv
                 ? "Vi klipper gräset dagtid mellan kl 10 och 15 så att platsen håller sig fin och välskött åt er. Skulle ljudet störa er precis då — säg bara till, så pausar vi direkt."
