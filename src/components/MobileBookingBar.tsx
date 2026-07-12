@@ -38,7 +38,7 @@ const MobileBookingBar = () => {
           </p>
         </div>
         <a
-          href="#boka"
+          href="/boka"
           className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-6 py-3 rounded-full text-sm font-bold shadow-lg shadow-primary/25 hover:scale-105 active:scale-95 transition-transform whitespace-nowrap"
         >
           {lang === "en" ? "Book now" : "Boka nu"}

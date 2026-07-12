@@ -133,7 +133,7 @@ const Blog = () => {
             Boka din glampingvistelse vid Göta kanal och skapa egna minnen.
           </p>
           <Link
-            to="/#boka"
+            to="/boka"
             className="inline-block bg-accent text-accent-foreground px-10 py-4 rounded-full font-semibold hover:scale-105 transition-transform shadow-md"
           >
             Boka nu →

@@ -91,7 +91,7 @@ const Navbar = () => {
             {lang === "en" ? "Contact us" : "Kontakta oss"}
           </button>
           <motion.a
-            href="#boka"
+            href="/boka"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="bg-accent text-accent-foreground px-6 py-2.5 rounded-full text-sm font-semibold shadow-sm"
@@ -147,7 +147,7 @@ const Navbar = () => {
               {lang === "en" ? "Contact us" : "Kontakta oss"}
             </button>
             <a
-              href="#boka"
+              href="/boka"
               onClick={() => setMenuOpen(false)}
               className="bg-accent text-accent-foreground px-5 py-3.5 rounded-full text-center font-semibold mt-2"
             >

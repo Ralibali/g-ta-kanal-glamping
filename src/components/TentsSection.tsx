@@ -67,7 +67,7 @@ const TentsSection = () => {
                   ))}
                 </div>
                 <motion.a
-                  href="#boka"
+                  href="/boka"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-3.5 rounded-full text-sm font-bold w-full text-center shadow-lg shadow-primary/20"
