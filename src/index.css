@@ -79,3 +79,21 @@ html {
 .sirvoy-widget-container iframe {
   border-radius: 0.75rem;
 }
+
+/* A11y: honor reduced-motion preferences globally */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* A11y: visible keyboard focus ring on interactive elements */
+:where(a, button, [role="button"], input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 0.375rem;
+}
