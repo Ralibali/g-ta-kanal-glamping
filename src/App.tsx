@@ -74,6 +74,8 @@ const App = () => (
           <Route path="/frukost" element={<Breakfast />} />
           <Route path="/breakfast" element={<Breakfast />} />
           <Route path="/boka" element={<Boka />} />
+          <Route path="/en/boka" element={<Boka lang="en" />} />
+          <Route path="/en/book" element={<Boka lang="en" />} />
           <Route path="/stay/:token" element={<Stay />} />
           <Route path="/under-vistelsen" element={<UnderVistelsen />} />
           <Route path="/during-your-stay" element={<UnderVistelsen />} />
