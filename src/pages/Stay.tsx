@@ -612,7 +612,9 @@ export default function Stay() {
               {hasBreakfast && (
                 <li className="flex items-start gap-3">
                   <Coffee className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                  <span>{isSv ? "Frukost levereras till ert tält kl 08:30 varje morgon. ☕" : "Breakfast delivered to your tent at 8:30 every morning. ☕"}</span>
+                  <span>{isSv
+                    ? "Frukost serveras runt kl 08:30 och levereras av Bostället Vedungsbageri. Ni får ett SMS så fort den är på plats. ☕"
+                    : "Breakfast is served around 8:30, delivered by Bostället Vedungsbageri. You'll get a text as soon as it's ready. ☕"}</span>
                 </li>
               )}
               {hasFika && (
