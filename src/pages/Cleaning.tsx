@@ -7,6 +7,7 @@ import { CLEAN_LANGS, getStoredLang, setStoredLang, tr, type CleanLang } from "@
 import { CleaningChecklist, type TentDayData } from "@/components/cleaning/CleaningChecklist";
 import { CleanerLoginForm } from "@/components/cleaning/CleanerLoginForm";
 import { TimeTracker } from "@/components/cleaning/TimeTracker";
+import { TodayView } from "@/components/cleaning/TodayView";
 import { SalaryPanel } from "@/components/cleaning/SalaryPanel";
 import { pickPreparationStay, towelInstruction, type CleaningStayLike } from "@/lib/cleaning-operations";
 import { Badge } from "@/components/ui/badge";
