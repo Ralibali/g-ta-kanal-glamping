@@ -879,15 +879,15 @@ export default function Stay() {
                 <div className="flex items-start gap-2">
                   <MessageCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Snabbt svar" : "Fast response"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Vi bekräftar inom några timmar" : "We confirm within a few hours"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Snabb bekräftelse" : "Instant confirmation"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Direkt när betalningen är genomförd" : "As soon as your payment goes through"}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <CreditCard className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Säker betalning" : "Secure payment"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Swish eller kortlänk" : "Card link by email"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Säker kortbetalning" : "Secure card payment"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Visa, Mastercard, Apple/Google Pay via Stripe" : "Visa, Mastercard, Apple/Google Pay via Stripe"}</div>
                   </div>
                 </div>
               </div>
