@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   MapPin, Phone, Clock, Key, UtensilsCrossed, Trees, Waves,
   Wifi, Flame, Dog, Info, Footprints, CheckCircle2, AlertCircle,
-  Coffee, MessageCircle, ShoppingBag, Car, Heart, Copy, Star, Instagram, Beer, ArrowRight, Volume2
+  Coffee, MessageCircle, ShoppingBag, Car, Heart, Copy, Star, Instagram, Beer, ArrowRight, Volume2, Droplets
 } from "lucide-react";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import ChatWidget from "@/components/ChatWidget";
