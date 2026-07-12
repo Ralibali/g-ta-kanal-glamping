@@ -171,9 +171,9 @@ const COPY = {
   },
 };
 
-type Copy = typeof COPY.sv;
+type Copy = Copy;
 
-const Header = ({ t, lang, onLang }: { t: typeof COPY.sv; lang: BokaLang; onLang: (l: BokaLang) => void }) => {
+const Header = ({ t, lang, onLang }: { t: Copy; lang: BokaLang; onLang: (l: BokaLang) => void }) => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -272,7 +272,7 @@ const Header = ({ t, lang, onLang }: { t: typeof COPY.sv; lang: BokaLang; onLang
   );
 };
 
-const StickyMobileCTA = ({ t }: { t: typeof COPY.sv }) => {
+const StickyMobileCTA = ({ t }: { t: Copy }) => {
   const [visible, setVisible] = useState(false);
   const [overBooking, setOverBooking] = useState(false);
 
@@ -327,7 +327,7 @@ const StickyMobileCTA = ({ t }: { t: typeof COPY.sv }) => {
   );
 };
 
-const Hero = ({ t }: { t: typeof COPY.sv }) => (
+const Hero = ({ t }: { t: Copy }) => (
   <section className="relative w-full min-h-[88vh] md:min-h-[92vh]">
     <img
       src={heroImg}
@@ -400,7 +400,7 @@ const Hero = ({ t }: { t: typeof COPY.sv }) => (
   </section>
 );
 
-const BookingCard = ({ t }: { t: typeof COPY.sv }) => (
+const BookingCard = ({ t }: { t: Copy }) => (
   <section id="boka" className="relative z-20 -mt-24 md:-mt-40 mb-20 md:mb-28">
     <div className="max-w-[1180px] mx-auto px-4 md:px-8">
       <div
@@ -439,7 +439,7 @@ const BookingCard = ({ t }: { t: typeof COPY.sv }) => (
   </section>
 );
 
-const Benefits = ({ t }: { t: typeof COPY.sv }) => {
+const Benefits = ({ t }: { t: Copy }) => {
   const icons = [
     <BedDouble size={22} strokeWidth={1.3} />,
     <Flame size={22} strokeWidth={1.3} />,
@@ -471,7 +471,7 @@ const Benefits = ({ t }: { t: typeof COPY.sv }) => {
   );
 };
 
-const Editorial = ({ t }: { t: typeof COPY.sv }) => (
+const Editorial = ({ t }: { t: Copy }) => (
   <section id="talten" className="py-24 md:py-32" style={{ background: PALETTE.white }}>
     <div className="max-w-6xl mx-auto px-6 md:px-8">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-end">
@@ -506,7 +506,7 @@ const Editorial = ({ t }: { t: typeof COPY.sv }) => (
   </section>
 );
 
-const Steps = ({ t }: { t: typeof COPY.sv }) => (
+const Steps = ({ t }: { t: Copy }) => (
   <section className="py-24 md:py-32" style={{ background: PALETTE.primary, color: PALETTE.white }}>
     <div className="max-w-6xl mx-auto px-6 md:px-8">
       <div className="max-w-2xl mb-14 md:mb-20">
@@ -533,7 +533,7 @@ const Steps = ({ t }: { t: typeof COPY.sv }) => (
   </section>
 );
 
-const FAQ = ({ t }: { t: typeof COPY.sv }) => {
+const FAQ = ({ t }: { t: Copy }) => {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <section id="faq" className="py-24 md:py-32" style={{ background: PALETTE.cream }}>
