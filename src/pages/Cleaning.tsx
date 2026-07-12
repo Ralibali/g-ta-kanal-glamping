@@ -76,7 +76,7 @@ type CleanerName = { user_id: string; display_name: string };
 export default function Cleaning() {
   const { user, isCleaner, isAdmin, profile, loading, signOut } = useCleaner();
   const [lang, setLang] = useState<CleanLang>(getStoredLang());
-  const [view, setView] = useState<"calendar" | "overview" | "day" | "time" | "salary">("calendar");
+  const [view, setView] = useState<"today" | "calendar" | "overview" | "day" | "time" | "salary">("today");
   const [calendarMonth, setCalendarMonth] = useState(() => {
     const value = new Date(`${todayInStockholm()}T12:00:00`);
     value.setDate(1);
