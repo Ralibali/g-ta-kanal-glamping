@@ -133,6 +133,8 @@ export default function UnderVistelsen() {
     slippersBody: "Stigen till servicehuset går över gräs och grus. Dessutom är duschen allmän för alla gäster vid kanalen – ett par tofflor eller slip-in-skor gör både nattliga toabesök och duschen mycket trevligare.",
     food: "Mat & matlagning",
     foodBody: "Matlagning är inte tillåten i eller vid tälten (brandsäkerhet). Kylskåp, kaffe och te finns inne i tältet. Prova gärna de nya matvagnarna uppe vid bron (Stjärnorpsvägen). Grillning går bra — i det gråa skåpet finns grillkol, gratis. Vi förespråkar ändå en god hämtmat.",
+    dishes: "Diska i servicehuset",
+    dishesBody: "Det finns inget kök vid tälten, men det går fint att diska i servicehuset — vid tvättmaskinerna, genom dörren till höger sett framifrån. I det gråa skåpet till vänster hittar ni diskmedel, diskborste och en bärkasse att bära koppar och glas i. Enkelt och nära.",
     consideration: "Visa hänsyn till varandra",
     considerationBody: "Vi delar platsen med flera gäster — håll ljudnivån nere efter kl 22 och respektera varandras lugn. Lämna tältet i fint skick så att nästa gäst får samma fina mottagande som ni fick.",
     wifi: "Wifi & täckning",
