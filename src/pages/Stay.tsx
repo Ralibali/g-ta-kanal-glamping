@@ -515,12 +515,12 @@ export default function Stay() {
         body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined },
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
-      setPaidTotal(total);
-      setDone(true);
-      toast.success(t.success);
+      const url = (res as any)?.url;
+      if (!url) throw new Error("Kunde inte starta kortbetalning.");
+      // Redirect to Stripe Checkout
+      window.location.href = url;
     } catch (err: any) {
       toast.error(err?.message ?? t.error);
-    } finally {
       setSubmitting(false);
     }
   };
