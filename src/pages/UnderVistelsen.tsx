@@ -144,7 +144,7 @@ export default function UnderVistelsen() {
     beforeLeave: "Innan ni åker hem",
     beforeIntro: "En påminnelse så att vi kan ta emot nästa gäst i samma fina skick:",
     washUp: "Diska det ni använt (koppar, glas, bestick) och ställ tillbaka i tältet.",
-    trash: "Kasta sopor i kärlen vid parkeringen — låt inte mat eller skräp ligga kvar.",
+    trash: "Kasta sopor i kärlen på området — låt inte mat eller skräp ligga kvar.",
     dontForget: "Glöm inte saker! Kolla under sängen, i kylen och i tältets ytterfack.",
     leaveCard: "Lämna servicekortet kvar i tältet.",
     zip: "Stäng dragkedjorna på tältet ordentligt när ni går.",
