@@ -171,7 +171,7 @@ const COPY = {
   },
 };
 
-type Copy = Copy;
+type Copy = typeof COPY.sv;
 
 const Header = ({ t, lang, onLang }: { t: Copy; lang: BokaLang; onLang: (l: BokaLang) => void }) => {
   const [scrolled, setScrolled] = useState(false);
