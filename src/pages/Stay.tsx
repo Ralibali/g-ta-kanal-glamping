@@ -55,7 +55,7 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "natt" : "nätter"}`,
     tooLate: "Tyvärr är det för sent att lägga till tillval inför den här vistelsen — beställning stänger två dygn före incheckning. Hör av dig till oss om något är akut!",
     addons: "Lägg till tillval",
-    intro: "Pricka i vad du vill, så får du betalningsinstruktioner direkt. Vi tar Swish till vårt företagsnummer.",
+    intro: "Pricka i vad du vill lägga till. Du betalar tryggt med kort i nästa steg — vi bekräftar direkt när betalningen är genomförd.",
     already: "Du har redan beställt:",
     pcs: (n: number) => `${n} st`,
     perPerson: "kr/person",
