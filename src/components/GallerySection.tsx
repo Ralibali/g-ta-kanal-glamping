@@ -9,14 +9,24 @@ import img5 from "@/assets/glamping-person-deck.jpg";
 import img6 from "@/assets/glamping-reading.jpg";
 import img7 from "@/assets/glamping-nature-kids.jpg";
 import img8 from "@/assets/glamping-interior-beds.jpg";
+import arch1 from "@/assets/img_9376.jpg.asset.json";
+import arch2 from "@/assets/img_9374.jpg.asset.json";
+import sunset1 from "@/assets/img_9375.jpg.asset.json";
+import sunset2 from "@/assets/img_9377.jpg.asset.json";
+import sunset3 from "@/assets/img_9373.jpg.asset.json";
 
 const images = [
+  { src: arch1.url, alt: "Glamping Bergs Slussar entré med tält och lyktor i skymning", span: "col-span-2 row-span-2" },
   { src: img1, alt: "Cosy glamping interior at Bergs Slussar", span: "col-span-1 row-span-2" },
+  { src: sunset1.url, alt: "Solnedgång över Göta kanal vid Bergs Slussar Glamping", span: "col-span-2 row-span-1" },
   { src: img2, alt: "Glamping tent with deck by Göta Canal", span: "col-span-1 row-span-1" },
   { src: img3, alt: "Evening lighting glamping Bergs Slussar", span: "col-span-1 row-span-1" },
+  { src: arch2.url, alt: "Kvällsstämning vid glampingtälten Bergs Slussar", span: "col-span-2 row-span-1" },
   { src: img4, alt: "Nature view from glamping near Linköping", span: "col-span-2 row-span-1" },
+  { src: sunset2.url, alt: "Skymning över hamnen vid Bergs Slussar", span: "col-span-1 row-span-1" },
   { src: img5, alt: "Guest enjoying glamping by Göta Canal Sweden", span: "col-span-1 row-span-1" },
   { src: img6, alt: "Relaxation in glamping tent Bergs Slussar", span: "col-span-1 row-span-1" },
+  { src: sunset3.url, alt: "Segelbåtar i solnedgång vid Bergs Slussar hamn", span: "col-span-1 row-span-1" },
   { src: img7, alt: "Children in nature camping Göta Canal", span: "col-span-1 row-span-1" },
   { src: img8, alt: "Comfortable beds glamping Sweden", span: "col-span-1 row-span-2" },
 ];
