@@ -306,6 +306,7 @@ export default function Cleaning() {
 
   useEffect(() => {
     if (!user || !isCleaner) return;
+    if (view === "today") { setDate(todayInStockholm()); void loadDay(); }
     if (view === "day") void loadDay();
     if (view === "overview") void loadOverview();
     if (view === "calendar") void loadCalendar();
