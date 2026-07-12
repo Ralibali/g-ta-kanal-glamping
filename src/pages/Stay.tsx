@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, Key, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut, Volume2 } from "lucide-react";
+import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, Key, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut, Volume2, Droplets } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -987,6 +987,12 @@ export default function Stay() {
               {isSv
                 ? "Har ni beställt frukost bakas och levereras den av Bostället Vedungsbageri och står vid portalen runt kl 08:30 — vi pingar er på SMS så fort den är på plats. Vill ni fixa mat själva funkar det fint att gå till restaurangen vid slussarna (ca 200 m), matvagnarna vid bron eller caféet i Vreta Kloster. Matlagning inne i tälten låter vi bli — men grillen står gärna redo, det finns gratis kol i det gråa skåpet."
                 : "If you've ordered breakfast, it's baked and delivered by Bostället Vedungsbageri and waits for you at the portal around 8:30 — we'll ping you by text as soon as it's there. Prefer to sort food yourselves? The restaurant by the locks (~200 m), the food trucks up by the bridge and the café in Vreta Kloster are all lovely options. We leave cooking inside the tents alone — but the BBQ is happy to be used, and there's free charcoal in the grey cabinet."}
+            </InfoRow>
+
+            <InfoRow icon={<Droplets className="h-4 w-4" />} title={isSv ? "Diska i servicehuset" : "Washing up in the service house"}>
+              {isSv
+                ? "Det finns inget kök vid tälten, men det går fint att diska i servicehuset — vid tvättmaskinerna, genom dörren till höger sett framifrån. I det gråa skåpet till vänster hittar ni diskmedel, diskborste och en bärkasse att ta med koppar och glas i. Enkelt och nära."
+                : "There's no kitchen by the tents, but you're very welcome to wash up in the service house — over by the washing machines, through the door on the right as you face the building. In the grey cabinet on the left you'll find washing-up liquid, a brush and a bag to carry cups and glasses in. Simple and just around the corner."}
             </InfoRow>
 
             <InfoRow icon={<Volume2 className="h-4 w-4" />} title={isSv ? "Gräsklippning dagtid" : "Lawn mowing in the daytime"}>
