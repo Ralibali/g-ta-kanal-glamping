@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LanguageRedirect from "./components/LanguageRedirect";
+import SiteMetaManager from "./components/SiteMetaManager";
 import { usePageTracking, useAutoClickTracking } from "./hooks/useTracking";
 import Index from "./pages/Index";
 import CheckIn from "./pages/CheckIn";
@@ -32,7 +33,6 @@ import ShortRedirect from "./pages/ShortRedirect";
 import Sup from "./pages/Sup";
 import Employee from "./pages/Employee";
 
-
 const queryClient = new QueryClient();
 
 function TrackingProvider({ children }: { children: React.ReactNode }) {
@@ -48,44 +48,45 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <TrackingProvider>
-        <LanguageRedirect />
-        <Routes>
-          <Route path="/" element={<Index lang="sv" />} />
-          <Route path="/en" element={<Index lang="en" />} />
-          <Route path="/glamping-linkoping" element={<GlampingLinkoping />} />
-          <Route path="/glamping-gota-kanal" element={<GlampingGotaKanal />} />
-          <Route path="/glamping-ostergotland" element={<GlampingOstergotland />} />
-          <Route path="/boende-bergs-slussar" element={<BoendeBergsSlussar />} />
-          <Route path="/overnattning-bergs-slussar" element={<OvernattningBergsSlussar />} />
-          <Route path="/boende-gota-kanal" element={<BoendeGotaKanal />} />
-          <Route path="/glamping-vreta-kloster" element={<GlampingVretaKloster />} />
-          <Route path="/romantisk-weekend-ostergotland" element={<RomantiskWeekendOstergotland />} />
-          <Route path="/checkin" element={<CheckIn />} />
-          <Route path="/checka-in" element={<CheckIn />} />
-          <Route path="/bokningsvillkor" element={<BookingTerms />} />
-          <Route path="/blogg" element={<Blog />} />
-          <Route path="/blogg/:slug" element={<BlogPost />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/unsubscribe" element={<Unsubscribe />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/*" element={<Admin />} />
-          <Route path="/stad" element={<Cleaning />} />
-          <Route path="/cleaning" element={<Cleaning />} />
-          <Route path="/frukost" element={<Breakfast />} />
-          <Route path="/breakfast" element={<Breakfast />} />
-          <Route path="/boka" element={<Boka />} />
-          <Route path="/en/boka" element={<Boka lang="en" />} />
-          <Route path="/en/book" element={<Boka lang="en" />} />
-          <Route path="/stay/:token" element={<Stay />} />
-          <Route path="/under-vistelsen" element={<UnderVistelsen />} />
-          <Route path="/during-your-stay" element={<UnderVistelsen />} />
-          <Route path="/sup" element={<Sup />} />
-          <Route path="/jobb" element={<Employee />} />
-          <Route path="/s/:slug" element={<ShortRedirect />} />
+          <LanguageRedirect />
+          <SiteMetaManager />
+          <Routes>
+            <Route path="/" element={<Index lang="sv" />} />
+            <Route path="/en" element={<Index lang="en" />} />
+            <Route path="/glamping-linkoping" element={<GlampingLinkoping />} />
+            <Route path="/glamping-gota-kanal" element={<GlampingGotaKanal />} />
+            <Route path="/glamping-ostergotland" element={<GlampingOstergotland />} />
+            <Route path="/boende-bergs-slussar" element={<BoendeBergsSlussar />} />
+            <Route path="/overnattning-bergs-slussar" element={<OvernattningBergsSlussar />} />
+            <Route path="/boende-gota-kanal" element={<BoendeGotaKanal />} />
+            <Route path="/glamping-vreta-kloster" element={<GlampingVretaKloster />} />
+            <Route path="/romantisk-weekend-ostergotland" element={<RomantiskWeekendOstergotland />} />
+            <Route path="/checkin" element={<CheckIn />} />
+            <Route path="/checka-in" element={<CheckIn />} />
+            <Route path="/bokningsvillkor" element={<BookingTerms />} />
+            <Route path="/blogg" element={<Blog />} />
+            <Route path="/blogg/:slug" element={<BlogPost />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/unsubscribe" element={<Unsubscribe />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/*" element={<Admin />} />
+            <Route path="/stad" element={<Cleaning />} />
+            <Route path="/cleaning" element={<Cleaning />} />
+            <Route path="/frukost" element={<Breakfast />} />
+            <Route path="/breakfast" element={<Breakfast />} />
+            <Route path="/boka" element={<Boka />} />
+            <Route path="/en/boka" element={<Boka lang="en" />} />
+            <Route path="/en/book" element={<Boka lang="en" />} />
+            <Route path="/stay/:token" element={<Stay />} />
+            <Route path="/under-vistelsen" element={<UnderVistelsen />} />
+            <Route path="/during-your-stay" element={<UnderVistelsen />} />
+            <Route path="/sup" element={<Sup />} />
+            <Route path="/jobb" element={<Employee />} />
+            <Route path="/s/:slug" element={<ShortRedirect />} />
 
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </TrackingProvider>
       </BrowserRouter>
     </TooltipProvider>
