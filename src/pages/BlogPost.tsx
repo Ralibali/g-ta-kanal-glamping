@@ -212,7 +212,7 @@ const BlogPost = () => {
             Boka din glampingvistelse vid Bergs Slussar och Göta kanal.
           </p>
           <Link
-            to="/#boka"
+            to="/boka"
             className="inline-block bg-accent text-accent-foreground px-10 py-4 rounded-full font-semibold hover:scale-105 transition-transform shadow-md"
           >
             Boka nu →

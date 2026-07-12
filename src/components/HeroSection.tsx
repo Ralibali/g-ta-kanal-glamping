@@ -96,7 +96,7 @@ const HeroSection = () => {
           className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center"
         >
           <motion.a
-            href="#boka"
+            href="/boka"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="bg-accent text-accent-foreground px-8 md:px-10 py-3.5 md:py-4 rounded-full text-base md:text-lg font-semibold shadow-lg"

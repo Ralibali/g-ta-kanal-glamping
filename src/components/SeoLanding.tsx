@@ -67,7 +67,7 @@ const SeoLanding = ({
     canon.setAttribute("href", canonical);
   }, [title, description, canonical]);
 
-  const ctaHref = cta.href ?? "/#boka";
+  const ctaHref = cta.href ?? "/boka";
 
   return (
     <LanguageProvider value="sv">

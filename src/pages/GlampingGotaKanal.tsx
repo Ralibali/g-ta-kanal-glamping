@@ -99,7 +99,7 @@ const GlampingGotaKanal = () => {
             </p>
 
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="inline-block">
-              <Link to="/#boka" className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-8 py-4 rounded-full text-lg font-semibold shadow-lg">
+              <Link to="/boka" className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-8 py-4 rounded-full text-lg font-semibold shadow-lg">
                 Boka glamping vid Bergs Slussar
                 <ArrowRight size={20} />
               </Link>

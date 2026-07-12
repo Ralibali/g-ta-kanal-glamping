@@ -21,7 +21,7 @@ const Footer = () => {
           <div>
             <p className="font-semibold mb-4 text-white/90">{lang === "en" ? "Quick links" : "Snabblänkar"}</p>
             <div className="flex flex-col gap-2 text-sm text-white/60">
-              <a href="#boka" className="hover:text-white transition-colors">{lang === "en" ? "Book" : "Boka"}</a>
+              <a href="/boka" className="hover:text-white transition-colors">{lang === "en" ? "Book" : "Boka"}</a>
               <a href="#talten" className="hover:text-white transition-colors">{lang === "en" ? "The tents" : "Om tälten"}</a>
               <a href="#aktiviteter" className="hover:text-white transition-colors">{lang === "en" ? "Activities" : "Aktiviteter"}</a>
               <a href="#kontakt" className="hover:text-white transition-colors">{lang === "en" ? "Find us" : "Hitta hit"}</a>

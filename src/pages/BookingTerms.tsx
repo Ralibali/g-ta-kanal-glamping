@@ -111,7 +111,7 @@ const BookingTerms = () => {
 
         <div className="pt-4">
           <Link
-            to="/#boka"
+            to="/boka"
             className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 rounded-xl font-semibold hover:scale-[1.02] transition-transform shadow-md text-sm"
           >
             Boka glamping vid Bergs Slussar
