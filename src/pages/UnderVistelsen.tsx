@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import {
   MapPin, Phone, Clock, Key, UtensilsCrossed, Trees, Waves,
   Wifi, Flame, Dog, Info, Footprints, CheckCircle2, AlertCircle,
-  Coffee, MessageCircle, ShoppingBag, Car, Heart, Copy, Star, Instagram, Beer, ArrowRight
+  Coffee, MessageCircle, ShoppingBag, Car, Heart, Copy, Star, Instagram, Beer, ArrowRight, Volume2
 } from "lucide-react";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import ChatWidget from "@/components/ChatWidget";
@@ -122,7 +122,13 @@ export default function UnderVistelsen() {
     discountValid: "Giltigt",
     knowTitle: "Bra att veta i tältet",
     serviceCard: "Servicekortet i tältet",
-    serviceCardBody: "Servicekortet som ligger framme i tältet är nyckeln till servicehuset (toalett, dusch, skötrum). Ta gärna med det i fickan – det är ca 150 m gångväg.",
+    serviceCardBody: "Servicekortet i tältet är endast till servicehuset (toalett, dusch, skötrum) — ca 150 m från tälten. Ta det med i fickan när ni går dit.",
+    parking: "Parkering",
+    parkingBody: "Parkering hänvisas till den allmänna parkeringen vid Berg (avgiftsbelagd). Vid infarten till Berg finns även en kostnadsfri pendlarparkering. Ingen parkering vid själva tälten.",
+    breakfastInfo: "Frukost & leverans",
+    breakfastInfoBody: "Har ni beställt frukost serveras den runt kl 08:30 och levereras av Bostället Vedungsbageri. Ni får ett SMS så fort den är på plats vid portalen.",
+    mower: "Gräsklippning dagtid",
+    mowerBody: "Gräsklipparen är igång varje dag mellan kl 10 och 15. Hör av er om den stör, så stänger vi av den.",
     slippers: "Tofflor är guld värda",
     slippersBody: "Stigen till servicehuset går över gräs och grus. Dessutom är duschen allmän för alla gäster vid kanalen – ett par tofflor eller slip-in-skor gör både nattliga toabesök och duschen mycket trevligare.",
     food: "Mat & matlagning",
@@ -138,7 +144,7 @@ export default function UnderVistelsen() {
     beforeLeave: "Innan ni åker hem",
     beforeIntro: "En påminnelse så att vi kan ta emot nästa gäst i samma fina skick:",
     washUp: "Diska det ni använt (koppar, glas, bestick) och ställ tillbaka i tältet.",
-    trash: "Kasta sopor i kärlen vid parkeringen — låt inte mat eller skräp ligga kvar.",
+    trash: "Kasta sopor i kärlen på området — låt inte mat eller skräp ligga kvar.",
     dontForget: "Glöm inte saker! Kolla under sängen, i kylen och i tältets ytterfack.",
     leaveCard: "Lämna servicekortet kvar i tältet.",
     zip: "Stäng dragkedjorna på tältet ordentligt när ni går.",
@@ -193,7 +199,13 @@ export default function UnderVistelsen() {
     discountValid: "Valid",
     knowTitle: "Good to know in the tent",
     serviceCard: "The service card in the tent",
-    serviceCardBody: "The service card in your tent is the key to the service house (toilet, shower, changing room). Keep it in your pocket — it's about a 150 m walk.",
+    serviceCardBody: "The service card in your tent is only for the service house (toilet, shower, changing room) — about 150 m from the tents. Bring it in your pocket when you walk over.",
+    parking: "Parking",
+    parkingBody: "Please use the public parking at Berg (paid). There is also a free commuter parking lot at the entrance to Berg. No parking next to the tents themselves.",
+    breakfastInfo: "Breakfast & delivery",
+    breakfastInfoBody: "If you've ordered breakfast, it's served around 8:30 and delivered by Bostället Vedungsbageri. You'll get a text as soon as it's at the portal.",
+    mower: "Lawn mowing in the daytime",
+    mowerBody: "The lawn mower runs every day between 10:00 and 15:00. Let us know if it's bothering you and we'll switch it off.",
     slippers: "Slippers are gold",
     slippersBody: "The path to the service house crosses grass and gravel. The shower is also shared with all canal guests — a pair of slippers or slip-on shoes makes night-time trips and the shower much nicer.",
     food: "Food & cooking",
@@ -209,7 +221,7 @@ export default function UnderVistelsen() {
     beforeLeave: "Before you leave",
     beforeIntro: "A reminder so we can welcome the next guest in the same great condition:",
     washUp: "Wash up what you've used (cups, glasses, cutlery) and put it back in the tent.",
-    trash: "Toss rubbish in the bins by the parking lot — don't leave food or trash behind.",
+    trash: "Toss rubbish in the bins on site — don't leave food or trash behind.",
     dontForget: "Don't forget anything! Check under the bed, in the fridge and the outer pocket.",
     leaveCard: "Leave the service card in the tent.",
     zip: "Zip the tent properly when you leave.",
@@ -417,6 +429,9 @@ export default function UnderVistelsen() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <Row icon={<Key className="h-4 w-4" />} title={t.serviceCard}>{t.serviceCardBody}</Row>
+            <Row icon={<Coffee className="h-4 w-4" />} title={t.breakfastInfo}>{t.breakfastInfoBody}</Row>
+            <Row icon={<Car className="h-4 w-4" />} title={t.parking}>{t.parkingBody}</Row>
+            <Row icon={<Volume2 className="h-4 w-4" />} title={t.mower}>{t.mowerBody}</Row>
             <Row icon={<Footprints className="h-4 w-4" />} title={t.slippers}>{t.slippersBody}</Row>
             <Row icon={<UtensilsCrossed className="h-4 w-4" />} title={t.food}>{t.foodBody}</Row>
             <Row icon={<Heart className="h-4 w-4" />} title={t.consideration}>{t.considerationBody}</Row>

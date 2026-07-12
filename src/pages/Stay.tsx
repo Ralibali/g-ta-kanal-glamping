@@ -612,7 +612,9 @@ export default function Stay() {
               {hasBreakfast && (
                 <li className="flex items-start gap-3">
                   <Coffee className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                  <span>{isSv ? "Frukost levereras till ert tält kl 08:30 varje morgon. ☕" : "Breakfast delivered to your tent at 8:30 every morning. ☕"}</span>
+                  <span>{isSv
+                    ? "Frukost serveras runt kl 08:30 och levereras av Bostället Vedungsbageri. Ni får ett SMS så fort den är på plats. ☕"
+                    : "Breakfast is served around 8:30, delivered by Bostället Vedungsbageri. You'll get a text as soon as it's ready. ☕"}</span>
                 </li>
               )}
               {hasFika && (
@@ -965,8 +967,8 @@ export default function Stay() {
 
             <InfoRow icon={<Car className="h-4 w-4" />} title={isSv ? "Parkering" : "Parking"}>
               {isSv
-                ? "Gratis parkering finns i direkt anslutning till slussområdet, ca 100 meter från tälten. Sommartid kan det vara fullt mitt på dagen — kom du gärna lite tidigare eller senare på eftermiddagen. Ingen parkering vid själva tälten (det är gångavstånd med era väskor)."
-                : "Free parking is available right by the lock area, about 100 m from the tents. In peak summer the lot can fill up midday — arrive a little earlier or later in the afternoon. No parking next to the tents themselves (short walk with your bags)."}
+                ? "Parkering hänvisas till den allmänna parkeringen vid Berg (avgiftsbelagd). Vid infarten till Berg finns även en kostnadsfri pendlarparkering. Ingen parkering vid själva tälten — kort promenad med väskorna."
+                : "Please use the public parking at Berg (paid). There is also a free commuter parking lot at the entrance to Berg. No parking next to the tents themselves — short walk with your bags."}
             </InfoRow>
 
             <InfoRow icon={<Clock className="h-4 w-4" />} title={isSv ? "Incheckning & utcheckning" : "Check-in & check-out"}>
