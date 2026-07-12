@@ -212,6 +212,8 @@ export default function UnderVistelsen() {
     slippersBody: "The path to the service house crosses grass and gravel. The shower is also shared with all canal guests — a pair of slippers or slip-on shoes makes night-time trips and the shower much nicer.",
     food: "Food & cooking",
     foodBody: "Cooking is not allowed in or next to the tents (fire safety). Fridge, coffee and tea are inside the tent. Try the new food trucks up by the bridge (Stjärnorpsvägen). Grilling is fine — the grey cabinet has free charcoal. We still recommend good takeout.",
+    dishes: "Washing up in the service house",
+    dishesBody: "There's no kitchen by the tents, but you're very welcome to wash up in the service house — over by the washing machines, through the door on the right as you face the building. In the grey cabinet on the left you'll find washing-up liquid, a brush and a bag to carry cups and glasses in. Simple and just around the corner.",
     consideration: "Be considerate of each other",
     considerationBody: "We share the space with several guests — keep noise down after 22:00 and respect each other's peace. Leave the tent in great shape so the next guest gets the same lovely welcome you did.",
     wifi: "Wifi & coverage",
