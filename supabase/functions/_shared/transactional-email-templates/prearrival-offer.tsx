@@ -41,7 +41,7 @@ const COPY = {
     intro: (name: string, days: string, tent: string) =>
       `Hi ${name}! In ${days} days you check in to ${tent} by the Göta Canal. Want to make your stay a little extra?`,
     items: (b: number, f: number, e: number) => [
-      `🥐 Breakfast – locally baked, delivered to your tent (${b} SEK/person)`,
+      `🥐 Breakfast – baked and delivered by Bostället Vedungsbageri, served around 8:30. You'll get a text as soon as it's at the portal (${b} SEK/person)`,
       `☕ Fika bag – a sweet treat on arrival (${f} SEK)`,
       `🕛 Early check-in at 12:00 (${e} SEK)`,
     ],
