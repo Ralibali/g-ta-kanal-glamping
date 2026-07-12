@@ -169,7 +169,9 @@ const COPY = {
     metaTitle: "Book glamping by the Göta Canal | Bergs Slussar Glamping",
     metaDesc: "Book a cosy glamping tent at Bergs Locks by the Göta Canal. Made-up beds, heating, electricity and easy direct booking near Linköping.",
   },
-} as const;
+};
+
+type Copy = typeof COPY.sv;
 
 const Header = ({ t, lang, onLang }: { t: typeof COPY.sv; lang: BokaLang; onLang: (l: BokaLang) => void }) => {
   const [scrolled, setScrolled] = useState(false);
