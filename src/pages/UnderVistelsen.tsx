@@ -438,6 +438,7 @@ export default function UnderVistelsen() {
             <Row icon={<Volume2 className="h-4 w-4" />} title={t.mower}>{t.mowerBody}</Row>
             <Row icon={<Footprints className="h-4 w-4" />} title={t.slippers}>{t.slippersBody}</Row>
             <Row icon={<UtensilsCrossed className="h-4 w-4" />} title={t.food}>{t.foodBody}</Row>
+            <Row icon={<Droplets className="h-4 w-4" />} title={t.dishes}>{t.dishesBody}</Row>
             <Row icon={<Heart className="h-4 w-4" />} title={t.consideration}>{t.considerationBody}</Row>
             <Row icon={<Wifi className="h-4 w-4" />} title={t.wifi}>{t.wifiBody}</Row>
             <Row icon={<Flame className="h-4 w-4" />} title={t.fire}>{t.fireBody}</Row>
