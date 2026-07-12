@@ -967,8 +967,8 @@ export default function Stay() {
 
             <InfoRow icon={<Car className="h-4 w-4" />} title={isSv ? "Parkering" : "Parking"}>
               {isSv
-                ? "Parkering hänvisas till den allmänna parkeringen vid Berg (avgiftsbelagd). Vid infarten till Berg finns även en kostnadsfri pendlarparkering. Ingen parkering vid själva tälten — kort promenad med väskorna."
-                : "Please use the public parking at Berg (paid). There is also a free commuter parking lot at the entrance to Berg. No parking next to the tents themselves — short walk with your bags."}
+                ? "Ni parkerar enklast på den allmänna parkeringen vid Berg (avgift). Vill ni parkera gratis finns en pendlarparkering precis vid infarten till Berg — några minuters promenad bort. Sedan är det en kort och fin promenad ner till tälten med väskorna."
+                : "The easiest option is the public parking at Berg (small fee). If you'd rather park for free, there's a commuter lot right at the entrance to Berg — a few minutes' walk away. From there it's a short, lovely stroll down to the tents with your bags."}
             </InfoRow>
 
             <InfoRow icon={<Clock className="h-4 w-4" />} title={isSv ? "Incheckning & utcheckning" : "Check-in & check-out"}>
