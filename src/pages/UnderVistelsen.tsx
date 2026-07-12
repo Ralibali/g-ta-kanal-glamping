@@ -429,6 +429,9 @@ export default function UnderVistelsen() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <Row icon={<Key className="h-4 w-4" />} title={t.serviceCard}>{t.serviceCardBody}</Row>
+            <Row icon={<Coffee className="h-4 w-4" />} title={t.breakfastInfo}>{t.breakfastInfoBody}</Row>
+            <Row icon={<Car className="h-4 w-4" />} title={t.parking}>{t.parkingBody}</Row>
+            <Row icon={<Volume2 className="h-4 w-4" />} title={t.mower}>{t.mowerBody}</Row>
             <Row icon={<Footprints className="h-4 w-4" />} title={t.slippers}>{t.slippersBody}</Row>
             <Row icon={<UtensilsCrossed className="h-4 w-4" />} title={t.food}>{t.foodBody}</Row>
             <Row icon={<Heart className="h-4 w-4" />} title={t.consideration}>{t.considerationBody}</Row>
