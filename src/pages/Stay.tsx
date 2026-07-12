@@ -55,7 +55,7 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "natt" : "nätter"}`,
     tooLate: "Tyvärr är det för sent att lägga till tillval inför den här vistelsen — beställning stänger två dygn före incheckning. Hör av dig till oss om något är akut!",
     addons: "Lägg till tillval",
-    intro: "Pricka i vad du vill, så får du betalningsinstruktioner direkt. Vi tar Swish till vårt företagsnummer.",
+    intro: "Pricka i vad du vill lägga till. Du betalar tryggt med kort i nästa steg — vi bekräftar direkt när betalningen är genomförd.",
     already: "Du har redan beställt:",
     pcs: (n: number) => `${n} st`,
     perPerson: "kr/person",
@@ -90,7 +90,7 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "night" : "nights"}`,
     tooLate: "Sorry, it's too late to add extras for this stay — orders close two days before check-in. Reach out if it's urgent!",
     addons: "Add extras",
-    intro: "Pick what you'd like. We'll email you a secure payment link so you can pay by card from anywhere.",
+    intro: "Pick what you'd like to add. You'll pay securely by card in the next step — we confirm the moment the payment goes through.",
     already: "You've already ordered:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/person",
@@ -386,26 +386,68 @@ export default function Stay() {
   const [paidTotal, setPaidTotal] = useState<number>(0);
   const [extraTents, setExtraTents] = useState<string[]>([]);
 
-  useEffect(() => {
+  const loadStay = async () => {
     if (!token) { setLoading(false); return; }
-    (async () => {
-      const { data: rpc, error } = await (supabase as any).rpc("get_stay_by_token", { p_token: token });
-      if (error) console.error(error);
-      const sd = rpc as StayData | null;
-      setData(sd);
-      // Tält-IDs kommer nu direkt från RPC:n (tent_ids); fall back till legacy-query för säkerhets skull.
-      const fromRpc = sd?.booking?.tent_ids;
-      if (Array.isArray(fromRpc) && fromRpc.length > 0) {
-        setExtraTents(fromRpc);
-      } else if (sd?.booking?.booking_number) {
-        const { data: stays } = await (supabase as any)
-          .from("tent_stays")
-          .select("tent_id")
-          .eq("booking_number", sd.booking.booking_number);
-        if (stays) setExtraTents((stays as { tent_id: string }[]).map(s => s.tent_id));
-      }
-      setLoading(false);
-    })();
+    const { data: rpc, error } = await (supabase as any).rpc("get_stay_by_token", { p_token: token });
+    if (error) console.error(error);
+    const sd = rpc as StayData | null;
+    setData(sd);
+    const fromRpc = sd?.booking?.tent_ids;
+    if (Array.isArray(fromRpc) && fromRpc.length > 0) {
+      setExtraTents(fromRpc);
+    } else if (sd?.booking?.booking_number) {
+      const { data: stays } = await (supabase as any)
+        .from("tent_stays")
+        .select("tent_id")
+        .eq("booking_number", sd.booking.booking_number);
+      if (stays) setExtraTents((stays as { tent_id: string }[]).map(s => s.tent_id));
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => { loadStay(); }, [token]);
+
+  // Handle return from Stripe Checkout
+  useEffect(() => {
+    if (!token) return;
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("payment");
+    const sessionId = params.get("session_id");
+    if (!status) return;
+
+    const clean = () => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("payment");
+      url.searchParams.delete("session_id");
+      window.history.replaceState({}, "", url.toString());
+    };
+
+    if (status === "cancelled") {
+      toast.info("Betalningen avbröts. Din beställning har inte skickats.");
+      clean();
+      return;
+    }
+    if (status === "success" && sessionId) {
+      (async () => {
+        try {
+          const { data: res, error } = await (supabase as any).functions.invoke("verify-addon-payment", {
+            body: { session_id: sessionId },
+          });
+          if (error) throw error;
+          if ((res as any)?.paid) {
+            toast.success("Tack! Betalning mottagen och beställning bekräftad. 🌿");
+            await loadStay();
+          } else {
+            toast.info("Vi väntar på bekräftelse från banken — det brukar gå på några sekunder. Ladda om sidan om det dröjer.");
+          }
+        } catch (e) {
+          console.error("verify failed", e);
+          toast.error("Kunde inte verifiera betalningen. Kontakta oss om summan drogs.");
+        } finally {
+          clean();
+        }
+      })();
+    }
   }, [token]);
 
 
@@ -473,12 +515,12 @@ export default function Stay() {
         body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined },
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
-      setPaidTotal(total);
-      setDone(true);
-      toast.success(t.success);
+      const url = (res as any)?.url;
+      if (!url) throw new Error("Kunde inte starta kortbetalning.");
+      // Redirect to Stripe Checkout
+      window.location.href = url;
     } catch (err: any) {
       toast.error(err?.message ?? t.error);
-    } finally {
       setSubmitting(false);
     }
   };
@@ -837,15 +879,15 @@ export default function Stay() {
                 <div className="flex items-start gap-2">
                   <MessageCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Snabbt svar" : "Fast response"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Vi bekräftar inom några timmar" : "We confirm within a few hours"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Snabb bekräftelse" : "Instant confirmation"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Direkt när betalningen är genomförd" : "As soon as your payment goes through"}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <CreditCard className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Säker betalning" : "Secure payment"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Swish eller kortlänk" : "Card link by email"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Säker kortbetalning" : "Secure card payment"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Visa, Mastercard, Apple/Google Pay via Stripe" : "Visa, Mastercard, Apple/Google Pay via Stripe"}</div>
                   </div>
                 </div>
               </div>
