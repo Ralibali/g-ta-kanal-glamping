@@ -967,26 +967,32 @@ export default function Stay() {
 
             <InfoRow icon={<Car className="h-4 w-4" />} title={isSv ? "Parkering" : "Parking"}>
               {isSv
-                ? "Ni parkerar enklast på den allmänna parkeringen vid Berg (avgift). Vill ni parkera gratis finns en pendlarparkering precis vid infarten till Berg — några minuters promenad bort. Sedan är det en kort och fin promenad ner till tälten med väskorna."
-                : "The easiest option is the public parking at Berg (small fee). If you'd rather park for free, there's a commuter lot right at the entrance to Berg — a few minutes' walk away. From there it's a short, lovely stroll down to the tents with your bags."}
+                ? "Ni parkerar enklast på den allmänna parkeringen vid Berg (liten avgift, smidigt och nära). Vill ni hellre parkera gratis finns en mysig pendlarparkering precis vid infarten till Berg — några minuters promenad bort. Sedan väntar en kort och fin stig ner till tälten."
+                : "The easiest option is the public parking at Berg — a small fee, but wonderfully close. If you'd rather park for free, there's a lovely commuter lot right at the entrance to Berg, just a few minutes' walk away. From there, a short and pretty path leads down to the tents."}
             </InfoRow>
 
             <InfoRow icon={<Clock className="h-4 w-4" />} title={isSv ? "Incheckning & utcheckning" : "Check-in & check-out"}>
               {isSv
-                ? "Incheckning från kl 15:00, utcheckning senast kl 10:00. Sen utcheckning till kl 12:00 kan bokas i mån av plats (400 kr via Swish — meddela oss i förväg). Du checkar in själv — vi mejlar tydliga instruktioner och en kodlås-kod dagen före ankomst."
-                : "Check-in from 3:00 pm, check-out by 10:00 am. Late check-out until 12:00 noon can be booked subject to availability (400 SEK via Swish — let us know in advance). Self check-in — we email clear instructions and a lock code the day before arrival."}
+                ? "Incheckning från kl 15:00, utcheckning senast kl 10:00. Vill ni stanna längre går det ofta bra att lägga till sen utcheckning till kl 12:00 (400 kr via Swish — hör bara av er). Ni checkar in själva, i lugn och ro — vi mejlar allt ni behöver dagen före ankomst."
+                : "Check-in from 3:00 pm, check-out by 10:00 am. If you'd like a slower morning, late check-out until noon can often be added (400 SEK via Swish — just let us know). You check in yourselves at your own pace — we'll email everything you need the day before arrival."}
             </InfoRow>
 
-            <InfoRow icon={<ShowerHead className="h-4 w-4" />} title={isSv ? "Servicehus (toalett & dusch)" : "Service house (toilet & shower)"}>
+            <InfoRow icon={<ShowerHead className="h-4 w-4" />} title={isSv ? "Servicehus & servicekort" : "Service house & service card"}>
               {isSv
-                ? "Fräscht servicehus med varma duschar, toaletter och handfat ca 150 meter från tälten. Öppet dygnet runt under hela din vistelse — koden får du i incheckningsmejlet."
-                : "Fresh service house with warm showers, toilets and sinks about 150 m from the tents. Open 24/7 throughout your stay — the code arrives with your check-in email."}
+                ? "Fräscht servicehus med varma duschar, toaletter och skötrum ca 150 m från tälten, öppet dygnet runt under hela er vistelse. I tältet ligger ett servicekort — det är nyckeln dit, så ta det gärna med i fickan när ni går. Koden får ni i incheckningsmejlet."
+                : "A fresh service house with warm showers, toilets and a changing room about 150 m from the tents — open around the clock throughout your stay. In your tent you'll find a service card; it's the key over there, so pop it in your pocket when you walk down. The code arrives with your check-in email."}
             </InfoRow>
 
-            <InfoRow icon={<UtensilsCrossed className="h-4 w-4" />} title={isSv ? "Mat & matlagning" : "Food & cooking"}>
+            <InfoRow icon={<UtensilsCrossed className="h-4 w-4" />} title={isSv ? "Mat & frukost" : "Food & breakfast"}>
               {isSv
-                ? "Av brandsäkerhetsskäl är matlagning inte tillåten i eller vid tälten. Beställ vår frukost eller fikapåse — eller gå till restaurangen vid slussarna (ca 200 m). I Berg och Vreta Kloster finns även café, glasskiosk och livsmedelsbutik."
-                : "For fire safety reasons, cooking is not allowed in or next to the tents. Order our breakfast or fika bag — or walk to the restaurant by the locks (~200 m). The villages of Berg and Vreta Kloster also have a café, ice-cream kiosk and grocery store nearby."}
+                ? "Har ni beställt frukost bakas och levereras den av Bostället Vedungsbageri och står vid portalen runt kl 08:30 — vi pingar er på SMS så fort den är på plats. Vill ni fixa mat själva funkar det fint att gå till restaurangen vid slussarna (ca 200 m), matvagnarna vid bron eller caféet i Vreta Kloster. Matlagning inne i tälten låter vi bli — men grillen står gärna redo, det finns gratis kol i det gråa skåpet."
+                : "If you've ordered breakfast, it's baked and delivered by Bostället Vedungsbageri and waits for you at the portal around 8:30 — we'll ping you by text as soon as it's there. Prefer to sort food yourselves? The restaurant by the locks (~200 m), the food trucks up by the bridge and the café in Vreta Kloster are all lovely options. We leave cooking inside the tents alone — but the BBQ is happy to be used, and there's free charcoal in the grey cabinet."}
+            </InfoRow>
+
+            <InfoRow icon={<Volume2 className="h-4 w-4" />} title={isSv ? "Gräsklippning dagtid" : "Lawn mowing in the daytime"}>
+              {isSv
+                ? "Vi klipper gräset dagtid mellan kl 10 och 15 så att platsen håller sig fin och välskött åt er. Skulle ljudet störa er precis då — säg bara till, så pausar vi direkt."
+                : "We mow the lawn during the day, between 10:00 and 15:00, to keep the place looking its best for you. If the sound bothers you right then, just say the word and we'll pause it."}
             </InfoRow>
 
             <InfoRow icon={<Wifi className="h-4 w-4" />} title={isSv ? "Wifi & täckning" : "Wifi & coverage"}>
