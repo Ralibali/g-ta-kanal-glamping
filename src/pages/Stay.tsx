@@ -386,26 +386,68 @@ export default function Stay() {
   const [paidTotal, setPaidTotal] = useState<number>(0);
   const [extraTents, setExtraTents] = useState<string[]>([]);
 
-  useEffect(() => {
+  const loadStay = async () => {
     if (!token) { setLoading(false); return; }
-    (async () => {
-      const { data: rpc, error } = await (supabase as any).rpc("get_stay_by_token", { p_token: token });
-      if (error) console.error(error);
-      const sd = rpc as StayData | null;
-      setData(sd);
-      // Tält-IDs kommer nu direkt från RPC:n (tent_ids); fall back till legacy-query för säkerhets skull.
-      const fromRpc = sd?.booking?.tent_ids;
-      if (Array.isArray(fromRpc) && fromRpc.length > 0) {
-        setExtraTents(fromRpc);
-      } else if (sd?.booking?.booking_number) {
-        const { data: stays } = await (supabase as any)
-          .from("tent_stays")
-          .select("tent_id")
-          .eq("booking_number", sd.booking.booking_number);
-        if (stays) setExtraTents((stays as { tent_id: string }[]).map(s => s.tent_id));
-      }
-      setLoading(false);
-    })();
+    const { data: rpc, error } = await (supabase as any).rpc("get_stay_by_token", { p_token: token });
+    if (error) console.error(error);
+    const sd = rpc as StayData | null;
+    setData(sd);
+    const fromRpc = sd?.booking?.tent_ids;
+    if (Array.isArray(fromRpc) && fromRpc.length > 0) {
+      setExtraTents(fromRpc);
+    } else if (sd?.booking?.booking_number) {
+      const { data: stays } = await (supabase as any)
+        .from("tent_stays")
+        .select("tent_id")
+        .eq("booking_number", sd.booking.booking_number);
+      if (stays) setExtraTents((stays as { tent_id: string }[]).map(s => s.tent_id));
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => { loadStay(); }, [token]);
+
+  // Handle return from Stripe Checkout
+  useEffect(() => {
+    if (!token) return;
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("payment");
+    const sessionId = params.get("session_id");
+    if (!status) return;
+
+    const clean = () => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("payment");
+      url.searchParams.delete("session_id");
+      window.history.replaceState({}, "", url.toString());
+    };
+
+    if (status === "cancelled") {
+      toast.info("Betalningen avbröts. Din beställning har inte skickats.");
+      clean();
+      return;
+    }
+    if (status === "success" && sessionId) {
+      (async () => {
+        try {
+          const { data: res, error } = await (supabase as any).functions.invoke("verify-addon-payment", {
+            body: { session_id: sessionId },
+          });
+          if (error) throw error;
+          if ((res as any)?.paid) {
+            toast.success("Tack! Betalning mottagen och beställning bekräftad. 🌿");
+            await loadStay();
+          } else {
+            toast.info("Vi väntar på bekräftelse från banken — det brukar gå på några sekunder. Ladda om sidan om det dröjer.");
+          }
+        } catch (e) {
+          console.error("verify failed", e);
+          toast.error("Kunde inte verifiera betalningen. Kontakta oss om summan drogs.");
+        } finally {
+          clean();
+        }
+      })();
+    }
   }, [token]);
 
 
