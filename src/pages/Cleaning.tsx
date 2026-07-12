@@ -440,12 +440,25 @@ export default function Cleaning() {
               return (
                 <>
                   <div className="flex gap-2 flex-wrap">
+                    <Button variant={view === "today" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("today")}><Sparkles className="h-3.5 w-3.5 mr-1" aria-hidden="true" />{tr(lang, "today")}</Button>
                     <Button variant={view === "calendar" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("calendar")}>{tr(lang, "calendar")}</Button>
                     <Button variant={view === "overview" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("overview")}>{tr(lang, "overview")}</Button>
                     <Button variant={view === "day" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("day")}>{tr(lang, "dayView")}</Button>
-                    {showTime && <Button variant={view === "time" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("time")}><Clock className="h-3.5 w-3.5 mr-1" />Tidbok</Button>}
-                    {showSalary && <Button variant={view === "salary" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("salary")}><Wallet className="h-3.5 w-3.5 mr-1" />Lön</Button>}
+                    {showTime && <Button variant={view === "time" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("time")}><Clock className="h-3.5 w-3.5 mr-1" aria-hidden="true" />Tidbok</Button>}
+                    {showSalary && <Button variant={view === "salary" ? "default" : "outline"} size="sm" className="flex-1 min-w-[80px]" onClick={() => setView("salary")}><Wallet className="h-3.5 w-3.5 mr-1" aria-hidden="true" />Lön</Button>}
                   </div>
+
+                  {view === "today" && user && (
+                    <TodayView
+                      lang={lang}
+                      userId={user.id}
+                      cards={cards}
+                      sessions={sessions}
+                      loading={dataLoading}
+                      onOpen={(card) => setSelected(card)}
+                      onReload={() => void loadDay()}
+                    />
+                  )}
 
                   {view === "day" && (
                     <div className="space-y-2">
