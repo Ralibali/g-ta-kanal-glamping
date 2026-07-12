@@ -90,7 +90,7 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "night" : "nights"}`,
     tooLate: "Sorry, it's too late to add extras for this stay — orders close two days before check-in. Reach out if it's urgent!",
     addons: "Add extras",
-    intro: "Pick what you'd like. We'll email you a secure payment link so you can pay by card from anywhere.",
+    intro: "Pick what you'd like to add. You'll pay securely by card in the next step — we confirm the moment the payment goes through.",
     already: "You've already ordered:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/person",
