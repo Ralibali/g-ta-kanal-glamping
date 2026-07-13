@@ -81,7 +81,7 @@ export function trackEvent(event: AnalyticsEvent, options?: TrackOptions): void 
     if (isBlockedPath(window.location.pathname)) return;
     const fn = window.plausible;
     if (typeof fn !== "function") return;
-    const props = sanitizeProps(options);
+    const props = sanitizeProps(options as Record<string, unknown> | undefined);
     fn(event, props ? { props } : undefined);
   } catch {
     // Analytics must never break the app.
