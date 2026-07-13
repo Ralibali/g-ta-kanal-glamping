@@ -18,6 +18,7 @@ import { CleaningManager } from "@/components/admin/CleaningManager";
 import { AddonsManager } from "@/components/admin/AddonsManager";
 import { AddonOrdersManager } from "@/components/admin/AddonOrdersManager";
 import { SmsManager } from "@/components/admin/SmsManager";
+import { PrearrivalPreview } from "@/components/admin/PrearrivalPreview";
 import { EmployeeManager } from "@/components/admin/EmployeeManager";
 
 const Admin = () => {
@@ -65,6 +66,7 @@ const Admin = () => {
               <Route path="addons" element={<AddonsManager />} />
               <Route path="addon-orders" element={<AddonOrdersManager />} />
               <Route path="sms" element={<SmsManager />} />
+              <Route path="prearrival" element={<PrearrivalPreview />} />
               <Route path="employees" element={<EmployeeManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
