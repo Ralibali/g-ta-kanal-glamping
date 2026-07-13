@@ -91,7 +91,7 @@ export const template = {
     return COPY[l].subject
   },
   displayName: 'Förankomst – tillvalsmeny',
-  previewData: { firstName: 'Anna', tentName: 'Naturkärnan', daysWord: 'fem', breakfastPrice: 209, fikaPrice: 89, earlyPrice: 399, link: 'https://goglampingsweden.se/stay/abc', lang: 'sv' },
+  previewData: { firstName: 'Anna', tentName: 'Naturkärnan', daysWord: 'fem', breakfastPrice: 209, fikaPrice: 89, earlyPrice: 399, latePrice: 399, link: 'https://goglampingsweden.se/stay/abc', lang: 'sv' },
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif' }
