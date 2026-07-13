@@ -18,34 +18,34 @@ interface Props {
 
 const COPY = {
   sv: {
-    preview: 'Betala med Swish så bekräftar vi din beställning',
-    subject: 'Tack! Swisha så bekräftar vi 🌿',
-    heading: 'Tack för din beställning!',
+    preview: 'Betalningen är genomförd och dina tillval är bekräftade',
+    subject: 'Tack! Dina tillval är bekräftade 🌿',
+    heading: 'Tack! Dina tillval är bekräftade',
     intro: (name: string, tent: string) =>
-      `Hej ${name}! Vi har noterat dina tillval till ${tent}. Swisha summan nedan så bekräftar vi så snart vi ser betalningen.`,
+      `Hej ${name}! Betalningen är genomförd och vi har bekräftat dina tillval till ${tent}.`,
     summary: 'Sammanfattning',
     total: (t: number) => `Summa att betala: ${t} kr`,
-    swishTitle: 'Betala med Swish',
+    swishTitle: 'Betalning genomförd',
     swishNumber: 'Swish-nummer',
     swishPayee: 'Mottagare',
     swishAmount: 'Belopp',
     swishRef: 'Meddelande (viktigt!)',
-    swishHelp: 'Skriv referensen i Swish-meddelandet så hittar vi din betalning direkt.',
-    openSwish: 'Öppna Swish-appen',
+    swishHelp: 'Spara gärna referensen om du behöver kontakta oss om beställningen.',
+    openSwish: 'Klart',
     outro: 'Vi ses snart!',
     signoff: 'Bergs Slussar Glamping',
     kr: 'kr',
   },
   en: {
-    preview: 'Payment instructions — your order is reserved',
-    subject: 'Thank you! Payment instructions 🌿',
-    heading: 'Thank you for your order!',
+    preview: 'Payment complete — your extras are confirmed',
+    subject: 'Thank you! Your extras are confirmed 🌿',
+    heading: 'Thank you! Your extras are confirmed',
     intro: (name: string, tent: string) =>
-      `Hi ${name}! We've received your extras for ${tent}. We'll send payment instructions and confirm your order as soon as payment has arrived. Your order is reserved until then.`,
+      `Hi ${name}! Your payment is complete and we've confirmed your extras for ${tent}.`,
     summary: 'Summary',
     total: (t: number) => `Total to pay: ${t} SEK`,
-    payTitle: 'How payment works',
-    payText: 'We will send payment instructions from info@auroramedia.se. Once payment has arrived, we confirm your order manually.',
+    payTitle: 'Payment complete',
+    payText: 'Your payment is complete and your order is confirmed.',
     refLine: (r: string) => `Reference: ${r}`,
     outro: 'See you soon!',
     signoff: 'Bergs Slussar Glamping',
@@ -166,12 +166,9 @@ const Email = ({
           {isSv ? (
             <Section style={swishBox}>
               <Heading as="h2" style={h2}>{(c as typeof COPY.sv).swishTitle}</Heading>
-              <Text style={kv}><strong>{(c as typeof COPY.sv).swishNumber}:</strong> {swishNumber}</Text>
-              <Text style={kv}><strong>{(c as typeof COPY.sv).swishPayee}:</strong> {swishPayee}</Text>
               <Text style={kv}><strong>{(c as typeof COPY.sv).swishAmount}:</strong> {total} {c.kr}</Text>
-              <Text style={kv}><strong>{(c as typeof COPY.sv).swishRef}:</strong> {swishReference}</Text>
+              {swishReference && <Text style={kv}><strong>{(c as typeof COPY.sv).swishRef}:</strong> {swishReference}</Text>}
               <Text style={helpText}>{(c as typeof COPY.sv).swishHelp}</Text>
-              <Button href={swishUrl} style={button}>{(c as typeof COPY.sv).openSwish}</Button>
             </Section>
           ) : (
             <Section style={payBox}>
