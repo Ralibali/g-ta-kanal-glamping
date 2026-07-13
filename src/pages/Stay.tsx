@@ -1010,9 +1010,9 @@ export default function Stay() {
           <CardContent className="space-y-4 text-sm">
             <InfoRow icon={<MapPin className="h-4 w-4" />} title={isSv ? "Adress & hitta hit" : "Address & getting here"}>
               {isSv ? (
-                <>Bergs Slussar, 590 77 Vreta Kloster. Sök på <strong>"Go Glamping Sweden, Bergs Slussar"</strong> i Google Maps eller Waze — du kommer rätt fram till parkeringen. <a href="https://www.google.com/maps/dir/?api=1&destination=Go+Glamping+Sweden+Bergs+Slussar" target="_blank" rel="noopener noreferrer" className="text-primary underline font-medium">Öppna i Google Maps →</a></>
+                <>Bergs Slussar, 590 77 Vreta Kloster. Sök på <strong>"Bergs Slussar Glamping"</strong> i Google Maps eller Waze — du kommer rätt fram till parkeringen. <a href="https://www.google.com/maps/dir/?api=1&destination=Bergs+Slussar+Glamping" target="_blank" rel="noopener noreferrer" className="text-primary underline font-medium">Öppna i Google Maps →</a></>
               ) : (
-                <>Bergs Slussar, 590 77 Vreta Kloster, Sweden. Search <strong>"Go Glamping Sweden, Bergs Slussar"</strong> in Google Maps or Waze — it leads straight to the parking lot. <a href="https://www.google.com/maps/dir/?api=1&destination=Go+Glamping+Sweden+Bergs+Slussar" target="_blank" rel="noopener noreferrer" className="text-primary underline font-medium">Open in Google Maps →</a></>
+                <>Bergs Slussar, 590 77 Vreta Kloster, Sweden. Search <strong>"Bergs Slussar Glamping"</strong> in Google Maps or Waze — it leads straight to the parking lot. <a href="https://www.google.com/maps/dir/?api=1&destination=Bergs+Slussar+Glamping" target="_blank" rel="noopener noreferrer" className="text-primary underline font-medium">Open in Google Maps →</a></>
               )}
             </InfoRow>
 
@@ -1024,32 +1024,32 @@ export default function Stay() {
 
             <InfoRow icon={<Clock className="h-4 w-4" />} title={isSv ? "Incheckning & utcheckning" : "Check-in & check-out"}>
               {isSv
-                ? "Incheckning från kl 15:00, utcheckning senast kl 10:00. Vill ni stanna längre går det ofta bra att lägga till sen utcheckning till kl 12:00 (400 kr via Swish — hör bara av er). Ni checkar in själva, i lugn och ro — vi mejlar allt ni behöver dagen före ankomst."
-                : "Check-in from 3:00 pm, check-out by 10:00 am. If you'd like a slower morning, late check-out until noon can often be added (400 SEK via Swish — just let us know). You check in yourselves at your own pace — we'll email everything you need the day before arrival."}
+                ? "Incheckning från kl 15:00, utcheckning senast kl 10:00. Vill ni ha mer tid? Tidig incheckning (kl 12:00) och sen utcheckning (till kl 12:00) finns som tillval här ovan, 399 kr styck. Ni checkar in själva, i lugn och ro — koden till tältet visas här på sidan när det är dags att checka in."
+                : "Check-in from 3:00 pm, check-out by 10:00 am. Want more time? Early check-in (12:00) and late check-out (until 12:00) are available as extras above, 399 SEK each. You check in yourselves at your own pace — the code to the tent appears here on this page when it's time to check in."}
             </InfoRow>
 
             <InfoRow icon={<ShowerHead className="h-4 w-4" />} title={isSv ? "Servicehus & servicekort" : "Service house & service card"}>
               {isSv
-                ? "Fräscht servicehus med varma duschar, toaletter och skötrum ca 150 m från tälten, öppet dygnet runt under hela er vistelse. I tältet ligger ett servicekort — det är nyckeln dit, så ta det gärna med i fickan när ni går. Koden får ni i incheckningsmejlet."
-                : "A fresh service house with warm showers, toilets and a changing room about 150 m from the tents — open around the clock throughout your stay. In your tent you'll find a service card; it's the key over there, so pop it in your pocket when you walk down. The code arrives with your check-in email."}
+                ? "Fräscht servicehus med varma duschar, toaletter och skötrum ca 150 m från tälten, öppet dygnet runt under hela er vistelse. I tältet ligger ett servicekort — det är nyckeln dit, så ta det gärna med i fickan när ni går, men glöm inte att lämna det åter när ni checkar ut genom att lägga det i tältet. Koden till servicehuset får ni i samband med incheckningen."
+                : "A fresh service house with warm showers, toilets and a changing room about 150 m from the tents — open around the clock throughout your stay. In your tent you'll find a service card; it's the key over there, so pop it in your pocket when you walk down, but please leave it back in the tent when you check out. The code to the service house is provided at check-in."}
             </InfoRow>
 
             <InfoRow icon={<UtensilsCrossed className="h-4 w-4" />} title={isSv ? "Mat & frukost" : "Food & breakfast"}>
               {isSv
-                ? "Har ni beställt frukost bakas och levereras den av Bostället Vedungsbageri och står vid portalen runt kl 08:30 — vi pingar er på SMS så fort den är på plats. Vill ni fixa mat själva funkar det fint att gå till restaurangen vid slussarna (ca 200 m), matvagnarna vid bron eller caféet i Vreta Kloster. Matlagning inne i tälten låter vi bli — men grillen står gärna redo, det finns gratis kol i det gråa skåpet."
-                : "If you've ordered breakfast, it's baked and delivered by Bostället Vedungsbageri and waits for you at the portal around 8:30 — we'll ping you by text as soon as it's there. Prefer to sort food yourselves? The restaurant by the locks (~200 m), the food trucks up by the bridge and the café in Vreta Kloster are all lovely options. We leave cooking inside the tents alone — but the BBQ is happy to be used, and there's free charcoal in the grey cabinet."}
+                ? "Har ni beställt frukost bakas den av Boställets Vedugnsbageri och ställs vid portalen runt kl 08:30 — vi pingar er på SMS så fort den är på plats. Vill ni fixa mat själva funkar det fint att gå till restaurangen vid slussarna (ca 200 m), matvagnarna vid bron eller caféet i Vreta Kloster. Matlagning inne i tälten låter vi bli — men grillen står gärna redo, det finns gratis kol i det gråa skåpet."
+                : "If you've ordered breakfast, it's baked by Boställets Vedugnsbageri and placed at the portal around 8:30 — we'll ping you by text as soon as it's there. Prefer to sort food yourselves? The restaurant by the locks (~200 m), the food trucks up by the bridge and the café in Vreta Kloster are all lovely options. We leave cooking inside the tents alone — but the BBQ is happy to be used, and there's free charcoal in the grey cabinet."}
             </InfoRow>
 
             <InfoRow icon={<Droplets className="h-4 w-4" />} title={isSv ? "Diska i servicehuset" : "Washing up in the service house"}>
               {isSv
-                ? "Det finns inget kök vid tälten, men det går fint att diska i servicehuset — vid tvättmaskinerna, genom dörren till höger sett framifrån. I det gråa skåpet till vänster hittar ni diskmedel, diskborste och en bärkasse att ta med koppar och glas i. Enkelt och nära."
-                : "There's no kitchen by the tents, but you're very welcome to wash up in the service house — over by the washing machines, through the door on the right as you face the building. In the grey cabinet on the left you'll find washing-up liquid, a brush and a bag to carry cups and glasses in. Simple and just around the corner."}
+                ? "Det finns inget kök vid tälten, men det går fint att diska i servicehuset — vid tvättmaskinerna, genom dörren till höger sett framifrån. I det gråa skåpet till vänster hittar ni diskmedel, diskborste och en vit korg att ta med koppar och glas i. Enkelt och nära."
+                : "There's no kitchen by the tents, but you're very welcome to wash up in the service house — over by the washing machines, through the door on the right as you face the building. In the grey cabinet on the left you'll find washing-up liquid, a brush and a white basket to carry cups and glasses in. Simple and just around the corner."}
             </InfoRow>
 
             <InfoRow icon={<Volume2 className="h-4 w-4" />} title={isSv ? "Gräsklippning dagtid" : "Lawn mowing in the daytime"}>
               {isSv
-                ? "Vi klipper gräset dagtid mellan kl 10 och 15 så att platsen håller sig fin och välskött åt er. Skulle ljudet störa er precis då — säg bara till, så pausar vi direkt."
-                : "We mow the lawn during the day, between 10:00 and 15:00, to keep the place looking its best for you. If the sound bothers you right then, just say the word and we'll pause it."}
+                ? "Vår robot klipper gräset dagtid mellan kl 10 och 15 så att platsen håller sig fin och välskött åt er. Skulle ljudet störa er precis då — säg bara till, så pausar vi direkt."
+                : "Our robot mows the lawn during the day, between 10:00 and 15:00, to keep the place looking its best for you. If the sound bothers you right then, just say the word and we'll pause it."}
             </InfoRow>
 
             <InfoRow icon={<Wifi className="h-4 w-4" />} title={isSv ? "Wifi & täckning" : "Wifi & coverage"}>
@@ -1066,14 +1066,14 @@ export default function Stay() {
 
             <InfoRow icon={<Cigarette className="h-4 w-4" />} title={isSv ? "Rökning" : "Smoking"}>
               {isSv
-                ? "Tälten är helt rökfria. Rökning är endast tillåten utomhus, väl bort från tältdukar — och fimpa alltid i medhavd asköra."
-                : "All tents are strictly non-smoking. Smoking is only allowed outdoors, well away from the canvas — and always extinguish butts properly."}
+                ? "Tälten är helt rökfria. Rökning är endast tillåten utomhus, väl bort från tältdukar — och fimpa alltid i medhavd askkopp."
+                : "All tents are strictly non-smoking. Smoking is only allowed outdoors, well away from the canvas — and always extinguish butts in a portable ashtray."}
             </InfoRow>
 
             <InfoRow icon={<Dog className="h-4 w-4" />} title={isSv ? "Husdjur" : "Pets"}>
               {isSv
-                ? "Tyvärr tar vi inte emot husdjur i tälten — av hänsyn till allergiker och tältdukens skick."
-                : "Sorry, pets are not allowed in the tents — out of consideration for allergy-sensitive guests and to protect the canvas."}
+                ? "Husdjur kan läggas till som tillval — 399 kr per djur. Kontakta oss innan ankomst så ordnar vi det."
+                : "Pets can be added as an extra — 399 SEK per pet. Contact us before arrival and we'll sort it."}
             </InfoRow>
 
             <InfoRow icon={<Trees className="h-4 w-4" />} title={isSv ? "Att göra i närheten" : "Things to do nearby"}>
@@ -1084,9 +1084,9 @@ export default function Stay() {
 
             <InfoRow icon={<Phone className="h-4 w-4" />} title={isSv ? "Kontakt under vistelsen" : "Contact during your stay"}>
               {isSv ? (
-                <>Christoffer svarar i mobilen: <a href="tel:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. Vi finns nära till hands om något behövs.</>
+                <>Christoffer svarar i mobilen per sms: <a href="sms:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. Vi finns nära till hands om något behövs.</>
               ) : (
-                <>Christoffer is reachable on mobile: <a href="tel:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. We're close by if anything comes up.</>
+                <>Christoffer replies by text on mobile: <a href="sms:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. We're close by if anything comes up.</>
               )}
             </InfoRow>
           </CardContent>
