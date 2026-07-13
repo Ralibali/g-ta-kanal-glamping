@@ -47,7 +47,20 @@ const BookingSection = () => {
           </p>
         </div>
 
-        <div ref={widgetRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
+        <div
+          ref={widgetRef}
+          className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]"
+          onPointerDownCapture={() => {
+            if ((window as any).__bookingStartedFired) return;
+            (window as any).__bookingStartedFired = true;
+            trackEvent("Booking Started", {
+              product_category: "booking",
+              language: lang,
+              source: "sirvoy_widget",
+            });
+          }}
+        />
+
 
         <p className="text-center text-primary-foreground/70 text-sm mt-4">
           {lang === "en" ? (
