@@ -683,7 +683,11 @@ export default function Stay() {
               </li>
               <li className="flex items-start gap-3">
                 <Clock className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                <span>{isSv ? "Utcheckning senast kl 10:00." : "Check-out by 10:00 am."}</span>
+                <span>
+                  {hasLate
+                    ? (isSv ? "Sen utcheckning — ni kan stanna till kl 12:00 🌤️" : "Late check-out — you can stay until 12:00 🌤️")
+                    : (isSv ? "Utcheckning senast kl 10:00." : "Check-out by 10:00 am.")}
+                </span>
               </li>
               {hasBreakfast && (
                 <li className="flex items-start gap-3">
