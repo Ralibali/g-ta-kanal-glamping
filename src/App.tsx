@@ -39,6 +39,7 @@ const queryClient = new QueryClient();
 function TrackingProvider({ children }: { children: React.ReactNode }) {
   usePageTracking();
   useAutoClickTracking();
+  useContactLinkTracking();
   return <>{children}</>;
 }
 
