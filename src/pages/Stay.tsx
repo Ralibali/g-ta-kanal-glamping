@@ -1122,7 +1122,7 @@ export default function Stay() {
             {isSv ? "Vi ser så fram emot att välkomna er! 🌿" : "We can't wait to welcome you! 🌿"}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            {isSv ? "Christoffer & Karin — Go Glamping Sweden" : "Christoffer & Karin — Go Glamping Sweden"}
+            {isSv ? "Christoffer — Bergs Slussar Glamping" : "Christoffer — Bergs Slussar Glamping"}
           </p>
         </div>
 
