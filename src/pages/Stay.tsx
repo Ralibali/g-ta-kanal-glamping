@@ -17,6 +17,7 @@ import addonFikaImg from "@/assets/glamping-reading.jpg";
 // Använder endast riktiga bilder från hemsidan.
 const ADDON_IMAGES: Record<string, string> = {
   early_checkin: addonEarlyCheckinImg,
+  late_checkout: addonEarlyCheckinImg,
   breakfast: addonBreakfastImg,
   fika_bag: addonFikaImg,
 };
