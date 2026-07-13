@@ -96,7 +96,7 @@ const T: Record<Lang, Record<string, string>> = {
     checkoutBy: "Utcheckning senast kl. 10:00",
     washDishes: "Diska i servicehuset (~150 m bort) och lämna köksytan ren",
     wasteSorting: "Allt skräp slängs i den svarta papperskorgen vid ingången. Pant lämnas i den vänstra soptunnan och allt annat avfall i den högra.",
-    lateCheckoutTitle: "♡ Vill du checka ut lite senare? Du kan förlänga till kl. 12:00 för 400 kr. Swisha och meddela oss – så är det fixat.",
+    lateCheckoutTitle: "♡ Vill du checka ut lite senare? Du kan förlänga till kl. 12:00 för 399 kr. Swisha och meddela oss – så är det fixat.",
     swish: "Swisha",
     notifyUs: "Meddela oss",
     notWorking: "Fungerar något inte?",
@@ -131,7 +131,7 @@ const T: Record<Lang, Record<string, string>> = {
     checkoutBy: "Udtjekning senest kl. 10:00",
     washDishes: "Vask dit service i servicehuset (~150 m væk) og efterlad køkkenoverfladen ren",
     wasteSorting: "Alt affald smides i den sorte papirkurv ved indgangen. Pantflasker lægges i den venstre skraldespand og alt andet affald i den højre.",
-    lateCheckoutTitle: "♡ Vil du checke ud lidt senere? Du kan forlænge til kl. 12:00 for 400 kr. Swish og giv os besked – så er det ordnet.",
+    lateCheckoutTitle: "♡ Vil du checke ud lidt senere? Du kan forlænge til kl. 12:00 for 399 kr. Swish og giv os besked – så er det ordnet.",
     swish: "Swish",
     notifyUs: "Giv os besked",
     notWorking: "Fungerer noget ikke?",
@@ -166,7 +166,7 @@ const T: Record<Lang, Record<string, string>> = {
     checkoutBy: "Check-out by 10:00 AM",
     washDishes: "Wash dishes in the service house (~150 m away) and leave the kitchen area clean",
     wasteSorting: "All rubbish goes in the black paper bin at the entrance. Deposit bottles go in the left bin and all other waste in the right one.",
-    lateCheckoutTitle: "♡ Would you like to check out a bit later? You can extend until 12:00 PM for 400 SEK. Swish and let us know – and it's sorted.",
+    lateCheckoutTitle: "♡ Would you like to check out a bit later? You can extend until 12:00 PM for 399 SEK. Swish and let us know – and it's sorted.",
     swish: "Swish",
     notifyUs: "Notify us",
     notWorking: "Something not working?",
@@ -594,10 +594,10 @@ const CheckIn = () => {
                 <a
                   href={`sms:0722254993?body=${encodeURIComponent(
                     lang === "en"
-                      ? `Hi! I've Swished 400 SEK for late check-out (12:00). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
+                      ? `Hi! I've Swished 399 SEK for late check-out (12:00). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
                       : lang === "da"
-                      ? `Hej! Jeg har Swishet 400 kr for sen udtjekning (kl. 12). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
-                      : `Hej! Jag har swishat 400 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
+                      ? `Hej! Jeg har Swishet 399 kr for sen udtjekning (kl. 12). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
+                      : `Hej! Jag har swishat 399 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
                   )}`}
                   className="flex items-center justify-center gap-2 border border-border text-foreground py-2.5 px-4 rounded-lg font-medium hover:bg-muted transition-colors text-sm"
                 >
