@@ -1,0 +1,1 @@
+UPDATE public.addons SET price_sek = 399, name_sv = 'Sen utcheckning (till kl 12.00)', unit = 'per_stay' WHERE slug = 'late_checkout';
