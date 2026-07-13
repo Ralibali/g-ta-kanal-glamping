@@ -431,51 +431,6 @@ export default function Stay() {
 
   useEffect(() => { loadStay(); }, [token]);
 
-  // Handle return from Stripe Checkout
-  useEffect(() => {
-    if (!token) return;
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get("payment");
-    const sessionId = params.get("session_id");
-    if (!status) return;
-
-    const clean = () => {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("payment");
-      url.searchParams.delete("session_id");
-      window.history.replaceState({}, "", url.toString());
-    };
-
-    if (status === "cancelled") {
-      toast.info("Betalningen avbröts. Din beställning har inte skickats.");
-      clean();
-      return;
-    }
-    if (status === "success" && sessionId) {
-      (async () => {
-        try {
-          const { data: res, error } = await (supabase as any).functions.invoke("verify-addon-payment", {
-            body: { session_id: sessionId },
-          });
-          if (error) throw error;
-          if ((res as any)?.paid) {
-            toast.success("Tack! Betalning mottagen och beställning bekräftad. 🌿");
-            await loadStay();
-          } else {
-            toast.info("Vi väntar på bekräftelse från banken — det brukar gå på några sekunder. Ladda om sidan om det dröjer.");
-          }
-        } catch (e) {
-          console.error("verify failed", e);
-          toast.error("Kunde inte verifiera betalningen. Kontakta oss om summan drogs.");
-        } finally {
-          clean();
-        }
-      })();
-    }
-  }, [token]);
-
-
-
   if (loading) return <Centered>{COPY.sv.loading}</Centered>;
   if (!data || !data.booking) return <Centered>{COPY.sv.notFound}</Centered>;
 
@@ -541,7 +496,7 @@ export default function Stay() {
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
       if ((res as any)?.swish) {
-        // Swedish flow: show Swish card, order registered as "requested"
+        // Manual-payment flow: show instructions, order registered as "requested"
         setPaidTotal((res as any)?.total ?? total);
         setDone(true);
         setSubmitting(false);
