@@ -294,6 +294,7 @@ function iconFor(slug: string) {
   if (slug === "breakfast") return <Coffee className="h-5 w-5" />;
   if (slug === "fika_bag") return <Cookie className="h-5 w-5" />;
   if (slug === "early_checkin") return <Clock className="h-5 w-5" />;
+  if (slug === "late_checkout") return <Clock className="h-5 w-5" />;
   return null;
 }
 
