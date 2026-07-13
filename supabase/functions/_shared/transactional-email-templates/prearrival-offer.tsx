@@ -55,7 +55,7 @@ const COPY = {
 } as const
 
 const Email = ({
-  firstName, tentName, daysWord = 'fem', breakfastPrice = 209, fikaPrice = 89, earlyPrice = 399,
+  firstName, tentName, daysWord = 'fem', breakfastPrice = 209, fikaPrice = 89, earlyPrice = 399, latePrice = 399,
   link = 'https://goglampingsweden.se', lang,
 }: Props) => {
   const l = (lang ?? 'sv').toLowerCase().startsWith('en') ? 'en' : 'sv'
@@ -70,7 +70,7 @@ const Email = ({
         <Container style={container}>
           <Heading style={h1}>{c.heading}</Heading>
           <Text style={text}>{c.intro(name, daysWord, tent)}</Text>
-          {c.items(breakfastPrice, fikaPrice, earlyPrice).map((it, i) => (
+          {c.items(breakfastPrice, fikaPrice, earlyPrice, latePrice).map((it, i) => (
             <Text key={i} style={item}>{it}</Text>
           ))}
           <Section style={{ textAlign: 'center', margin: '28px 0' }}>
