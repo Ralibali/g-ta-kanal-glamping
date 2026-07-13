@@ -304,24 +304,24 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
     sv: {
       tagline: "Nybakat från Boställets Vedugnsbageri — ställs vid portalen runt kl 08:30.",
       bullets: [
-        "Färska frallor & croissant från bageriet",
-        "Ost, skinka, smör & marmelad",
-        "Yoghurt med müsli och säsongens frukt",
-        "Termos med kaffe eller te",
-        "Färskpressad juice",
+        "En nygräddad fröbulle med smör, ost, sallad & skinka",
+        "Ett hårdkokt ägg — en klassiker som mättar och ger energi",
+        "Naturell yoghurt med hemlagad müsli och säsongens frukt vid sidan",
+        "En hembakad småkaka",
+        "Juice (33 cl) — vid bokning för två delar ni på en förpackning",
       ],
-      note: "Vi skickar SMS så fort frukosten står klar vid portalen. Pris per person.",
+      note: "Kaffe finns i tältet för egen servering. Frukosten ställs vid portalen ca kl 08:30 — vi skickar ett SMS så fort den är på plats. Pris per person och per dag.",
     },
     en: {
       tagline: "Freshly baked from Boställets Vedugnsbageri — placed at the portal around 8:30.",
       bullets: [
-        "Fresh rolls & croissant from the bakery",
-        "Cheese, ham, butter & jam",
-        "Yoghurt with muesli and seasonal fruit",
-        "Thermos of coffee or tea",
-        "Freshly pressed juice",
+        "A freshly baked seed roll with butter, cheese, lettuce and ham",
+        "A hard-boiled egg — a classic that keeps you going",
+        "Plain yoghurt with homemade muesli and seasonal fruit on the side",
+        "A homemade cookie",
+        "Juice (33 cl) — when booking for two, you share one package",
       ],
-      note: "We'll send a text as soon as breakfast is ready at the portal. Price per person.",
+      note: "Coffee is available in the tent for self-service. Breakfast is placed at the portal around 8:30 — we'll send a text as soon as it's there. Price per person per day.",
     },
   },
   fika_bag: {
@@ -388,6 +388,26 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
         "Guaranteed time (bookable extra)",
       ],
       note: "399 SEK per booking, regardless of number of guests.",
+    },
+  },
+  pet: {
+    sv: {
+      tagline: "Husdjur som tillval — 399 kr per djur.",
+      bullets: [
+        "Lägg till om ni tar med hund eller annat husdjur",
+        "Pris per djur",
+        "Vi förbereder tältet så att vistelsen blir smidig för alla",
+      ],
+      note: "Tälten är fortsatt helt rökfria och husdjur ska hållas under uppsikt på området.",
+    },
+    en: {
+      tagline: "Pets as an add-on — 399 SEK per pet.",
+      bullets: [
+        "Add this if you bring a dog or another pet",
+        "Price per pet",
+        "We'll prepare the tent so the stay works smoothly for everyone",
+      ],
+      note: "The tents remain strictly non-smoking and pets must be supervised on site.",
     },
   },
 };
