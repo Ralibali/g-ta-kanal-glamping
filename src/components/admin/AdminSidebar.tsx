@@ -16,6 +16,7 @@ import {
   PackagePlus,
   ShoppingBag,
   MessageSquare,
+  Send,
   Briefcase,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
