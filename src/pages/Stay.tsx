@@ -56,7 +56,7 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "natt" : "nätter"}`,
     tooLate: "Tyvärr är det för sent att lägga till tillval inför den här vistelsen — beställning stänger två dygn före incheckning. Hör av dig till oss om något är akut!",
     addons: "Lägg till tillval",
-    intro: "Pricka i vad du vill lägga till. Du betalar tryggt med kort i nästa steg — vi bekräftar direkt när betalningen är genomförd.",
+    intro: "Pricka i vad du vill lägga till. Efteråt får du Swish-instruktioner — vi bekräftar beställningen när betalningen kommit in.",
     already: "Du har redan beställt:",
     pcs: (n: number) => `${n} st`,
     perPerson: "kr/person",
@@ -73,7 +73,7 @@ const COPY = {
     selectedLabel: "✓ Vald",
     currency: "kr",
     swishTitle: "Betala med Swish",
-    swishIntro: "Swisha summan nedan så bekräftar vi din beställning så snart vi ser betalningen.",
+    swishIntro: "Swisha summan nedan så bekräftar vi din beställning så snart betalningen kommit in.",
     swishNumber: "Swish-nummer",
     swishPayee: "Mottagare",
     swishAmount: "Belopp",
@@ -302,7 +302,7 @@ function iconFor(slug: string) {
 const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: string[]; note?: string }>> = {
   breakfast: {
     sv: {
-      tagline: "Nybakat från Bostället — levereras direkt till ditt tält.",
+      tagline: "Nybakat från Boställets Vedugnsbageri — ställs vid portalen runt kl 08:30.",
       bullets: [
         "Färska frallor & croissant från bageriet",
         "Ost, skinka, smör & marmelad",
@@ -310,7 +310,7 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
         "Termos med kaffe eller te",
         "Färskpressad juice",
       ],
-      note: "Levereras till tältet kl 08:30. Pris per person.",
+      note: "Vi skickar SMS så fort frukosten står klar vid portalen. Pris per person.",
     },
     en: {
       tagline: "Freshly baked from Bostället — delivered to your tent.",
@@ -641,7 +641,7 @@ export default function Stay() {
                     <span className="text-xs font-medium">{isSv ? "Ring oss" : "Call us"}</span>
                   </a>
                   <a
-                    href="mailto:hej@goglampingsweden.se"
+                    href="mailto:info@auroramedia.se"
                     className="flex flex-col items-center gap-1 rounded-lg border bg-card hover:bg-muted/40 transition-colors p-2.5 text-center"
                   >
                     <MessageCircle className="h-4 w-4 text-primary" />
@@ -711,7 +711,7 @@ export default function Stay() {
                 className="mt-1 w-full text-left rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors p-3 text-sm text-foreground/90"
               >
                 {isSv
-                  ? "Vill ni förgylla vistelsen? Lägg till frukost eller fikapåse nedan 👇"
+                    ? "Vill ni göra vistelsen extra mysig? Lägg till frukost eller fikapåse nedan 👇"
                   : "Want to make your stay even sweeter? Add breakfast or a fika bag below 👇"}
               </button>
             )}
@@ -910,22 +910,22 @@ export default function Stay() {
                 <div className="flex items-start gap-2">
                   <ShieldCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Inga förskottsbetalningar" : "No upfront payment"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Betala först när vi bekräftat din beställning" : "Pay only after we confirm your order"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Swishbetalning" : "Payment link"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Swisha efter att du skickat beställningen" : "You'll receive secure payment instructions"}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <MessageCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Snabb bekräftelse" : "Instant confirmation"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Direkt när betalningen är genomförd" : "As soon as your payment goes through"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Bekräftas manuellt" : "Confirmed manually"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Vi bekräftar så snart betalningen syns" : "We confirm as soon as payment is received"}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <CreditCard className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Säker kortbetalning" : "Secure card payment"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Visa, Mastercard, Apple/Google Pay via Stripe" : "Visa, Mastercard, Apple/Google Pay via Stripe"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Ingen automatisk kortbetalning" : "Secure card payment"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Svenska beställningar hanteras via Swish" : "Visa, Mastercard, Apple/Google Pay via Stripe"}</div>
                   </div>
                 </div>
               </div>
@@ -1113,7 +1113,7 @@ export default function Stay() {
 
             <InfoRow icon={<Phone className="h-4 w-4" />} title={isSv ? "Kontakt under vistelsen" : "Contact during your stay"}>
               {isSv ? (
-                <>Christoffer svarar i mobilen per sms: <a href="sms:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. Vi finns nära till hands om något behövs.</>
+                <>Christoffer svarar i mobilen per sms: <a href="sms:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a>. Vi finns nära till hands om något behövs.</>
               ) : (
                 <>Christoffer replies by text on mobile: <a href="sms:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. We're close by if anything comes up.</>
               )}
