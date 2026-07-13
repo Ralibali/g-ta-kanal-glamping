@@ -23,14 +23,15 @@ const COPY = {
   sv: {
     preview: (t: string) => `Snart dags! Förbered din vistelse i ${t}`,
     subject: 'Snart dags! Förbered din vistelse 🌿',
-    heading: '🌿 Snart dags!',
+    heading: 'Välkomna till Bergs Slussar Glamping',
     intro: (name: string, days: string, tent: string) =>
-      `Hej ${name}! Om ${days} dagar checkar du in i ${tent} vid Göta kanal. Vill du göra vistelsen lite extra?`,
-    items: (b: number, f: number, e: number, l: number) => [
-      `🥐 Frukost – bakad och levererad av Boställets Vedugnsbageri, ställs vid portalen runt kl 08:30. Ni får ett SMS så fort den är på plats (${b} kr/person)`,
-      `☕ Fikapåse – något gott som väntar i tältet vid ankomst (${f} kr)`,
-      `🕛 Tidig incheckning kl 12:00 istället för kl 15:00 (${e} kr)`,
-      `🕛 Sen utcheckning till kl 12:00 istället för kl 10:00 (${l} kr)`,
+      `Hej ${name}! Om ${days} dagar checkar du in i ${tent} vid Göta kanal. Vad roligt att ni snart kommer till oss vid kanalen!`,
+    lead: 'Här är allt ni behöver inför vistelsen. Vill ni förgylla vistelsen? Lägg till frukost eller mer tid vid kanalen nedan.',
+    payment: 'Du betalar tryggt med kort i nästa steg — vi bekräftar direkt när betalningen är genomförd.',
+    items: (b: number, e: number, l: number) => [
+      `Frukost — ${b} kr/person. Nybakat och närproducerat från Boställets Vedugnsbageri: fröbulle med smör, ost, sallad och skinka, hårdkokt ägg, naturell yoghurt med hemlagad müsli och säsongens frukt, hembakad småkaka och juice. Kaffe finns i tältet för egen servering. Frukosten ställs vid portalen ca kl 08:30 — vi skickar SMS så fort den är på plats.`,
+      `Tidig incheckning kl 12:00 — ${e} kr. Kom redan kl 12:00 istället för ordinarie kl 15:00 — tre extra timmar att njuta vid kanalen.`,
+      `Sen utcheckning till kl 12:00 — ${l} kr. Stanna kvar till klockan tolv istället för tio — ingen stress på avresemorgonen.`,
     ],
     cta: 'Lägg till tillval',
     outro: 'Vi ses snart!',
@@ -39,14 +40,15 @@ const COPY = {
   en: {
     preview: (t: string) => `Almost time! Prepare your stay in ${t}`,
     subject: 'Almost time! Prepare your stay 🌿',
-    heading: '🌿 Almost time!',
+    heading: 'Welcome to Bergs Slussar Glamping',
     intro: (name: string, days: string, tent: string) =>
-      `Hi ${name}! In ${days} days you check in to ${tent} by the Göta Canal. Want to make your stay a little extra?`,
-    items: (b: number, f: number, e: number, l: number) => [
-      `🥐 Breakfast – baked and delivered by Boställets Vedugnsbageri, placed at the portal around 8:30. You'll get a text as soon as it's ready (${b} SEK/person)`,
-      `☕ Fika bag – a sweet treat waiting in your tent on arrival (${f} SEK)`,
-      `🕛 Early check-in at 12:00 instead of 15:00 (${e} SEK)`,
-      `🕛 Late check-out until 12:00 instead of 10:00 (${l} SEK)`,
+      `Hi ${name}! In ${days} days you check in to ${tent} by the Göta Canal. We're so happy you're coming to stay with us by the canal!`,
+    lead: 'Here is everything you need before your stay. Want to make it even better? Add breakfast or more time by the canal below.',
+    payment: 'You pay securely by card in the next step — we confirm as soon as the payment is complete.',
+    items: (b: number, e: number, l: number) => [
+      `Breakfast — ${b} SEK/person. Fresh and locally baked by Boställets Vedugnsbageri: seed roll with butter, cheese, lettuce and ham, hard-boiled egg, plain yoghurt with homemade muesli and seasonal fruit, homemade cookie and juice. Coffee is available in the tent for self-service. Breakfast is placed at the portal around 8:30 — we text you as soon as it is there.`,
+      `Early check-in at 12:00 — ${e} SEK. Arrive at 12:00 instead of 15:00 — three extra hours by the canal.`,
+      `Late check-out until 12:00 — ${l} SEK. Stay until noon instead of 10:00 — no stress on departure morning.`,
     ],
     cta: 'Add extras',
     outro: 'See you soon!',
@@ -70,7 +72,9 @@ const Email = ({
         <Container style={container}>
           <Heading style={h1}>{c.heading}</Heading>
           <Text style={text}>{c.intro(name, daysWord, tent)}</Text>
-          {c.items(breakfastPrice, fikaPrice, earlyPrice, latePrice).map((it, i) => (
+          <Text style={text}>{c.lead}</Text>
+          <Text style={text}>{c.payment}</Text>
+          {c.items(breakfastPrice, earlyPrice, latePrice).map((it, i) => (
             <Text key={i} style={item}>{it}</Text>
           ))}
           <Section style={{ textAlign: 'center', margin: '28px 0' }}>
