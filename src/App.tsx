@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LanguageRedirect from "./components/LanguageRedirect";
 import SiteMetaManager from "./components/SiteMetaManager";
 import { usePageTracking, useAutoClickTracking } from "./hooks/useTracking";
+import { useContactLinkTracking } from "./hooks/useContactLinkTracking";
 import Index from "./pages/Index";
 import CheckIn from "./pages/CheckIn";
 import BookingTerms from "./pages/BookingTerms";
