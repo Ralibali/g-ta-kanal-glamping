@@ -693,8 +693,8 @@ export default function Stay() {
                 <li className="flex items-start gap-3">
                   <Coffee className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                   <span>{isSv
-                    ? "Frukosten kommer varm och nybakad från Bostället Vedungsbageri runt kl 08:30 — vi skickar ett litet SMS så fort den står klar vid portalen, så kan ni ta den när det passar. ☕"
-                    : "Breakfast arrives warm and freshly baked from Bostället Vedungsbageri around 8:30 — we'll send you a little text as soon as it's waiting at the portal, so you can pick it up whenever suits you. ☕"}</span>
+                    ? "Frukosten kommer varm och nybakad från Boställets Vedugnsbageri runt kl 08:30 — vi skickar ett litet SMS så fort den står klar vid portalen, så kan ni ta den när det passar. ☕"
+                    : "Breakfast arrives warm and freshly baked from Boställets Vedugnsbageri around 8:30 — we'll send you a little text as soon as it's waiting at the portal, so you can pick it up whenever suits you. ☕"}</span>
                 </li>
               )}
               {hasFika && (
