@@ -1,7 +1,16 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
+import Stripe from 'https://esm.sh/stripe@18.5.0'
 
 interface Item { addon_id: string; quantity: number }
+
+const STRIPE_PRICE_BY_SLUG: Record<string, string> = {
+  breakfast: 'price_1TsUkLHzffTezY82PWYrzYcm',
+  fika_bag: 'price_1TsqjQHzffTezY8212PMh3lv',
+  early_checkin: 'price_1Tsqg8HzffTezY82GWJwqyzq',
+  late_checkout: 'price_1Tsqg8HzffTezY82qAlTyuxQ',
+  pet: 'price_1Tsqg9HzffTezY821RBaczlc',
+}
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
@@ -59,11 +68,6 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: 'breakfast_unavailable_monday' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
-  const rawLang = (booking.language ?? 'sv').toLowerCase().slice(0, 2)
-  const supportedLangs = ['sv', 'en', 'de', 'da', 'no', 'nl', 'fr']
-  const lang: string = supportedLangs.includes(rawLang) ? rawLang : (rawLang === 'nb' || rawLang === 'nn' ? 'no' : 'en')
-  const isSv = lang === 'sv'
-
   const orderRows: any[] = []
   const lineItems: any[] = []
   let total = 0
@@ -77,12 +81,12 @@ Deno.serve(async (req) => {
       booking_id: booking.id, addon_id: a.id, quantity: qty,
       unit_price_sek: a.price_sek, total_sek: lineTotal, status: 'pending',
     })
+    const price = STRIPE_PRICE_BY_SLUG[a.slug]
+    if (!price) {
+      return new Response(JSON.stringify({ error: `missing_stripe_price_for_${a.slug}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
     lineItems.push({
-      price_data: {
-        currency: 'sek',
-        product_data: { name: isSv ? a.name_sv : a.name_en },
-        unit_amount: a.price_sek * 100,
-      },
+      price,
       quantity: qty,
     })
   }
@@ -117,130 +121,29 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: insertErr?.message || 'insert_failed' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
   const orderIds = insertedOrders.map(o => o.id)
-  const ref = booking.booking_number || String(booking.public_token).slice(0, 8).toUpperCase()
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-
-  // All add-on orders use manual confirmation now. Swedish guests get Swish
-  // instructions; other languages get generic payment instructions and owner follow-up.
-  await supabase.from('addon_orders').update({ status: 'requested' }).in('id', orderIds)
-
-  const { data: addonRows } = await supabase.from('addons')
-    .select('id, slug, name_sv, name_en')
-    .in('id', orderRows.map(r => r.addon_id))
-  const aMap = new Map((addonRows ?? []).map((a: any) => [a.id, a]))
-  const emailItems = orderRows.map(r => ({
-    name: isSv ? ((aMap.get(r.addon_id) as any)?.name_sv ?? 'Tillval') : ((aMap.get(r.addon_id) as any)?.name_en ?? 'Extra'),
-    quantity: r.quantity,
-    total: r.total_sek,
-  }))
-  const hasBreakfast = orderRows.some(r => (aMap.get(r.addon_id) as any)?.slug === 'breakfast')
-  const hasFika = orderRows.some(r => (aMap.get(r.addon_id) as any)?.slug === 'fika_bag')
-  const hasEarly = orderRows.some(r => (aMap.get(r.addon_id) as any)?.slug === 'early_checkin')
-
-  const { data: settings2 } = await supabase.from('app_settings').select('key,value').in('key', ['owner_email', 'swish_number'])
-  const sMap2: Record<string, any> = {}
-  for (const r of (settings2 ?? [])) sMap2[r.key] = r.value
-  const ownerEmail = String(sMap2['owner_email'] ?? 'info@auroramedia.se')
-  const swishNumber = String(sMap2['swish_number'] ?? '1230628289')
-
-  const tentName = booking.tent_name || booking.tent_id
-  const firstName = booking.guest_first_name || (booking.guest_name ? booking.guest_name.split(',')[0].split(' ').pop() : null)
-
-  try {
-    await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        templateName: 'addon-request-owner',
-        recipientEmail: ownerEmail,
-        idempotencyKey: `addon-owner-req-${orderIds.join('-')}`,
-        templateData: {
-          guestName: booking.guest_name,
-          guestEmail: booking.email ?? null,
-          guestLang: lang,
-          tentName,
-          checkinDate: booking.checkin_date,
-          items: emailItems, total, hasEarlyCheckin: hasEarly,
-          reference: ref,
-          adminUrl: 'https://goglampingsweden.se/admin/addon-orders',
-        },
-      }),
-    })
-  } catch (err) { console.error('owner email failed', err) }
-
-  if (hasBreakfast || hasFika) {
-    try {
-      await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          templateName: 'breakfast-new-order',
-          recipientEmail: 'Info@bostallets.se',
-          idempotencyKey: `breakfast-new-req-${orderIds.join('-')}`,
-          templateData: {
-            guestName: booking.guest_name,
-            tentName, bookingNumber: booking.booking_number,
-            hasBreakfast, hasFika,
-            breakfastDate: booking.checkout_date ?? null,
-            fikaDate: booking.checkin_date,
-            items: emailItems,
-          },
-        }),
-      })
-    } catch (err) { console.error('breakfast notice failed', err) }
+  const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
+  if (!stripeKey) {
+    return new Response(JSON.stringify({ error: 'stripe_not_configured' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
+  const stripe = new Stripe(stripeKey, { apiVersion: '2025-08-27.basil' })
+  const origin = req.headers.get('origin') || 'https://goglampingsweden.se'
+  const session = await stripe.checkout.sessions.create({
+    customer_email: booking.email ?? undefined,
+    line_items: lineItems,
+    mode: 'payment',
+    success_url: `${origin}/stay/${booking.public_token}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${origin}/stay/${booking.public_token}`,
+    metadata: {
+      booking_id: booking.id,
+      booking_number: booking.booking_number ?? '',
+      order_ids: orderIds.join(','),
+    },
+  })
 
-  if (booking.email) {
-    try {
-      await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          templateName: 'addon-request-guest',
-          recipientEmail: booking.email,
-          idempotencyKey: `addon-guest-req-${orderIds.join('-')}`,
-          templateData: {
-            firstName, tentName, items: emailItems, total, lang,
-            reference: ref, swishNumber,
-          },
-        }),
-      })
-    } catch (err) { console.error('guest email failed', err) }
-  }
-
-  if (isSv) {
-    const phoneRaw = (booking.phone ?? '').replace(/[\s\-()]/g, '')
-    let phone: string | null = null
-    if (phoneRaw) {
-      if (phoneRaw.startsWith('+')) phone = phoneRaw
-      else if (phoneRaw.startsWith('00')) phone = '+' + phoneRaw.slice(2)
-      else if (phoneRaw.startsWith('0')) phone = '+46' + phoneRaw.slice(1)
-      else phone = '+' + phoneRaw
-    }
-    if (phone) {
-      const itemsStr = emailItems.map(i => `${i.quantity}× ${i.name}`).join(', ')
-      const smsBody = `Tack ${firstName ?? ''}! Vi har tagit emot din beställning: ${itemsStr}. Swisha ${total} kr till ${swishNumber} med meddelande ${ref}. Vi bekräftar när betalningen kommit in.`
-      try {
-        const user = Deno.env.get('ELKS46_USERNAME')
-        const pass = Deno.env.get('ELKS46_PASSWORD')
-        if (user && pass) {
-          const auth = btoa(`${user}:${pass}`)
-          await fetch('https://api.46elks.com/a1/sms', {
-            method: 'POST',
-            headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-              from: ((Deno.env.get('ELKS46_FROM') || 'GoGlamping').replace(/[^A-Za-z0-9]/g, '').slice(0, 11)) || 'GoGlamping',
-              to: phone, message: smsBody,
-            }),
-          })
-        }
-      } catch (err) { console.error('sms failed', err) }
-    }
-  }
+  await supabase.from('addon_orders').update({ stripe_session_id: session.id }).in('id', orderIds)
 
   return new Response(JSON.stringify({
-    success: true, swish: true, total, reference: ref, count: orderIds.length,
+    success: true, url: session.url, session_id: session.id, total, count: orderIds.length,
   }), {
     status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
