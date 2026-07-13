@@ -14,6 +14,7 @@ interface Props {
   breakfastPrice?: number
   fikaPrice?: number
   earlyPrice?: number
+  latePrice?: number
   link?: string
   lang?: string
 }
@@ -25,10 +26,11 @@ const COPY = {
     heading: '🌿 Snart dags!',
     intro: (name: string, days: string, tent: string) =>
       `Hej ${name}! Om ${days} dagar checkar du in i ${tent} vid Göta kanal. Vill du göra vistelsen lite extra?`,
-    items: (b: number, f: number, e: number) => [
-      `🥐 Frukost – bakad och levererad av Bostället Vedungsbageri, serveras runt kl 08:30. Ni får ett SMS så fort den är på plats vid portalen (${b} kr/person)`,
-      `☕ Fikapåse – något gott vid ankomst (${f} kr)`,
-      `🕛 Tidig incheckning kl 12.00 (${e} kr)`,
+    items: (b: number, f: number, e: number, l: number) => [
+      `🥐 Frukost – bakad och levererad av Boställets Vedugnsbageri, ställs vid portalen runt kl 08:30. Ni får ett SMS så fort den är på plats (${b} kr/person)`,
+      `☕ Fikapåse – något gott som väntar i tältet vid ankomst (${f} kr)`,
+      `🕛 Tidig incheckning kl 12:00 istället för kl 15:00 (${e} kr)`,
+      `🕛 Sen utcheckning till kl 12:00 istället för kl 10:00 (${l} kr)`,
     ],
     cta: 'Lägg till tillval',
     outro: 'Vi ses snart!',
@@ -40,10 +42,11 @@ const COPY = {
     heading: '🌿 Almost time!',
     intro: (name: string, days: string, tent: string) =>
       `Hi ${name}! In ${days} days you check in to ${tent} by the Göta Canal. Want to make your stay a little extra?`,
-    items: (b: number, f: number, e: number) => [
-      `🥐 Breakfast – baked and delivered by Bostället Vedungsbageri, served around 8:30. You'll get a text as soon as it's at the portal (${b} SEK/person)`,
-      `☕ Fika bag – a sweet treat on arrival (${f} SEK)`,
-      `🕛 Early check-in at 12:00 (${e} SEK)`,
+    items: (b: number, f: number, e: number, l: number) => [
+      `🥐 Breakfast – baked and delivered by Boställets Vedugnsbageri, placed at the portal around 8:30. You'll get a text as soon as it's ready (${b} SEK/person)`,
+      `☕ Fika bag – a sweet treat waiting in your tent on arrival (${f} SEK)`,
+      `🕛 Early check-in at 12:00 instead of 15:00 (${e} SEK)`,
+      `🕛 Late check-out until 12:00 instead of 10:00 (${l} SEK)`,
     ],
     cta: 'Add extras',
     outro: 'See you soon!',
