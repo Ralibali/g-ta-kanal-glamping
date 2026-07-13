@@ -52,7 +52,7 @@ const isBlockedPath = (path: string) =>
   BLOCKED_PREFIXES.some((p) => path === p || path.startsWith(`${p}/`));
 
 const sanitizeProps = (
-  props?: Partial<Record<string, unknown>>,
+  props?: Record<string, unknown>,
 ): Record<string, string> | undefined => {
   if (!props) return undefined;
   const clean: Record<string, string> = {};
