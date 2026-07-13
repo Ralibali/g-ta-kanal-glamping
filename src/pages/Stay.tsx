@@ -20,6 +20,7 @@ const ADDON_IMAGES: Record<string, string> = {
   late_checkout: addonEarlyCheckinImg,
   breakfast: addonBreakfastImg,
   fika_bag: addonFikaImg,
+  pet: addonEarlyCheckinImg,
 };
 
 
@@ -295,6 +296,7 @@ function iconFor(slug: string) {
   if (slug === "fika_bag") return <Cookie className="h-5 w-5" />;
   if (slug === "early_checkin") return <Clock className="h-5 w-5" />;
   if (slug === "late_checkout") return <Clock className="h-5 w-5" />;
+  if (slug === "pet") return <Dog className="h-5 w-5" />;
   return null;
 }
 
@@ -531,6 +533,9 @@ export default function Stay() {
   const hasEarly = orderedSlugs.has("early_checkin");
   const hasLate = orderedSlugs.has("late_checkout");
   const hasAnyAddon = orderedSlugs.size > 0;
+  const lockRevealHour = hasEarly ? 12 : 15;
+  const [year, month, day] = data.booking.checkin_date.split("-").map(Number);
+  const lockCodeVisible = Date.now() >= new Date(year, month - 1, day, lockRevealHour, 0, 0).getTime();
 
   const scrollToAddons = () => {
     document.getElementById("addons-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -570,7 +575,7 @@ export default function Stay() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-background" />
         <div className="relative h-full max-w-2xl mx-auto px-4 flex flex-col justify-end pb-6">
           <p className="text-white/80 text-xs uppercase tracking-[0.2em] mb-2 font-sans">
-            {isSv ? "Välkomna till" : "Welcome to"} Go Glamping Sweden
+            {isSv ? "Välkomna till" : "Welcome to"} Bergs Slussar Glamping
           </p>
           <h1 className="font-serif text-3xl md:text-4xl text-white drop-shadow-md">
             {firstName ? t.welcome(firstName) : t.welcomeNoName}
@@ -612,10 +617,16 @@ export default function Stay() {
                   {ci} → {co} · {t.nights(data.booking.nights ?? 1)}
                 </div>
                 <div className="mt-3 rounded-md border border-primary/30 bg-primary/5 p-3">
-                  <div className="font-medium text-foreground">
-                    🔒 {isSv ? "Kod till hänglåset" : "Code for the lock"}: <span className="font-mono text-lg tracking-widest">2018</span>
-                  </div>
-                  {multi && (
+                  {lockCodeVisible ? (
+                    <div className="font-medium text-foreground">
+                      🔒 {isSv ? "Kod till hänglåset" : "Code for the lock"}: <span className="font-mono text-lg tracking-widest">2018</span>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-foreground">
+                      🔒 {isSv ? "Koden till hänglåset visas här när det är dags att checka in." : "The lock code appears here when it is time to check in."}
+                    </div>
+                  )}
+                  {lockCodeVisible && multi && (
                     <div className="text-xs text-muted-foreground mt-1">
                       {isSv ? `Samma kod till alla ${tentNames.length} tälten.` : `Same code for all ${tentNames.length} tents.`}
                     </div>
@@ -710,8 +721,8 @@ export default function Stay() {
                 className="mt-1 w-full text-left rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors p-3 text-sm text-foreground/90"
               >
                 {isSv
-                    ? "Vill ni göra vistelsen extra mysig? Lägg till frukost eller fikapåse nedan 👇"
-                  : "Want to make your stay even sweeter? Add breakfast or a fika bag below 👇"}
+                    ? "Vill ni förgylla vistelsen? Lägg till frukost eller mer tid vid kanalen nedan 👇"
+                  : "Want to make your stay even better? Add breakfast or more time by the canal below 👇"}
               </button>
             )}
           </CardContent>
@@ -741,21 +752,18 @@ export default function Stay() {
         )}
 
         {done ? (
-          isSv ? (
-            <SwishCard
-              t={t}
-              amount={paidTotal}
-              reference={data.booking.booking_number || data.booking.public_token.slice(0, 8).toUpperCase()}
-              swishNumber={data.settings?.swish_number || "1230628289"}
-              payee={data.settings?.swish_payee || "Aurora Media AB"}
-            />
-          ) : (
-            <PaymentLinkCard
-              t={t}
-              amount={paidTotal}
-              reference={data.booking.booking_number || data.booking.public_token.slice(0, 8).toUpperCase()}
-            />
-          )
+          <Card className="border-primary/50 bg-primary/5">
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="h-8 w-8 text-primary shrink-0" />
+                <div>
+                  <h2 className="font-serif text-xl text-primary">{t.success}</h2>
+                  <p className="text-sm text-muted-foreground">{isSv ? "Bekräftelsen skickas även till din e-post." : "A confirmation is also sent to your email."}</p>
+                </div>
+              </div>
+              {paidTotal > 0 && <div className="text-sm font-medium">{t.total}: {paidTotal} {t.currency}</div>}
+            </CardContent>
+          </Card>
         ) : tooLate ? (
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
@@ -909,22 +917,22 @@ export default function Stay() {
                 <div className="flex items-start gap-2">
                   <ShieldCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Swishbetalning" : "Payment instructions"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Swisha efter att du skickat beställningen" : "You'll receive payment instructions"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Enkelt att beställa" : "Easy to order"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Pricka i och betala direkt här på sidan" : "Tick your choices and pay directly on this page"}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <MessageCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Bekräftas manuellt" : "Confirmed manually"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Vi bekräftar så snart betalningen syns" : "We confirm as soon as payment is received"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Snabb bekräftelse" : "Fast confirmation"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Direkt när betalningen är genomförd" : "As soon as the payment is complete"}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <CreditCard className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Svenska gäster betalar med Swish" : "Manual confirmation"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Instruktioner visas direkt efter beställning" : "We confirm once payment has arrived"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Säker betalning" : "Secure payment"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Swish eller kort — Visa, Mastercard, Apple/Google Pay via Stripe" : "Card, Apple Pay and Google Pay via Stripe"}</div>
                   </div>
                 </div>
               </div>
