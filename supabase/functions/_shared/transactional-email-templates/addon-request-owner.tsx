@@ -32,21 +32,21 @@ const REPLY_GREETING: Record<string, string> = {
 }
 
 const REPLY_BODY: Record<string, (ref: string, total: number) => string> = {
-  en: (ref, total) => `,\n\nThanks for your add-on order (ref ${ref}, total ${total} SEK).\nHere is your secure payment link — pay by card and your order is confirmed automatically:\n\n[PASTE STRIPE PAYMENT LINK HERE]\n\nLet us know if you have any questions.\n\nWarm regards,\nBergs Slussar Glamping`,
-  de: (ref, total) => `,\n\nvielen Dank für deine Zusatzbestellung (Ref. ${ref}, Gesamt ${total} SEK).\nHier ist dein sicherer Zahlungslink — zahle mit Karte und deine Bestellung wird automatisch bestätigt:\n\n[STRIPE-ZAHLUNGSLINK HIER EINFÜGEN]\n\nMelde dich gern bei Fragen.\n\nHerzliche Grüße,\nBergs Slussar Glamping`,
-  da: (ref, total) => `,\n\ntak for din ekstra bestilling (ref. ${ref}, i alt ${total} SEK).\nHer er dit sikre betalingslink — betal med kort, så bekræftes din bestilling automatisk:\n\n[INDSÆT STRIPE-BETALINGSLINK HER]\n\nSig endelig til, hvis du har spørgsmål.\n\nMange hilsner,\nBergs Slussar Glamping`,
-  no: (ref, total) => `,\n\ntakk for din tilleggsbestilling (ref. ${ref}, totalt ${total} SEK).\nHer er din sikre betalingslenke — betal med kort, så bekreftes bestillingen automatisk:\n\n[LIM INN STRIPE-BETALINGSLENKE HER]\n\nSi gjerne fra om du har spørsmål.\n\nVennlig hilsen,\nBergs Slussar Glamping`,
-  nl: (ref, total) => `,\n\nbedankt voor je extra bestelling (ref. ${ref}, totaal ${total} SEK).\nHier is je veilige betaallink — betaal met kaart en je bestelling wordt automatisch bevestigd:\n\n[PLAK STRIPE-BETAALLINK HIER]\n\nLaat het ons gerust weten als je vragen hebt.\n\nMet vriendelijke groet,\nBergs Slussar Glamping`,
-  fr: (ref, total) => `,\n\nmerci pour votre commande d'options (réf. ${ref}, total ${total} SEK).\nVoici votre lien de paiement sécurisé — payez par carte et votre commande sera confirmée automatiquement :\n\n[COLLER LE LIEN DE PAIEMENT STRIPE ICI]\n\nN'hésitez pas en cas de questions.\n\nBien cordialement,\nBergs Slussar Glamping`,
+  en: (ref, total) => `,\n\nThanks for your add-on order (ref ${ref}, total ${total} SEK).\nWe will confirm your order as soon as payment has arrived.\n\nLet us know if you have any questions.\n\nWarm regards,\nBergs Slussar Glamping`,
+  de: (ref, total) => `,\n\nvielen Dank für deine Zusatzbestellung (Ref. ${ref}, Gesamt ${total} SEK).\nWir bestätigen deine Bestellung, sobald die Zahlung eingegangen ist.\n\nMelde dich gern bei Fragen.\n\nHerzliche Grüße,\nBergs Slussar Glamping`,
+  da: (ref, total) => `,\n\ntak for din ekstra bestilling (ref. ${ref}, i alt ${total} SEK).\nVi bekræfter din bestilling, når betalingen er modtaget.\n\nSig endelig til, hvis du har spørgsmål.\n\nMange hilsner,\nBergs Slussar Glamping`,
+  no: (ref, total) => `,\n\ntakk for din tilleggsbestilling (ref. ${ref}, totalt ${total} SEK).\nVi bekrefter bestillingen når betalingen er mottatt.\n\nSi gjerne fra om du har spørsmål.\n\nVennlig hilsen,\nBergs Slussar Glamping`,
+  nl: (ref, total) => `,\n\nbedankt voor je extra bestelling (ref. ${ref}, totaal ${total} SEK).\nWe bevestigen je bestelling zodra de betaling is ontvangen.\n\nLaat het ons gerust weten als je vragen hebt.\n\nMet vriendelijke groet,\nBergs Slussar Glamping`,
+  fr: (ref, total) => `,\n\nmerci pour votre commande d'options (réf. ${ref}, total ${total} SEK).\nNous confirmerons votre commande dès réception du paiement.\n\nN'hésitez pas en cas de questions.\n\nBien cordialement,\nBergs Slussar Glamping`,
 }
 
 const REPLY_SUBJECT: Record<string, (ref: string) => string> = {
-  en: (ref) => `Your payment link – Bergs Slussar Glamping (ref ${ref})`,
-  de: (ref) => `Dein Zahlungslink – Bergs Slussar Glamping (Ref. ${ref})`,
-  da: (ref) => `Dit betalingslink – Bergs Slussar Glamping (ref. ${ref})`,
-  no: (ref) => `Din betalingslenke – Bergs Slussar Glamping (ref. ${ref})`,
-  nl: (ref) => `Je betaallink – Bergs Slussar Glamping (ref. ${ref})`,
-  fr: (ref) => `Votre lien de paiement – Bergs Slussar Glamping (réf. ${ref})`,
+  en: (ref) => `Your add-on order – Bergs Slussar Glamping (ref ${ref})`,
+  de: (ref) => `Deine Zusatzbestellung – Bergs Slussar Glamping (Ref. ${ref})`,
+  da: (ref) => `Din ekstra bestilling – Bergs Slussar Glamping (ref. ${ref})`,
+  no: (ref) => `Din tilleggsbestilling – Bergs Slussar Glamping (ref. ${ref})`,
+  nl: (ref) => `Je extra bestelling – Bergs Slussar Glamping (ref. ${ref})`,
+  fr: (ref) => `Votre commande d'options – Bergs Slussar Glamping (réf. ${ref})`,
 }
 
 function pickReplyLang(raw?: string): 'en' | 'de' | 'da' | 'no' | 'nl' | 'fr' {
@@ -110,11 +110,11 @@ const Email = ({
             </Section>
           ) : (
             <Section style={payCallout}>
-              <Text style={text}><strong>Utländsk gäst</strong> – gästen har fått ett mejl om att en betalningslänk är på väg. Skapa en Stripe-betalningslänk på {total} kr och svara med knappen nedan så får gästen länken på sitt språk.</Text>
+              <Text style={text}><strong>Utländsk gäst</strong> – gästen har fått ett mejl om att betalningsinstruktioner kommer. Följ upp manuellt vid behov och bekräfta i admin när betalningen kommit in.</Text>
               {mailtoHref && (
                 <>
-                  <Button href={mailtoHref} style={button}>✉️ Svara gästen med betalningslänk</Button>
-                  <Text style={helpText}>Öppnar din mejlklient med ett färdigt svar på {langLabel.toLowerCase()} – klistra in Stripe-länken där det står [PASTE STRIPE PAYMENT LINK HERE] och skicka.</Text>
+                  <Button href={mailtoHref} style={button}>✉️ Svara gästen</Button>
+                  <Text style={helpText}>Öppnar din mejlklient med ett färdigt svar på {langLabel.toLowerCase()}.</Text>
                 </>
               )}
               {!guestEmail && (

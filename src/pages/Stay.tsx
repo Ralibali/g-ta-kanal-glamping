@@ -91,15 +91,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "night" : "nights"}`,
     tooLate: "Sorry, it's too late to add extras for this stay — orders close two days before check-in. Reach out if it's urgent!",
     addons: "Add extras",
-    intro: "Pick what you'd like to add. You'll pay securely by card in the next step — we confirm the moment the payment goes through.",
+    intro: "Pick what you'd like to add. Afterward you'll get payment instructions — we confirm your order once payment has arrived.",
     already: "You've already ordered:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/person",
     perStay: "SEK",
     total: "Total",
-    submit: "Send request",
+    submit: "Send order",
     sending: "Sending…",
-    success: "Thank you! We've received your request.",
+    success: "Thank you! We've received your order.",
     error: "Something went wrong. Please try again shortly.",
     pending: "Awaiting payment",
     confirmed: "Confirmed",
@@ -107,11 +107,11 @@ const COPY = {
     addLabel: "Add",
     selectedLabel: "✓ Selected",
     currency: "SEK",
-    payTitle: "Payment instructions on the way",
-    payIntro: "We'll email you a secure payment link within a few hours so you can pay by card. Your request is reserved until then.",
+    payTitle: "Payment instructions",
+    payIntro: "We'll send payment instructions and confirm your order as soon as payment has arrived.",
     payAmountLabel: "Amount",
     payRefLabel: "Reference",
-    payContact: "Questions? Email hej@goglampingsweden.se",
+    payContact: "Questions? Email info@auroramedia.se",
     copy: "Copy",
     copied: "Copied!",
   },
@@ -124,7 +124,7 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "Nacht" : "Nächte"}`,
     tooLate: "Leider ist es zu spät, Extras hinzuzufügen — Bestellungen schließen zwei Tage vor Check-in.",
     addons: "Extras hinzufügen",
-    intro: "Wähle aus, was du möchtest. Wir senden dir per E-Mail einen sicheren Zahlungslink, mit dem du bequem mit Karte bezahlen kannst.",
+    intro: "Wähle aus, was du möchtest. Danach erhältst du Zahlungsinformationen — wir bestätigen deine Bestellung, sobald die Zahlung eingegangen ist.",
     already: "Bereits bestellt:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/Person",
@@ -141,10 +141,10 @@ const COPY = {
     selectedLabel: "✓ Gewählt",
     currency: "SEK",
     payTitle: "Zahlungsanweisungen folgen",
-    payIntro: "Du erhältst innerhalb weniger Stunden einen sicheren Zahlungslink per E-Mail, mit dem du mit Karte bezahlen kannst. Deine Anfrage ist bis dahin reserviert.",
+    payIntro: "Du erhältst Zahlungsinformationen und wir bestätigen deine Bestellung, sobald die Zahlung eingegangen ist.",
     payAmountLabel: "Betrag",
     payRefLabel: "Referenz",
-    payContact: "Fragen? hej@goglampingsweden.se",
+    payContact: "Fragen? info@auroramedia.se",
     copy: "Kopieren",
     copied: "Kopiert!",
   },
@@ -157,15 +157,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "nat" : "nætter"}`,
     tooLate: "Desværre er det for sent at tilføje ekstra — bestillinger lukker to dage før ankomst.",
     addons: "Tilføj ekstra",
-    intro: "Vælg hvad du vil have. Vi sender dig et sikkert betalingslink på mail, så du kan betale med kort.",
+    intro: "Vælg hvad du vil have. Bagefter får du betalingsinstruktioner — vi bekræfter din bestilling, når betalingen er modtaget.",
     already: "Allerede bestilt:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/person",
     perStay: "SEK",
     total: "Total",
-    submit: "Send ønske",
+    submit: "Send bestilling",
     sending: "Sender…",
-    success: "Tak! Vi har modtaget dit ønske.",
+    success: "Tak! Vi har modtaget din bestilling.",
     error: "Noget gik galt. Prøv igen om lidt.",
     pending: "Afventer betaling",
     confirmed: "Bekræftet",
@@ -174,10 +174,10 @@ const COPY = {
     selectedLabel: "✓ Valgt",
     currency: "SEK",
     payTitle: "Betalingsinstruktioner er på vej",
-    payIntro: "Du får et sikkert betalingslink på mail inden for få timer, så du kan betale med kort. Din bestilling er reserveret indtil da.",
+    payIntro: "Du får betalingsinstruktioner, og vi bekræfter din bestilling, når betalingen er modtaget.",
     payAmountLabel: "Beløb",
     payRefLabel: "Reference",
-    payContact: "Spørgsmål? hej@goglampingsweden.se",
+    payContact: "Spørgsmål? info@auroramedia.se",
     copy: "Kopiér",
     copied: "Kopieret!",
   },
@@ -190,15 +190,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "natt" : "netter"}`,
     tooLate: "Beklager, det er for sent å legge til tillegg — bestillinger lukkes to dager før ankomst.",
     addons: "Legg til tillegg",
-    intro: "Velg det du vil ha. Vi sender en sikker betalingslenke på e-post slik at du kan betale med kort.",
+    intro: "Velg det du vil ha. Etterpå får du betalingsinstruksjoner — vi bekrefter bestillingen når betalingen er mottatt.",
     already: "Allerede bestilt:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/person",
     perStay: "SEK",
     total: "Total",
-    submit: "Send ønske",
+    submit: "Send bestilling",
     sending: "Sender…",
-    success: "Takk! Vi har mottatt ønsket ditt.",
+    success: "Takk! Vi har mottatt bestillingen din.",
     error: "Noe gikk galt. Prøv igjen om litt.",
     pending: "Venter på betaling",
     confirmed: "Bekreftet",
@@ -207,10 +207,10 @@ const COPY = {
     selectedLabel: "✓ Valgt",
     currency: "SEK",
     payTitle: "Betalingsinstruksjoner på vei",
-    payIntro: "Du får en sikker betalingslenke på e-post innen få timer slik at du kan betale med kort. Bestillingen er reservert til da.",
+    payIntro: "Du får betalingsinstruksjoner, og vi bekrefter bestillingen når betalingen er mottatt.",
     payAmountLabel: "Beløp",
     payRefLabel: "Referanse",
-    payContact: "Spørsmål? hej@goglampingsweden.se",
+    payContact: "Spørsmål? info@auroramedia.se",
     copy: "Kopier",
     copied: "Kopiert!",
   },
@@ -223,15 +223,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "nacht" : "nachten"}`,
     tooLate: "Helaas is het te laat om extra's toe te voegen — bestellingen sluiten twee dagen voor aankomst.",
     addons: "Extra's toevoegen",
-    intro: "Kies wat je wilt. We sturen je per e-mail een veilige betaallink waarmee je met kaart kunt betalen.",
+    intro: "Kies wat je wilt. Daarna ontvang je betaalinstructies — we bevestigen je bestelling zodra de betaling is ontvangen.",
     already: "Al besteld:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/persoon",
     perStay: "SEK",
     total: "Totaal",
-    submit: "Verzoek versturen",
+    submit: "Bestelling versturen",
     sending: "Bezig…",
-    success: "Bedankt! We hebben je verzoek ontvangen.",
+    success: "Bedankt! We hebben je bestelling ontvangen.",
     error: "Er ging iets mis. Probeer het zo opnieuw.",
     pending: "Wacht op betaling",
     confirmed: "Bevestigd",
@@ -240,10 +240,10 @@ const COPY = {
     selectedLabel: "✓ Gekozen",
     currency: "SEK",
     payTitle: "Betaalinstructies onderweg",
-    payIntro: "Je ontvangt binnen enkele uren een veilige betaallink per e-mail om met kaart te betalen. Je verzoek blijft tot dan gereserveerd.",
+    payIntro: "Je ontvangt betaalinstructies en we bevestigen je bestelling zodra de betaling is ontvangen.",
     payAmountLabel: "Bedrag",
     payRefLabel: "Referentie",
-    payContact: "Vragen? hej@goglampingsweden.se",
+    payContact: "Vragen? info@auroramedia.se",
     copy: "Kopiëren",
     copied: "Gekopieerd!",
   },
@@ -256,15 +256,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "nuit" : "nuits"}`,
     tooLate: "Désolé, il est trop tard pour ajouter des options — les commandes ferment deux jours avant l'arrivée.",
     addons: "Ajouter des options",
-    intro: "Choisissez ce que vous souhaitez. Nous vous enverrons par e-mail un lien de paiement sécurisé pour payer par carte.",
+    intro: "Choisissez ce que vous souhaitez. Vous recevrez ensuite les instructions de paiement — nous confirmerons votre commande dès réception du paiement.",
     already: "Déjà commandé :",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/pers.",
     perStay: "SEK",
     total: "Total",
-    submit: "Envoyer la demande",
+    submit: "Envoyer la commande",
     sending: "Envoi…",
-    success: "Merci ! Nous avons reçu votre demande.",
+    success: "Merci ! Nous avons reçu votre commande.",
     error: "Une erreur est survenue. Réessayez dans un instant.",
     pending: "En attente de paiement",
     confirmed: "Confirmé",
@@ -273,10 +273,10 @@ const COPY = {
     selectedLabel: "✓ Choisi",
     currency: "SEK",
     payTitle: "Instructions de paiement en route",
-    payIntro: "Vous recevrez sous quelques heures un lien de paiement sécurisé par e-mail pour régler par carte. Votre demande est réservée d'ici là.",
+    payIntro: "Vous recevrez les instructions de paiement et nous confirmerons votre commande dès réception du paiement.",
     payAmountLabel: "Montant",
     payRefLabel: "Référence",
-    payContact: "Questions ? hej@goglampingsweden.se",
+    payContact: "Questions ? info@auroramedia.se",
     copy: "Copier",
     copied: "Copié !",
   },
@@ -313,7 +313,7 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
       note: "Vi skickar SMS så fort frukosten står klar vid portalen. Pris per person.",
     },
     en: {
-      tagline: "Freshly baked from Bostället — delivered to your tent.",
+      tagline: "Freshly baked from Boställets Vedugnsbageri — placed at the portal around 8:30.",
       bullets: [
         "Fresh rolls & croissant from the bakery",
         "Cheese, ham, butter & jam",
@@ -321,7 +321,7 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
         "Thermos of coffee or tea",
         "Freshly pressed juice",
       ],
-      note: "Delivered to your tent at 8:30 AM. Price per person.",
+      note: "We'll send a text as soon as breakfast is ready at the portal. Price per person.",
     },
   },
   fika_bag: {
@@ -431,51 +431,6 @@ export default function Stay() {
 
   useEffect(() => { loadStay(); }, [token]);
 
-  // Handle return from Stripe Checkout
-  useEffect(() => {
-    if (!token) return;
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get("payment");
-    const sessionId = params.get("session_id");
-    if (!status) return;
-
-    const clean = () => {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("payment");
-      url.searchParams.delete("session_id");
-      window.history.replaceState({}, "", url.toString());
-    };
-
-    if (status === "cancelled") {
-      toast.info("Betalningen avbröts. Din beställning har inte skickats.");
-      clean();
-      return;
-    }
-    if (status === "success" && sessionId) {
-      (async () => {
-        try {
-          const { data: res, error } = await (supabase as any).functions.invoke("verify-addon-payment", {
-            body: { session_id: sessionId },
-          });
-          if (error) throw error;
-          if ((res as any)?.paid) {
-            toast.success("Tack! Betalning mottagen och beställning bekräftad. 🌿");
-            await loadStay();
-          } else {
-            toast.info("Vi väntar på bekräftelse från banken — det brukar gå på några sekunder. Ladda om sidan om det dröjer.");
-          }
-        } catch (e) {
-          console.error("verify failed", e);
-          toast.error("Kunde inte verifiera betalningen. Kontakta oss om summan drogs.");
-        } finally {
-          clean();
-        }
-      })();
-    }
-  }, [token]);
-
-
-
   if (loading) return <Centered>{COPY.sv.loading}</Centered>;
   if (!data || !data.booking) return <Centered>{COPY.sv.notFound}</Centered>;
 
@@ -541,7 +496,7 @@ export default function Stay() {
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
       if ((res as any)?.swish) {
-        // Swedish flow: show Swish card, order registered as "requested"
+        // Manual-payment flow: show instructions, order registered as "requested"
         setPaidTotal((res as any)?.total ?? total);
         setDone(true);
         setSubmitting(false);
@@ -549,8 +504,8 @@ export default function Stay() {
         return;
       }
       const url = (res as any)?.url;
-      if (!url) throw new Error("Kunde inte starta kortbetalning.");
-      // Redirect to Stripe Checkout
+      if (!url) throw new Error("Kunde inte starta betalningen.");
+      // Redirect to payment provider
       window.location.href = url;
     } catch (err: any) {
       toast.error(err?.message ?? t.error);
@@ -761,7 +716,7 @@ export default function Stay() {
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
           </Card>
-        ) : data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).length === 0 ? null : (
+        ) : data.addons.filter((a) => a.slug !== 'sup_rental' && !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).length === 0 ? null : (
           <>
             <div id="addons-section" className="scroll-mt-4">
               <h2 className="font-serif text-xl text-primary mb-1">{t.addons}</h2>
@@ -813,7 +768,7 @@ export default function Stay() {
             )}
 
             <div className="space-y-3">
-              {data.addons.filter((a) => !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).map((a) => {
+              {data.addons.filter((a) => a.slug !== 'sup_rental' && !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).map((a) => {
                 const q = qty[a.id] ?? 0;
                 const name = isSv ? a.name_sv : a.name_en;
                 const desc = isSv ? a.description_sv : a.description_en;
@@ -910,8 +865,8 @@ export default function Stay() {
                 <div className="flex items-start gap-2">
                   <ShieldCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Swishbetalning" : "Payment link"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Swisha efter att du skickat beställningen" : "You'll receive secure payment instructions"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Swishbetalning" : "Payment instructions"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Swisha efter att du skickat beställningen" : "You'll receive payment instructions"}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
@@ -924,8 +879,8 @@ export default function Stay() {
                 <div className="flex items-start gap-2">
                   <CreditCard className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Svenska gäster betalar med Swish" : "Secure card payment"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Instruktioner visas direkt efter beställning" : "Visa, Mastercard, Apple/Google Pay via Stripe"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Svenska gäster betalar med Swish" : "Manual confirmation"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Instruktioner visas direkt efter beställning" : "We confirm once payment has arrived"}</div>
                   </div>
                 </div>
               </div>
@@ -1115,7 +1070,7 @@ export default function Stay() {
               {isSv ? (
                 <>Christoffer svarar i mobilen per sms: <a href="sms:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a>. Vi finns nära till hands om något behövs.</>
               ) : (
-                <>Christoffer replies by text on mobile: <a href="sms:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:hej@goglampingsweden.se" className="text-primary underline">hej@goglampingsweden.se</a>. We're close by if anything comes up.</>
+                <>Christoffer replies by text on mobile: <a href="sms:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a>. We're close by if anything comes up.</>
               )}
             </InfoRow>
           </CardContent>
