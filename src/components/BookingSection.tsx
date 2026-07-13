@@ -73,7 +73,19 @@ const BookingSection = () => {
         <div className="text-center mt-6">
           <button
             type="button"
-            onClick={() => setShowAvailability((v) => !v)}
+            onClick={() => {
+              setShowAvailability((v) => {
+                const next = !v;
+                if (next) {
+                  trackEvent("Booking Search", {
+                    product_category: "booking",
+                    language: lang,
+                    source: "availability_calendar",
+                  });
+                }
+                return next;
+              });
+            }}
             className="inline-flex items-center gap-2 text-primary-foreground/90 hover:text-primary-foreground underline-offset-4 hover:underline font-medium"
           >
             <Calendar className="h-4 w-4" />
