@@ -11,8 +11,6 @@ interface Props {
   items?: Item[]
   total?: number
   lang?: string
-  swishNumber?: string
-  swishPayee?: string
   swishReference?: string
 }
 
@@ -138,14 +136,13 @@ function pickLang(raw: string | undefined): LangKey {
 
 const Email = ({
   firstName, tentName, items = [], total = 0, lang,
-  swishNumber = '1230628289', swishPayee = 'Aurora Media AB', swishReference = '',
+  swishReference = '',
 }: Props) => {
   const l = pickLang(lang)
   const c = COPY[l]
   const isSv = l === 'sv'
   const name = firstName || (isSv ? 'där' : l === 'de' ? 'du' : l === 'fr' ? 'cher client' : 'there')
   const tent = tentName || (isSv ? 'ert tält' : l === 'de' ? 'dein Zelt' : l === 'fr' ? 'votre tente' : 'your tent')
-  const swishUrl = `https://app.swish.nu/1/p/sw/?sw=${swishNumber}&amt=${total}&cur=SEK&msg=${encodeURIComponent(swishReference)}&src=qr`
   return (
     <Html lang={l} dir="ltr">
       <Head />
@@ -197,7 +194,7 @@ export const template = {
     firstName: 'Anna', tentName: 'Naturkärnan',
     items: [{ name: 'Frukost ×2', quantity: 2, total: 418 }],
     total: 418, lang: 'sv',
-    swishNumber: '1230628289', swishPayee: 'Aurora Media AB', swishReference: 'BOK-1234',
+    swishReference: 'BOK-1234',
   },
 } satisfies TemplateEntry
 
