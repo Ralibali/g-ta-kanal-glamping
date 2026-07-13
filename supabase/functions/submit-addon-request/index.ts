@@ -255,7 +255,7 @@ Deno.serve(async (req) => {
   const stripe = new Stripe(stripeKey, { apiVersion: '2025-08-27.basil' })
 
   const origin = req.headers.get('origin') || 'https://goglampingsweden.se'
-  const ref = booking.booking_number || String(booking.public_token).slice(0, 8).toUpperCase()
+
 
   const localeMap: Record<string, string> = { sv: 'sv', en: 'en', de: 'de', da: 'da', no: 'nb', nl: 'nl', fr: 'fr' }
   const stripeLocale = localeMap[lang] || 'auto'
