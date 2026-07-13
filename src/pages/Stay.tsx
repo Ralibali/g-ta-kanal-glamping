@@ -515,6 +515,14 @@ export default function Stay() {
         body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined },
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
+      if ((res as any)?.swish) {
+        // Swedish flow: show Swish card, order registered as "requested"
+        setPaidTotal((res as any)?.total ?? total);
+        setDone(true);
+        setSubmitting(false);
+        await loadStay();
+        return;
+      }
       const url = (res as any)?.url;
       if (!url) throw new Error("Kunde inte starta kortbetalning.");
       // Redirect to Stripe Checkout
@@ -523,6 +531,7 @@ export default function Stay() {
       toast.error(err?.message ?? t.error);
       setSubmitting(false);
     }
+
   };
 
   return (
