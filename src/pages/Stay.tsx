@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ const ADDON_IMAGES: Record<string, string> = {
   late_checkout: addonEarlyCheckinImg,
   breakfast: addonBreakfastImg,
   fika_bag: addonFikaImg,
+  pet: addonEarlyCheckinImg,
 };
 
 
@@ -56,15 +57,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "natt" : "nätter"}`,
     tooLate: "Tyvärr är det för sent att lägga till tillval inför den här vistelsen — beställning stänger två dygn före incheckning. Hör av dig till oss om något är akut!",
     addons: "Lägg till tillval",
-    intro: "Pricka i vad du vill lägga till. Efteråt får du Swish-instruktioner — vi bekräftar beställningen när betalningen kommit in.",
+    intro: "Pricka i vad du vill lägga till. Du betalar tryggt med kort i nästa steg — vi bekräftar direkt när betalningen är genomförd.",
     already: "Du har redan beställt:",
     pcs: (n: number) => `${n} st`,
     perPerson: "kr/person",
     perStay: "kr",
     total: "Summa",
-    submit: "Skicka beställning",
-    sending: "Skickar…",
-    success: "Tack! Vi har tagit emot din beställning.",
+    submit: "Gå till betalning",
+    sending: "Öppnar betalning…",
+    success: "Tack! Betalningen är genomförd och din beställning är bekräftad.",
     error: "Något gick fel. Försök igen om en stund.",
     pending: "Avvaktar betalning",
     confirmed: "Bekräftad",
@@ -72,8 +73,8 @@ const COPY = {
     addLabel: "Lägg till",
     selectedLabel: "✓ Vald",
     currency: "kr",
-    swishTitle: "Betala med Swish",
-    swishIntro: "Swisha summan nedan så bekräftar vi din beställning så snart betalningen kommit in.",
+    swishTitle: "Betalning genomförd",
+    swishIntro: "Din betalning är genomförd och beställningen är bekräftad.",
     swishNumber: "Swish-nummer",
     swishPayee: "Mottagare",
     swishAmount: "Belopp",
@@ -91,15 +92,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "night" : "nights"}`,
     tooLate: "Sorry, it's too late to add extras for this stay — orders close two days before check-in. Reach out if it's urgent!",
     addons: "Add extras",
-    intro: "Pick what you'd like to add. Afterward you'll get payment instructions — we confirm your order once payment has arrived.",
+    intro: "Pick what you'd like to add. You'll pay securely by card in the next step — we confirm as soon as the payment is complete.",
     already: "You've already ordered:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/person",
     perStay: "SEK",
     total: "Total",
-    submit: "Send order",
-    sending: "Sending…",
-    success: "Thank you! We've received your order.",
+    submit: "Continue to payment",
+    sending: "Opening payment…",
+    success: "Thank you! Your payment is complete and your order is confirmed.",
     error: "Something went wrong. Please try again shortly.",
     pending: "Awaiting payment",
     confirmed: "Confirmed",
@@ -107,8 +108,8 @@ const COPY = {
     addLabel: "Add",
     selectedLabel: "✓ Selected",
     currency: "SEK",
-    payTitle: "Payment instructions",
-    payIntro: "We'll send payment instructions and confirm your order as soon as payment has arrived.",
+    payTitle: "Payment complete",
+    payIntro: "Your payment is complete and your add-ons are confirmed.",
     payAmountLabel: "Amount",
     payRefLabel: "Reference",
     payContact: "Questions? Email info@auroramedia.se",
@@ -124,15 +125,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "Nacht" : "Nächte"}`,
     tooLate: "Leider ist es zu spät, Extras hinzuzufügen — Bestellungen schließen zwei Tage vor Check-in.",
     addons: "Extras hinzufügen",
-    intro: "Wähle aus, was du möchtest. Danach erhältst du Zahlungsinformationen — wir bestätigen deine Bestellung, sobald die Zahlung eingegangen ist.",
+    intro: "Wähle aus, was du hinzufügen möchtest. Im nächsten Schritt bezahlst du sicher per Karte — wir bestätigen, sobald die Zahlung abgeschlossen ist.",
     already: "Bereits bestellt:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/Person",
     perStay: "SEK",
     total: "Summe",
-    submit: "Anfrage senden",
-    sending: "Sende…",
-    success: "Danke! Wir haben deine Anfrage erhalten.",
+    submit: "Weiter zur Zahlung",
+    sending: "Zahlung wird geöffnet…",
+    success: "Danke! Die Zahlung ist abgeschlossen und deine Bestellung ist bestätigt.",
     error: "Etwas ist schiefgelaufen. Bitte versuche es gleich erneut.",
     pending: "Wartet auf Zahlung",
     confirmed: "Bestätigt",
@@ -157,15 +158,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "nat" : "nætter"}`,
     tooLate: "Desværre er det for sent at tilføje ekstra — bestillinger lukker to dage før ankomst.",
     addons: "Tilføj ekstra",
-    intro: "Vælg hvad du vil have. Bagefter får du betalingsinstruktioner — vi bekræfter din bestilling, når betalingen er modtaget.",
+    intro: "Vælg, hvad du vil tilføje. Du betaler sikkert med kort i næste trin — vi bekræfter, så snart betalingen er gennemført.",
     already: "Allerede bestilt:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/person",
     perStay: "SEK",
     total: "Total",
-    submit: "Send bestilling",
-    sending: "Sender…",
-    success: "Tak! Vi har modtaget din bestilling.",
+    submit: "Fortsæt til betaling",
+    sending: "Åbner betaling…",
+    success: "Tak! Betalingen er gennemført, og din bestilling er bekræftet.",
     error: "Noget gik galt. Prøv igen om lidt.",
     pending: "Afventer betaling",
     confirmed: "Bekræftet",
@@ -190,15 +191,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "natt" : "netter"}`,
     tooLate: "Beklager, det er for sent å legge til tillegg — bestillinger lukkes to dager før ankomst.",
     addons: "Legg til tillegg",
-    intro: "Velg det du vil ha. Etterpå får du betalingsinstruksjoner — vi bekrefter bestillingen når betalingen er mottatt.",
+    intro: "Velg hva du vil legge til. Du betaler trygt med kort i neste steg — vi bekrefter så snart betalingen er gjennomført.",
     already: "Allerede bestilt:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/person",
     perStay: "SEK",
     total: "Total",
-    submit: "Send bestilling",
-    sending: "Sender…",
-    success: "Takk! Vi har mottatt bestillingen din.",
+    submit: "Fortsett til betaling",
+    sending: "Åpner betaling…",
+    success: "Takk! Betalingen er gjennomført og bestillingen er bekreftet.",
     error: "Noe gikk galt. Prøv igjen om litt.",
     pending: "Venter på betaling",
     confirmed: "Bekreftet",
@@ -223,15 +224,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "nacht" : "nachten"}`,
     tooLate: "Helaas is het te laat om extra's toe te voegen — bestellingen sluiten twee dagen voor aankomst.",
     addons: "Extra's toevoegen",
-    intro: "Kies wat je wilt. Daarna ontvang je betaalinstructies — we bevestigen je bestelling zodra de betaling is ontvangen.",
+    intro: "Kies wat je wilt toevoegen. Je betaalt veilig met kaart in de volgende stap — we bevestigen zodra de betaling is voltooid.",
     already: "Al besteld:",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/persoon",
     perStay: "SEK",
     total: "Totaal",
-    submit: "Bestelling versturen",
-    sending: "Bezig…",
-    success: "Bedankt! We hebben je bestelling ontvangen.",
+    submit: "Doorgaan naar betaling",
+    sending: "Betaling openen…",
+    success: "Bedankt! De betaling is voltooid en je bestelling is bevestigd.",
     error: "Er ging iets mis. Probeer het zo opnieuw.",
     pending: "Wacht op betaling",
     confirmed: "Bevestigd",
@@ -256,15 +257,15 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "nuit" : "nuits"}`,
     tooLate: "Désolé, il est trop tard pour ajouter des options — les commandes ferment deux jours avant l'arrivée.",
     addons: "Ajouter des options",
-    intro: "Choisissez ce que vous souhaitez. Vous recevrez ensuite les instructions de paiement — nous confirmerons votre commande dès réception du paiement.",
+    intro: "Choisissez ce que vous souhaitez ajouter. Vous paierez par carte en toute sécurité à l’étape suivante — nous confirmerons dès que le paiement sera effectué.",
     already: "Déjà commandé :",
     pcs: (n: number) => `${n}×`,
     perPerson: "SEK/pers.",
     perStay: "SEK",
     total: "Total",
-    submit: "Envoyer la commande",
-    sending: "Envoi…",
-    success: "Merci ! Nous avons reçu votre commande.",
+    submit: "Continuer vers le paiement",
+    sending: "Ouverture du paiement…",
+    success: "Merci ! Le paiement est terminé et votre commande est confirmée.",
     error: "Une erreur est survenue. Réessayez dans un instant.",
     pending: "En attente de paiement",
     confirmed: "Confirmé",
@@ -295,6 +296,7 @@ function iconFor(slug: string) {
   if (slug === "fika_bag") return <Cookie className="h-5 w-5" />;
   if (slug === "early_checkin") return <Clock className="h-5 w-5" />;
   if (slug === "late_checkout") return <Clock className="h-5 w-5" />;
+  if (slug === "pet") return <Dog className="h-5 w-5" />;
   return null;
 }
 
@@ -304,24 +306,24 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
     sv: {
       tagline: "Nybakat från Boställets Vedugnsbageri — ställs vid portalen runt kl 08:30.",
       bullets: [
-        "Färska frallor & croissant från bageriet",
-        "Ost, skinka, smör & marmelad",
-        "Yoghurt med müsli och säsongens frukt",
-        "Termos med kaffe eller te",
-        "Färskpressad juice",
+        "En nygräddad fröbulle med smör, ost, sallad & skinka",
+        "Ett hårdkokt ägg — en klassiker som mättar och ger energi",
+        "Naturell yoghurt med hemlagad müsli och säsongens frukt vid sidan",
+        "En hembakad småkaka",
+        "Juice (33 cl) — vid bokning för två delar ni på en förpackning",
       ],
-      note: "Vi skickar SMS så fort frukosten står klar vid portalen. Pris per person.",
+      note: "Kaffe finns i tältet för egen servering. Frukosten ställs vid portalen ca kl 08:30 — vi skickar ett SMS så fort den är på plats. Pris per person och per dag.",
     },
     en: {
       tagline: "Freshly baked from Boställets Vedugnsbageri — placed at the portal around 8:30.",
       bullets: [
-        "Fresh rolls & croissant from the bakery",
-        "Cheese, ham, butter & jam",
-        "Yoghurt with muesli and seasonal fruit",
-        "Thermos of coffee or tea",
-        "Freshly pressed juice",
+        "A freshly baked seed roll with butter, cheese, lettuce and ham",
+        "A hard-boiled egg — a classic that keeps you going",
+        "Plain yoghurt with homemade muesli and seasonal fruit on the side",
+        "A homemade cookie",
+        "Juice (33 cl) — when booking for two, you share one package",
       ],
-      note: "We'll send a text as soon as breakfast is ready at the portal. Price per person.",
+      note: "Coffee is available in the tent for self-service. Breakfast is placed at the portal around 8:30 — we'll send a text as soon as it's there. Price per person per day.",
     },
   },
   fika_bag: {
@@ -390,6 +392,26 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
       note: "399 SEK per booking, regardless of number of guests.",
     },
   },
+  pet: {
+    sv: {
+      tagline: "Husdjur som tillval — 399 kr per djur.",
+      bullets: [
+        "Lägg till om ni tar med hund eller annat husdjur",
+        "Pris per djur",
+        "Vi förbereder tältet så att vistelsen blir smidig för alla",
+      ],
+      note: "Tälten är fortsatt helt rökfria och husdjur ska hållas under uppsikt på området.",
+    },
+    en: {
+      tagline: "Pets as an add-on — 399 SEK per pet.",
+      bullets: [
+        "Add this if you bring a dog or another pet",
+        "Price per pet",
+        "We'll prepare the tent so the stay works smoothly for everyone",
+      ],
+      note: "The tents remain strictly non-smoking and pets must be supervised on site.",
+    },
+  },
 };
 
 function getDetails(slug: string, lang: string) {
@@ -400,6 +422,7 @@ function getDetails(slug: string, lang: string) {
 
 export default function Stay() {
   const { token } = useParams<{ token: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState<StayData | null>(null);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState<Record<string, number>>({});
@@ -430,6 +453,37 @@ export default function Stay() {
   };
 
   useEffect(() => { loadStay(); }, [token]);
+
+  useEffect(() => {
+    const sessionId = searchParams.get("session_id");
+    if (!sessionId || searchParams.get("payment") !== "success") return;
+    let active = true;
+    setSubmitting(true);
+    (async () => {
+      try {
+        const { data: verified, error } = await (supabase as any).functions.invoke("verify-addon-payment", {
+          body: { session_id: sessionId },
+        });
+        if (error || (verified as any)?.error) throw new Error((verified as any)?.error ?? error?.message);
+        if (!active) return;
+        setPaidTotal(Number((verified as any)?.total ?? 0));
+        setDone(true);
+        toast.success("Betalningen är genomförd.");
+        await loadStay();
+        const next = new URLSearchParams(searchParams);
+        next.delete("session_id");
+        next.delete("payment");
+        setSearchParams(next, { replace: true });
+      } catch (err: any) {
+        if (active) toast.error(err?.message ?? "Kunde inte bekräfta betalningen.");
+      } finally {
+        if (active) setSubmitting(false);
+      }
+    })();
+    return () => { active = false; };
+    // Kör bara när länken öppnas med Stripe-session i URL:en.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   if (loading) return <Centered>{COPY.sv.loading}</Centered>;
   if (!data || !data.booking) return <Centered>{COPY.sv.notFound}</Centered>;
@@ -479,6 +533,9 @@ export default function Stay() {
   const hasEarly = orderedSlugs.has("early_checkin");
   const hasLate = orderedSlugs.has("late_checkout");
   const hasAnyAddon = orderedSlugs.size > 0;
+  const lockRevealHour = hasEarly ? 12 : 15;
+  const [year, month, day] = data.booking.checkin_date.split("-").map(Number);
+  const lockCodeVisible = Date.now() >= new Date(year, month - 1, day, lockRevealHour, 0, 0).getTime();
 
   const scrollToAddons = () => {
     document.getElementById("addons-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -495,14 +552,6 @@ export default function Stay() {
         body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined },
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
-      if ((res as any)?.swish) {
-        // Manual-payment flow: show instructions, order registered as "requested"
-        setPaidTotal((res as any)?.total ?? total);
-        setDone(true);
-        setSubmitting(false);
-        await loadStay();
-        return;
-      }
       const url = (res as any)?.url;
       if (!url) throw new Error("Kunde inte starta betalningen.");
       // Redirect to payment provider
@@ -526,7 +575,7 @@ export default function Stay() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-background" />
         <div className="relative h-full max-w-2xl mx-auto px-4 flex flex-col justify-end pb-6">
           <p className="text-white/80 text-xs uppercase tracking-[0.2em] mb-2 font-sans">
-            {isSv ? "Välkomna till" : "Welcome to"} Go Glamping Sweden
+            {isSv ? "Välkomna till" : "Welcome to"} Bergs Slussar Glamping
           </p>
           <h1 className="font-serif text-3xl md:text-4xl text-white drop-shadow-md">
             {firstName ? t.welcome(firstName) : t.welcomeNoName}
@@ -568,10 +617,16 @@ export default function Stay() {
                   {ci} → {co} · {t.nights(data.booking.nights ?? 1)}
                 </div>
                 <div className="mt-3 rounded-md border border-primary/30 bg-primary/5 p-3">
-                  <div className="font-medium text-foreground">
-                    🔒 {isSv ? "Kod till hänglåset" : "Code for the lock"}: <span className="font-mono text-lg tracking-widest">2018</span>
-                  </div>
-                  {multi && (
+                  {lockCodeVisible ? (
+                    <div className="font-medium text-foreground">
+                      🔒 {isSv ? "Kod till hänglåset" : "Code for the lock"}: <span className="font-mono text-lg tracking-widest">2018</span>
+                    </div>
+                  ) : (
+                    <div className="font-medium text-foreground">
+                      🔒 {isSv ? "Koden till hänglåset visas här när det är dags att checka in." : "The lock code appears here when it is time to check in."}
+                    </div>
+                  )}
+                  {lockCodeVisible && multi && (
                     <div className="text-xs text-muted-foreground mt-1">
                       {isSv ? `Samma kod till alla ${tentNames.length} tälten.` : `Same code for all ${tentNames.length} tents.`}
                     </div>
@@ -666,8 +721,8 @@ export default function Stay() {
                 className="mt-1 w-full text-left rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors p-3 text-sm text-foreground/90"
               >
                 {isSv
-                    ? "Vill ni göra vistelsen extra mysig? Lägg till frukost eller fikapåse nedan 👇"
-                  : "Want to make your stay even sweeter? Add breakfast or a fika bag below 👇"}
+                    ? "Vill ni förgylla vistelsen? Lägg till frukost eller mer tid vid kanalen nedan 👇"
+                  : "Want to make your stay even better? Add breakfast or more time by the canal below 👇"}
               </button>
             )}
           </CardContent>
@@ -697,21 +752,18 @@ export default function Stay() {
         )}
 
         {done ? (
-          isSv ? (
-            <SwishCard
-              t={t}
-              amount={paidTotal}
-              reference={data.booking.booking_number || data.booking.public_token.slice(0, 8).toUpperCase()}
-              swishNumber={data.settings?.swish_number || "1230628289"}
-              payee={data.settings?.swish_payee || "Aurora Media AB"}
-            />
-          ) : (
-            <PaymentLinkCard
-              t={t}
-              amount={paidTotal}
-              reference={data.booking.booking_number || data.booking.public_token.slice(0, 8).toUpperCase()}
-            />
-          )
+          <Card className="border-primary/50 bg-primary/5">
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="h-8 w-8 text-primary shrink-0" />
+                <div>
+                  <h2 className="font-serif text-xl text-primary">{t.success}</h2>
+                  <p className="text-sm text-muted-foreground">{isSv ? "Bekräftelsen skickas även till din e-post." : "A confirmation is also sent to your email."}</p>
+                </div>
+              </div>
+              {paidTotal > 0 && <div className="text-sm font-medium">{t.total}: {paidTotal} {t.currency}</div>}
+            </CardContent>
+          </Card>
         ) : tooLate ? (
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
@@ -865,22 +917,22 @@ export default function Stay() {
                 <div className="flex items-start gap-2">
                   <ShieldCheck className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Swishbetalning" : "Payment instructions"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Swisha efter att du skickat beställningen" : "You'll receive payment instructions"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Enkelt att beställa" : "Easy to order"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Pricka i och betala direkt här på sidan" : "Tick your choices and pay directly on this page"}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <MessageCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Bekräftas manuellt" : "Confirmed manually"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Vi bekräftar så snart betalningen syns" : "We confirm as soon as payment is received"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Snabb bekräftelse" : "Fast confirmation"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Direkt när betalningen är genomförd" : "As soon as the payment is complete"}</div>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <CreditCard className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Svenska gäster betalar med Swish" : "Manual confirmation"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Instruktioner visas direkt efter beställning" : "We confirm once payment has arrived"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Säker betalning" : "Secure payment"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Swish eller kort — Visa, Mastercard, Apple/Google Pay via Stripe" : "Card, Apple Pay and Google Pay via Stripe"}</div>
                   </div>
                 </div>
               </div>

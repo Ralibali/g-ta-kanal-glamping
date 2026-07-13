@@ -32,12 +32,12 @@ const REPLY_GREETING: Record<string, string> = {
 }
 
 const REPLY_BODY: Record<string, (ref: string, total: number) => string> = {
-  en: (ref, total) => `,\n\nThanks for your add-on order (ref ${ref}, total ${total} SEK).\nWe will confirm your order as soon as payment has arrived.\n\nLet us know if you have any questions.\n\nWarm regards,\nBergs Slussar Glamping`,
-  de: (ref, total) => `,\n\nvielen Dank für deine Zusatzbestellung (Ref. ${ref}, Gesamt ${total} SEK).\nWir bestätigen deine Bestellung, sobald die Zahlung eingegangen ist.\n\nMelde dich gern bei Fragen.\n\nHerzliche Grüße,\nBergs Slussar Glamping`,
-  da: (ref, total) => `,\n\ntak for din ekstra bestilling (ref. ${ref}, i alt ${total} SEK).\nVi bekræfter din bestilling, når betalingen er modtaget.\n\nSig endelig til, hvis du har spørgsmål.\n\nMange hilsner,\nBergs Slussar Glamping`,
-  no: (ref, total) => `,\n\ntakk for din tilleggsbestilling (ref. ${ref}, totalt ${total} SEK).\nVi bekrefter bestillingen når betalingen er mottatt.\n\nSi gjerne fra om du har spørsmål.\n\nVennlig hilsen,\nBergs Slussar Glamping`,
-  nl: (ref, total) => `,\n\nbedankt voor je extra bestelling (ref. ${ref}, totaal ${total} SEK).\nWe bevestigen je bestelling zodra de betaling is ontvangen.\n\nLaat het ons gerust weten als je vragen hebt.\n\nMet vriendelijke groet,\nBergs Slussar Glamping`,
-  fr: (ref, total) => `,\n\nmerci pour votre commande d'options (réf. ${ref}, total ${total} SEK).\nNous confirmerons votre commande dès réception du paiement.\n\nN'hésitez pas en cas de questions.\n\nBien cordialement,\nBergs Slussar Glamping`,
+  en: (ref, total) => `,\n\nThanks for your add-on order (ref ${ref}, total ${total} SEK).\nYour payment is complete and the order is confirmed.\n\nLet us know if you have any questions.\n\nWarm regards,\nBergs Slussar Glamping`,
+  de: (ref, total) => `,\n\nvielen Dank für deine Zusatzbestellung (Ref. ${ref}, Gesamt ${total} SEK).\nDie Zahlung ist abgeschlossen und die Bestellung ist bestätigt.\n\nMelde dich gern bei Fragen.\n\nHerzliche Grüße,\nBergs Slussar Glamping`,
+  da: (ref, total) => `,\n\ntak for din ekstra bestilling (ref. ${ref}, i alt ${total} SEK).\nBetalingen er gennemført, og bestillingen er bekræftet.\n\nSig endelig til, hvis du har spørgsmål.\n\nMange hilsner,\nBergs Slussar Glamping`,
+  no: (ref, total) => `,\n\ntakk for din tilleggsbestilling (ref. ${ref}, totalt ${total} SEK).\nBetalingen er gjennomført og bestillingen er bekreftet.\n\nSi gjerne fra om du har spørsmål.\n\nVennlig hilsen,\nBergs Slussar Glamping`,
+  nl: (ref, total) => `,\n\nbedankt voor je extra bestelling (ref. ${ref}, totaal ${total} SEK).\nDe betaling is voltooid en je bestelling is bevestigd.\n\nLaat het ons gerust weten als je vragen hebt.\n\nMet vriendelijke groet,\nBergs Slussar Glamping`,
+  fr: (ref, total) => `,\n\nmerci pour votre commande d'options (réf. ${ref}, total ${total} SEK).\nLe paiement est terminé et votre commande est confirmée.\n\nN'hésitez pas en cas de questions.\n\nBien cordialement,\nBergs Slussar Glamping`,
 }
 
 const REPLY_SUBJECT: Record<string, (ref: string) => string> = {
@@ -77,10 +77,10 @@ const Email = ({
   return (
     <Html lang="sv" dir="ltr">
       <Head />
-      <Preview>Nytt tillvalsönskemål från {guestName ?? 'gäst'}</Preview>
+      <Preview>Betald tillvalsbeställning från {guestName ?? 'gäst'}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Heading style={h1}>🛎️ Nytt tillvalsönskemål</Heading>
+          <Heading style={h1}>✅ Betald tillvalsbeställning</Heading>
           <Section style={card}>
             <Text style={label}>Gäst</Text>
             <Text style={value}>{guestName ?? '—'}{guestEmail ? ` • ${guestEmail}` : ''}</Text>
@@ -106,11 +106,11 @@ const Email = ({
 
           {isSv ? (
             <Section style={swishCallout}>
-              <Text style={text}><strong>Svensk gäst</strong> – får Swish-instruktioner automatiskt. Bekräfta beställningen i admin när betalningen kommit in.</Text>
+              <Text style={text}><strong>Svensk gäst</strong> – betalningen är genomförd via Stripe. Kontrollera/bekräfta i admin vid behov.</Text>
             </Section>
           ) : (
             <Section style={payCallout}>
-              <Text style={text}><strong>Utländsk gäst</strong> – gästen har fått ett mejl om att betalningsinstruktioner kommer. Följ upp manuellt vid behov och bekräfta i admin när betalningen kommit in.</Text>
+              <Text style={text}><strong>Utländsk gäst</strong> – betalningen är genomförd via Stripe. Gästens bekräftelsemejl är skickat.</Text>
               {mailtoHref && (
                 <>
                   <Button href={mailtoHref} style={button}>✉️ Svara gästen</Button>

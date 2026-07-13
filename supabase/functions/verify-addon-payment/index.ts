@@ -179,7 +179,7 @@ Deno.serve(async (req) => {
           idempotencyKey: `addon-guest-paid-${sessionId}`,
           templateData: {
             firstName, tentName, items: emailItems, total, lang,
-            paid: true, reference: ref,
+            paid: true, reference: ref, swishReference: ref,
           },
         }),
       })
