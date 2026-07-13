@@ -59,6 +59,7 @@ async function sendSms(toPhone: string, body: string): Promise<{ id: string } | 
 const ADDON_LABELS: Record<string, Record<string, string>> = {
   breakfast:     { sv: 'frukost', en: 'breakfast', de: 'Frühstück', da: 'morgenmad', no: 'frokost', nl: 'ontbijt', fr: 'petit-déjeuner' },
   early_checkin: { sv: 'tidig incheckning', en: 'early check-in', de: 'früher Check-in', da: 'tidlig check-in', no: 'tidlig innsjekk', nl: 'vroeg inchecken', fr: 'arrivée anticipée' },
+  late_checkout: { sv: 'sen utcheckning', en: 'late check-out', de: 'später Check-out', da: 'sen check-out', no: 'sen utsjekk', nl: 'laat uitchecken', fr: 'départ tardif' },
 }
 
 function joinList(items: string[], lang: string): string {
