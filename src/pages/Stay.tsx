@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 import addonEarlyCheckinImg from "@/assets/glamping-exterior-deck.jpg";
 import heroImg from "@/assets/glamping-sunset.jpg";
 import addonBreakfastImg from "@/assets/glamping-interior-cozy.jpg";
@@ -469,6 +470,10 @@ export default function Stay() {
         setPaidTotal(Number((verified as any)?.total ?? 0));
         setDone(true);
         toast.success("Betalningen är genomförd.");
+        trackEvent("Add-on Purchased", {
+          product_category: "addon",
+          payment_method: "stripe",
+        });
         await loadStay();
         const next = new URLSearchParams(searchParams);
         next.delete("session_id");
@@ -547,6 +552,11 @@ export default function Stay() {
       .map((a) => ({ addon_id: a.id, quantity: qty[a.id] }));
     if (items.length === 0) return;
     setSubmitting(true);
+    trackEvent("Add-on Checkout Started", {
+      product_category: "addon",
+      payment_method: "stripe",
+      language: lang,
+    });
     try {
       const { data: res, error } = await (supabase as any).functions.invoke("submit-addon-request", {
         body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined },

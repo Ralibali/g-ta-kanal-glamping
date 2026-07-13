@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLang } from "@/i18n/LanguageContext";
 import { Calendar, ChevronDown } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 const BookingSection = () => {
   const lang = useLang();
@@ -46,7 +47,20 @@ const BookingSection = () => {
           </p>
         </div>
 
-        <div ref={widgetRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
+        <div
+          ref={widgetRef}
+          className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]"
+          onPointerDownCapture={() => {
+            if ((window as any).__bookingStartedFired) return;
+            (window as any).__bookingStartedFired = true;
+            trackEvent("Booking Started", {
+              product_category: "booking",
+              language: lang,
+              source: "sirvoy_widget",
+            });
+          }}
+        />
+
 
         <p className="text-center text-primary-foreground/70 text-sm mt-4">
           {lang === "en" ? (
@@ -59,7 +73,19 @@ const BookingSection = () => {
         <div className="text-center mt-6">
           <button
             type="button"
-            onClick={() => setShowAvailability((v) => !v)}
+            onClick={() => {
+              setShowAvailability((v) => {
+                const next = !v;
+                if (next) {
+                  trackEvent("Booking Search", {
+                    product_category: "booking",
+                    language: lang,
+                    source: "availability_calendar",
+                  });
+                }
+                return next;
+              });
+            }}
             className="inline-flex items-center gap-2 text-primary-foreground/90 hover:text-primary-foreground underline-offset-4 hover:underline font-medium"
           >
             <Calendar className="h-4 w-4" />
