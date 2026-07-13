@@ -114,9 +114,6 @@ const COPY = {
     payContact: "Questions? Email info@auroramedia.se",
     copy: "Copy",
     copied: "Copied!",
-    payAmountLabel: "Amount",
-    payRefLabel: "Reference",
-    payContact: "Questions? Email info@auroramedia.se",
   },
   de: {
     loading: "Lade deinen Aufenthalt…",
