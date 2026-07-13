@@ -470,6 +470,11 @@ export default function Stay() {
         setPaidTotal(Number((verified as any)?.total ?? 0));
         setDone(true);
         toast.success("Betalningen är genomförd.");
+        trackEvent("Add-on Purchased", {
+          product_category: "addon",
+          payment_method: "stripe",
+          language: pickLang(sd?.booking?.language) ?? "sv",
+        });
         await loadStay();
         const next = new URLSearchParams(searchParams);
         next.delete("session_id");
