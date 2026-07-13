@@ -118,6 +118,134 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: insertErr?.message || 'insert_failed' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
   const orderIds = insertedOrders.map(o => o.id)
+  const ref = booking.booking_number || String(booking.public_token).slice(0, 8).toUpperCase()
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+  const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+
+  // === Swedish guests: keep the old Swish + SMS flow (no Stripe) ===
+  if (isSv) {
+    await supabase.from('addon_orders').update({ status: 'requested' }).in('id', orderIds)
+
+    const { data: addonRows } = await supabase.from('addons')
+      .select('id, slug, name_sv, name_en')
+      .in('id', orderRows.map(r => r.addon_id))
+    const aMap = new Map((addonRows ?? []).map((a: any) => [a.id, a]))
+    const emailItems = orderRows.map(r => ({
+      name: (aMap.get(r.addon_id) as any)?.name_sv ?? 'Tillval',
+      quantity: r.quantity,
+      total: r.total_sek,
+    }))
+    const hasBreakfast = orderRows.some(r => (aMap.get(r.addon_id) as any)?.slug === 'breakfast')
+    const hasFika = orderRows.some(r => (aMap.get(r.addon_id) as any)?.slug === 'fika_bag')
+    const hasEarly = orderRows.some(r => (aMap.get(r.addon_id) as any)?.slug === 'early_checkin')
+
+    const { data: settings2 } = await supabase.from('app_settings').select('key,value').in('key', ['owner_email', 'swish_number'])
+    const sMap2: Record<string, any> = {}
+    for (const r of (settings2 ?? [])) sMap2[r.key] = r.value
+    const ownerEmail = String(sMap2['owner_email'] ?? 'info@auroramedia.se')
+    const swishNumber = String(sMap2['swish_number'] ?? '1230628289')
+
+    const tentName = booking.tent_name || booking.tent_id
+    const firstName = booking.guest_first_name || (booking.guest_name ? booking.guest_name.split(',')[0].split(' ').pop() : null)
+
+    try {
+      await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          templateName: 'addon-request-owner',
+          recipientEmail: ownerEmail,
+          idempotencyKey: `addon-owner-req-${orderIds.join('-')}`,
+          templateData: {
+            guestName: booking.guest_name,
+            guestEmail: booking.email ?? null,
+            guestLang: 'sv',
+            tentName,
+            checkinDate: booking.checkin_date,
+            items: emailItems, total, hasEarlyCheckin: hasEarly,
+            reference: ref,
+            adminUrl: 'https://goglampingsweden.se/admin/addon-orders',
+          },
+        }),
+      })
+    } catch (err) { console.error('owner email failed', err) }
+
+    if (hasBreakfast || hasFika) {
+      try {
+        await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            templateName: 'breakfast-new-order',
+            recipientEmail: 'Info@bostallets.se',
+            idempotencyKey: `breakfast-new-req-${orderIds.join('-')}`,
+            templateData: {
+              guestName: booking.guest_name,
+              tentName, bookingNumber: booking.booking_number,
+              hasBreakfast, hasFika,
+              breakfastDate: booking.checkout_date ?? null,
+              fikaDate: booking.checkin_date,
+              items: emailItems,
+            },
+          }),
+        })
+      } catch (err) { console.error('breakfast notice failed', err) }
+    }
+
+    if (booking.email) {
+      try {
+        await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            templateName: 'addon-request-guest',
+            recipientEmail: booking.email,
+            idempotencyKey: `addon-guest-req-${orderIds.join('-')}`,
+            templateData: {
+              firstName, tentName, items: emailItems, total, lang: 'sv',
+              paid: false, reference: ref, swishNumber,
+            },
+          }),
+        })
+      } catch (err) { console.error('guest email failed', err) }
+    }
+
+    const phoneRaw = (booking.phone ?? '').replace(/[\s\-()]/g, '')
+    let phone: string | null = null
+    if (phoneRaw) {
+      if (phoneRaw.startsWith('+')) phone = phoneRaw
+      else if (phoneRaw.startsWith('00')) phone = '+' + phoneRaw.slice(2)
+      else if (phoneRaw.startsWith('0')) phone = '+46' + phoneRaw.slice(1)
+      else phone = '+' + phoneRaw
+    }
+    if (phone) {
+      const itemsStr = emailItems.map(i => `${i.quantity}× ${i.name}`).join(', ')
+      const smsBody = `Tack ${firstName ?? ''}! Vi har tagit emot din beställning: ${itemsStr}. Swisha ${total} kr till ${swishNumber} med meddelande ${ref}. Vi bekräftar när betalningen kommit in.`
+      try {
+        const user = Deno.env.get('ELKS46_USERNAME')
+        const pass = Deno.env.get('ELKS46_PASSWORD')
+        if (user && pass) {
+          const auth = btoa(`${user}:${pass}`)
+          await fetch('https://api.46elks.com/a1/sms', {
+            method: 'POST',
+            headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+              from: ((Deno.env.get('ELKS46_FROM') || 'GoGlamping').replace(/[^A-Za-z0-9]/g, '').slice(0, 11)) || 'GoGlamping',
+              to: phone, message: smsBody,
+            }),
+          })
+        }
+      } catch (err) { console.error('sms failed', err) }
+    }
+
+    return new Response(JSON.stringify({
+      success: true, swish: true, total, reference: ref, count: orderIds.length,
+    }), {
+      status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    })
+  }
+
+
 
   // Create Stripe Checkout session
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
