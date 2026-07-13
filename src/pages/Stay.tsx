@@ -420,6 +420,7 @@ function getDetails(slug: string, lang: string) {
 
 export default function Stay() {
   const { token } = useParams<{ token: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState<StayData | null>(null);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState<Record<string, number>>({});
@@ -450,6 +451,37 @@ export default function Stay() {
   };
 
   useEffect(() => { loadStay(); }, [token]);
+
+  useEffect(() => {
+    const sessionId = searchParams.get("session_id");
+    if (!sessionId || searchParams.get("payment") !== "success") return;
+    let active = true;
+    setSubmitting(true);
+    (async () => {
+      try {
+        const { data: verified, error } = await (supabase as any).functions.invoke("verify-addon-payment", {
+          body: { session_id: sessionId },
+        });
+        if (error || (verified as any)?.error) throw new Error((verified as any)?.error ?? error?.message);
+        if (!active) return;
+        setPaidTotal(Number((verified as any)?.total ?? 0));
+        setDone(true);
+        toast.success("Betalningen är genomförd.");
+        await loadStay();
+        const next = new URLSearchParams(searchParams);
+        next.delete("session_id");
+        next.delete("payment");
+        setSearchParams(next, { replace: true });
+      } catch (err: any) {
+        if (active) toast.error(err?.message ?? "Kunde inte bekräfta betalningen.");
+      } finally {
+        if (active) setSubmitting(false);
+      }
+    })();
+    return () => { active = false; };
+    // Kör bara när länken öppnas med Stripe-session i URL:en.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   if (loading) return <Centered>{COPY.sv.loading}</Centered>;
   if (!data || !data.booking) return <Centered>{COPY.sv.notFound}</Centered>;
@@ -515,14 +547,6 @@ export default function Stay() {
         body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined },
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
-      if ((res as any)?.swish) {
-        // Manual-payment flow: show instructions, order registered as "requested"
-        setPaidTotal((res as any)?.total ?? total);
-        setDone(true);
-        setSubmitting(false);
-        await loadStay();
-        return;
-      }
       const url = (res as any)?.url;
       if (!url) throw new Error("Kunde inte starta betalningen.");
       // Redirect to payment provider
