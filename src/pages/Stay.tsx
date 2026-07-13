@@ -473,7 +473,6 @@ export default function Stay() {
         trackEvent("Add-on Purchased", {
           product_category: "addon",
           payment_method: "stripe",
-          language: pickLang(sd?.booking?.language) ?? "sv",
         });
         await loadStay();
         const next = new URLSearchParams(searchParams);
