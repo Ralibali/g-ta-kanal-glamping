@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLang } from "@/i18n/LanguageContext";
 import { Calendar, ChevronDown } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 const BookingSection = () => {
   const lang = useLang();
