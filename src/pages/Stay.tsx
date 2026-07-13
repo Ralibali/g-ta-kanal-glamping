@@ -522,6 +522,7 @@ export default function Stay() {
   const hasBreakfast = orderedSlugs.has("breakfast");
   const hasFika = orderedSlugs.has("fika_bag");
   const hasEarly = orderedSlugs.has("early_checkin");
+  const hasLate = orderedSlugs.has("late_checkout");
   const hasAnyAddon = orderedSlugs.size > 0;
 
   const scrollToAddons = () => {
