@@ -73,7 +73,7 @@ export default function UnderVistelsen() {
   }, []);
 
   const handleLateCheckout = () => {
-    const amount = 400;
+    const amount = 399;
     const msg = encodeURIComponent("Sen utcheckning");
     const webUrl = `https://app.swish.nu/1/p/sw/?sw=${SWISH}&amt=${amount}&cur=SEK&msg=${msg}&src=qr`;
     try {
@@ -97,9 +97,9 @@ export default function UnderVistelsen() {
     lateTitle: "Sen utcheckning",
     lateLead: "Vill ni stanna lite längre?",
     lateBody: "Sen utcheckning till kl 12:00 går bra i mån av plats. En lugn förmiddag vid kanalen utan stress.",
-    lateItem: "Sen utcheckning till 12:00 – 400 kr",
-    lateHow: "Tryck på Swisha så öppnas Swish-appen med 400 kr förifyllt. Vi får en notis direkt och bekräftar er sena utcheckning.",
-    payCta: "Swisha 400 kr",
+    lateItem: "Sen utcheckning till 12:00 – 399 kr",
+    lateHow: "Tryck på Swisha så öppnas Swish-appen med 399 kr förifyllt. Vi får en notis direkt och bekräftar er sena utcheckning.",
+    payCta: "Swisha 399 kr",
     paidToast: "Tack! Sen utcheckning bokad.",
     sms: "Sms:a oss",
 
@@ -176,9 +176,9 @@ export default function UnderVistelsen() {
     lateTitle: "Late check-out",
     lateLead: "Want to stay a little longer?",
     lateBody: "Late check-out until 12:00 noon is available subject to availability — enjoy a calm morning by the canal.",
-    lateItem: "Late check-out until 12:00 – 400 SEK",
-    lateHow: "Tap Swish and the Swish app opens with 400 SEK prefilled. We get a notification instantly and confirm your late check-out.",
-    payCta: "Swish 400 SEK",
+    lateItem: "Late check-out until 12:00 – 399 SEK",
+    lateHow: "Tap Swish and the Swish app opens with 399 SEK prefilled. We get a notification instantly and confirm your late check-out.",
+    payCta: "Swish 399 SEK",
     paidToast: "Thanks! Late check-out booked.",
     sms: "Text us",
 

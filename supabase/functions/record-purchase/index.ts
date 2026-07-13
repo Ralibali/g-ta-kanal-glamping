@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
     : `SUP-uthyrning (${qty} st) bokad${booking?.guest_name ? ` – ${booking.guest_name}` : ''}`
 
   const lines = [
-    kind === 'late_checkout' ? 'En gäst har just bokat sen utcheckning till kl 12:00 (400 kr).' : `En gäst har just hyrt ${qty} SUP (${total} kr) i 24 timmar.`,
+    kind === 'late_checkout' ? 'En gäst har just bokat sen utcheckning till kl 12:00 (399 kr).' : `En gäst har just hyrt ${qty} SUP (${total} kr) i 24 timmar.`,
     '',
     `Belopp: ${total} kr (Swish till 1230628289)`,
     booking ? `Gäst: ${booking.guest_name ?? '—'}` : 'Gäst: SUP-walk-in (ingen bokning kopplad)',
