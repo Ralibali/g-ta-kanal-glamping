@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 import addonEarlyCheckinImg from "@/assets/glamping-exterior-deck.jpg";
 import heroImg from "@/assets/glamping-sunset.jpg";
 import addonBreakfastImg from "@/assets/glamping-interior-cozy.jpg";
