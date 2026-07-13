@@ -348,24 +348,46 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
   },
   early_checkin: {
     sv: {
-      tagline: "Kom redan kl 12:00 istället för ordinarie 15:00 — tre extra timmar att njuta.",
+      tagline: "Kom redan kl 12:00 istället för ordinarie kl 15:00 — tre extra timmar vid kanalen.",
       bullets: [
         "Incheckning från kl 12:00",
-        "Tre extra timmar vid kanalen",
-        "Tältet är bäddat och klart när du kommer",
-        "Garanterad tillgänglighet (bokningsbart)",
+        "Tre extra timmar att njuta",
+        "Tältet är bäddat och klart när ni kommer",
+        "Garanterad tillgänglighet (bokningsbart tillval)",
       ],
-      note: "Pris per bokning, oavsett antal gäster.",
+      note: "399 kr per bokning, oavsett antal gäster.",
     },
     en: {
-      tagline: "Arrive at 12:00 PM instead of the usual 3:00 PM — three extra hours to enjoy.",
+      tagline: "Arrive at 12:00 instead of the usual 15:00 — three extra hours by the canal.",
       bullets: [
-        "Check-in from 12:00 PM",
-        "Three extra hours by the canal",
-        "Tent made and ready when you arrive",
-        "Guaranteed availability (bookable)",
+        "Check-in from 12:00",
+        "Three extra hours to enjoy",
+        "Tent made up and ready when you arrive",
+        "Guaranteed availability (bookable extra)",
       ],
-      note: "Price per booking, regardless of number of guests.",
+      note: "399 SEK per booking, regardless of number of guests.",
+    },
+  },
+  late_checkout: {
+    sv: {
+      tagline: "Stanna kvar till kl 12:00 istället för ordinarie kl 10:00 — två lugna extratimmar innan hemresan.",
+      bullets: [
+        "Utcheckning senast kl 12:00",
+        "Två extra timmar på morgonen",
+        "Perfekt för en långfrukost vid kanalen",
+        "Garanterad tid (bokningsbart tillval)",
+      ],
+      note: "399 kr per bokning, oavsett antal gäster.",
+    },
+    en: {
+      tagline: "Stay until 12:00 instead of the usual 10:00 — two calm extra hours before heading home.",
+      bullets: [
+        "Check-out by 12:00",
+        "Two extra hours in the morning",
+        "Perfect for a slow breakfast by the canal",
+        "Guaranteed time (bookable extra)",
+      ],
+      note: "399 SEK per booking, regardless of number of guests.",
     },
   },
 };
