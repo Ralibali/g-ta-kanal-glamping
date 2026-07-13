@@ -552,6 +552,11 @@ export default function Stay() {
       .map((a) => ({ addon_id: a.id, quantity: qty[a.id] }));
     if (items.length === 0) return;
     setSubmitting(true);
+    trackEvent("Add-on Checkout Started", {
+      product_category: "addon",
+      payment_method: "stripe",
+      language: lang,
+    });
     try {
       const { data: res, error } = await (supabase as any).functions.invoke("submit-addon-request", {
         body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined },
