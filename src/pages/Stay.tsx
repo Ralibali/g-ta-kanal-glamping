@@ -62,9 +62,9 @@ const COPY = {
     perPerson: "kr/person",
     perStay: "kr",
     total: "Summa",
-    submit: "Skicka önskemål",
+    submit: "Skicka beställning",
     sending: "Skickar…",
-    success: "Tack! Vi har tagit emot ditt önskemål.",
+    success: "Tack! Vi har tagit emot din beställning.",
     error: "Något gick fel. Försök igen om en stund.",
     pending: "Avvaktar betalning",
     confirmed: "Bekräftad",
@@ -924,8 +924,8 @@ export default function Stay() {
                 <div className="flex items-start gap-2">
                   <CreditCard className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium text-foreground">{isSv ? "Ingen automatisk kortbetalning" : "Secure card payment"}</div>
-                    <div className="text-muted-foreground">{isSv ? "Svenska beställningar hanteras via Swish" : "Visa, Mastercard, Apple/Google Pay via Stripe"}</div>
+                    <div className="font-medium text-foreground">{isSv ? "Svenska gäster betalar med Swish" : "Secure card payment"}</div>
+                    <div className="text-muted-foreground">{isSv ? "Instruktioner visas direkt efter beställning" : "Visa, Mastercard, Apple/Google Pay via Stripe"}</div>
                   </div>
                 </div>
               </div>
