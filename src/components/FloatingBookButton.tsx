@@ -1,7 +1,13 @@
 import { useLang } from "@/i18n/LanguageContext";
 import { MessageCircle } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
-const openChat = () => {
+const openChat = (lang: string) => {
+  trackEvent("Contact Click", {
+    product_category: "contact",
+    source: "floating_button",
+    language: lang,
+  });
   window.dispatchEvent(new CustomEvent("open-chat"));
 };
 
