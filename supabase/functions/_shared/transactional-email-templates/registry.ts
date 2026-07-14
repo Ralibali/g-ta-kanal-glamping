@@ -12,7 +12,7 @@ export interface TemplateEntry {
 import { template as chatNotification } from './chat-notification.tsx'
 import { template as chatReply } from './chat-reply.tsx'
 import { template as cleaningComplete } from './cleaning-complete.tsx'
-import { template as cleaningScheduleUpdate } from './cleaning-schedule-update.tsx'
+
 import { template as tentReadyGuest } from './tent-ready-guest.tsx'
 import { template as prearrivalOffer } from './prearrival-offer.tsx'
 import { template as addonRequestOwner } from './addon-request-owner.tsx'
