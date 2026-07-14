@@ -26,6 +26,7 @@ import NotFound from "./pages/NotFound";
 import ChatPage from "./pages/ChatPage";
 import Unsubscribe from "./pages/Unsubscribe";
 import Cleaning from "./pages/Cleaning";
+import CleaningPortal from "./pages/CleaningPortal";
 import Breakfast from "./pages/Breakfast";
 import Boka from "./pages/Boka";
 import Stay from "./pages/Stay";
@@ -72,7 +73,7 @@ const App = () => (
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/*" element={<Admin />} />
-            <Route path="/stad" element={<Cleaning />} />
+            <Route path="/stad" element={<CleaningPortal />} />
             <Route path="/cleaning" element={<Cleaning />} />
             <Route path="/frukost" element={<Breakfast />} />
             <Route path="/breakfast" element={<Breakfast />} />
