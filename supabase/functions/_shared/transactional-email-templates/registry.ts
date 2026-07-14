@@ -26,7 +26,6 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'chat-notification': chatNotification,
   'chat-reply': chatReply,
   'cleaning-complete': cleaningComplete,
-  'cleaning-schedule-update': cleaningScheduleUpdate,
   'tent-ready-guest': tentReadyGuest,
   'prearrival-offer': prearrivalOffer,
   'addon-request-owner': addonRequestOwner,
