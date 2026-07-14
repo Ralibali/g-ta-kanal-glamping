@@ -19,6 +19,18 @@ type Person = {
 
 const PEOPLE: Person[] = [
   {
+    email: "stadare@goglampingsweden.se",
+    password: "topstäd",
+    role: "cleaner",
+    profile: {
+      display_name: "F",
+      full_name: "F",
+      hourly_rate: 0,
+      vacation_pct: 0,
+      sort_order: 10,
+    },
+  },
+  {
     email: "melvin@r8a.se",
     password: "melvinlindstrom",
     role: "cleaner",
