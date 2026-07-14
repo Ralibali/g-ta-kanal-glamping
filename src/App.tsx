@@ -33,6 +33,7 @@ import UnderVistelsen from "./pages/UnderVistelsen";
 import ShortRedirect from "./pages/ShortRedirect";
 import Sup from "./pages/Sup";
 import Employee from "./pages/Employee";
+import CleaningPortal from "./pages/CleaningPortal";
 
 const queryClient = new QueryClient();
 
