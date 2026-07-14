@@ -38,6 +38,7 @@ interface BookingInfo {
   checkin_date: string; checkout_date: string;
   nights: number; language: string;
   tent_ids?: string[] | null;
+  checked_in_at?: string | null;
 }
 interface Order { id: string; addon_id: string; quantity: number; total_sek: number; status: string }
 interface StayData {
@@ -540,7 +541,7 @@ export default function Stay() {
   const hasAnyAddon = orderedSlugs.size > 0;
   const lockRevealHour = hasEarly ? 12 : 15;
   const [year, month, day] = data.booking.checkin_date.split("-").map(Number);
-  const lockCodeVisible = Date.now() >= new Date(year, month - 1, day, lockRevealHour, 0, 0).getTime();
+  const lockCodeVisible = Boolean(data.booking.checked_in_at) || Date.now() >= new Date(year, month - 1, day, lockRevealHour, 0, 0).getTime();
 
   const scrollToAddons = () => {
     document.getElementById("addons-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
