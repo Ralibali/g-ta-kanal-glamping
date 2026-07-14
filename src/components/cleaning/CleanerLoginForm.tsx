@@ -10,6 +10,7 @@ import { toast } from "sonner";
 type Identity = { key: string; label: string; email?: string };
 
 const IDENTITIES: Identity[] = [
+  { key: "f", label: "F", email: "stadare@goglampingsweden.se" },
   { key: "melvin", label: "Melvin", email: "melvin@r8a.se" },
   { key: "admin", label: "Admin", email: "info@auroramedia.se" },
   { key: "other", label: "Annan anställd" },
