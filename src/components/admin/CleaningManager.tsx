@@ -3,12 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Sparkles, RefreshCw, MessageSquare, AlertTriangle, CheckCircle2, Mail, Send } from "lucide-react";
+import { Sparkles, RefreshCw, MessageSquare, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
 import { toast } from "sonner";
 
@@ -21,72 +19,9 @@ export function CleaningManager() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [sms, setSms] = useState<Sms[]>([]);
   const [loading, setLoading] = useState(true);
-  const [notifyDates, setNotifyDates] = useState<Date[]>([]);
-  const [notifyNote, setNotifyNote] = useState("");
-  const [sendingNotify, setSendingNotify] = useState(false);
   const today = todayInStockholm();
 
-  const fmtDate = (d: Date) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`;
-  };
 
-  const sendScheduleUpdate = async () => {
-    if (notifyDates.length === 0) {
-      toast.error("Välj minst ett datum");
-      return;
-    }
-    setSendingNotify(true);
-    try {
-      const dates = notifyDates.map(fmtDate).sort();
-      const { data: stayRows, error } = await (supabase as any)
-        .from("tent_stays")
-        .select("tent_id, checkin_date, checkout_date")
-        .or(dates.map((d) => `checkin_date.eq.${d},checkout_date.eq.${d}`).join(","));
-      if (error) throw error;
-      const rows = (stayRows ?? []) as { tent_id: string; checkin_date: string; checkout_date: string }[];
-      const days = dates.map((d) => {
-        const map = new Map<string, { tentNo: number; tentName: string; arrival: boolean; departure: boolean }>();
-        rows.forEach((r) => {
-          const tent = TENT_BY_ID[r.tent_id];
-          if (!tent) return;
-          const arr = r.checkin_date === d;
-          const dep = r.checkout_date === d;
-          if (!arr && !dep) return;
-          const existing = map.get(r.tent_id) ?? { tentNo: tent.no, tentName: tent.name, arrival: false, departure: false };
-          if (arr) existing.arrival = true;
-          if (dep) existing.departure = true;
-          map.set(r.tent_id, existing);
-        });
-        const tents = Array.from(map.values()).sort((a, b) => a.tentNo - b.tentNo);
-        return { date: d, tents };
-      });
-
-      const { error: invErr } = await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "cleaning-schedule-update",
-          recipientEmail: "karin@topstad.se",
-          idempotencyKey: `cleaning-update-${Date.now()}`,
-          templateData: {
-            dates,
-            days,
-            note: notifyNote.trim() || undefined,
-            cleaningUrl: `${window.location.origin}/stad`,
-          },
-        },
-      });
-      if (invErr) throw invErr;
-      toast.success(`Mail skickat till karin@topstad.se (${dates.length} datum)`);
-      setNotifyDates([]);
-      setNotifyNote("");
-    } catch (e: any) {
-      toast.error(e.message ?? "Kunde inte skicka mail");
-    } finally {
-      setSendingNotify(false);
-    }
-  };
 
   const load = async () => {
     setLoading(true);
@@ -133,48 +68,6 @@ export function CleaningManager() {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2"><Mail className="h-5 w-5" /> Notifiera städ om ändrade datum</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Välj de datum som ändrats och skicka ett mail till <strong>karin@topstad.se</strong> med datum, tält och ankomst/avresa.
-          </p>
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="border rounded-md p-2">
-              <Calendar
-                mode="multiple"
-                selected={notifyDates}
-                onSelect={(d) => setNotifyDates((d as Date[]) ?? [])}
-                weekStartsOn={1}
-              />
-            </div>
-            <div className="flex-1 space-y-2">
-              <div className="text-xs text-muted-foreground">
-                Valda datum: {notifyDates.length === 0 ? "inga" : notifyDates.map(fmtDate).sort().join(", ")}
-              </div>
-              <Textarea
-                placeholder="Valfri kommentar (t.ex. 'Avresa den 21 borttagen')"
-                value={notifyNote}
-                onChange={(e) => setNotifyNote(e.target.value)}
-                rows={4}
-              />
-              <div className="flex gap-2">
-                <Button onClick={sendScheduleUpdate} disabled={sendingNotify || notifyDates.length === 0}>
-                  <Send className="mr-2 h-4 w-4" />
-                  {sendingNotify ? "Skickar..." : "Skicka uppdatering"}
-                </Button>
-                {notifyDates.length > 0 && (
-                  <Button variant="ghost" onClick={() => { setNotifyDates([]); setNotifyNote(""); }}>
-                    Rensa
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
 
       <Card>

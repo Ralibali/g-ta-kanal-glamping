@@ -81,24 +81,14 @@ export const UI = {
   guestsLabel: { sv: "Gäster i tältet", en: "Guests in tent", si: "කූඩාරමේ ආගන්තුකයන්" },
   totalGuests: { sv: "gäster totalt", en: "guests total", si: "මුළු ආගන්තුකයන්" },
   tentLabel: { sv: "Tält", en: "Tent", si: "කූඩාරම" },
-  loginHint: {
-    sv: "Logga in med lösenordet topstäd",
-    en: "Sign in with the password topstäd",
-    si: "topstäd මුරපදය භාවිතා කර පුරනය වන්න",
-  },
   saveChecklistFirst: {
     sv: "Spara checklistan först (kryssa något)",
     en: "Save the checklist first (tick something)",
     si: "පළමුව පිරික්සුම් ලැයිස්තුව සුරකින්න (යමක් සලකුණු කරන්න)",
   },
-  thursdayNotice: {
-    sv: "Varje torsdag skickas listan för kommande vecka med de städningar topstäd ska hjälpa till med. Dagar markerade ”Christoffer städar” behöver topstäd inte komma till.",
-    en: "Every Thursday we send the list for the coming week with the cleanings topstäd will help with. Days marked ”Christoffer cleans” do not need topstäd.",
-    si: "සෑම බ්‍රහස්පතින්දාම ඉදිරි සතියේ topstäd උපකාර කරන පිරිසිදු කිරීම් ලැයිස්තුව යවනු ලැබේ. ”Christoffer cleans” ලෙස සලකුණු කළ දින topstäd පැමිණිය යුතු නැත.",
-  },
   selfClean: {
     sv: "Christoffer städar själv",
-    en: "Christoffer cleans (no topstäd)",
+    en: "Christoffer cleans",
     si: "Christoffer විසින්ම පිරිසිදු කරයි",
   },
   selfCleanShort: {
@@ -112,16 +102,15 @@ export const UI = {
     si: "මෙම දිනය මා විසින්ම පිරිසිදු කරන බව සලකුණු කරන්න",
   },
   unmarkSelfClean: {
-    sv: "Ta bort markering – topstäd hjälper",
-    en: "Remove mark – topstäd will help",
-    si: "සලකුණ ඉවත් කරන්න – topstäd උදව් කරයි",
+    sv: "Ta bort markering",
+    en: "Remove mark",
+    si: "සලකුණ ඉවත් කරන්න",
   },
   selfCleanBannerDay: {
-    sv: "Den här dagen städar Christoffer själv – topstäd behöver inte komma.",
-    en: "Christoffer cleans this day himself – topstäd does not need to come.",
-    si: "මෙම දින Christoffer විසින්ම පිරිසිදු කරයි – topstäd පැමිණිය යුතු නැත.",
+    sv: "Den här dagen städar Christoffer själv.",
+    en: "Christoffer cleans this day himself.",
+    si: "මෙම දින Christoffer විසින්ම පිරිසිදු කරයි.",
   },
-  topstadLabel: { sv: "F", en: "F", si: "F" },
   christofferLabel: { sv: "Christoffer", en: "Christoffer", si: "Christoffer" },
   whoCleansLegend: { sv: "Vem städar?", en: "Who cleans?", si: "කවුද පිරිසිදු කරන්නේ?" },
 } as const;
