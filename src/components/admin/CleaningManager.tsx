@@ -3,12 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Sparkles, RefreshCw, MessageSquare, AlertTriangle, CheckCircle2, Mail, Send } from "lucide-react";
+import { Sparkles, RefreshCw, MessageSquare, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
 import { toast } from "sonner";
 
@@ -21,17 +19,8 @@ export function CleaningManager() {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [sms, setSms] = useState<Sms[]>([]);
   const [loading, setLoading] = useState(true);
-  const [notifyDates, setNotifyDates] = useState<Date[]>([]);
-  const [notifyNote, setNotifyNote] = useState("");
-  const [sendingNotify, setSendingNotify] = useState(false);
   const today = todayInStockholm();
 
-  const fmtDate = (d: Date) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`;
-  };
 
 
   const load = async () => {
