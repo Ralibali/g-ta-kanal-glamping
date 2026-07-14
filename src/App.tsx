@@ -73,7 +73,7 @@ const App = () => (
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/*" element={<Admin />} />
-            <Route path="/stad" element={<Cleaning />} />
+            <Route path="/stad" element={<CleaningPortal />} />
             <Route path="/cleaning" element={<Cleaning />} />
             <Route path="/frukost" element={<Breakfast />} />
             <Route path="/breakfast" element={<Breakfast />} />
