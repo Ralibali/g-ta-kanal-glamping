@@ -33,6 +33,7 @@ import UnderVistelsen from "./pages/UnderVistelsen";
 import ShortRedirect from "./pages/ShortRedirect";
 import Sup from "./pages/Sup";
 import Employee from "./pages/Employee";
+import CleaningPortal from "./pages/CleaningPortal";
 
 const queryClient = new QueryClient();
 
@@ -72,7 +73,7 @@ const App = () => (
             <Route path="/unsubscribe" element={<Unsubscribe />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/*" element={<Admin />} />
-            <Route path="/stad" element={<Cleaning />} />
+            <Route path="/stad" element={<CleaningPortal />} />
             <Route path="/cleaning" element={<Cleaning />} />
             <Route path="/frukost" element={<Breakfast />} />
             <Route path="/breakfast" element={<Breakfast />} />
