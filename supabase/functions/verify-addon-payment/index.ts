@@ -144,28 +144,10 @@ Deno.serve(async (req) => {
     })
   } catch (err) { console.error('owner email failed', err) }
 
-  // Karin (breakfast) notice
-  if (hasBreakfastOrder || hasFikaOrder) {
-    try {
-      await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          templateName: 'breakfast-new-order',
-          recipientEmail: 'Info@bostallets.se',
-          idempotencyKey: `breakfast-new-paid-${sessionId}`,
-          templateData: {
-            guestName: booking.guest_name,
-            tentName, bookingNumber: booking.booking_number,
-            hasBreakfast: hasBreakfastOrder, hasFika: hasFikaOrder,
-            breakfastDate: booking.checkout_date ?? null,
-            fikaDate: booking.checkin_date,
-            items: emailItems,
-          },
-        }),
-      })
-    } catch (err) { console.error('breakfast notice failed', err) }
-  }
+  // Ingen per-order-notis till Bostället/Karin — hon får endast den samlade
+  // digest-utskicket från send-breakfast-digest. Varje frukost-/fikabeställning
+  // ska inte längre trigga ett separat mejl.
+
 
   // Guest email (paid confirmation)
   if (booking.email) {
