@@ -1556,6 +1556,127 @@ function OrderStatusRow({
           );
         })}
       </div>
+      {isDone && onDownloadReceipt && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onDownloadReceipt}
+          className="w-full h-9 text-xs"
+        >
+          <Download className="h-3.5 w-3.5 mr-1.5" />
+          {isSv ? 'Ladda ner kvitto (PDF)' : 'Download receipt (PDF)'}
+        </Button>
+      )}
     </div>
   );
+}
+
+function downloadReceipt(params: {
+  order: Order;
+  addonName: string;
+  booking: BookingInfo & { booking_number?: string };
+  isSv: boolean;
+}) {
+  const { order, addonName, booking, isSv } = params;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const pageW = doc.internal.pageSize.getWidth();
+  let y = 56;
+
+  const paidAt = order.paid_at ? new Date(order.paid_at) : new Date();
+  const paidStr = paidAt.toLocaleString(isSv ? 'sv-SE' : 'en-GB', {
+    year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
+  });
+  const method = order.status === 'confirmed' ? 'Swish' : 'Kort / Card';
+  const receiptNo = `GG-${(booking.booking_number ?? '').toString().slice(-6).toUpperCase() || '------'}-${order.id.slice(0, 6).toUpperCase()}`;
+
+  // Header
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.setTextColor(44, 95, 46);
+  doc.text('Go Glamping Sweden', 56, y);
+  y += 18;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(90);
+  doc.text('Aurora Media AB  ·  info@auroramedia.se  ·  +46 72 225 49 93', 56, y);
+  y += 8;
+  doc.text('goglampingsweden.se  ·  Bergs Slussar, Ljungsbro', 56, y);
+  y += 24;
+
+  // Title
+  doc.setDrawColor(220);
+  doc.line(56, y, pageW - 56, y);
+  y += 22;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.setTextColor(20);
+  doc.text(isSv ? 'Kvitto' : 'Receipt', 56, y);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(90);
+  doc.text(`${isSv ? 'Kvittonr' : 'Receipt no'}: ${receiptNo}`, pageW - 56, y, { align: 'right' });
+  y += 14;
+  doc.text(`${isSv ? 'Datum' : 'Date'}: ${paidStr}`, pageW - 56, y, { align: 'right' });
+  y += 24;
+
+  // Booking info
+  doc.setTextColor(20);
+  doc.setFontSize(11);
+  const info: [string, string][] = [
+    [isSv ? 'Gäst' : 'Guest', booking.guest_first_name ?? '—'],
+    [isSv ? 'Bokningsnr' : 'Booking no', booking.booking_number ?? '—'],
+    [isSv ? 'Tält' : 'Tent', booking.tent_name ?? booking.tent_id ?? '—'],
+    [isSv ? 'Vistelse' : 'Stay', `${booking.checkin_date} → ${booking.checkout_date}`],
+    [isSv ? 'Betalsätt' : 'Payment method', method],
+  ];
+  for (const [k, v] of info) {
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${k}:`, 56, y);
+    doc.setFont('helvetica', 'normal');
+    doc.text(String(v), 170, y);
+    y += 16;
+  }
+  y += 8;
+
+  // Table header
+  doc.setDrawColor(220);
+  doc.line(56, y, pageW - 56, y);
+  y += 16;
+  doc.setFont('helvetica', 'bold');
+  doc.text(isSv ? 'Beskrivning' : 'Description', 56, y);
+  doc.text(isSv ? 'Antal' : 'Qty', 340, y, { align: 'right' });
+  doc.text(isSv ? 'Summa' : 'Amount', pageW - 56, y, { align: 'right' });
+  y += 6;
+  doc.line(56, y, pageW - 56, y);
+  y += 18;
+
+  // Row
+  doc.setFont('helvetica', 'normal');
+  doc.text(addonName, 56, y);
+  doc.text(String(order.quantity), 340, y, { align: 'right' });
+  doc.text(`${order.total_sek} kr`, pageW - 56, y, { align: 'right' });
+  y += 20;
+  doc.line(56, y, pageW - 56, y);
+  y += 20;
+
+  // Total
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.text(isSv ? 'Att betala totalt' : 'Total paid', 56, y);
+  doc.text(`${order.total_sek} kr`, pageW - 56, y, { align: 'right' });
+  y += 28;
+
+  // Footer note
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(9);
+  doc.setTextColor(120);
+  doc.text(
+    isSv
+      ? 'Moms ingår enligt gällande regler. Detta är ett kvitto på erlagd betalning.'
+      : 'VAT included where applicable. This is a receipt for payment received.',
+    56, y,
+  );
+
+  doc.save(`kvitto-${receiptNo}.pdf`);
 }
