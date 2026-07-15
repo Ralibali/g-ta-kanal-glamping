@@ -773,6 +773,16 @@ export default function Stay() {
           </Card>
         )}
 
+        {swishInfo && !done && (
+          <SwishCard
+            t={t}
+            amount={swishInfo.amount}
+            reference={swishInfo.reference}
+            swishNumber={data.settings?.swish_number ?? '1230628289'}
+            payee={data.settings?.swish_payee ?? 'Aurora Media AB'}
+          />
+        )}
+
         {done ? (
           <Card className="border-primary/50 bg-primary/5">
             <CardContent className="p-5 space-y-3">
