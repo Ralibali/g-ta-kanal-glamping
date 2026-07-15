@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, Key, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut, Volume2, Droplets, AlertTriangle, RefreshCw, Download } from "lucide-react";
+import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, Key, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut, Volume2, Droplets, AlertTriangle, RefreshCw, Download, Copy, Check, Mail, LifeBuoy } from "lucide-react";
 import jsPDF from "jspdf";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
@@ -842,6 +842,13 @@ export default function Stay() {
                   />
                 );
               })}
+              <NeedHelpSection
+                orders={data.orders}
+                addons={data.addons}
+                bookingNumber={data.booking.booking_number ?? ''}
+                guestName={data.booking.guest_first_name ?? ''}
+                isSv={isSv}
+              />
             </CardContent>
           </Card>
         )}
@@ -1716,4 +1723,135 @@ function downloadReceipt(params: {
   );
 
   doc.save(`kvitto-${receiptNo}.pdf`);
+}
+
+function NeedHelpSection({
+  orders, addons, bookingNumber, guestName, isSv,
+}: {
+  orders: Order[]; addons: Addon[]; bookingNumber: string; guestName: string; isSv: boolean;
+}) {
+  const SLOW_THRESHOLD_MS = 30 * 60 * 1000; // 30 min
+
+  const problematic = orders.filter((o) => {
+    if (o.status === 'cancelled') return true;
+    if (o.status === 'requested' || o.status === 'pending') {
+      const created = o.created_at ? new Date(o.created_at).getTime() : 0;
+      return created > 0 && Date.now() - created > SLOW_THRESHOLD_MS;
+    }
+    return false;
+  });
+
+  if (problematic.length === 0) return null;
+
+  const anyCancelled = problematic.some((o) => o.status === 'cancelled');
+  const anySlow = problematic.some((o) => o.status !== 'cancelled');
+
+  // Human-readable reference bundle
+  const referenceLines = problematic.map((o) => {
+    const a = addons.find((x) => x.id === o.addon_id);
+    const label = a ? (isSv ? a.name_sv : a.name_en) : o.addon_id.slice(0, 6);
+    const shortId = o.id.slice(0, 8).toUpperCase();
+    const statusLabel =
+      o.status === 'cancelled' ? (isSv ? 'avbruten' : 'cancelled') :
+      o.status === 'requested' ? (isSv ? 'väntar på Swish' : 'awaiting Swish') :
+      o.status === 'pending' ? (isSv ? 'väntar på kort' : 'awaiting card') : o.status;
+    return `#${shortId} · ${o.quantity}× ${label} · ${o.total_sek} kr · ${statusLabel}`;
+  });
+
+  const header =
+    isSv ? `Bokning ${bookingNumber || '—'}${guestName ? ` · ${guestName}` : ''}`
+         : `Booking ${bookingNumber || '—'}${guestName ? ` · ${guestName}` : ''}`;
+  const reference = [header, ...referenceLines].join('\n');
+
+  const [copied, setCopied] = useState(false);
+  const copyRef = async () => {
+    try {
+      await navigator.clipboard.writeText(reference);
+      setCopied(true);
+      toast.success(isSv ? 'Referens kopierad' : 'Reference copied');
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error(isSv ? 'Kunde inte kopiera' : 'Copy failed');
+    }
+  };
+
+  const phone = '+46722254993';
+  const phoneDisplay = '072-225 49 93';
+  const email = 'info@auroramedia.se';
+  const subject = encodeURIComponent(
+    isSv ? `Hjälp med beställning – bokning ${bookingNumber || ''}`
+         : `Help with order – booking ${bookingNumber || ''}`,
+  );
+  const mailBody = encodeURIComponent(reference + '\n\n');
+  const smsBody = encodeURIComponent(
+    (isSv ? 'Hej! Jag behöver hjälp med min beställning:\n\n' : 'Hi! I need help with my order:\n\n') + reference,
+  );
+
+  return (
+    <div className={`rounded-lg border p-3 space-y-3 ${anyCancelled ? 'border-destructive/40 bg-destructive/5' : 'border-amber-500/40 bg-amber-500/5'}`}>
+      <div className="flex items-start gap-2">
+        <LifeBuoy className={`h-5 w-5 shrink-0 ${anyCancelled ? 'text-destructive' : 'text-amber-600 dark:text-amber-400'}`} />
+        <div className="min-w-0">
+          <div className="font-semibold text-sm">
+            {isSv ? 'Behöver du hjälp?' : 'Need help?'}
+          </div>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {anyCancelled && anySlow
+              ? (isSv
+                  ? 'En eller flera beställningar är avbrutna eller tar ovanligt lång tid att bekräfta. Vi hjälper dig gärna direkt.'
+                  : 'One or more orders were cancelled or are taking longer than usual to confirm. We are happy to help.')
+              : anyCancelled
+                ? (isSv
+                    ? 'En beställning avbröts innan betalning bekräftades. Hör av dig så löser vi det direkt.'
+                    : 'An order was cancelled before payment was confirmed. Get in touch and we will sort it out.')
+                : (isSv
+                    ? 'Din betalning har inte bekräftats inom rimlig tid. Hör av dig så hjälper vi dig.'
+                    : 'Your payment has not been confirmed within a reasonable time. Contact us and we will help.')}
+          </p>
+        </div>
+      </div>
+
+      <div className="rounded-md border border-border/60 bg-background/80 p-2.5 space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">
+            {isSv ? 'Din orderreferens' : 'Your order reference'}
+          </span>
+          <Button type="button" size="sm" variant="outline" onClick={copyRef} className="h-7 px-2 text-xs">
+            {copied ? <Check className="h-3 w-3 mr-1" /> : <Copy className="h-3 w-3 mr-1" />}
+            {copied ? (isSv ? 'Kopierat' : 'Copied') : (isSv ? 'Kopiera' : 'Copy')}
+          </Button>
+        </div>
+        <pre className="text-[11px] leading-relaxed whitespace-pre-wrap break-words font-mono text-foreground/80">
+{reference}
+        </pre>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <Button asChild size="sm" className="h-9 text-xs">
+          <a href={`tel:${phone}`}>
+            <Phone className="h-3.5 w-3.5 mr-1.5" />
+            {isSv ? `Ring ${phoneDisplay}` : `Call ${phoneDisplay}`}
+          </a>
+        </Button>
+        <Button asChild size="sm" variant="outline" className="h-9 text-xs">
+          <a href={`sms:${phone}?body=${smsBody}`}>
+            <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
+            {isSv ? 'Skicka SMS' : 'Send SMS'}
+          </a>
+        </Button>
+        <Button asChild size="sm" variant="outline" className="h-9 text-xs">
+          <a href={`mailto:${email}?subject=${subject}&body=${mailBody}`}>
+            <Mail className="h-3.5 w-3.5 mr-1.5" />
+            {isSv ? 'Mejla oss' : 'Email us'}
+          </a>
+        </Button>
+      </div>
+
+      <p className="text-[11px] text-muted-foreground">
+        {isSv
+          ? 'Vi svarar dagligen kl 08–20. Klistra in referensen ovan så hittar vi din beställning direkt.'
+          : 'We reply daily 08:00–20:00. Paste the reference above so we can find your order instantly.'}
+      </p>
+    </div>
+  );
 }
