@@ -66,11 +66,14 @@ export function AddonOrdersManager() {
   };
 
   const filtered = orders.filter((o) => {
+    if (filter === "swish") return o.status === "requested" && !o.paid_at;
     if (filter === "open") return ["requested", "pending"].includes(o.status);
     if (filter === "done") return ["paid", "confirmed"].includes(o.status);
     if (filter === "early") return o.addons?.slug === "early_checkin";
     return true;
   });
+
+  const swishCount = orders.filter((o) => o.status === "requested" && !o.paid_at).length;
 
   return (
     <div className="space-y-6">
