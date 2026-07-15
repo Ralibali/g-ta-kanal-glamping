@@ -1074,6 +1074,40 @@ export default function Stay() {
               );
             })()}
 
+            {submitError && (
+              <Card id="stay-error-banner" className="border-destructive/50 bg-destructive/5">
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex gap-3">
+                    <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <div className="font-semibold text-destructive">{submitError.title}</div>
+                      <div className="text-sm text-foreground/80">{submitError.detail}</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <Button size="sm" onClick={() => submit(submitError.method)} disabled={submitting}>
+                      <RefreshCw className={`h-4 w-4 mr-2 ${submitting ? 'animate-spin' : ''}`} />
+                      {isSv ? "Försök igen" : "Try again"}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => submit(submitError.method === 'swish' ? 'stripe' : 'swish')}
+                      disabled={submitting}
+                    >
+                      {submitError.method === 'swish'
+                        ? (isSv ? "Prova kortbetalning" : "Try card payment")
+                        : (isSv ? "Prova Swish istället" : "Try Swish instead")}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center">
+                    {isSv ? "Kvarstår problemet? Ring oss på " : "Still stuck? Call us at "}
+                    <a href="tel:+46722254993" className="underline">072-225 49 93</a>.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
             {itemCount > 0 && (
               <Card className="sticky bottom-4 border-primary shadow-xl bg-card/95 backdrop-blur">
                 <CardContent className="p-4 space-y-3">
