@@ -1474,9 +1474,9 @@ function PaymentLinkCard({ t, amount, reference }: { t: any; amount: number; ref
 }
 
 function OrderStatusRow({
-  name, quantity, total, status, isSv,
+  name, quantity, total, status, isSv, onDownloadReceipt,
 }: {
-  name: string; quantity: number; total: number; status: string; isSv: boolean;
+  name: string; quantity: number; total: number; status: string; isSv: boolean; onDownloadReceipt?: () => void;
 }) {
   const isCancelled = status === 'cancelled';
   const isDone = status === 'paid' || status === 'confirmed';
