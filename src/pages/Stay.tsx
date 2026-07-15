@@ -431,6 +431,7 @@ export default function Stay() {
   const [dietary, setDietary] = useState<string[]>([]);
   const [dietaryNote, setDietaryNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<{ title: string; detail: string; method: 'stripe' | 'swish' } | null>(null);
   const [done, setDone] = useState(false);
   const [paidTotal, setPaidTotal] = useState<number>(0);
   const [swishInfo, setSwishInfo] = useState<{ amount: number; reference: string } | null>(null);
