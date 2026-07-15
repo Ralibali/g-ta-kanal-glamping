@@ -1477,32 +1477,58 @@ function PaymentLinkCard({ t, amount, reference }: { t: any; amount: number; ref
 }
 
 function OrderStatusRow({
-  name, quantity, total, status, isSv, onDownloadReceipt,
+  name, quantity, total, status, isSv, createdAt, paidAt, updatedAt, onDownloadReceipt,
 }: {
-  name: string; quantity: number; total: number; status: string; isSv: boolean; onDownloadReceipt?: () => void;
+  name: string; quantity: number; total: number; status: string; isSv: boolean;
+  createdAt?: string | null; paidAt?: string | null; updatedAt?: string | null;
+  onDownloadReceipt?: () => void;
 }) {
   const isCancelled = status === 'cancelled';
   const isDone = status === 'paid' || status === 'confirmed';
-  // pending = Stripe checkout not completed; requested = Swish awaiting owner confirmation
   const isSwish = status === 'requested';
   const isStripePending = status === 'pending';
 
-  const steps = [
-    { key: 'ordered', label: isSv ? 'Beställd' : 'Ordered', done: true },
+  const fmt = (iso?: string | null) => {
+    if (!iso) return null;
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return null;
+    return d.toLocaleString(isSv ? 'sv-SE' : 'en-GB', {
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit',
+    });
+  };
+
+  const cancelledAt = isCancelled ? (updatedAt ?? null) : null;
+  const doneAt = isDone ? (paidAt ?? updatedAt ?? null) : null;
+
+  type Step = { key: string; label: string; ts: string | null; done: boolean; active?: boolean; cancelled?: boolean };
+  const steps: Step[] = [
+    {
+      key: 'ordered',
+      label: isSv ? 'Beställd' : 'Ordered',
+      ts: fmt(createdAt),
+      done: true,
+    },
     {
       key: 'paid',
-      label: isSwish
-        ? (isSv ? 'Väntar på Swish' : 'Awaiting Swish')
-        : isStripePending
-          ? (isSv ? 'Kortbetalning startad' : 'Card payment started')
-          : (isSv ? 'Betald' : 'Paid'),
+      label: isCancelled
+        ? (isSv ? 'Avbruten' : 'Cancelled')
+        : isSwish
+          ? (isSv ? 'Väntar på Swish' : 'Awaiting Swish')
+          : isStripePending
+            ? (isSv ? 'Kortbetalning startad' : 'Card payment started')
+            : (isSv ? 'Betald' : 'Paid'),
+      ts: isCancelled ? fmt(cancelledAt) : (isDone ? fmt(doneAt) : null),
       done: isDone,
       active: !isDone && !isCancelled,
+      cancelled: isCancelled,
     },
     {
       key: 'confirmed',
       label: isSv ? 'Bekräftad' : 'Confirmed',
+      ts: isDone ? fmt(doneAt) : null,
       done: isDone,
+      cancelled: isCancelled,
     },
   ];
 
@@ -1526,39 +1552,47 @@ function OrderStatusRow({
         </span>
       </div>
 
-      <div className="flex items-center gap-1.5">
+      <ol className="space-y-2">
         {steps.map((s, i) => {
-          const dotCls = isCancelled && i > 0
-            ? 'bg-destructive/30 text-destructive'
+          const isLast = i === steps.length - 1;
+          const dotCls = s.cancelled && i > 0
+            ? 'bg-destructive/20 text-destructive border-destructive/40'
             : s.done
-              ? 'bg-primary text-primary-foreground'
-              : (s as any).active
-                ? 'bg-amber-500 text-white animate-pulse'
-                : 'bg-muted text-muted-foreground';
-          const lineCls = isCancelled
+              ? 'bg-primary text-primary-foreground border-primary'
+              : s.active
+                ? 'bg-amber-500 text-white border-amber-500 animate-pulse'
+                : 'bg-muted text-muted-foreground border-border';
+          const lineCls = s.cancelled
             ? 'bg-destructive/20'
-            : steps[i]?.done && steps[i + 1]?.done
+            : (steps[i + 1]?.done && s.done)
               ? 'bg-primary'
-              : 'bg-muted';
+              : 'bg-border';
           return (
-            <div key={s.key} className="flex-1 flex items-center gap-1.5 min-w-0">
-              <div className={`h-5 w-5 rounded-full flex items-center justify-center shrink-0 ${dotCls}`}>
-                {isCancelled && i > 0 ? (
-                  <span className="text-[10px] leading-none">✕</span>
-                ) : s.done ? (
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                ) : (
-                  <span className="text-[10px] font-bold">{i + 1}</span>
-                )}
+            <li key={s.key} className="flex gap-2.5">
+              <div className="flex flex-col items-center shrink-0">
+                <div className={`h-5 w-5 rounded-full border flex items-center justify-center ${dotCls}`}>
+                  {s.cancelled && i > 0 ? (
+                    <span className="text-[10px] leading-none">✕</span>
+                  ) : s.done ? (
+                    <CheckCircle2 className="h-3 w-3" />
+                  ) : (
+                    <span className="text-[10px] font-bold">{i + 1}</span>
+                  )}
+                </div>
+                {!isLast && <div className={`w-0.5 flex-1 min-h-[14px] ${lineCls}`} />}
               </div>
-              <div className="flex-1 flex items-center gap-1.5 min-w-0">
-                <span className="text-[11px] text-muted-foreground truncate">{s.label}</span>
-                {i < steps.length - 1 && <div className={`flex-1 h-0.5 rounded-full ${lineCls}`} />}
+              <div className="pb-2 min-w-0 flex-1">
+                <div className={`text-[12px] font-medium ${s.cancelled && i > 0 ? 'text-destructive' : s.done ? 'text-foreground' : s.active ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  {s.label}
+                </div>
+                <div className="text-[11px] text-muted-foreground tabular-nums">
+                  {s.ts ?? (s.active ? (isSv ? 'Väntar…' : 'Pending…') : '—')}
+                </div>
               </div>
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ol>
       {isDone && onDownloadReceipt && (
         <Button
           type="button"
