@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle2, XCircle, RefreshCw, Clock } from "lucide-react";
+import { CheckCircle2, XCircle, RefreshCw, Clock, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 
 interface OrderRow {
@@ -38,7 +38,7 @@ const STATUS_LABEL: Record<string, { label: string; variant: "default" | "second
 export function AddonOrdersManager() {
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "open" | "early" | "done">("open");
+  const [filter, setFilter] = useState<"all" | "swish" | "open" | "early" | "done">("swish");
   const [working, setWorking] = useState<string | null>(null);
 
   const load = async () => {
@@ -66,11 +66,14 @@ export function AddonOrdersManager() {
   };
 
   const filtered = orders.filter((o) => {
+    if (filter === "swish") return o.status === "requested" && !o.paid_at;
     if (filter === "open") return ["requested", "pending"].includes(o.status);
     if (filter === "done") return ["paid", "confirmed"].includes(o.status);
     if (filter === "early") return o.addons?.slug === "early_checkin";
     return true;
   });
+
+  const swishCount = orders.filter((o) => o.status === "requested" && !o.paid_at).length;
 
   return (
     <div className="space-y-6">
@@ -85,12 +88,18 @@ export function AddonOrdersManager() {
       </div>
 
       <div className="flex gap-2 flex-wrap">
-        {(["open", "early", "done", "all"] as const).map((f) => (
+        {(["swish", "open", "early", "done", "all"] as const).map((f) => (
           <Button key={f} variant={filter === f ? "default" : "outline"} size="sm" onClick={() => setFilter(f)}>
-            {f === "open" ? "Att hantera" : f === "early" ? "Tidig incheckning" : f === "done" ? "Klara" : "Alla"}
+            {f === "swish" ? <><Smartphone className="h-4 w-4 mr-1" /> Swish att bekräfta{swishCount > 0 ? ` (${swishCount})` : ""}</> : f === "open" ? "Att hantera" : f === "early" ? "Tidig incheckning" : f === "done" ? "Klara" : "Alla"}
           </Button>
         ))}
       </div>
+
+      {filter === "swish" && (
+        <p className="text-sm text-muted-foreground -mt-2">
+          Gäster som valt Swish. Kontrollera att beloppet kommit in i Swish-appen med rätt referens, klicka sedan <strong>Markera som betald</strong>.
+        </p>
+      )}
 
       <Card>
         <CardHeader>
@@ -143,7 +152,7 @@ export function AddonOrdersManager() {
                           {open && (
                             <div className="flex gap-1">
                               <Button size="sm" onClick={() => act(o.id, "confirm")} disabled={working === o.id}>
-                                <CheckCircle2 className="h-4 w-4 mr-1" /> Bekräfta
+                                <CheckCircle2 className="h-4 w-4 mr-1" /> {o.status === "requested" ? "Markera som betald" : "Bekräfta"}
                               </Button>
                               <Button size="sm" variant="ghost" onClick={() => act(o.id, "cancel")} disabled={working === o.id}>
                                 <XCircle className="h-4 w-4" />
