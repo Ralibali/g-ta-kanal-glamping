@@ -1390,9 +1390,27 @@ function SwishCard({
           <Row label={t.swishRef} value={reference} copyKey="ref" />
         </div>
 
-        <a href={swishUrl} className="block">
-          <Button className="w-full" size="lg">{t.swishOpen}</Button>
-        </a>
+        <Button className="w-full" size="lg" onClick={openSwish}>{t.swishOpen}</Button>
+
+        {linkFailed && (
+          <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-3 text-sm space-y-2">
+            <div className="flex gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <div className="font-semibold text-amber-900 dark:text-amber-200">
+                  {t === undefined || typeof t.swishFallback !== 'string'
+                    ? 'Öppnades inte Swish? Öppna Swish-appen manuellt och använd uppgifterna ovan.'
+                    : t.swishFallback}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {isMobile
+                    ? 'Kopiera nummer, belopp och meddelande ovan.'
+                    : 'Öppna Swish-appen på din mobil och slå in uppgifterna manuellt.'}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
