@@ -1324,16 +1324,41 @@ function SwishCard({
   t: any; amount: number; reference: string; swishNumber: string; payee: string;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
+  const [linkFailed, setLinkFailed] = useState(false);
+  const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const copy = async (val: string, key: string) => {
     try {
       await navigator.clipboard.writeText(val);
       setCopied(key);
       toast.success(t.swishCopied);
       setTimeout(() => setCopied((c) => (c === key ? null : c)), 1500);
-    } catch { /* noop */ }
+    } catch {
+      toast.error(t.copy + ' ✗');
+    }
   };
   // Swish deep link (mobile opens the app, desktop ignores)
   const swishUrl = `https://app.swish.nu/1/p/sw/?sw=${swishNumber}&amt=${amount}&cur=SEK&msg=${encodeURIComponent(reference)}&src=qr`;
+
+  const openSwish = () => {
+    if (!isMobile) {
+      setLinkFailed(true);
+      return;
+    }
+    // Detect whether the Swish app took focus. If not within 1.5s, show fallback.
+    const start = Date.now();
+    const onVisibility = () => {
+      if (document.hidden) {
+        // App opened successfully
+        document.removeEventListener('visibilitychange', onVisibility);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    window.location.href = swishUrl;
+    setTimeout(() => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      if (!document.hidden && Date.now() - start >= 1400) setLinkFailed(true);
+    }, 1500);
+  };
 
   const Row = ({ label, value, copyKey }: { label: string; value: string; copyKey: string }) => (
     <div className="flex items-center justify-between gap-3 py-2 border-b border-border/50 last:border-0">
