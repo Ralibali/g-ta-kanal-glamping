@@ -88,12 +88,18 @@ export function AddonOrdersManager() {
       </div>
 
       <div className="flex gap-2 flex-wrap">
-        {(["open", "early", "done", "all"] as const).map((f) => (
+        {(["swish", "open", "early", "done", "all"] as const).map((f) => (
           <Button key={f} variant={filter === f ? "default" : "outline"} size="sm" onClick={() => setFilter(f)}>
-            {f === "open" ? "Att hantera" : f === "early" ? "Tidig incheckning" : f === "done" ? "Klara" : "Alla"}
+            {f === "swish" ? <><Smartphone className="h-4 w-4 mr-1" /> Swish att bekräfta{swishCount > 0 ? ` (${swishCount})` : ""}</> : f === "open" ? "Att hantera" : f === "early" ? "Tidig incheckning" : f === "done" ? "Klara" : "Alla"}
           </Button>
         ))}
       </div>
+
+      {filter === "swish" && (
+        <p className="text-sm text-muted-foreground -mt-2">
+          Gäster som valt Swish. Kontrollera att beloppet kommit in i Swish-appen med rätt referens, klicka sedan <strong>Markera som betald</strong>.
+        </p>
+      )}
 
       <Card>
         <CardHeader>
