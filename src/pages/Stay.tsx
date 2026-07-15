@@ -842,6 +842,13 @@ export default function Stay() {
                   />
                 );
               })}
+              <NeedHelpSection
+                orders={data.orders}
+                addons={data.addons}
+                bookingNumber={data.booking.booking_number ?? ''}
+                guestName={data.booking.guest_first_name ?? ''}
+                isSv={isSv}
+              />
             </CardContent>
           </Card>
         )}
