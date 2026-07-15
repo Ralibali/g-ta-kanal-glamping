@@ -829,6 +829,9 @@ export default function Stay() {
                     quantity={o.quantity}
                     total={o.total_sek}
                     status={o.status}
+                    createdAt={o.created_at ?? null}
+                    paidAt={o.paid_at ?? null}
+                    updatedAt={o.updated_at ?? null}
                     isSv={isSv}
                     onDownloadReceipt={() => downloadReceipt({
                       order: o,
