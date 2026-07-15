@@ -41,7 +41,7 @@ interface BookingInfo {
   tent_ids?: string[] | null;
   checked_in_at?: string | null;
 }
-interface Order { id: string; addon_id: string; quantity: number; total_sek: number; status: string; paid_at?: string | null }
+interface Order { id: string; addon_id: string; quantity: number; total_sek: number; status: string; paid_at?: string | null; created_at?: string | null; updated_at?: string | null }
 interface StayData {
   booking: BookingInfo & { booking_number?: string };
   addons: Addon[];
