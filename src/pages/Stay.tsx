@@ -458,6 +458,25 @@ export default function Stay() {
 
   useEffect(() => { loadStay(); }, [token]);
 
+  // Auto-refresh medan någon betalning fortfarande är pågående (Swish/Stripe).
+  // Uppdaterar status och tidslinje så snart backend markerar den som paid/confirmed/cancelled.
+  useEffect(() => {
+    if (!token) return;
+    const orders = data?.orders ?? [];
+    const hasPending = orders.some(o => o.status === "requested" || o.status === "pending");
+    if (!hasPending) return;
+    const interval = window.setInterval(() => { loadStay(); }, 5000);
+    const onFocus = () => loadStay();
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, data?.orders?.map(o => `${o.id}:${o.status}`).join("|")]);
+
   useEffect(() => {
     const sessionId = searchParams.get("session_id");
     if (!sessionId || searchParams.get("payment") !== "success") return;
