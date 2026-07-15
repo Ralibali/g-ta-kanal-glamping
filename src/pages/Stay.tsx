@@ -548,7 +548,7 @@ export default function Stay() {
     document.getElementById("addons-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const submit = async () => {
+  const submit = async (method: 'stripe' | 'swish' = 'stripe') => {
     const items = data.addons
       .filter((a) => (qty[a.id] ?? 0) > 0)
       .map((a) => ({ addon_id: a.id, quantity: qty[a.id] }));
@@ -556,17 +556,27 @@ export default function Stay() {
     setSubmitting(true);
     trackEvent("Add-on Checkout Started", {
       product_category: "addon",
-      payment_method: "stripe",
+      payment_method: method,
       language: lang,
     });
     try {
       const { data: res, error } = await (supabase as any).functions.invoke("submit-addon-request", {
-        body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined },
+        body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined, payment_method: method },
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
+      if (method === 'swish') {
+        const totalPaid = Number((res as any)?.total ?? total);
+        const reference = String((res as any)?.reference ?? data.booking.booking_number ?? '');
+        setSwishInfo({ amount: totalPaid, reference });
+        setQty({});
+        setSubmitting(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        toast.success(isSv ? "Beställningen är registrerad — öppna Swish för att betala." : "Order registered — open Swish to pay.");
+        await loadStay();
+        return;
+      }
       const url = (res as any)?.url;
       if (!url) throw new Error("Kunde inte starta betalningen.");
-      // Redirect to payment provider
       window.location.href = url;
     } catch (err: any) {
       toast.error(err?.message ?? t.error);
