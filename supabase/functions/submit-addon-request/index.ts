@@ -17,10 +17,11 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 
-  let body: { public_token?: string; items?: Item[]; dietary?: string[]; dietary_note?: string } = {}
+  let body: { public_token?: string; items?: Item[]; dietary?: string[]; dietary_note?: string; payment_method?: 'stripe' | 'swish' } = {}
   try { body = await req.json() } catch {}
   const token = body.public_token
   const items = Array.isArray(body.items) ? body.items.filter(i => i.addon_id && i.quantity > 0) : []
+  const paymentMethod: 'stripe' | 'swish' = body.payment_method === 'swish' ? 'swish' : 'stripe'
   const ALLOWED_DIETS = new Set(['gluten_free', 'vegan', 'vegetarian', 'lactose_free', 'nut_allergy'])
   const dietary = Array.isArray(body.dietary)
     ? Array.from(new Set(body.dietary.filter((d): d is string => typeof d === 'string' && ALLOWED_DIETS.has(d))))
