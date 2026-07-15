@@ -549,12 +549,48 @@ export default function Stay() {
     document.getElementById("addons-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const friendlyError = (raw: string | undefined, method: 'stripe' | 'swish'): { title: string; detail: string } => {
+    const code = String(raw ?? '').toLowerCase();
+    const sv = isSv;
+    if (code.includes('too_late')) return {
+      title: sv ? 'För sent att beställa' : 'Too late to order',
+      detail: sv ? 'Beställning stänger två dygn före incheckning. Hör av dig direkt till oss så löser vi det.' : 'Orders close two days before check-in. Please contact us directly.',
+    };
+    if (code.includes('breakfast_unavailable_monday')) return {
+      title: sv ? 'Frukost ej tillgänglig på måndagar' : 'Breakfast unavailable on Mondays',
+      detail: sv ? 'Ta bort frukost ur beställningen för att fortsätta.' : 'Please remove breakfast to continue.',
+    };
+    if (code.includes('missing_stripe_price') || code.includes('stripe_not_configured')) return {
+      title: sv ? 'Kortbetalning ur funktion' : 'Card payment unavailable',
+      detail: sv ? 'Just nu går det inte att betala med kort. Använd Swish istället, eller försök igen om en stund.' : 'Card payment is temporarily unavailable. Please use Swish or try again shortly.',
+    };
+    if (code.includes('no_valid_items') || code.includes('items required')) return {
+      title: sv ? 'Inga tillval valda' : 'No items selected',
+      detail: sv ? 'Välj minst ett tillval för att fortsätta.' : 'Please select at least one item.',
+    };
+    if (code.includes('not_found')) return {
+      title: sv ? 'Länken fungerar inte' : 'Link not valid',
+      detail: sv ? 'Vi kunde inte hitta din bokning. Kontrollera länken eller kontakta oss.' : "We couldn't find your booking. Please check the link or contact us.",
+    };
+    if (code.includes('failed to fetch') || code.includes('networkerror') || code.includes('load failed')) return {
+      title: sv ? 'Ingen internetanslutning' : 'No internet connection',
+      detail: sv ? 'Kontrollera din uppkoppling och försök igen.' : 'Check your connection and try again.',
+    };
+    return {
+      title: sv ? 'Betalningen kunde inte startas' : 'Payment could not start',
+      detail: method === 'swish'
+        ? (sv ? 'Vi kunde inte registrera din Swish-beställning. Försök igen eller välj kortbetalning.' : 'We could not register your Swish order. Try again or pay by card.')
+        : (sv ? 'Vi kunde inte skapa kortbetalningen. Försök igen eller välj Swish.' : 'We could not create the card payment. Try again or use Swish.'),
+    };
+  };
+
   const submit = async (method: 'stripe' | 'swish' = 'stripe') => {
     const items = data.addons
       .filter((a) => (qty[a.id] ?? 0) > 0)
       .map((a) => ({ addon_id: a.id, quantity: qty[a.id] }));
     if (items.length === 0) return;
     setSubmitting(true);
+    setSubmitError(null);
     trackEvent("Add-on Checkout Started", {
       product_category: "addon",
       payment_method: method,
@@ -564,7 +600,8 @@ export default function Stay() {
       const { data: res, error } = await (supabase as any).functions.invoke("submit-addon-request", {
         body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined, payment_method: method },
       });
-      if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
+      const rawError = (res as any)?.error ?? error?.message;
+      if (error || (res as any)?.error) throw new Error(rawError);
       if (method === 'swish') {
         const totalPaid = Number((res as any)?.total ?? total);
         const reference = String((res as any)?.reference ?? data.booking.booking_number ?? '');
@@ -577,13 +614,15 @@ export default function Stay() {
         return;
       }
       const url = (res as any)?.url;
-      if (!url) throw new Error("Kunde inte starta betalningen.");
+      if (!url) throw new Error("missing_stripe_price");
       window.location.href = url;
     } catch (err: any) {
-      toast.error(err?.message ?? t.error);
+      const friendly = friendlyError(err?.message, method);
+      setSubmitError({ ...friendly, method });
       setSubmitting(false);
+      // Scroll error into view
+      setTimeout(() => document.getElementById('stay-error-banner')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
     }
-
   };
 
   return (
