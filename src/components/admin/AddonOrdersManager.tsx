@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle2, XCircle, RefreshCw, Clock } from "lucide-react";
+import { CheckCircle2, XCircle, RefreshCw, Clock, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 
 interface OrderRow {
