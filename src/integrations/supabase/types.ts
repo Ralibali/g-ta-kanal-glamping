@@ -25,6 +25,8 @@ export type Database = {
           status: string
           stripe_payment_intent: string | null
           stripe_session_id: string | null
+          swish_reminder_2h_at: string | null
+          swish_reminder_30m_at: string | null
           total_sek: number
           unit_price_sek: number
           updated_at: string
@@ -39,6 +41,8 @@ export type Database = {
           status?: string
           stripe_payment_intent?: string | null
           stripe_session_id?: string | null
+          swish_reminder_2h_at?: string | null
+          swish_reminder_30m_at?: string | null
           total_sek: number
           unit_price_sek: number
           updated_at?: string
@@ -53,6 +57,8 @@ export type Database = {
           status?: string
           stripe_payment_intent?: string | null
           stripe_session_id?: string | null
+          swish_reminder_2h_at?: string | null
+          swish_reminder_30m_at?: string | null
           total_sek?: number
           unit_price_sek?: number
           updated_at?: string

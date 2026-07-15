@@ -20,6 +20,7 @@ import { template as addonRequestGuest } from './addon-request-guest.tsx'
 import { template as breakfastNewOrder } from './breakfast-new-order.tsx'
 import { template as breakfastDigest } from './breakfast-digest.tsx'
 import { template as simpleOwnerNotice } from './simple-owner-notice.tsx'
+import { template as swishPaymentReminder } from './swish-payment-reminder.tsx'
 
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
@@ -33,5 +34,6 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'breakfast-new-order': breakfastNewOrder,
   'breakfast-digest': breakfastDigest,
   'simple-owner-notice': simpleOwnerNotice,
+  'swish-payment-reminder': swishPaymentReminder,
 }
 
