@@ -459,24 +459,31 @@ export default function Stay() {
 
   useEffect(() => { loadStay(); }, [token]);
 
-  // Auto-refresh medan någon betalning fortfarande är pågående (Swish/Stripe).
-  // Uppdaterar status och tidslinje så snart backend markerar den som paid/confirmed/cancelled.
+  // Realtidsuppdatering via Supabase Realtime broadcast.
+  // En databastrigger på addon_orders anropar realtime.send() till kanalen
+  // "booking:<public_token>" så snart en beställning skapas/ändras/tas bort.
+  // Gästen prenumererar på sin egen kanal via sin unika token — ingen polling.
   useEffect(() => {
     if (!token) return;
-    const orders = data?.orders ?? [];
-    const hasPending = orders.some(o => o.status === "requested" || o.status === "pending");
-    if (!hasPending) return;
-    const interval = window.setInterval(() => { loadStay(); }, 5000);
-    const onFocus = () => loadStay();
-    window.addEventListener("focus", onFocus);
-    document.addEventListener("visibilitychange", onFocus);
+    const channel = supabase
+      .channel(`booking:${token}`)
+      .on('broadcast', { event: 'order_change' }, () => {
+        loadStay();
+      })
+      .subscribe();
+
+    // Ladda om även när fliken kommer i fokus igen (t.ex. efter Swish-appen)
+    const onFocus = () => { if (document.visibilityState === 'visible') loadStay(); };
+    document.addEventListener('visibilitychange', onFocus);
+    window.addEventListener('focus', onFocus);
+
     return () => {
-      window.clearInterval(interval);
-      window.removeEventListener("focus", onFocus);
-      document.removeEventListener("visibilitychange", onFocus);
+      supabase.removeChannel(channel);
+      document.removeEventListener('visibilitychange', onFocus);
+      window.removeEventListener('focus', onFocus);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, data?.orders?.map(o => `${o.id}:${o.status}`).join("|")]);
+  }, [token]);
 
   useEffect(() => {
     const sessionId = searchParams.get("session_id");
