@@ -795,18 +795,22 @@ export default function Stay() {
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-primary" />
-                {t.already}
+                {isSv ? "Dina beställningar" : "Your orders"}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-1 text-sm">
+            <CardContent className="space-y-3">
               {data.orders.map((o) => {
                 const a = data.addons.find((x) => x.id === o.addon_id);
                 if (!a) return null;
                 return (
-                  <div key={o.id} className="flex justify-between">
-                    <span>{o.quantity}× {isSv ? a.name_sv : a.name_en}</span>
-                    <Badge variant="secondary">{o.status === "confirmed" || o.status === "paid" ? t.confirmed : t.pending}</Badge>
-                  </div>
+                  <OrderStatusRow
+                    key={o.id}
+                    name={isSv ? a.name_sv : a.name_en}
+                    quantity={o.quantity}
+                    total={o.total_sek}
+                    status={o.status}
+                    isSv={isSv}
+                  />
                 );
               })}
             </CardContent>
