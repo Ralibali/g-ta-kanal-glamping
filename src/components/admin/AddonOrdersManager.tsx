@@ -38,7 +38,7 @@ const STATUS_LABEL: Record<string, { label: string; variant: "default" | "second
 export function AddonOrdersManager() {
   const [orders, setOrders] = useState<OrderRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "open" | "early" | "done">("open");
+  const [filter, setFilter] = useState<"all" | "swish" | "open" | "early" | "done">("swish");
   const [working, setWorking] = useState<string | null>(null);
 
   const load = async () => {
