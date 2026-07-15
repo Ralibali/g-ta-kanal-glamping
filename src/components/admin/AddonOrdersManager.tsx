@@ -152,7 +152,7 @@ export function AddonOrdersManager() {
                           {open && (
                             <div className="flex gap-1">
                               <Button size="sm" onClick={() => act(o.id, "confirm")} disabled={working === o.id}>
-                                <CheckCircle2 className="h-4 w-4 mr-1" /> Bekräfta
+                                <CheckCircle2 className="h-4 w-4 mr-1" /> {o.status === "requested" ? "Markera som betald" : "Bekräfta"}
                               </Button>
                               <Button size="sm" variant="ghost" onClick={() => act(o.id, "cancel")} disabled={working === o.id}>
                                 <XCircle className="h-4 w-4" />
