@@ -71,6 +71,7 @@ Deno.serve(async (req) => {
 
   const orderRows: any[] = []
   const lineItems: any[] = []
+  const emailItemNames: { name: string; quantity: number; total: number; slug: string }[] = []
   let total = 0
   for (const it of items) {
     const a = addonMap.get(it.addon_id)
@@ -80,16 +81,17 @@ Deno.serve(async (req) => {
     total += lineTotal
     orderRows.push({
       booking_id: booking.id, addon_id: a.id, quantity: qty,
-      unit_price_sek: a.price_sek, total_sek: lineTotal, status: 'pending',
+      unit_price_sek: a.price_sek, total_sek: lineTotal,
+      status: paymentMethod === 'swish' ? 'requested' : 'pending',
     })
-    const price = STRIPE_PRICE_BY_SLUG[a.slug]
-    if (!price) {
-      return new Response(JSON.stringify({ error: `missing_stripe_price_for_${a.slug}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    emailItemNames.push({ name: a.name_sv, quantity: qty, total: lineTotal, slug: a.slug })
+    if (paymentMethod === 'stripe') {
+      const price = STRIPE_PRICE_BY_SLUG[a.slug]
+      if (!price) {
+        return new Response(JSON.stringify({ error: `missing_stripe_price_for_${a.slug}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+      lineItems.push({ price, quantity: qty })
     }
-    lineItems.push({
-      price,
-      quantity: qty,
-    })
   }
   if (orderRows.length === 0) {
     return new Response(JSON.stringify({ error: 'no_valid_items' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
