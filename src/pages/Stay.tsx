@@ -830,6 +830,12 @@ export default function Stay() {
                     total={o.total_sek}
                     status={o.status}
                     isSv={isSv}
+                    onDownloadReceipt={() => downloadReceipt({
+                      order: o,
+                      addonName: isSv ? a.name_sv : a.name_en,
+                      booking: data.booking,
+                      isSv,
+                    })}
                   />
                 );
               })}
