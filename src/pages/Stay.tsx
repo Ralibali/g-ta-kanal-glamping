@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, Key, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut, Volume2, Droplets } from "lucide-react";
+import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, Key, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut, Volume2, Droplets, AlertTriangle, RefreshCw } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -431,6 +431,7 @@ export default function Stay() {
   const [dietary, setDietary] = useState<string[]>([]);
   const [dietaryNote, setDietaryNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<{ title: string; detail: string; method: 'stripe' | 'swish' } | null>(null);
   const [done, setDone] = useState(false);
   const [paidTotal, setPaidTotal] = useState<number>(0);
   const [swishInfo, setSwishInfo] = useState<{ amount: number; reference: string } | null>(null);
@@ -548,12 +549,48 @@ export default function Stay() {
     document.getElementById("addons-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const friendlyError = (raw: string | undefined, method: 'stripe' | 'swish'): { title: string; detail: string } => {
+    const code = String(raw ?? '').toLowerCase();
+    const sv = isSv;
+    if (code.includes('too_late')) return {
+      title: sv ? 'För sent att beställa' : 'Too late to order',
+      detail: sv ? 'Beställning stänger två dygn före incheckning. Hör av dig direkt till oss så löser vi det.' : 'Orders close two days before check-in. Please contact us directly.',
+    };
+    if (code.includes('breakfast_unavailable_monday')) return {
+      title: sv ? 'Frukost ej tillgänglig på måndagar' : 'Breakfast unavailable on Mondays',
+      detail: sv ? 'Ta bort frukost ur beställningen för att fortsätta.' : 'Please remove breakfast to continue.',
+    };
+    if (code.includes('missing_stripe_price') || code.includes('stripe_not_configured')) return {
+      title: sv ? 'Kortbetalning ur funktion' : 'Card payment unavailable',
+      detail: sv ? 'Just nu går det inte att betala med kort. Använd Swish istället, eller försök igen om en stund.' : 'Card payment is temporarily unavailable. Please use Swish or try again shortly.',
+    };
+    if (code.includes('no_valid_items') || code.includes('items required')) return {
+      title: sv ? 'Inga tillval valda' : 'No items selected',
+      detail: sv ? 'Välj minst ett tillval för att fortsätta.' : 'Please select at least one item.',
+    };
+    if (code.includes('not_found')) return {
+      title: sv ? 'Länken fungerar inte' : 'Link not valid',
+      detail: sv ? 'Vi kunde inte hitta din bokning. Kontrollera länken eller kontakta oss.' : "We couldn't find your booking. Please check the link or contact us.",
+    };
+    if (code.includes('failed to fetch') || code.includes('networkerror') || code.includes('load failed')) return {
+      title: sv ? 'Ingen internetanslutning' : 'No internet connection',
+      detail: sv ? 'Kontrollera din uppkoppling och försök igen.' : 'Check your connection and try again.',
+    };
+    return {
+      title: sv ? 'Betalningen kunde inte startas' : 'Payment could not start',
+      detail: method === 'swish'
+        ? (sv ? 'Vi kunde inte registrera din Swish-beställning. Försök igen eller välj kortbetalning.' : 'We could not register your Swish order. Try again or pay by card.')
+        : (sv ? 'Vi kunde inte skapa kortbetalningen. Försök igen eller välj Swish.' : 'We could not create the card payment. Try again or use Swish.'),
+    };
+  };
+
   const submit = async (method: 'stripe' | 'swish' = 'stripe') => {
     const items = data.addons
       .filter((a) => (qty[a.id] ?? 0) > 0)
       .map((a) => ({ addon_id: a.id, quantity: qty[a.id] }));
     if (items.length === 0) return;
     setSubmitting(true);
+    setSubmitError(null);
     trackEvent("Add-on Checkout Started", {
       product_category: "addon",
       payment_method: method,
@@ -563,7 +600,8 @@ export default function Stay() {
       const { data: res, error } = await (supabase as any).functions.invoke("submit-addon-request", {
         body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined, payment_method: method },
       });
-      if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
+      const rawError = (res as any)?.error ?? error?.message;
+      if (error || (res as any)?.error) throw new Error(rawError);
       if (method === 'swish') {
         const totalPaid = Number((res as any)?.total ?? total);
         const reference = String((res as any)?.reference ?? data.booking.booking_number ?? '');
@@ -576,13 +614,15 @@ export default function Stay() {
         return;
       }
       const url = (res as any)?.url;
-      if (!url) throw new Error("Kunde inte starta betalningen.");
+      if (!url) throw new Error("missing_stripe_price");
       window.location.href = url;
     } catch (err: any) {
-      toast.error(err?.message ?? t.error);
+      const friendly = friendlyError(err?.message, method);
+      setSubmitError({ ...friendly, method });
       setSubmitting(false);
+      // Scroll error into view
+      setTimeout(() => document.getElementById('stay-error-banner')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
     }
-
   };
 
   return (
@@ -1034,6 +1074,40 @@ export default function Stay() {
               );
             })()}
 
+            {submitError && (
+              <Card id="stay-error-banner" className="border-destructive/50 bg-destructive/5">
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex gap-3">
+                    <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <div className="font-semibold text-destructive">{submitError.title}</div>
+                      <div className="text-sm text-foreground/80">{submitError.detail}</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <Button size="sm" onClick={() => submit(submitError.method)} disabled={submitting}>
+                      <RefreshCw className={`h-4 w-4 mr-2 ${submitting ? 'animate-spin' : ''}`} />
+                      {isSv ? "Försök igen" : "Try again"}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => submit(submitError.method === 'swish' ? 'stripe' : 'swish')}
+                      disabled={submitting}
+                    >
+                      {submitError.method === 'swish'
+                        ? (isSv ? "Prova kortbetalning" : "Try card payment")
+                        : (isSv ? "Prova Swish istället" : "Try Swish instead")}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center">
+                    {isSv ? "Kvarstår problemet? Ring oss på " : "Still stuck? Call us at "}
+                    <a href="tel:+46722254993" className="underline">072-225 49 93</a>.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
             {itemCount > 0 && (
               <Card className="sticky bottom-4 border-primary shadow-xl bg-card/95 backdrop-blur">
                 <CardContent className="p-4 space-y-3">
@@ -1250,16 +1324,41 @@ function SwishCard({
   t: any; amount: number; reference: string; swishNumber: string; payee: string;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
+  const [linkFailed, setLinkFailed] = useState(false);
+  const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const copy = async (val: string, key: string) => {
     try {
       await navigator.clipboard.writeText(val);
       setCopied(key);
       toast.success(t.swishCopied);
       setTimeout(() => setCopied((c) => (c === key ? null : c)), 1500);
-    } catch { /* noop */ }
+    } catch {
+      toast.error(t.copy + ' ✗');
+    }
   };
   // Swish deep link (mobile opens the app, desktop ignores)
   const swishUrl = `https://app.swish.nu/1/p/sw/?sw=${swishNumber}&amt=${amount}&cur=SEK&msg=${encodeURIComponent(reference)}&src=qr`;
+
+  const openSwish = () => {
+    if (!isMobile) {
+      setLinkFailed(true);
+      return;
+    }
+    // Detect whether the Swish app took focus. If not within 1.5s, show fallback.
+    const start = Date.now();
+    const onVisibility = () => {
+      if (document.hidden) {
+        // App opened successfully
+        document.removeEventListener('visibilitychange', onVisibility);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    window.location.href = swishUrl;
+    setTimeout(() => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      if (!document.hidden && Date.now() - start >= 1400) setLinkFailed(true);
+    }, 1500);
+  };
 
   const Row = ({ label, value, copyKey }: { label: string; value: string; copyKey: string }) => (
     <div className="flex items-center justify-between gap-3 py-2 border-b border-border/50 last:border-0">
@@ -1291,9 +1390,27 @@ function SwishCard({
           <Row label={t.swishRef} value={reference} copyKey="ref" />
         </div>
 
-        <a href={swishUrl} className="block">
-          <Button className="w-full" size="lg">{t.swishOpen}</Button>
-        </a>
+        <Button className="w-full" size="lg" onClick={openSwish}>{t.swishOpen}</Button>
+
+        {linkFailed && (
+          <div className="rounded-lg bg-amber-500/10 border border-amber-500/30 p-3 text-sm space-y-2">
+            <div className="flex gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <div className="font-semibold text-amber-900 dark:text-amber-200">
+                  {t === undefined || typeof t.swishFallback !== 'string'
+                    ? 'Öppnades inte Swish? Öppna Swish-appen manuellt och använd uppgifterna ovan.'
+                    : t.swishFallback}
+                </div>
+                <div className="text-xs text-muted-foreground mt-1">
+                  {isMobile
+                    ? 'Kopiera nummer, belopp och meddelande ovan.'
+                    : 'Öppna Swish-appen på din mobil och slå in uppgifterna manuellt.'}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
