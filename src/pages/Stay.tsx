@@ -433,6 +433,7 @@ export default function Stay() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [paidTotal, setPaidTotal] = useState<number>(0);
+  const [swishInfo, setSwishInfo] = useState<{ amount: number; reference: string } | null>(null);
   const [extraTents, setExtraTents] = useState<string[]>([]);
 
   const loadStay = async () => {
@@ -547,7 +548,7 @@ export default function Stay() {
     document.getElementById("addons-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  const submit = async () => {
+  const submit = async (method: 'stripe' | 'swish' = 'stripe') => {
     const items = data.addons
       .filter((a) => (qty[a.id] ?? 0) > 0)
       .map((a) => ({ addon_id: a.id, quantity: qty[a.id] }));
@@ -555,17 +556,27 @@ export default function Stay() {
     setSubmitting(true);
     trackEvent("Add-on Checkout Started", {
       product_category: "addon",
-      payment_method: "stripe",
+      payment_method: method,
       language: lang,
     });
     try {
       const { data: res, error } = await (supabase as any).functions.invoke("submit-addon-request", {
-        body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined },
+        body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined, payment_method: method },
       });
       if (error || (res as any)?.error) throw new Error((res as any)?.error ?? error?.message);
+      if (method === 'swish') {
+        const totalPaid = Number((res as any)?.total ?? total);
+        const reference = String((res as any)?.reference ?? data.booking.booking_number ?? '');
+        setSwishInfo({ amount: totalPaid, reference });
+        setQty({});
+        setSubmitting(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        toast.success(isSv ? "Beställningen är registrerad — öppna Swish för att betala." : "Order registered — open Swish to pay.");
+        await loadStay();
+        return;
+      }
       const url = (res as any)?.url;
       if (!url) throw new Error("Kunde inte starta betalningen.");
-      // Redirect to payment provider
       window.location.href = url;
     } catch (err: any) {
       toast.error(err?.message ?? t.error);
@@ -760,6 +771,16 @@ export default function Stay() {
               })}
             </CardContent>
           </Card>
+        )}
+
+        {swishInfo && !done && (
+          <SwishCard
+            t={t}
+            amount={swishInfo.amount}
+            reference={swishInfo.reference}
+            swishNumber={data.settings?.swish_number ?? '1230628289'}
+            payee={data.settings?.swish_payee ?? 'Aurora Media AB'}
+          />
         )}
 
         {done ? (
@@ -1014,15 +1035,41 @@ export default function Stay() {
             })()}
 
             {itemCount > 0 && (
-              <Card className="sticky bottom-4 border-primary shadow-lg">
-                <CardContent className="p-4 flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider">{t.total}</div>
-                    <div className="font-serif text-2xl text-primary">{total} {t.currency}</div>
+              <Card className="sticky bottom-4 border-primary shadow-xl bg-card/95 backdrop-blur">
+                <CardContent className="p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-[11px] text-muted-foreground uppercase tracking-wider">{t.total}</div>
+                      <div className="font-serif text-3xl text-primary leading-none">{total} <span className="text-lg">{t.currency}</span></div>
+                    </div>
+                    <div className="text-right text-xs text-muted-foreground">
+                      {itemCount} {isSv ? (itemCount === 1 ? "vald" : "valda") : (itemCount === 1 ? "item" : "items")}
+                    </div>
                   </div>
-                  <Button size="lg" onClick={submit} disabled={submitting}>
-                    {submitting ? t.sending : t.submit}
-                  </Button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <Button
+                      size="lg"
+                      onClick={() => submit('swish')}
+                      disabled={submitting}
+                      className="w-full bg-[#5b2c91] hover:bg-[#4a2478] text-white font-semibold"
+                    >
+                      <span className="mr-2 inline-flex items-center justify-center rounded-sm bg-white text-[#5b2c91] px-1.5 py-0.5 text-[10px] font-bold tracking-wider">SWISH</span>
+                      {isSv ? "Betala med Swish" : "Pay with Swish"}
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      onClick={() => submit('stripe')}
+                      disabled={submitting}
+                      className="w-full border-primary/40"
+                    >
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      {isSv ? "Betala med kort" : "Pay by card"}
+                    </Button>
+                  </div>
+                  <p className="text-[11px] text-center text-muted-foreground">
+                    {submitting ? t.sending : (isSv ? "Trygg betalning • bekräftelse via mejl" : "Secure payment • email confirmation")}
+                  </p>
                 </CardContent>
               </Card>
             )}

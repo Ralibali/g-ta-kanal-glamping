@@ -17,10 +17,11 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 
-  let body: { public_token?: string; items?: Item[]; dietary?: string[]; dietary_note?: string } = {}
+  let body: { public_token?: string; items?: Item[]; dietary?: string[]; dietary_note?: string; payment_method?: 'stripe' | 'swish' } = {}
   try { body = await req.json() } catch {}
   const token = body.public_token
   const items = Array.isArray(body.items) ? body.items.filter(i => i.addon_id && i.quantity > 0) : []
+  const paymentMethod: 'stripe' | 'swish' = body.payment_method === 'swish' ? 'swish' : 'stripe'
   const ALLOWED_DIETS = new Set(['gluten_free', 'vegan', 'vegetarian', 'lactose_free', 'nut_allergy'])
   const dietary = Array.isArray(body.dietary)
     ? Array.from(new Set(body.dietary.filter((d): d is string => typeof d === 'string' && ALLOWED_DIETS.has(d))))
@@ -70,6 +71,7 @@ Deno.serve(async (req) => {
 
   const orderRows: any[] = []
   const lineItems: any[] = []
+  const emailItemNames: { name: string; quantity: number; total: number; slug: string }[] = []
   let total = 0
   for (const it of items) {
     const a = addonMap.get(it.addon_id)
@@ -79,16 +81,17 @@ Deno.serve(async (req) => {
     total += lineTotal
     orderRows.push({
       booking_id: booking.id, addon_id: a.id, quantity: qty,
-      unit_price_sek: a.price_sek, total_sek: lineTotal, status: 'pending',
+      unit_price_sek: a.price_sek, total_sek: lineTotal,
+      status: paymentMethod === 'swish' ? 'requested' : 'pending',
     })
-    const price = STRIPE_PRICE_BY_SLUG[a.slug]
-    if (!price) {
-      return new Response(JSON.stringify({ error: `missing_stripe_price_for_${a.slug}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    emailItemNames.push({ name: a.name_sv, quantity: qty, total: lineTotal, slug: a.slug })
+    if (paymentMethod === 'stripe') {
+      const price = STRIPE_PRICE_BY_SLUG[a.slug]
+      if (!price) {
+        return new Response(JSON.stringify({ error: `missing_stripe_price_for_${a.slug}` }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+      }
+      lineItems.push({ price, quantity: qty })
     }
-    lineItems.push({
-      price,
-      quantity: qty,
-    })
   }
   if (orderRows.length === 0) {
     return new Response(JSON.stringify({ error: 'no_valid_items' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
@@ -121,6 +124,43 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: insertErr?.message || 'insert_failed' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
   const orderIds = insertedOrders.map(o => o.id)
+  const ref = booking.booking_number || booking.id.slice(0, 8).toUpperCase()
+
+  if (paymentMethod === 'swish') {
+    // Notify owner immediately so they can watch Swish and confirm in admin
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+      const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+      const { data: ownerSetting } = await supabase.from('app_settings').select('value').eq('key', 'owner_email').maybeSingle()
+      const ownerEmail = String((ownerSetting as any)?.value ?? 'info@auroramedia.se')
+      await fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          templateName: 'addon-request-owner',
+          recipientEmail: ownerEmail,
+          idempotencyKey: `addon-owner-swish-${orderIds.join('-')}`,
+          templateData: {
+            guestName: booking.guest_name,
+            guestEmail: booking.email ?? null,
+            guestLang: booking.language ?? 'sv',
+            tentName: booking.tent_name || booking.tent_id,
+            checkinDate: booking.checkin_date,
+            items: emailItemNames.map(i => ({ name: i.name, quantity: i.quantity, total: i.total })),
+            total,
+            hasEarlyCheckin: emailItemNames.some(i => i.slug === 'early_checkin'),
+            reference: ref,
+            adminUrl: 'https://goglampingsweden.se/admin/addon-orders',
+          },
+        }),
+      })
+    } catch (err) { console.error('swish owner email failed', err) }
+
+    return new Response(JSON.stringify({
+      success: true, method: 'swish', total, count: orderIds.length, reference: ref,
+    }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+  }
+
   const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
   if (!stripeKey) {
     return new Response(JSON.stringify({ error: 'stripe_not_configured' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
@@ -143,7 +183,7 @@ Deno.serve(async (req) => {
   await supabase.from('addon_orders').update({ stripe_session_id: session.id }).in('id', orderIds)
 
   return new Response(JSON.stringify({
-    success: true, url: session.url, session_id: session.id, total, count: orderIds.length,
+    success: true, method: 'stripe', url: session.url, session_id: session.id, total, count: orderIds.length,
   }), {
     status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   })
