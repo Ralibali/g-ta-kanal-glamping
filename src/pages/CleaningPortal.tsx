@@ -553,39 +553,72 @@ export default function CleaningPortal() {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    {Array.from(d.tents).map((tid) => {
-                      const t = TENT_BY_ID[tid];
-                      const isEarly = d.earlyTents.has(tid);
-                      const isDone = d.completedTents.has(tid);
-                      return (
-                        <Badge key={tid} variant="outline" className="gap-1">
-                          {isDone && <CheckCircle2 className="h-3 w-3 text-green-600" />}
-                          {t ? `${t.no}. ${t.name}` : tid}
-                          {isEarly && <Sunrise className="h-3 w-3 text-amber-500" />}
-                        </Badge>
-                      );
-                    })}
-                    {d.tents.size === 0 && (
-                      <span className="text-muted-foreground">Inga byten</span>
+                  {d.perTent.size === 0 ? (
+                    <p className="text-xs text-muted-foreground">Inga byten</p>
+                  ) : (
+                    <ul className="divide-y rounded-md border">
+                      {Array.from(d.perTent.values())
+                        .sort((a, b) => (TENT_BY_ID[a.tent_id]?.no ?? 99) - (TENT_BY_ID[b.tent_id]?.no ?? 99))
+                        .map((t) => {
+                          const meta = TENT_BY_ID[t.tent_id];
+                          return (
+                            <li key={t.tent_id} className="flex flex-wrap items-center justify-between gap-2 p-2">
+                              <div className="flex items-center gap-2 min-w-0">
+                                {t.done ? (
+                                  <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                                ) : (
+                                  <span className="inline-block h-2 w-2 rounded-full bg-muted-foreground/40 shrink-0" />
+                                )}
+                                <span className="font-medium text-sm truncate">
+                                  {meta ? `${meta.no}. ${meta.name}` : t.tent_id}
+                                </span>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                {t.hasArrival ? (
+                                  <Badge variant="secondary" className="text-[11px]">
+                                    <Users className="mr-1 h-3 w-3" />
+                                    {t.arrivalGuests} gäst{t.arrivalGuests === 1 ? "" : "er"}
+                                    {t.arrivalChildren > 0 && (
+                                      <span className="ml-1 opacity-70">
+                                        ({t.arrivalAdults}v + {t.arrivalChildren}b)
+                                      </span>
+                                    )}
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="outline" className="text-[11px]">Endast avresa</Badge>
+                                )}
+                                {t.hasArrival && t.hasDeparture && (
+                                  <Badge variant="outline" className="text-[11px]">Byte</Badge>
+                                )}
+                                {t.early && (
+                                  <Badge className="bg-amber-500 hover:bg-amber-500 text-white text-[11px]">
+                                    <Sunrise className="mr-1 h-3 w-3" /> Tidig
+                                  </Badge>
+                                )}
+                              </div>
+                            </li>
+                          );
+                        })}
+                    </ul>
+                  )}
+
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                    <span>{d.arrivals} ankomster · {d.departures} avresor</span>
+                    <span>
+                      <Users className="mr-1 inline h-3 w-3" />
+                      Totalt {d.guests} gäster
+                      {d.children > 0 && (
+                        <span className="opacity-70"> ({d.adults} vuxna + {d.children} barn)</span>
+                      )}
+                    </span>
+                    {d.earlyTents.size > 0 && (
+                      <span className="text-amber-600">
+                        <Sunrise className="mr-1 inline h-3 w-3" />
+                        {d.earlyTents.size} tidig incheckning
+                      </span>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-                    <div>{d.arrivals} byten</div>
-                    <div>
-                      <Users className="mr-1 inline h-3 w-3" />
-                      {d.guests} gäster
-                    </div>
-                    <div>
-                      {d.earlyTents.size > 0 && (
-                        <span className="text-amber-600">
-                          <Sunrise className="mr-1 inline h-3 w-3" />
-                          {d.earlyTents.size} tidig
-                        </span>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <div className="flex-1">
