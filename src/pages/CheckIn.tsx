@@ -573,7 +573,7 @@ const CheckIn = () => {
             <div className="bg-secondary rounded-xl p-5 mb-6 text-left">
               <p className="text-sm font-semibold text-foreground mb-3">
                 {tentIds.length > 1
-                  ? (lang === "en" ? "Your tents" : lang === "da" ? "Dine telte" : "Dina tält")
+                  ? (lang === "en" ? "Your tents" : lang === "de" ? "Ihre Zelte" : "Dina tält")
                   : t.yourTent}
               </p>
               <div className="space-y-4">
@@ -598,8 +598,8 @@ const CheckIn = () => {
               <p className="text-xs text-muted-foreground mb-3">
                 {lang === "en"
                   ? "The same code opens both tents."
-                  : lang === "da"
-                  ? "Samme kode åbner begge telte."
+                  : lang === "de"
+                  ? "Derselbe Code öffnet beide Zelte."
                   : "Samma kod öppnar båda tälten."}
               </p>
             )}
@@ -645,8 +645,8 @@ const CheckIn = () => {
                   href={`sms:0722254993?body=${encodeURIComponent(
                     lang === "en"
                       ? `Hi! I've Swished 399 SEK for late check-out (12:00). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
-                      : lang === "da"
-                      ? `Hej! Jeg har Swishet 399 kr for sen udtjekning (kl. 12). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
+                      : lang === "de"
+                      ? `Hallo! Ich habe 399 SEK per Swish für späten Check-out (12:00 Uhr) bezahlt. Buchung: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
                       : `Hej! Jag har swishat 399 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
                   )}`}
                   className="flex items-center justify-center gap-2 border border-border text-foreground py-2.5 px-4 rounded-lg font-medium hover:bg-muted transition-colors text-sm"
