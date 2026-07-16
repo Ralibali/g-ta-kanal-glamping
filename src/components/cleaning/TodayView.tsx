@@ -366,6 +366,7 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
             );
           })}
         </ul>
+        </>
       )}
     </div>
   );
