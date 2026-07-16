@@ -94,9 +94,13 @@ export default function CleaningPortal() {
   const [selfCleanDates, setSelfCleanDates] = useState<Set<string>>(new Set());
   const [sessions, setSessions] = useState<Session[]>([]);
   const [earlyFlags, setEarlyFlags] = useState<EarlyFlag[]>([]);
+  const [roomMismatches, setRoomMismatches] = useState<
+    { booking_number: string; guest_name: string | null; tent_id: string | null; checkin_date: string | null; checkout_date: string | null; expected: number; actual: number; guests_expected: number; guests_actual: number }[]
+  >([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState<Filter>("all");
+
 
   const loadAll = async () => {
     setDataLoading(true);
