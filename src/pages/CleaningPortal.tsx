@@ -43,15 +43,30 @@ type Availability = { work_date: string; user_id: string };
 type Session = { tent_id: string; cleaning_date: string; status: string };
 type EarlyFlag = { tent_id: string; date: string; active: boolean };
 
+type TentDayInfo = {
+  tent_id: string;
+  arrivalGuests: number; // adults + children
+  arrivalAdults: number;
+  arrivalChildren: number;
+  hasArrival: boolean;
+  hasDeparture: boolean;
+  early: boolean;
+  done: boolean;
+};
+
 type DayRow = {
   date: string;
   tents: Set<string>;
   arrivals: number;
   departures: number;
   guests: number;
+  adults: number;
+  children: number;
   earlyTents: Set<string>;
   completedTents: Set<string>;
+  perTent: Map<string, TentDayInfo>;
 };
+
 
 type Filter = "all" | "missing" | "assigned" | "self";
 
