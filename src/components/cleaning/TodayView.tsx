@@ -241,7 +241,42 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
           </CardContent>
         </Card>
       ) : (
-        <ul className="space-y-3" aria-label={tr(lang, "dayView")}>
+        <>
+          {(() => {
+            const arrivalCards = cards.filter((c) => c.hasArrival);
+            const totalAdults = arrivalCards.reduce((a, c) => a + (c.guests || 0), 0);
+            const totalChildren = arrivalCards.reduce((a, c) => a + (c.children || 0), 0);
+            const totalGuests = totalAdults + totalChildren;
+            if (totalGuests === 0) return null;
+            return (
+              <div className="flex items-center gap-3 rounded-xl border-2 border-primary/30 bg-primary/5 p-3">
+                <Users className="h-6 w-6 text-primary shrink-0" aria-hidden="true" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[10px] uppercase tracking-wider text-primary font-semibold">
+                    {tr(lang, "todayTitle") /* fallback */ ? "" : ""}
+                    {lang === "sv" ? "Gäster som checkar in idag" : lang === "si" ? "අද ඇතුල්වන ආගන්තුකයන්" : "Guests checking in today"}
+                  </div>
+                  <div className="flex items-baseline gap-1.5 flex-wrap">
+                    <span className="text-2xl font-bold text-primary leading-none tabular-nums">
+                      {totalGuests}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {tr(lang, "totalGuests")}
+                    </span>
+                    {totalChildren > 0 && (
+                      <span className="text-[11px] text-muted-foreground">
+                        ({totalAdults} {tr(lang, "guests").toLowerCase()} + {totalChildren} {tr(lang, "children").toLowerCase()})
+                      </span>
+                    )}
+                    <span className="text-[11px] text-muted-foreground ml-auto">
+                      {arrivalCards.length} / {total} {lang === "sv" ? "tält med ankomst" : lang === "si" ? "කූඩාරම්" : "tents arriving"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+          <ul className="space-y-3" aria-label={tr(lang, "dayView")}>
           {cards.map((card) => {
             const session = sessions.find((s) => s.tent_id === card.tent_id);
             const isDone = session?.status === "completed";
