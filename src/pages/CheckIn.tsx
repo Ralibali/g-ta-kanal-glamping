@@ -284,6 +284,27 @@ const CheckIn = () => {
     setNotFound(false);
     setBookingNumber(resolvedBookingNumber);
     setTentId(matchedBooking.tentId);
+
+    // Hämta alla tält kopplade till bokningen (för flertältsbokningar)
+    let allTents: TentId[] = [matchedBooking.tentId];
+    try {
+      const { data: tentsData } = await supabase.rpc("list_tents_for_booking", {
+        p_booking_number: resolvedBookingNumber,
+      });
+      if (Array.isArray(tentsData) && tentsData.length > 0) {
+        const ids = tentsData
+          .map((r: { tent_id: string }) => r.tent_id as TentId)
+          .filter((id): id is TentId => VALID_TENT_IDS.includes(id));
+        if (ids.length > 0) {
+          allTents = ids.includes(matchedBooking.tentId)
+            ? ids
+            : [matchedBooking.tentId, ...ids];
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch all tents for booking", err);
+    }
+    setTentIds(allTents);
     setLang(matchedBooking.lang);
     setTermsAccepted(TERMS[matchedBooking.lang].map(() => false));
     setError("");
@@ -295,19 +316,24 @@ const CheckIn = () => {
   const handleTermsSubmit = async () => {
     if (allTermsAccepted && tentId) {
       setStep("code");
-      // Logga incheckning (fire-and-forget)
+      // Logga incheckning för varje tält gästen bokat (fire-and-forget)
       const bn = bookingNumber.trim().toUpperCase();
+      const tents = tentIds.length > 0 ? tentIds : [tentId];
       try {
-        await supabase.from("check_ins").insert({
-          booking_number: bn,
-          tent_id: tentId,
-          lang,
-          user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-        });
+        await Promise.all(
+          tents.map((tid) =>
+            supabase.from("check_ins").insert({
+              booking_number: bn,
+              tent_id: tid,
+              lang,
+              user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+            })
+          )
+        );
       } catch (err) {
         console.error("Failed to log check-in", err);
       }
-      // Fire-and-forget welcome SMS with personal link to /under-vistelsen
+      // Skicka ett välkomst-SMS (edge-funktionen slår upp bokningen själv)
       try {
         supabase.functions.invoke("send-checkin-welcome", {
           body: { booking_number: bn },
