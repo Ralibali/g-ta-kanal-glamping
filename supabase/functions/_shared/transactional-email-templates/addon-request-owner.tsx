@@ -16,6 +16,7 @@ interface Props {
   adminUrl?: string
   hasEarlyCheckin?: boolean
   reference?: string
+  paymentMethod?: 'stripe' | 'swish'
 }
 
 const LANG_LABELS: Record<string, string> = {
