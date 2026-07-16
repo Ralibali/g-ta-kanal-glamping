@@ -567,19 +567,38 @@ const CheckIn = () => {
 
             {/* Tent info */}
             <div className="bg-secondary rounded-xl p-5 mb-6 text-left">
-              <p className="text-sm font-semibold text-foreground mb-1">{t.yourTent}</p>
-              <p className="font-serif text-lg font-bold text-foreground">{TENT_INFO[lang][tentId].name}</p>
-              <div className="flex items-start gap-2 mt-3">
-                <MapPin className="text-accent shrink-0 mt-0.5" size={16} />
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {TENT_INFO[lang][tentId].directions}
-                </p>
+              <p className="text-sm font-semibold text-foreground mb-3">
+                {tentIds.length > 1
+                  ? (lang === "en" ? "Your tents" : lang === "da" ? "Dine telte" : "Dina tält")
+                  : t.yourTent}
+              </p>
+              <div className="space-y-4">
+                {(tentIds.length > 0 ? tentIds : [tentId]).map((tid) => (
+                  <div key={tid}>
+                    <p className="font-serif text-lg font-bold text-foreground">{TENT_INFO[lang][tid!].name}</p>
+                    <div className="flex items-start gap-2 mt-1">
+                      <MapPin className="text-accent shrink-0 mt-0.5" size={16} />
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {TENT_INFO[lang][tid!].directions}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <p className="text-muted-foreground text-sm mb-4">
+            <p className="text-muted-foreground text-sm mb-2">
               {t.lockCodeLabel}
             </p>
+            {tentIds.length > 1 && (
+              <p className="text-xs text-muted-foreground mb-3">
+                {lang === "en"
+                  ? "The same code opens both tents."
+                  : lang === "da"
+                  ? "Samme kode åbner begge telte."
+                  : "Samma kod öppnar båda tälten."}
+              </p>
+            )}
             <div className="bg-primary rounded-2xl py-8 px-6 mb-6">
               <p className="font-mono text-6xl font-bold text-primary-foreground tracking-[0.3em]">
                 {LOCK_CODE}
