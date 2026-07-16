@@ -5,7 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 // ─── Aktiva bokningsnummer ───────────────────────────────────
 // Koppla bokningsnummer till tält: "sjobris", "naturkarnan" eller "lugnetsyta"
 type TentId = "sjobris" | "naturkarnan" | "lugnetsyta";
-type Lang = "sv" | "da" | "en";
+type Lang = "sv" | "en" | "de";
+
+interface CheckInProps {
+  initialLang?: Lang;
+}
 
 interface Booking {
   tentId: TentId;
