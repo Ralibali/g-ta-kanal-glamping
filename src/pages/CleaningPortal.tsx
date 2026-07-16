@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  AlertTriangle,
   CalendarDays,
   CheckCircle2,
   ChevronRight,
@@ -12,6 +13,7 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useCleaner } from "@/hooks/useCleaner";
 import { TENTS, TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
