@@ -182,12 +182,32 @@ export default function CleaningPortal() {
           arrivals: 0,
           departures: 0,
           guests: 0,
+          adults: 0,
+          children: 0,
           earlyTents: new Set(),
           completedTents: new Set(),
+          perTent: new Map(),
         };
         map.set(d, row);
       }
       return row;
+    };
+    const ensureTent = (row: DayRow, tid: string): TentDayInfo => {
+      let t = row.perTent.get(tid);
+      if (!t) {
+        t = {
+          tent_id: tid,
+          arrivalGuests: 0,
+          arrivalAdults: 0,
+          arrivalChildren: 0,
+          hasArrival: false,
+          hasDeparture: false,
+          early: false,
+          done: false,
+        };
+        row.perTent.set(tid, t);
+      }
+      return t;
     };
     const arrivalByKey = new Map<string, Stay>();
     for (const s of stays) arrivalByKey.set(`${s.tent_id}|${s.checkin_date}`, s);
@@ -195,31 +215,44 @@ export default function CleaningPortal() {
     for (const s of stays) {
       if (s.checkout_date >= today && s.checkout_date <= rangeEnd) {
         const row = ensure(s.checkout_date);
+        const tInfo = ensureTent(row, s.tent_id);
         if (!row.tents.has(s.tent_id)) {
           row.tents.add(s.tent_id);
           row.departures += 1;
         }
+        tInfo.hasDeparture = true;
         const arr = arrivalByKey.get(`${s.tent_id}|${s.checkout_date}`);
         if (arr) {
+          const adults = Math.max(0, Number(arr.guests ?? 0));
+          const children = Math.max(0, Number(arr.children ?? 0));
           row.arrivals += 1;
-          row.guests += Number(arr.guests ?? 0);
+          row.guests += adults + children;
+          row.adults += adults;
+          row.children += children;
+          tInfo.hasArrival = true;
+          tInfo.arrivalAdults = adults;
+          tInfo.arrivalChildren = children;
+          tInfo.arrivalGuests = adults + children;
         }
       }
       if (s.checkin_date >= today && s.checkin_date <= rangeEnd) {
-        const key = `${s.tent_id}|${s.checkin_date}`;
-        // Only add as arrival-only day if there's no departure on that same tent+date
         const isTurnover = stays.some(
           (x) => x.tent_id === s.tent_id && x.checkout_date === s.checkin_date,
         );
         if (!isTurnover) {
           const row = ensure(s.checkin_date);
-          if (!row.tents.has(s.tent_id)) {
-            row.tents.add(s.tent_id);
-            // count as arrival preparation only (no departure)
-          }
+          const tInfo = ensureTent(row, s.tent_id);
+          row.tents.add(s.tent_id);
+          const adults = Math.max(0, Number(s.guests ?? 0));
+          const children = Math.max(0, Number(s.children ?? 0));
           row.arrivals += 1;
-          row.guests += Number(s.guests ?? 0);
-          void key;
+          row.guests += adults + children;
+          row.adults += adults;
+          row.children += children;
+          tInfo.hasArrival = true;
+          tInfo.arrivalAdults = adults;
+          tInfo.arrivalChildren = children;
+          tInfo.arrivalGuests = adults + children;
         }
       }
     }
@@ -227,16 +260,19 @@ export default function CleaningPortal() {
     for (const f of earlyFlags) {
       const row = ensure(f.date);
       row.earlyTents.add(f.tent_id);
+      ensureTent(row, f.tent_id).early = true;
     }
     for (const sess of sessions) {
       if (sess.status === "completed") {
         const row = ensure(sess.cleaning_date);
         row.completedTents.add(sess.tent_id);
+        ensureTent(row, sess.tent_id).done = true;
       }
     }
 
     return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
   }, [stays, sessions, earlyFlags, today, rangeEnd]);
+
 
   const filteredDays = useMemo(() => {
     return days.filter((d) => {
