@@ -270,6 +270,35 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
                         <span className="text-xs text-muted-foreground">#{card.tentNo}</span>
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5">{card.position}</p>
+
+                      {card.hasArrival ? (
+                        <div className="mt-2.5 flex items-center gap-3 rounded-lg bg-primary/10 border border-primary/30 p-2.5">
+                          <Users className="h-6 w-6 text-primary shrink-0" aria-hidden="true" />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-[10px] uppercase tracking-wider text-primary font-semibold">
+                              {tr(lang, "guestsLabel")}
+                            </div>
+                            <div className="flex items-baseline gap-1.5 flex-wrap">
+                              <span className="text-2xl font-bold text-primary leading-none tabular-nums">
+                                {card.guests + card.children}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {tr(lang, "guests").toLowerCase()}
+                              </span>
+                              {card.children > 0 && (
+                                <span className="text-[11px] text-muted-foreground">
+                                  ({card.guests} {tr(lang, "guests").toLowerCase()} + {card.children} {tr(lang, "children").toLowerCase()})
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mt-2.5 rounded-lg bg-muted/60 border border-border p-2 text-xs text-muted-foreground">
+                          {labels.departureBadge} · {lang === "sv" ? "ingen ny gäst idag" : lang === "si" ? "අද අලුත් ආගන්තුකයෙක් නැත" : "no new guest today"}
+                        </div>
+                      )}
+
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {card.earlyCheckin && (
                           <Badge className="bg-amber-500 hover:bg-amber-500 text-white text-[10px]">
@@ -281,12 +310,9 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
                             <MoonStar className="h-3 w-3 mr-1" aria-hidden="true" />{labels.lateBadge}
                           </Badge>
                         )}
-                        {!card.hasArrival && (
-                          <Badge variant="outline" className="text-[10px]">{labels.departureBadge}</Badge>
-                        )}
-                        {card.hasArrival && card.guests > 0 && (
+                        {card.hasArrival && card.hasDeparture && (
                           <Badge variant="outline" className="text-[10px]">
-                            <Users className="h-3 w-3 mr-1" aria-hidden="true" />{card.guests}
+                            {lang === "sv" ? "Byte" : lang === "si" ? "මාරුව" : "Turnover"}
                           </Badge>
                         )}
                         {card.breakfast && (
