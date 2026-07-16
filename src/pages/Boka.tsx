@@ -661,7 +661,9 @@ interface BokaProps {
 }
 
 const Boka = ({ lang: initialLang }: BokaProps = {}) => {
-  const [lang, setLang] = useState<BokaLang>(initialLang === "en" ? "en" : "sv");
+  const [lang, setLang] = useState<BokaLang>(
+    initialLang === "en" ? "en" : initialLang === "de" ? "de" : "sv"
+  );
   const t = COPY[lang];
 
   useEffect(() => {
@@ -675,7 +677,11 @@ const Boka = ({ lang: initialLang }: BokaProps = {}) => {
     }
   }, []);
 
-  const canonical = lang === "en" ? "https://goglampingsweden.se/en/boka" : "https://goglampingsweden.se/boka";
+  const canonical =
+    lang === "en" ? "https://goglampingsweden.se/en/boka"
+    : lang === "de" ? "https://goglampingsweden.se/de/boka"
+    : "https://goglampingsweden.se/boka";
+  const ogLocale = lang === "en" ? "en_US" : lang === "de" ? "de_DE" : "sv_SE";
 
   return (
     <HelmetProvider>
@@ -687,13 +693,14 @@ const Boka = ({ lang: initialLang }: BokaProps = {}) => {
           <link rel="canonical" href={canonical} />
           <link rel="alternate" hrefLang="sv" href="https://goglampingsweden.se/boka" />
           <link rel="alternate" hrefLang="en" href="https://goglampingsweden.se/en/boka" />
+          <link rel="alternate" hrefLang="de" href="https://goglampingsweden.se/de/boka" />
           <link rel="alternate" hrefLang="x-default" href="https://goglampingsweden.se/boka" />
           <meta property="og:title" content={t.metaTitle} />
           <meta property="og:description" content={t.metaDesc} />
           <meta property="og:type" content="website" />
           <meta property="og:url" content={canonical} />
           <meta property="og:image" content="https://goglampingsweden.se/og-image.jpg" />
-          <meta property="og:locale" content={lang === "en" ? "en_US" : "sv_SE"} />
+          <meta property="og:locale" content={ogLocale} />
         </Helmet>
         <style>{FONT_STYLES}</style>
 
