@@ -28,7 +28,7 @@ const FONT_STYLES = `
   }
 `;
 
-type BokaLang = "sv" | "en";
+type BokaLang = "sv" | "en" | "de";
 
 const COPY = {
   sv: {
@@ -168,6 +168,75 @@ const COPY = {
     faqCta: "Book glamping by the Göta Canal",
     metaTitle: "Book glamping by the Göta Canal | Bergs Slussar Glamping",
     metaDesc: "Book a cosy glamping tent at Bergs Locks by the Göta Canal. Made-up beds, heating, electricity and easy direct booking near Linköping.",
+  },
+  de: {
+    nav: [
+      { label: "Über das Glamping", href: "#om" },
+      { label: "Unsere Zelte", href: "#talten" },
+      { label: "Häufige Fragen", href: "#faq" },
+    ],
+    navBook: "Aufenthalt buchen",
+    navBookShort: "Buchen",
+    menuOpen: "Menü öffnen",
+    menuClose: "Menü schließen",
+    stickyCta: "Verfügbare Daten ansehen",
+    stickyCall: "Rufen Sie uns an",
+    stickyStrap: "Direktbuchung · Bester Preis · Sofortige Bestätigung",
+    heroEyebrow: "Glamping am Göta-Kanal",
+    heroTitle1: "Weich schlafen.",
+    heroTitle2: "Am Wasser aufwachen.",
+    heroLead: "Gemütliche Glamping-Zelte mit bezogenen Betten, Heizung und Strom – direkt an den Schleusen von Berg, 15 Minuten von Linköping entfernt.",
+    heroPrice: "Ab 1\u00a0595 SEK/Nacht – alles inklusive",
+    heroCta: "Verfügbare Daten ansehen",
+    heroChip1: "Bezogene Betten",
+    heroChip2: "Private Terrasse",
+    heroChip3: "Heizung & Strom",
+    bookEyebrow: "Buchung",
+    bookTitle: "Finden Sie Ihren Aufenthalt",
+    bookLead: "Wählen Sie Daten und Gästezahl, um verfügbare Zelte und aktuelle Preise zu sehen. Alle drei Zelte bieten Platz für bis zu vier Personen – ein Doppelbett und ein kleines Schlafsofa für zwei.",
+    bookAssurances: [
+      "Sofortige Bestätigung",
+      "Sichere Zahlung",
+      "Bester verfügbarer Direktpreis",
+      "Persönlicher Check-in",
+    ],
+    benefitsEyebrow: "Das ist inklusive",
+    benefitsTitle: "Alles für einen ruhigeren Aufenthalt",
+    benefits: [
+      { title: "Echte bezogene Betten", text: "Weiche Matratzen, saubere Laken und warme Decken – bereit, wenn Sie eintreten." },
+      { title: "Heizung & Strom im Zelt", text: "Angenehme Temperatur das ganze Jahr über und Steckdosen für alles, was Sie brauchen." },
+      { title: "Handtücher und Bettwäsche inklusive", text: "Nichts zu packen oder zu tragen – alles ist bei Ihrer Ankunft vorbereitet." },
+      { title: "Eigene Terrasse", text: "Sitzen Sie draußen mit einer Tasse Kaffee und lassen Sie den Morgen in Ruhe erwachen." },
+      { title: "Frühstück kann hinzugefügt werden", text: "Fügen Sie ein leckeres Frühstück bei der Buchung hinzu und starten Sie den Tag entspannt." },
+      { title: "Göta-Kanal um die Ecke", text: "Schleusen, Wanderwege und Bootsleben sind nur wenige Schritte entfernt." },
+    ],
+    editorialEyebrow: "Drei Zelte",
+    editorialTitle: "Drei Zelte. Ein ganz besonderer Ort.",
+    editorialLead: "Sie wohnen nah an der Natur, am Kanal und an den Restaurants und Spazierwegen der Schleusen von Berg. Die Zelte sind gemütlich für einen komfortablen Aufenthalt, ohne dass das Naturgefühl verloren geht.",
+    editorialCta: "Verfügbarkeit prüfen",
+    stepsEyebrow: "So funktioniert es",
+    stepsTitle: "Einfache Buchung von Anfang bis Ende",
+    steps: [
+      { n: "01", title: "Daten und Zelt wählen", text: "Nutzen Sie den Buchungskalender oben, um verfügbare Nächte zu sehen." },
+      { n: "02", title: "Buchung sicher abschließen", text: "Sofortige Bestätigung per E-Mail mit allen Details zu Ihrem Aufenthalt." },
+      { n: "03", title: "Infos vor der Ankunft erhalten", text: "Wir senden einige Tage vorher Check-in-Details und praktische Tipps per E-Mail." },
+    ],
+    stepsOutro: "Nach der Buchung erhalten Sie eine sofortige Bestätigung. Wenn der Ankunftstag näher rückt, senden wir Informationen zum Check-in, Ihrem Zelt und praktische Details.",
+    faqEyebrow: "Häufige Fragen",
+    faqTitle: "Gut zu wissen",
+    faqs: [
+      { q: "Wann können wir einchecken?", a: "Check-in ist ab 15:00 Uhr. Sie erhalten vor der Ankunft einen persönlichen Check-in-Link per E-Mail mit Code und praktischen Informationen." },
+      { q: "Wann müssen wir auschecken?", a: "Check-out ist bis spätestens 10:00 Uhr. Wenn Sie länger bleiben möchten, kann oft ein später Check-out gegen einen kleinen Aufpreis hinzugefügt werden." },
+      { q: "Gibt es Toiletten und Duschen?", a: "Ja, es gibt ein Servicehaus mit modernen Toiletten und Duschen in der Nähe der Zelte." },
+      { q: "Können wir Frühstück hinzufügen?", a: "Ja, das Frühstück kann bei der Buchung hinzugefügt werden. Es wird gegen 8:30 Uhr von Boställets Vedugnsbageri geliefert – Sie erhalten eine SMS, sobald es bereit ist." },
+      { q: "Sind Kinder willkommen?", a: "Ja, Kinder sind herzlich willkommen. Jedes Zelt hat ein Doppelbett und ein kleines Schlafsofa für zwei, sodass Platz für bis zu vier Gäste ist." },
+      { q: "Gibt es Heizung und Strom?", a: "Ja, jedes Zelt hat Heizung und Steckdosen, damit Ihr Aufenthalt bei jedem Wetter angenehm bleibt." },
+      { q: "Wie funktioniert der Check-in?", a: "Der Check-in ist digital. Sie erhalten einen Code per E-Mail rechtzeitig vor der Ankunft und können selbst einchecken, wann es Ihnen passt." },
+      { q: "Gibt es Parkplätze?", a: "Am einfachsten ist der öffentliche Parkplatz in Berg (kleine Gebühr). Wenn Sie kostenlos parken möchten, gibt es einen Pendlerparkplatz direkt an der Einfahrt zu Berg." },
+    ],
+    faqCta: "Glamping am Göta-Kanal buchen",
+    metaTitle: "Glamping am Göta-Kanal buchen | Bergs Slussar Glamping",
+    metaDesc: "Buchen Sie ein gemütliches Glamping-Zelt an den Schleusen von Berg am Göta-Kanal. Bezogene Betten, Heizung, Strom und einfache Direktbuchung nahe Linköping.",
   },
 };
 
