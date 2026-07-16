@@ -59,15 +59,16 @@ function pickReplyLang(raw?: string): 'en' | 'de' | 'da' | 'no' | 'nl' | 'fr' {
 
 const Email = ({
   guestName, guestEmail, guestLang, tentName, checkinDate,
-  items = [], total = 0, adminUrl, hasEarlyCheckin, reference,
+  items = [], total = 0, adminUrl, hasEarlyCheckin, reference, paymentMethod,
 }: Props) => {
   const lang = (guestLang ?? 'sv').toLowerCase().slice(0, 2)
   const isSv = lang === 'sv'
   const langLabel = LANG_LABELS[lang] ?? guestLang ?? '—'
   const ref = reference ?? '—'
+  const isSwish = paymentMethod === 'swish'
 
   let mailtoHref: string | null = null
-  if (!isSv && guestEmail) {
+  if (!isSv && guestEmail && !isSwish) {
     const rl = pickReplyLang(guestLang)
     const greeting = REPLY_GREETING[rl] ?? 'Hi'
     const subject = REPLY_SUBJECT[rl](ref)
@@ -75,13 +76,18 @@ const Email = ({
     mailtoHref = `mailto:${guestEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
   }
 
+  const headingText = isSwish ? '💳 Swish-önskemål – väntar på betalning' : '✅ Betald tillvalsbeställning'
+  const previewText = isSwish
+    ? `Swish-önskemål från ${guestName ?? 'gäst'} – bekräfta när Swish inkommit`
+    : `Betald tillvalsbeställning från ${guestName ?? 'gäst'}`
+
   return (
     <Html lang="sv" dir="ltr">
       <Head />
-      <Preview>Betald tillvalsbeställning från {guestName ?? 'gäst'}</Preview>
+      <Preview>{previewText}</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Heading style={h1}>✅ Betald tillvalsbeställning</Heading>
+          <Heading style={h1}>{headingText}</Heading>
           <Section style={card}>
             <Text style={label}>Gäst</Text>
             <Text style={value}>{guestName ?? '—'}{guestEmail ? ` • ${guestEmail}` : ''}</Text>
@@ -105,7 +111,14 @@ const Email = ({
           ))}
           <Text style={total_}>Summa: {total} kr</Text>
 
-          {isSv ? (
+          {isSwish ? (
+            <Section style={swishCallout}>
+              <Text style={text}>
+                <strong>Swish-betalning</strong> – gästen har valt att betala med Swish till <strong>1230628289</strong> med referens <strong>{ref}</strong>.
+                Betalningen är <strong>ännu inte mottagen</strong>. Kontrollera Swish-appen och markera som betald i admin när {total} kr kommit in.
+              </Text>
+            </Section>
+          ) : isSv ? (
             <Section style={swishCallout}>
               <Text style={text}><strong>Svensk gäst</strong> – betalningen är genomförd via Stripe. Kontrollera/bekräfta i admin vid behov.</Text>
             </Section>
