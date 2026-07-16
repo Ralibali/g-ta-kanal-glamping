@@ -10,6 +10,7 @@ import {
   RefreshCw,
   Sparkles,
   Sunrise,
+  Upload,
   UserRound,
   Users,
 } from "lucide-react";
