@@ -253,7 +253,6 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
                 <Users className="h-6 w-6 text-primary shrink-0" aria-hidden="true" />
                 <div className="flex-1 min-w-0">
                   <div className="text-[10px] uppercase tracking-wider text-primary font-semibold">
-                    {tr(lang, "todayTitle") /* fallback */ ? "" : ""}
                     {lang === "sv" ? "Gäster som checkar in idag" : lang === "si" ? "අද ඇතුල්වන ආගන්තුකයන්" : "Guests checking in today"}
                   </div>
                   <div className="flex items-baseline gap-1.5 flex-wrap">
