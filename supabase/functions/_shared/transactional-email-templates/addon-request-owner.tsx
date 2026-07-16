@@ -148,7 +148,8 @@ export const template = {
   component: Email,
   subject: (d: Record<string, any>) => {
     const flag = (d?.guestLang ?? 'sv').toLowerCase().startsWith('sv') ? '🇸🇪' : '🌍'
-    return `${flag} Tillvalsönskemål: ${d?.guestName ?? 'gäst'} – ${d?.tentName ?? ''}`
+    const prefix = d?.paymentMethod === 'swish' ? 'Swish-önskemål' : 'Tillvalsönskemål'
+    return `${flag} ${prefix}: ${d?.guestName ?? 'gäst'} – ${d?.tentName ?? ''}`
   },
   displayName: 'Tillvalsönskemål – ägarnotis',
   previewData: {
