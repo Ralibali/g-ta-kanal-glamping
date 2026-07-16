@@ -605,7 +605,52 @@ export default function CleaningPortal() {
           </CardContent>
         </Card>
 
+        {/* Datavarningar: bokningar där tent_stays inte matchar Sirvoy */}
+        {roomMismatches.length > 0 && (
+          <Card className="border-amber-500/60 bg-amber-500/5">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base text-amber-900 dark:text-amber-100">
+                <AlertTriangle className="h-5 w-5 text-amber-600" />
+                {roomMismatches.length} bokning{roomMismatches.length === 1 ? "" : "ar"} har saknad tält- eller gästinfo
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="text-xs text-amber-900/80 dark:text-amber-100/80">
+                Sirvoy anger fler tält eller gäster än vi har importerat. Importera Booking content-CSV:en igen för att fylla i det saknade tältet, annars kan städaren tro att tältet står tomt.
+              </p>
+              <ul className="space-y-1.5 text-sm">
+                {roomMismatches.map((m) => (
+                  <li key={m.booking_number} className="flex flex-wrap items-center gap-2 rounded border border-amber-500/40 bg-background p-2">
+                    <span className="font-medium">{m.guest_name ?? "Okänd gäst"}</span>
+                    <span className="text-xs text-muted-foreground">
+                      #{m.booking_number} · {m.checkin_date}
+                      {m.checkout_date ? ` → ${m.checkout_date}` : ""}
+                    </span>
+                    {m.expected > m.actual && (
+                      <Badge variant="destructive" className="text-[11px]">
+                        {m.actual}/{m.expected} tält importerade
+                      </Badge>
+                    )}
+                    {m.guests_expected > m.guests_actual && (
+                      <Badge className="bg-amber-500 hover:bg-amber-500 text-white text-[11px]">
+                        <Users className="mr-1 h-3 w-3" />
+                        {m.guests_actual}/{m.guests_expected} gäster
+                      </Badge>
+                    )}
+                    {m.tent_id && (
+                      <span className="text-xs text-muted-foreground">
+                        (importerat: {TENT_BY_ID[m.tent_id]?.name ?? m.tent_id})
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Filter */}
+
         <div className="flex flex-wrap items-center gap-2">
           {(
             [
