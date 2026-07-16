@@ -17,7 +17,7 @@ interface Booking {
 }
 
 const VALID_BOOKINGS: Record<string, Booking> = {
-  "JM06JI38XT": { tentId: "sjobris", lang: "da" }, // Michael Vinge, 2026-06-03 till 2026-06-05
+  "JM06JI38XT": { tentId: "sjobris", lang: "sv" }, // Michael Vinge, 2026-06-03 till 2026-06-05
   "26431": { tentId: "sjobris", lang: "sv" }, // Elin Pettersson, 2026-06-06 till 2026-06-07
 };
 
