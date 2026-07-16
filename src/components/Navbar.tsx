@@ -194,14 +194,6 @@ const Navbar = () => {
             >
               {bookLabel}
             </a>
-            </button>
-            <a
-              href={bookingPath}
-              onClick={() => setMenuOpen(false)}
-              className="bg-accent text-accent-foreground px-5 py-3.5 rounded-full text-center font-semibold mt-2"
-            >
-              {lang === "en" ? "Book now" : "Boka nu"}
-            </a>
           </div>
         </motion.div>
       )}
