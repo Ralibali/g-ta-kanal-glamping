@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  AlertTriangle,
   CalendarDays,
   CheckCircle2,
   ChevronRight,
@@ -12,6 +13,7 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useCleaner } from "@/hooks/useCleaner";
 import { TENTS, TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
@@ -94,14 +96,18 @@ export default function CleaningPortal() {
   const [selfCleanDates, setSelfCleanDates] = useState<Set<string>>(new Set());
   const [sessions, setSessions] = useState<Session[]>([]);
   const [earlyFlags, setEarlyFlags] = useState<EarlyFlag[]>([]);
+  const [roomMismatches, setRoomMismatches] = useState<
+    { booking_number: string; guest_name: string | null; tent_id: string | null; checkin_date: string | null; checkout_date: string | null; expected: number; actual: number; guests_expected: number; guests_actual: number }[]
+  >([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState<Filter>("all");
 
+
   const loadAll = async () => {
     setDataLoading(true);
     try {
-      const [staysRes, assignRes, namesRes, availRes, selfRes, sessRes, earlyRes] = await Promise.all([
+      const [staysRes, assignRes, namesRes, availRes, selfRes, sessRes, earlyRes, bookingsRes] = await Promise.all([
         (supabase as any)
           .from("tent_stays")
           .select("booking_number, tent_id, checkin_date, checkout_date, guests, children")
@@ -135,7 +141,13 @@ export default function CleaningPortal() {
           .gte("date", today)
           .lte("date", rangeEnd)
           .eq("active", true),
+        (supabase as any)
+          .from("bookings")
+          .select("booking_number, guest_name, tent_id, checkin_date, checkout_date, raw")
+          .gte("checkin_date", today)
+          .lte("checkin_date", rangeEnd),
       ]);
+
 
       setStays((staysRes.data ?? []) as Stay[]);
 
@@ -157,6 +169,58 @@ export default function CleaningPortal() {
       setSelfCleanDates(new Set(((selfRes.data ?? []) as { date: string }[]).map((r) => r.date)));
       setSessions((sessRes.data ?? []) as Session[]);
       setEarlyFlags((earlyRes.data ?? []) as EarlyFlag[]);
+
+      // Beräkna mismatches mellan bookings.raw och tent_stays
+      const staysByBooking = new Map<string, Stay[]>();
+      for (const s of (staysRes.data ?? []) as Stay[]) {
+        if (!staysByBooking.has(s.booking_number)) staysByBooking.set(s.booking_number, []);
+        staysByBooking.get(s.booking_number)!.push(s);
+      }
+      type BookingRow = {
+        booking_number: string;
+        guest_name: string | null;
+        tent_id: string | null;
+        checkin_date: string | null;
+        checkout_date: string | null;
+        raw: Record<string, unknown> | null;
+      };
+      const mismatches: typeof roomMismatches = [];
+      for (const b of ((bookingsRes.data ?? []) as BookingRow[])) {
+        const raw = (b.raw ?? {}) as Record<string, unknown>;
+        const basic = ((raw as any).basic_info ?? {}) as Record<string, string>;
+        const rooms = Number(
+          (raw as any).number_of_rooms ?? basic["Number of rooms"] ?? 0,
+        );
+        const guestsRaw = Number(
+          (raw as any).number_of_guests ?? basic["Number of guests"] ?? 0,
+        );
+        const childrenRaw = Number((raw as any).children_total ?? 0);
+        const totalExpectedGuests = guestsRaw + childrenRaw;
+        const bookingStays = staysByBooking.get(b.booking_number) ?? [];
+        const actualStays = bookingStays.length;
+        const actualGuests = bookingStays.reduce(
+          (acc, s) => acc + Number(s.guests ?? 0) + Number(s.children ?? 0),
+          0,
+        );
+        const roomsMissing = rooms > 0 && actualStays < rooms;
+        const guestsMissing = totalExpectedGuests > 0 && actualGuests < totalExpectedGuests;
+        if (roomsMissing || guestsMissing) {
+          mismatches.push({
+            booking_number: b.booking_number,
+            guest_name: b.guest_name,
+            tent_id: b.tent_id,
+            checkin_date: b.checkin_date,
+            checkout_date: b.checkout_date,
+            expected: rooms || actualStays,
+            actual: actualStays,
+            guests_expected: totalExpectedGuests,
+            guests_actual: actualGuests,
+          });
+        }
+      }
+      mismatches.sort((a, b) => (a.checkin_date ?? "").localeCompare(b.checkin_date ?? ""));
+      setRoomMismatches(mismatches);
+
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Kunde inte hämta data");
     } finally {
@@ -543,7 +607,52 @@ export default function CleaningPortal() {
           </CardContent>
         </Card>
 
+        {/* Datavarningar: bokningar där tent_stays inte matchar Sirvoy */}
+        {roomMismatches.length > 0 && (
+          <Card className="border-amber-500/60 bg-amber-500/5">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center gap-2 text-base text-amber-900 dark:text-amber-100">
+                <AlertTriangle className="h-5 w-5 text-amber-600" />
+                {roomMismatches.length} bokning{roomMismatches.length === 1 ? "" : "ar"} har saknad tält- eller gästinfo
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="text-xs text-amber-900/80 dark:text-amber-100/80">
+                Sirvoy anger fler tält eller gäster än vi har importerat. Importera Booking content-CSV:en igen för att fylla i det saknade tältet, annars kan städaren tro att tältet står tomt.
+              </p>
+              <ul className="space-y-1.5 text-sm">
+                {roomMismatches.map((m) => (
+                  <li key={m.booking_number} className="flex flex-wrap items-center gap-2 rounded border border-amber-500/40 bg-background p-2">
+                    <span className="font-medium">{m.guest_name ?? "Okänd gäst"}</span>
+                    <span className="text-xs text-muted-foreground">
+                      #{m.booking_number} · {m.checkin_date}
+                      {m.checkout_date ? ` → ${m.checkout_date}` : ""}
+                    </span>
+                    {m.expected > m.actual && (
+                      <Badge variant="destructive" className="text-[11px]">
+                        {m.actual}/{m.expected} tält importerade
+                      </Badge>
+                    )}
+                    {m.guests_expected > m.guests_actual && (
+                      <Badge className="bg-amber-500 hover:bg-amber-500 text-white text-[11px]">
+                        <Users className="mr-1 h-3 w-3" />
+                        {m.guests_actual}/{m.guests_expected} gäster
+                      </Badge>
+                    )}
+                    {m.tent_id && (
+                      <span className="text-xs text-muted-foreground">
+                        (importerat: {TENT_BY_ID[m.tent_id]?.name ?? m.tent_id})
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Filter */}
+
         <div className="flex flex-wrap items-center gap-2">
           {(
             [
