@@ -274,14 +274,14 @@ export default function UnderVistelsen({ initialLang = "sv" }: UnderVistelsenPro
           <div className="flex items-center justify-between mb-2">
             <p className="text-white/85 text-xs uppercase tracking-[0.2em]">{t.sub}</p>
             <div className="flex gap-1">
-              <button
-                onClick={() => setIsSv(true)}
-                className={`text-xs px-2 py-0.5 rounded-full border ${isSv ? "bg-white/20 text-white border-white/40" : "text-white/70 border-white/20 hover:bg-white/10"}`}
-              >SV</button>
-              <button
-                onClick={() => setIsSv(false)}
-                className={`text-xs px-2 py-0.5 rounded-full border ${!isSv ? "bg-white/20 text-white border-white/40" : "text-white/70 border-white/20 hover:bg-white/10"}`}
-              >EN</button>
+              {(["sv", "en", "de"] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  aria-pressed={lang === l}
+                  className={`text-xs px-2 py-0.5 rounded-full border ${lang === l ? "bg-white/20 text-white border-white/40" : "text-white/70 border-white/20 hover:bg-white/10"}`}
+                >{l.toUpperCase()}</button>
+              ))}
             </div>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl text-white drop-shadow-md leading-tight">
