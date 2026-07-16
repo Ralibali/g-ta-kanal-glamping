@@ -464,6 +464,17 @@ export default function Stay({ initialLang }: StayProps = {}) {
 
   useEffect(() => { loadStay(); }, [token]);
 
+  // Återställ Swish-rutan automatiskt om gästen har en obetald Swish-beställning
+  // (t.ex. efter sidladdning, byte av flik eller att telefonen tappade Swish-appen)
+  useEffect(() => {
+    if (!data || swishInfo || done) return;
+    const unpaid = (data.orders ?? []).filter((o) => o.status === "requested" && !o.paid_at);
+    if (unpaid.length === 0) return;
+    const amount = unpaid.reduce((s, o) => s + Number(o.total_sek ?? 0), 0);
+    const reference = String(data.booking.booking_number ?? "");
+    if (amount > 0 && reference) setSwishInfo({ amount, reference });
+  }, [data, swishInfo, done]);
+
   // Realtidsuppdatering via Supabase Realtime broadcast.
   // En databastrigger på addon_orders anropar realtime.send() till kanalen
   // "booking:<public_token>" så snart en beställning skapas/ändras/tas bort.
