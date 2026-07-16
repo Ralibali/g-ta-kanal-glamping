@@ -461,9 +461,15 @@ export default function CleaningPortal() {
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2 text-sm">
                   <Badge variant="secondary">{focusRow.tents.size} tält</Badge>
-                  <Badge variant="secondary">{focusRow.arrivals} byten</Badge>
+                  <Badge variant="secondary">{focusRow.arrivals} ankomster</Badge>
+                  <Badge variant="secondary">{focusRow.departures} avresor</Badge>
                   <Badge variant="secondary">
                     <Users className="mr-1 h-3 w-3" /> {focusRow.guests} gäster
+                    {focusRow.children > 0 && (
+                      <span className="ml-1 opacity-70">
+                        ({focusRow.adults}v + {focusRow.children}b)
+                      </span>
+                    )}
                   </Badge>
                   {focusEarly > 0 && (
                     <Badge className="bg-amber-500 text-white">
@@ -472,6 +478,50 @@ export default function CleaningPortal() {
                   )}
                   {focusLate > 0 && <Badge variant="outline">{focusLate} sen utcheckning</Badge>}
                 </div>
+                <ul className="divide-y rounded-md border">
+                  {Array.from(focusRow.perTent.values())
+                    .sort((a, b) => (TENT_BY_ID[a.tent_id]?.no ?? 99) - (TENT_BY_ID[b.tent_id]?.no ?? 99))
+                    .map((t) => {
+                      const meta = TENT_BY_ID[t.tent_id];
+                      return (
+                        <li key={t.tent_id} className="flex flex-wrap items-center justify-between gap-2 p-2 text-sm">
+                          <div className="flex items-center gap-2 min-w-0">
+                            {t.done ? (
+                              <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                            ) : (
+                              <span className="inline-block h-2 w-2 rounded-full bg-muted-foreground/40 shrink-0" />
+                            )}
+                            <span className="font-medium truncate">
+                              {meta ? `${meta.no}. ${meta.name}` : t.tent_id}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {t.hasArrival ? (
+                              <Badge variant="secondary" className="text-[11px]">
+                                <Users className="mr-1 h-3 w-3" />
+                                {t.arrivalGuests} gäst{t.arrivalGuests === 1 ? "" : "er"}
+                                {t.arrivalChildren > 0 && (
+                                  <span className="ml-1 opacity-70">
+                                    ({t.arrivalAdults}v + {t.arrivalChildren}b)
+                                  </span>
+                                )}
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-[11px]">Endast avresa</Badge>
+                            )}
+                            {t.hasArrival && t.hasDeparture && (
+                              <Badge variant="outline" className="text-[11px]">Byte</Badge>
+                            )}
+                            {t.early && (
+                              <Badge className="bg-amber-500 hover:bg-amber-500 text-white text-[11px]">
+                                <Sunrise className="mr-1 h-3 w-3" /> Tidig
+                              </Badge>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
+                </ul>
                 <div className="h-2 w-full overflow-hidden rounded bg-muted">
                   <div
                     className="h-full bg-green-600 transition-all"
@@ -488,6 +538,7 @@ export default function CleaningPortal() {
                   {focusRow.completedTents.size} av {focusRow.tents.size} tält klara
                 </p>
               </div>
+
             )}
           </CardContent>
         </Card>
