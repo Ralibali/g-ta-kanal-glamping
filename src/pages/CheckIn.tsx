@@ -217,14 +217,14 @@ const TERMS: Record<Lang, string[]> = {
 
 type Step = "booking" | "terms" | "code";
 
-const CheckIn = () => {
+const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
   const [step, setStep] = useState<Step>("booking");
   const [bookingNumber, setBookingNumber] = useState("");
   const [error, setError] = useState("");
   const [notFound, setNotFound] = useState(false);
   const [tentId, setTentId] = useState<TentId | null>(null);
   const [tentIds, setTentIds] = useState<TentId[]>([]);
-  const [lang, setLang] = useState<Lang>("sv");
+  const [lang, setLang] = useState<Lang>(initialLang);
   const [termsAccepted, setTermsAccepted] = useState<boolean[]>([]);
 
   const t = T[lang];
