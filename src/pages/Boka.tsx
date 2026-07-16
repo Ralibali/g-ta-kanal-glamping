@@ -265,7 +265,7 @@ const Header = ({ t, lang, onLang }: { t: Copy; lang: BokaLang; onLang: (l: Boka
       }}
     >
       <div className="max-w-7xl mx-auto px-5 md:px-8 flex items-center justify-between" style={{ paddingTop: scrolled ? 14 : 22, paddingBottom: scrolled ? 14 : 22, transition: "padding 300ms" }}>
-        <Link to={lang === "en" ? "/en" : "/"} className="flex items-center gap-2.5" style={{ color: textColor }}>
+        <Link to={lang === "en" ? "/en" : lang === "de" ? "/de" : "/"} className="flex items-center gap-2.5" style={{ color: textColor }}>
           <Leaf size={20} strokeWidth={1.6} />
           <span className="font-serif text-lg md:text-xl tracking-tight" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>
             Bergs Slussar Glamping
