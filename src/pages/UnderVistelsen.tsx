@@ -28,8 +28,16 @@ interface PersonalData {
   bookingNumber?: string | null;
 }
 
-export default function UnderVistelsen() {
-  const [isSv, setIsSv] = useState(true);
+type UvLang = "sv" | "en" | "de";
+
+interface UnderVistelsenProps {
+  initialLang?: UvLang;
+}
+
+export default function UnderVistelsen({ initialLang = "sv" }: UnderVistelsenProps = {}) {
+  const [lang, setLang] = useState<UvLang>(initialLang);
+  // Existing copy is Swedish/English only; DE currently falls back to English wording.
+  const isSv = lang === "sv";
   const [personal, setPersonal] = useState<PersonalData | null>(null);
 
   useEffect(() => {
@@ -37,11 +45,13 @@ export default function UnderVistelsen() {
     meta.name = "robots";
     meta.content = "noindex, nofollow";
     document.head.appendChild(meta);
-    document.title = isSv
+    document.title = lang === "sv"
       ? "Under er vistelse · Go Glamping Sweden"
+      : lang === "de"
+      ? "Während Ihres Aufenthalts · Go Glamping Sweden"
       : "During your stay · Go Glamping Sweden";
     return () => { document.head.removeChild(meta); };
-  }, [isSv]);
+  }, [lang]);
 
   // Personalize via ?t=<public_token>
   useEffect(() => {
@@ -64,13 +74,19 @@ export default function UnderVistelsen() {
           checkinDate: booking.checkin_date,
           bookingNumber: booking.booking_number,
         });
-        const lang = String(booking.language || "sv").toLowerCase();
-        setIsSv(lang.startsWith("sv"));
+        // Only auto-set language from booking if user hasn't already picked one.
+        const bookingLang = String(booking.language || "sv").toLowerCase();
+        if (initialLang === "sv" && !bookingLang.startsWith("sv")) {
+          if (bookingLang.startsWith("de")) setLang("de");
+          else setLang("en");
+        }
       } catch (e) {
         console.error("personalize failed", e);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const handleLateCheckout = () => {
     const amount = 399;
@@ -258,14 +274,14 @@ export default function UnderVistelsen() {
           <div className="flex items-center justify-between mb-2">
             <p className="text-white/85 text-xs uppercase tracking-[0.2em]">{t.sub}</p>
             <div className="flex gap-1">
-              <button
-                onClick={() => setIsSv(true)}
-                className={`text-xs px-2 py-0.5 rounded-full border ${isSv ? "bg-white/20 text-white border-white/40" : "text-white/70 border-white/20 hover:bg-white/10"}`}
-              >SV</button>
-              <button
-                onClick={() => setIsSv(false)}
-                className={`text-xs px-2 py-0.5 rounded-full border ${!isSv ? "bg-white/20 text-white border-white/40" : "text-white/70 border-white/20 hover:bg-white/10"}`}
-              >EN</button>
+              {(["sv", "en", "de"] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  aria-pressed={lang === l}
+                  className={`text-xs px-2 py-0.5 rounded-full border ${lang === l ? "bg-white/20 text-white border-white/40" : "text-white/70 border-white/20 hover:bg-white/10"}`}
+                >{l.toUpperCase()}</button>
+              ))}
             </div>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl text-white drop-shadow-md leading-tight">

@@ -56,6 +56,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index lang="sv" />} />
             <Route path="/en" element={<Index lang="en" />} />
+            <Route path="/de" element={<Index lang="de" />} />
             <Route path="/glamping-linkoping" element={<GlampingLinkoping />} />
             <Route path="/glamping-gota-kanal" element={<GlampingGotaKanal />} />
             <Route path="/glamping-ostergotland" element={<GlampingOstergotland />} />
@@ -66,6 +67,8 @@ const App = () => (
             <Route path="/romantisk-weekend-ostergotland" element={<RomantiskWeekendOstergotland />} />
             <Route path="/checkin" element={<CheckIn />} />
             <Route path="/checka-in" element={<CheckIn />} />
+            <Route path="/en/checkin" element={<CheckIn initialLang="en" />} />
+            <Route path="/de/checkin" element={<CheckIn initialLang="de" />} />
             <Route path="/bokningsvillkor" element={<BookingTerms />} />
             <Route path="/blogg" element={<Blog />} />
             <Route path="/blogg/:slug" element={<BlogPost />} />
@@ -80,9 +83,14 @@ const App = () => (
             <Route path="/boka" element={<Boka />} />
             <Route path="/en/boka" element={<Boka lang="en" />} />
             <Route path="/en/book" element={<Boka lang="en" />} />
+            <Route path="/de/boka" element={<Boka lang="de" />} />
+            <Route path="/de/buchen" element={<Boka lang="de" />} />
             <Route path="/stay/:token" element={<Stay />} />
+            <Route path="/en/stay/:token" element={<Stay initialLang="en" />} />
+            <Route path="/de/stay/:token" element={<Stay initialLang="de" />} />
             <Route path="/under-vistelsen" element={<UnderVistelsen />} />
-            <Route path="/during-your-stay" element={<UnderVistelsen />} />
+            <Route path="/during-your-stay" element={<UnderVistelsen initialLang="en" />} />
+            <Route path="/de/under-vistelsen" element={<UnderVistelsen initialLang="de" />} />
             <Route path="/sup" element={<Sup />} />
             <Route path="/jobb" element={<Employee />} />
             <Route path="/s/:slug" element={<ShortRedirect />} />

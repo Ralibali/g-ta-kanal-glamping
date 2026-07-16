@@ -10,11 +10,18 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const homePath = lang === "en" ? "/en" : "/";
-  const bookingPath = lang === "en" ? "/en/boka" : "/boka";
+  const homePath = lang === "en" ? "/en" : lang === "de" ? "/de" : "/";
+  const bookingPath = lang === "en" ? "/en/boka" : lang === "de" ? "/de/boka" : "/boka";
   const sectionHref = (section: string) => `${homePath}#${section}`;
 
-  const navLinks = lang === "en"
+  const navLinks = lang === "de"
+    ? [
+        { label: "Über uns", href: sectionHref("om-oss") },
+        { label: "Zelte", href: sectionHref("talten") },
+        { label: "Aktivitäten", href: sectionHref("aktiviteter") },
+        { label: "Anfahrt", href: sectionHref("kontakt") },
+      ]
+    : lang === "en"
     ? [
         { label: "About", href: sectionHref("om-oss") },
         { label: "Tents", href: sectionHref("talten") },
@@ -37,15 +44,15 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const switchLang = () => {
-    const target = lang === "sv" ? "en" : "sv";
+  const pickLang = (target: Lang) => {
     localStorage.setItem("lang-choice", target);
     setMenuOpen(false);
-    navigate(target === "en" ? "/en" : "/");
+    navigate(target === "en" ? "/en" : target === "de" ? "/de" : "/");
   };
 
-  const otherLang: Lang = lang === "sv" ? "en" : "sv";
-  const flagEmoji = lang === "sv" ? "🇬🇧" : "🇸🇪";
+  const LANGS: Lang[] = ["sv", "en", "de"];
+  const contactLabel = lang === "en" ? "Contact us" : lang === "de" ? "Kontakt" : "Kontakta oss";
+  const bookLabel = lang === "en" ? "Book now" : lang === "de" ? "Jetzt buchen" : "Boka nu";
 
   return (
     <nav
@@ -76,18 +83,27 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
-          <button
-            type="button"
-            onClick={switchLang}
-            className={`text-sm font-medium transition-all hover:opacity-80 flex items-center gap-1.5 ${
-              scrolled ? "text-foreground" : "text-white/90"
+          <div
+            role="group"
+            aria-label="Language"
+            className={`inline-flex items-center gap-0.5 rounded-full border px-1 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${
+              scrolled ? "border-border text-foreground" : "border-white/30 text-white/90"
             }`}
-            title={otherLang === "en" ? "Switch to English" : "Byt till svenska"}
-            aria-label={otherLang === "en" ? "Switch to English" : "Byt till svenska"}
           >
-            <span className="text-base" aria-hidden="true">{flagEmoji}</span>
-            <span className="uppercase text-xs">{otherLang.toUpperCase()}</span>
-          </button>
+            {LANGS.map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => pickLang(l)}
+                aria-pressed={lang === l}
+                className={`px-2 py-0.5 rounded-full transition-colors ${
+                  lang === l
+                    ? scrolled ? "bg-primary text-primary-foreground" : "bg-white text-primary"
+                    : "opacity-70 hover:opacity-100"
+                }`}
+              >{l}</button>
+            ))}
+          </div>
           <button
             type="button"
             onClick={openChat}
@@ -95,7 +111,7 @@ const Navbar = () => {
               scrolled ? "text-foreground" : "text-white/90"
             }`}
           >
-            {lang === "en" ? "Contact us" : "Kontakta oss"}
+            {contactLabel}
           </button>
           <motion.a
             href={bookingPath}
@@ -103,25 +119,37 @@ const Navbar = () => {
             whileTap={{ scale: 0.98 }}
             className="bg-accent text-accent-foreground px-6 py-2.5 rounded-full text-sm font-semibold shadow-sm"
           >
-            {lang === "en" ? "Book now" : "Boka nu"}
+            {bookLabel}
           </motion.a>
         </div>
 
         <div className="flex lg:hidden items-center gap-3">
-          <button
-            type="button"
-            onClick={switchLang}
-            className={`p-2 text-base ${scrolled ? "text-foreground" : "text-white"}`}
-            title={otherLang === "en" ? "Switch to English" : "Byt till svenska"}
-            aria-label={otherLang === "en" ? "Switch to English" : "Byt till svenska"}
+          <div
+            role="group"
+            aria-label="Language"
+            className={`inline-flex items-center gap-0.5 rounded-full border px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
+              scrolled ? "border-border text-foreground" : "border-white/30 text-white"
+            }`}
           >
-            <span aria-hidden="true">{flagEmoji}</span>
-          </button>
+            {LANGS.map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => pickLang(l)}
+                aria-pressed={lang === l}
+                className={`px-1.5 py-0.5 rounded-full transition-colors ${
+                  lang === l
+                    ? scrolled ? "bg-primary text-primary-foreground" : "bg-white text-primary"
+                    : "opacity-70"
+                }`}
+              >{l}</button>
+            ))}
+          </div>
           <button
             type="button"
             onClick={() => setMenuOpen((open) => !open)}
             className={`p-2 ${scrolled ? "text-foreground" : "text-white"}`}
-            aria-label={menuOpen ? (lang === "en" ? "Close menu" : "Stäng meny") : (lang === "en" ? "Open menu" : "Öppna meny")}
+            aria-label={menuOpen ? (lang === "en" ? "Close menu" : lang === "de" ? "Menü schließen" : "Stäng meny") : (lang === "en" ? "Open menu" : lang === "de" ? "Menü öffnen" : "Öppna meny")}
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
           >
@@ -157,14 +185,14 @@ const Navbar = () => {
               }}
               className="text-foreground text-lg font-medium py-2 border-b border-border/50 text-left"
             >
-              {lang === "en" ? "Contact us" : "Kontakta oss"}
+              {contactLabel}
             </button>
             <a
               href={bookingPath}
               onClick={() => setMenuOpen(false)}
               className="bg-accent text-accent-foreground px-5 py-3.5 rounded-full text-center font-semibold mt-2"
             >
-              {lang === "en" ? "Book now" : "Boka nu"}
+              {bookLabel}
             </a>
           </div>
         </motion.div>

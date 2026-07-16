@@ -5,7 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 // ─── Aktiva bokningsnummer ───────────────────────────────────
 // Koppla bokningsnummer till tält: "sjobris", "naturkarnan" eller "lugnetsyta"
 type TentId = "sjobris" | "naturkarnan" | "lugnetsyta";
-type Lang = "sv" | "da" | "en";
+type Lang = "sv" | "en" | "de";
+
+interface CheckInProps {
+  initialLang?: Lang;
+}
 
 interface Booking {
   tentId: TentId;
@@ -13,7 +17,7 @@ interface Booking {
 }
 
 const VALID_BOOKINGS: Record<string, Booking> = {
-  "JM06JI38XT": { tentId: "sjobris", lang: "da" }, // Michael Vinge, 2026-06-03 till 2026-06-05
+  "JM06JI38XT": { tentId: "sjobris", lang: "sv" }, // Michael Vinge, 2026-06-03 till 2026-06-05
   "26431": { tentId: "sjobris", lang: "sv" }, // Elin Pettersson, 2026-06-06 till 2026-06-07
 };
 
@@ -34,18 +38,18 @@ const TENT_INFO: Record<Lang, Record<TentId, { name: string; directions: string 
       directions: "Tältet i mitten – följ stigen rakt fram.",
     },
   },
-  da: {
+  de: {
     sjobris: {
-      name: "Sjöbrisretreatet (Telt 1)",
-      directions: "Teltet længst til højre – gå ligeud fra QR-koden.",
+      name: "Sjöbrisretreatet (Zelt 1)",
+      directions: "Das Zelt ganz rechts – vom QR-Code aus geradeaus.",
     },
     naturkarnan: {
-      name: "Naturkärnan (Telt 2)",
-      directions: "Teltet længst til venstre – gå til venstre og følg stien.",
+      name: "Naturkärnan (Zelt 2)",
+      directions: "Das Zelt ganz links – nach links gehen und dem Pfad folgen.",
     },
     lugnetsyta: {
-      name: "Lugnetsytan (Telt 3)",
-      directions: "Teltet i midten – følg stien ligeud.",
+      name: "Lugnetsytan (Zelt 3)",
+      directions: "Das mittlere Zelt – dem Pfad geradeaus folgen.",
     },
   },
   en: {
@@ -104,40 +108,40 @@ const T: Record<Lang, Record<string, string>> = {
     contactHost: "Frågor eller akuta ärenden under vistelsen? Kontakta värden:",
     goHome: "Gå till startsidan →",
   },
-  da: {
-    backToHome: "Tilbage til forsiden",
-    digitalCheckin: "Digital indtjekning",
-    welcome: "Velkommen!",
-    enterBooking: "Indtast dit bookingsnummer eller navn for at checke ind.",
-    bookingPlaceholder: "Bookingsnummer eller navn",
-    enterBookingError: "Indtast dit bookingsnummer eller navn.",
-    bookingNotFound: "Bookingen blev ikke fundet. Tjek og prøv igen.",
-    notFoundTitle: "Vi fandt ingen booking",
-    notFoundHelp: "Tjek stavning og tal. Hvis systemet stadig ikke kan finde din booking – send Christoffer en SMS, så løser vi det på et minut.",
-    smsNow: "SMS Christoffer nu",
-    callNow: "Ring +46 72-225 49 93",
-    continue: "Fortsæt",
-    problemSms: "Problemer?",
-    smsContact: "SMS Christoffer",
-    termsTitle: "Vilkår for opholdet",
-    termsSubtitle: "Accepter vilkårene for at få din låsekode.",
-    back: "Tilbage",
-    showLockCode: "Vis låsekode",
-    checkinComplete: "Indtjekning gennemført!",
-    yourTent: "Dit telt",
-    lockCodeLabel: "Din kode til låsen:",
-    goodToKnow: "Godt at vide",
-    checkinFrom: "Indtjekning fra kl. 15:00",
-    checkoutBy: "Udtjekning senest kl. 10:00",
-    washDishes: "Vask dit service i servicehuset (~150 m væk) og efterlad køkkenoverfladen ren",
-    wasteSorting: "Alt affald smides i den sorte papirkurv ved indgangen. Pantflasker lægges i den venstre skraldespand og alt andet affald i den højre.",
-    lateCheckoutTitle: "♡ Vil du checke ud lidt senere? Du kan forlænge til kl. 12:00 for 399 kr. Swish og giv os besked – så er det ordnet.",
+  de: {
+    backToHome: "Zurück zur Startseite",
+    digitalCheckin: "Digitaler Check-in",
+    welcome: "Willkommen!",
+    enterBooking: "Geben Sie Ihre Buchungsnummer oder Ihren Namen ein, um einzuchecken.",
+    bookingPlaceholder: "Buchungsnummer oder Name",
+    enterBookingError: "Bitte geben Sie Ihre Buchungsnummer oder Ihren Namen ein.",
+    bookingNotFound: "Buchung nicht gefunden. Bitte überprüfen und erneut versuchen.",
+    notFoundTitle: "Wir konnten Ihre Buchung nicht finden",
+    notFoundHelp: "Überprüfen Sie Schreibweise und Zahlen. Wenn das System Ihre Buchung weiterhin nicht findet – schreiben Sie Christoffer eine SMS und wir lösen es in einer Minute.",
+    smsNow: "Jetzt SMS an Christoffer",
+    callNow: "Anruf +46 72-225 49 93",
+    continue: "Weiter",
+    problemSms: "Probleme?",
+    smsContact: "SMS an Christoffer",
+    termsTitle: "Bedingungen für den Aufenthalt",
+    termsSubtitle: "Akzeptieren Sie die Bedingungen, um Ihren Türschloss-Code zu erhalten.",
+    back: "Zurück",
+    showLockCode: "Türschloss-Code anzeigen",
+    checkinComplete: "Check-in abgeschlossen!",
+    yourTent: "Ihr Zelt",
+    lockCodeLabel: "Ihr Code für das Schloss:",
+    goodToKnow: "Gut zu wissen",
+    checkinFrom: "Check-in ab 15:00 Uhr",
+    checkoutBy: "Check-out bis spätestens 10:00 Uhr",
+    washDishes: "Geschirr im Servicehaus (~150 m entfernt) spülen und die Küchenfläche sauber hinterlassen",
+    wasteSorting: "Sämtlicher Abfall kommt in den schwarzen Papierkorb am Eingang. Pfandflaschen in die linke Tonne und alle anderen Abfälle in die rechte.",
+    lateCheckoutTitle: "♡ Möchten Sie etwas später auschecken? Sie können bis 12:00 Uhr verlängern für 399 SEK. Zahlen Sie per Swish und geben Sie uns Bescheid – dann ist alles erledigt.",
     swish: "Swish",
-    notifyUs: "Giv os besked",
-    notWorking: "Fungerer noget ikke?",
-    contactChristoffer: "Kontakt Christoffer via SMS",
-    contactHost: "Spørgsmål eller akutte ærinder under opholdet? Kontakt værten:",
-    goHome: "Gå til forsiden →",
+    notifyUs: "Uns benachrichtigen",
+    notWorking: "Funktioniert etwas nicht?",
+    contactChristoffer: "Christoffer per SMS kontaktieren",
+    contactHost: "Fragen oder dringende Anliegen während Ihres Aufenthalts? Kontaktieren Sie den Gastgeber:",
+    goHome: "Zur Startseite →",
   },
   en: {
     backToHome: "Back to homepage",
@@ -189,15 +193,15 @@ const TERMS: Record<Lang, string[]> = {
     "Jag följer gällande eldningsförbud och grillar endast på anvisad plats.",
     "Jag har läst och godkänner bokningsvillkoren, inklusive att en avgift om 2 000 kr kan debiteras det kort som användes vid bokningen om tältet lämnas i ett skick som utgör sanitär olägenhet eller om utrustning skadats genom oaktsamhet. Avgift debiteras alltid först efter dialog med gästen.",
   ],
-  da: [
-    "Jeg forstår, at indtjekning er fra kl. 15:00 og udtjekning senest kl. 10:00.",
-    "Jeg efterlader teltet i rimelig stand – rengøring er inkluderet, men personlige ejendele, affald og madrester medtages ved udtjekning.",
-    "Jeg vasker mit eget service og bestik i servicehuset, efterlader køkkenoverfladen ren og stiller det, jeg har vasket, tilbage på samme plads, hvor det stod.",
-    "Alt affald smides i den sorte papirkurv ved indgangen. Pantflasker lægges i den venstre skraldespand og alt andet affald i den højre.",
-    "Grillkul og andre fælles tilbehør sættes tilbage i fællesskabsskabet efter brug.",
-    "Jeg anmelder skader eller fejl på telte og udstyr direkte til værten, så det kan repareres før næste gæst ankommer.",
-    "Jeg følger gældende brandforbud og griller kun på anvist sted.",
-    "Jeg har læst og accepterer bookingsbetingelserne, inklusive at et gebyr på 2 000 kr kan debiteres det kort, der blev brugt ved bookingen, hvis teltet efterlades i en tilstand, der udgør sanitær ulempe, eller hvis udstyr er beskadiget ved uagtsomhed. Gebyr debiteres altid først efter dialog med gæsten.",
+  de: [
+    "Ich verstehe, dass der Check-in ab 15:00 Uhr und der Check-out spätestens um 10:00 Uhr erfolgt.",
+    "Ich hinterlasse das Zelt in einem angemessenen Zustand – die Reinigung ist inbegriffen, persönliche Gegenstände, Müll und Essensreste nehme ich beim Check-out mit.",
+    "Ich spüle mein eigenes Geschirr und Besteck im Servicehaus, hinterlasse die Küchenfläche sauber und stelle das gespülte Geschirr wieder an denselben Platz zurück.",
+    "Sämtlicher Abfall kommt in den schwarzen Papierkorb am Eingang. Pfandflaschen kommen in die linke Tonne, aller andere Abfall in die rechte.",
+    "Grillkohle und andere gemeinsame Ausstattung wird nach Gebrauch in den Gemeinschaftsschrank zurückgestellt.",
+    "Ich melde Schäden oder Mängel an Zelt und Ausstattung direkt beim Gastgeber, damit sie vor der Ankunft des nächsten Gastes behoben werden können.",
+    "Ich befolge geltende Feuerverbote und grille nur an der ausgewiesenen Stelle.",
+    "Ich habe die Buchungsbedingungen gelesen und akzeptiere sie, einschließlich, dass eine Gebühr von 2 000 SEK der bei der Buchung verwendeten Karte belastet werden kann, wenn das Zelt in einem Zustand hinterlassen wird, der eine sanitäre Belästigung darstellt, oder wenn Ausstattung durch Fahrlässigkeit beschädigt wurde. Eine Gebühr wird immer erst nach einem Gespräch mit dem Gast erhoben.",
   ],
   en: [
     "I understand that check-in is from 3:00 PM and check-out is by 10:00 AM at the latest.",
@@ -213,14 +217,14 @@ const TERMS: Record<Lang, string[]> = {
 
 type Step = "booking" | "terms" | "code";
 
-const CheckIn = () => {
+const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
   const [step, setStep] = useState<Step>("booking");
   const [bookingNumber, setBookingNumber] = useState("");
   const [error, setError] = useState("");
   const [notFound, setNotFound] = useState(false);
   const [tentId, setTentId] = useState<TentId | null>(null);
   const [tentIds, setTentIds] = useState<TentId[]>([]);
-  const [lang, setLang] = useState<Lang>("sv");
+  const [lang, setLang] = useState<Lang>(initialLang);
   const [termsAccepted, setTermsAccepted] = useState<boolean[]>([]);
 
   const t = T[lang];
@@ -255,7 +259,7 @@ const CheckIn = () => {
       setLookupLoading(false);
       const row = Array.isArray(data) ? data[0] : null;
       if (row && VALID_TENT_IDS.includes(row.tent_id as TentId)) {
-        const dbLang: Lang = row.lang === "da" ? "da" : row.lang === "en" ? "en" : "sv";
+        const dbLang: Lang = row.lang === "de" ? "de" : row.lang === "en" ? "en" : "sv";
         // Respektera användarens valda språk om det skiljer sig
         matchedBooking = { tentId: row.tent_id as TentId, lang: lang !== "sv" ? lang : dbLang };
       }
@@ -270,7 +274,7 @@ const CheckIn = () => {
       setLookupLoading(false);
       const row = Array.isArray(data) ? data[0] : null;
       if (row && VALID_TENT_IDS.includes(row.tent_id as TentId)) {
-        const dbLang: Lang = row.lang === "da" ? "da" : row.lang === "en" ? "en" : "sv";
+        const dbLang: Lang = row.lang === "de" ? "de" : row.lang === "en" ? "en" : "sv";
         matchedBooking = { tentId: row.tent_id as TentId, lang: lang !== "sv" ? lang : dbLang };
         resolvedBookingNumber = row.booking_number ?? trimmedUpper;
       }
@@ -350,7 +354,7 @@ const CheckIn = () => {
         {/* Language switcher */}
         <div className="flex justify-end mb-4">
           <div className="inline-flex rounded-full bg-primary-foreground/10 p-1 text-xs font-medium">
-            {(["sv", "en"] as const).map((l) => (
+            {(["sv", "en", "de"] as const).map((l) => (
               <button
                 key={l}
                 type="button"
@@ -362,7 +366,7 @@ const CheckIn = () => {
                 }`}
                 aria-pressed={lang === l}
               >
-                {l === "sv" ? "SV" : "EN"}
+                {l.toUpperCase()}
               </button>
             ))}
           </div>
@@ -569,7 +573,7 @@ const CheckIn = () => {
             <div className="bg-secondary rounded-xl p-5 mb-6 text-left">
               <p className="text-sm font-semibold text-foreground mb-3">
                 {tentIds.length > 1
-                  ? (lang === "en" ? "Your tents" : lang === "da" ? "Dine telte" : "Dina tält")
+                  ? (lang === "en" ? "Your tents" : lang === "de" ? "Ihre Zelte" : "Dina tält")
                   : t.yourTent}
               </p>
               <div className="space-y-4">
@@ -594,8 +598,8 @@ const CheckIn = () => {
               <p className="text-xs text-muted-foreground mb-3">
                 {lang === "en"
                   ? "The same code opens both tents."
-                  : lang === "da"
-                  ? "Samme kode åbner begge telte."
+                  : lang === "de"
+                  ? "Derselbe Code öffnet beide Zelte."
                   : "Samma kod öppnar båda tälten."}
               </p>
             )}
@@ -641,8 +645,8 @@ const CheckIn = () => {
                   href={`sms:0722254993?body=${encodeURIComponent(
                     lang === "en"
                       ? `Hi! I've Swished 399 SEK for late check-out (12:00). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
-                      : lang === "da"
-                      ? `Hej! Jeg har Swishet 399 kr for sen udtjekning (kl. 12). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
+                      : lang === "de"
+                      ? `Hallo! Ich habe 399 SEK per Swish für späten Check-out (12:00 Uhr) bezahlt. Buchung: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
                       : `Hej! Jag har swishat 399 kr för sen utcheckning (kl 12). Bokning: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
                   )}`}
                   className="flex items-center justify-center gap-2 border border-border text-foreground py-2.5 px-4 rounded-lg font-medium hover:bg-muted transition-colors text-sm"

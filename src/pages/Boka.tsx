@@ -28,7 +28,7 @@ const FONT_STYLES = `
   }
 `;
 
-type BokaLang = "sv" | "en";
+type BokaLang = "sv" | "en" | "de";
 
 const COPY = {
   sv: {
@@ -169,6 +169,75 @@ const COPY = {
     metaTitle: "Book glamping by the Göta Canal | Bergs Slussar Glamping",
     metaDesc: "Book a cosy glamping tent at Bergs Locks by the Göta Canal. Made-up beds, heating, electricity and easy direct booking near Linköping.",
   },
+  de: {
+    nav: [
+      { label: "Über das Glamping", href: "#om" },
+      { label: "Unsere Zelte", href: "#talten" },
+      { label: "Häufige Fragen", href: "#faq" },
+    ],
+    navBook: "Aufenthalt buchen",
+    navBookShort: "Buchen",
+    menuOpen: "Menü öffnen",
+    menuClose: "Menü schließen",
+    stickyCta: "Verfügbare Daten ansehen",
+    stickyCall: "Rufen Sie uns an",
+    stickyStrap: "Direktbuchung · Bester Preis · Sofortige Bestätigung",
+    heroEyebrow: "Glamping am Göta-Kanal",
+    heroTitle1: "Weich schlafen.",
+    heroTitle2: "Am Wasser aufwachen.",
+    heroLead: "Gemütliche Glamping-Zelte mit bezogenen Betten, Heizung und Strom – direkt an den Schleusen von Berg, 15 Minuten von Linköping entfernt.",
+    heroPrice: "Ab 1\u00a0595 SEK/Nacht – alles inklusive",
+    heroCta: "Verfügbare Daten ansehen",
+    heroChip1: "Bezogene Betten",
+    heroChip2: "Private Terrasse",
+    heroChip3: "Heizung & Strom",
+    bookEyebrow: "Buchung",
+    bookTitle: "Finden Sie Ihren Aufenthalt",
+    bookLead: "Wählen Sie Daten und Gästezahl, um verfügbare Zelte und aktuelle Preise zu sehen. Alle drei Zelte bieten Platz für bis zu vier Personen – ein Doppelbett und ein kleines Schlafsofa für zwei.",
+    bookAssurances: [
+      "Sofortige Bestätigung",
+      "Sichere Zahlung",
+      "Bester verfügbarer Direktpreis",
+      "Persönlicher Check-in",
+    ],
+    benefitsEyebrow: "Das ist inklusive",
+    benefitsTitle: "Alles für einen ruhigeren Aufenthalt",
+    benefits: [
+      { title: "Echte bezogene Betten", text: "Weiche Matratzen, saubere Laken und warme Decken – bereit, wenn Sie eintreten." },
+      { title: "Heizung & Strom im Zelt", text: "Angenehme Temperatur das ganze Jahr über und Steckdosen für alles, was Sie brauchen." },
+      { title: "Handtücher und Bettwäsche inklusive", text: "Nichts zu packen oder zu tragen – alles ist bei Ihrer Ankunft vorbereitet." },
+      { title: "Eigene Terrasse", text: "Sitzen Sie draußen mit einer Tasse Kaffee und lassen Sie den Morgen in Ruhe erwachen." },
+      { title: "Frühstück kann hinzugefügt werden", text: "Fügen Sie ein leckeres Frühstück bei der Buchung hinzu und starten Sie den Tag entspannt." },
+      { title: "Göta-Kanal um die Ecke", text: "Schleusen, Wanderwege und Bootsleben sind nur wenige Schritte entfernt." },
+    ],
+    editorialEyebrow: "Drei Zelte",
+    editorialTitle: "Drei Zelte. Ein ganz besonderer Ort.",
+    editorialLead: "Sie wohnen nah an der Natur, am Kanal und an den Restaurants und Spazierwegen der Schleusen von Berg. Die Zelte sind gemütlich für einen komfortablen Aufenthalt, ohne dass das Naturgefühl verloren geht.",
+    editorialCta: "Verfügbarkeit prüfen",
+    stepsEyebrow: "So funktioniert es",
+    stepsTitle: "Einfache Buchung von Anfang bis Ende",
+    steps: [
+      { n: "01", title: "Daten und Zelt wählen", text: "Nutzen Sie den Buchungskalender oben, um verfügbare Nächte zu sehen." },
+      { n: "02", title: "Buchung sicher abschließen", text: "Sofortige Bestätigung per E-Mail mit allen Details zu Ihrem Aufenthalt." },
+      { n: "03", title: "Infos vor der Ankunft erhalten", text: "Wir senden einige Tage vorher Check-in-Details und praktische Tipps per E-Mail." },
+    ],
+    stepsOutro: "Nach der Buchung erhalten Sie eine sofortige Bestätigung. Wenn der Ankunftstag näher rückt, senden wir Informationen zum Check-in, Ihrem Zelt und praktische Details.",
+    faqEyebrow: "Häufige Fragen",
+    faqTitle: "Gut zu wissen",
+    faqs: [
+      { q: "Wann können wir einchecken?", a: "Check-in ist ab 15:00 Uhr. Sie erhalten vor der Ankunft einen persönlichen Check-in-Link per E-Mail mit Code und praktischen Informationen." },
+      { q: "Wann müssen wir auschecken?", a: "Check-out ist bis spätestens 10:00 Uhr. Wenn Sie länger bleiben möchten, kann oft ein später Check-out gegen einen kleinen Aufpreis hinzugefügt werden." },
+      { q: "Gibt es Toiletten und Duschen?", a: "Ja, es gibt ein Servicehaus mit modernen Toiletten und Duschen in der Nähe der Zelte." },
+      { q: "Können wir Frühstück hinzufügen?", a: "Ja, das Frühstück kann bei der Buchung hinzugefügt werden. Es wird gegen 8:30 Uhr von Boställets Vedugnsbageri geliefert – Sie erhalten eine SMS, sobald es bereit ist." },
+      { q: "Sind Kinder willkommen?", a: "Ja, Kinder sind herzlich willkommen. Jedes Zelt hat ein Doppelbett und ein kleines Schlafsofa für zwei, sodass Platz für bis zu vier Gäste ist." },
+      { q: "Gibt es Heizung und Strom?", a: "Ja, jedes Zelt hat Heizung und Steckdosen, damit Ihr Aufenthalt bei jedem Wetter angenehm bleibt." },
+      { q: "Wie funktioniert der Check-in?", a: "Der Check-in ist digital. Sie erhalten einen Code per E-Mail rechtzeitig vor der Ankunft und können selbst einchecken, wann es Ihnen passt." },
+      { q: "Gibt es Parkplätze?", a: "Am einfachsten ist der öffentliche Parkplatz in Berg (kleine Gebühr). Wenn Sie kostenlos parken möchten, gibt es einen Pendlerparkplatz direkt an der Einfahrt zu Berg." },
+    ],
+    faqCta: "Glamping am Göta-Kanal buchen",
+    metaTitle: "Glamping am Göta-Kanal buchen | Bergs Slussar Glamping",
+    metaDesc: "Buchen Sie ein gemütliches Glamping-Zelt an den Schleusen von Berg am Göta-Kanal. Bezogene Betten, Heizung, Strom und einfache Direktbuchung nahe Linköping.",
+  },
 };
 
 type Copy = typeof COPY.sv;
@@ -196,7 +265,7 @@ const Header = ({ t, lang, onLang }: { t: Copy; lang: BokaLang; onLang: (l: Boka
       }}
     >
       <div className="max-w-7xl mx-auto px-5 md:px-8 flex items-center justify-between" style={{ paddingTop: scrolled ? 14 : 22, paddingBottom: scrolled ? 14 : 22, transition: "padding 300ms" }}>
-        <Link to={lang === "en" ? "/en" : "/"} className="flex items-center gap-2.5" style={{ color: textColor }}>
+        <Link to={lang === "en" ? "/en" : lang === "de" ? "/de" : "/"} className="flex items-center gap-2.5" style={{ color: textColor }}>
           <Leaf size={20} strokeWidth={1.6} />
           <span className="font-serif text-lg md:text-xl tracking-tight" style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 500 }}>
             Bergs Slussar Glamping
@@ -210,18 +279,15 @@ const Header = ({ t, lang, onLang }: { t: Copy; lang: BokaLang; onLang: (l: Boka
             </a>
           ))}
           <div className="flex items-center gap-1 text-xs" style={{ color: textColor }}>
-            <button
-              onClick={() => onLang("sv")}
-              className={`px-2 py-0.5 rounded-full border ${lang === "sv" ? "font-semibold" : "opacity-70"}`}
-              style={{ borderColor: `${textColor}55` }}
-              aria-pressed={lang === "sv"}
-            >SV</button>
-            <button
-              onClick={() => onLang("en")}
-              className={`px-2 py-0.5 rounded-full border ${lang === "en" ? "font-semibold" : "opacity-70"}`}
-              style={{ borderColor: `${textColor}55` }}
-              aria-pressed={lang === "en"}
-            >EN</button>
+            {(["sv", "en", "de"] as BokaLang[]).map((l) => (
+              <button
+                key={l}
+                onClick={() => onLang(l)}
+                className={`px-2 py-0.5 rounded-full border ${lang === l ? "font-semibold" : "opacity-70"}`}
+                style={{ borderColor: `${textColor}55` }}
+                aria-pressed={lang === l}
+              >{l.toUpperCase()}</button>
+            ))}
           </div>
           <a
             href="#boka"
@@ -234,8 +300,9 @@ const Header = ({ t, lang, onLang }: { t: Copy; lang: BokaLang; onLang: (l: Boka
 
         <div className="md:hidden flex items-center gap-2">
           <div className="flex items-center gap-1 text-[11px]" style={{ color: textColor }}>
-            <button onClick={() => onLang("sv")} className={`px-1.5 py-0.5 rounded-full border ${lang === "sv" ? "font-semibold" : "opacity-70"}`} style={{ borderColor: `${textColor}55` }} aria-pressed={lang === "sv"}>SV</button>
-            <button onClick={() => onLang("en")} className={`px-1.5 py-0.5 rounded-full border ${lang === "en" ? "font-semibold" : "opacity-70"}`} style={{ borderColor: `${textColor}55` }} aria-pressed={lang === "en"}>EN</button>
+            {(["sv", "en", "de"] as BokaLang[]).map((l) => (
+              <button key={l} onClick={() => onLang(l)} className={`px-1.5 py-0.5 rounded-full border ${lang === l ? "font-semibold" : "opacity-70"}`} style={{ borderColor: `${textColor}55` }} aria-pressed={lang === l}>{l.toUpperCase()}</button>
+            ))}
           </div>
           <a href="#boka" className="rounded-full px-4 py-2 text-sm font-medium" style={{ background: PALETTE.primary, color: PALETTE.white }}>
             {t.navBookShort}
@@ -594,7 +661,9 @@ interface BokaProps {
 }
 
 const Boka = ({ lang: initialLang }: BokaProps = {}) => {
-  const [lang, setLang] = useState<BokaLang>(initialLang === "en" ? "en" : "sv");
+  const [lang, setLang] = useState<BokaLang>(
+    initialLang === "en" ? "en" : initialLang === "de" ? "de" : "sv"
+  );
   const t = COPY[lang];
 
   useEffect(() => {
@@ -608,7 +677,11 @@ const Boka = ({ lang: initialLang }: BokaProps = {}) => {
     }
   }, []);
 
-  const canonical = lang === "en" ? "https://goglampingsweden.se/en/boka" : "https://goglampingsweden.se/boka";
+  const canonical =
+    lang === "en" ? "https://goglampingsweden.se/en/boka"
+    : lang === "de" ? "https://goglampingsweden.se/de/boka"
+    : "https://goglampingsweden.se/boka";
+  const ogLocale = lang === "en" ? "en_US" : lang === "de" ? "de_DE" : "sv_SE";
 
   return (
     <HelmetProvider>
@@ -620,13 +693,14 @@ const Boka = ({ lang: initialLang }: BokaProps = {}) => {
           <link rel="canonical" href={canonical} />
           <link rel="alternate" hrefLang="sv" href="https://goglampingsweden.se/boka" />
           <link rel="alternate" hrefLang="en" href="https://goglampingsweden.se/en/boka" />
+          <link rel="alternate" hrefLang="de" href="https://goglampingsweden.se/de/boka" />
           <link rel="alternate" hrefLang="x-default" href="https://goglampingsweden.se/boka" />
           <meta property="og:title" content={t.metaTitle} />
           <meta property="og:description" content={t.metaDesc} />
           <meta property="og:type" content="website" />
           <meta property="og:url" content={canonical} />
           <meta property="og:image" content="https://goglampingsweden.se/og-image.jpg" />
-          <meta property="og:locale" content={lang === "en" ? "en_US" : "sv_SE"} />
+          <meta property="og:locale" content={ogLocale} />
         </Helmet>
         <style>{FONT_STYLES}</style>
 
