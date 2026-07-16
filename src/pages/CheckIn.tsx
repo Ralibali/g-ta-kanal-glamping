@@ -219,6 +219,7 @@ const CheckIn = () => {
   const [error, setError] = useState("");
   const [notFound, setNotFound] = useState(false);
   const [tentId, setTentId] = useState<TentId | null>(null);
+  const [tentIds, setTentIds] = useState<TentId[]>([]);
   const [lang, setLang] = useState<Lang>("sv");
   const [termsAccepted, setTermsAccepted] = useState<boolean[]>([]);
 
@@ -283,6 +284,27 @@ const CheckIn = () => {
     setNotFound(false);
     setBookingNumber(resolvedBookingNumber);
     setTentId(matchedBooking.tentId);
+
+    // Hämta alla tält kopplade till bokningen (för flertältsbokningar)
+    let allTents: TentId[] = [matchedBooking.tentId];
+    try {
+      const { data: tentsData } = await supabase.rpc("list_tents_for_booking", {
+        p_booking_number: resolvedBookingNumber,
+      });
+      if (Array.isArray(tentsData) && tentsData.length > 0) {
+        const ids = tentsData
+          .map((r: { tent_id: string }) => r.tent_id as TentId)
+          .filter((id): id is TentId => VALID_TENT_IDS.includes(id));
+        if (ids.length > 0) {
+          allTents = ids.includes(matchedBooking.tentId)
+            ? ids
+            : [matchedBooking.tentId, ...ids];
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch all tents for booking", err);
+    }
+    setTentIds(allTents);
     setLang(matchedBooking.lang);
     setTermsAccepted(TERMS[matchedBooking.lang].map(() => false));
     setError("");
@@ -294,19 +316,24 @@ const CheckIn = () => {
   const handleTermsSubmit = async () => {
     if (allTermsAccepted && tentId) {
       setStep("code");
-      // Logga incheckning (fire-and-forget)
+      // Logga incheckning för varje tält gästen bokat (fire-and-forget)
       const bn = bookingNumber.trim().toUpperCase();
+      const tents = tentIds.length > 0 ? tentIds : [tentId];
       try {
-        await supabase.from("check_ins").insert({
-          booking_number: bn,
-          tent_id: tentId,
-          lang,
-          user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
-        });
+        await Promise.all(
+          tents.map((tid) =>
+            supabase.from("check_ins").insert({
+              booking_number: bn,
+              tent_id: tid,
+              lang,
+              user_agent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+            })
+          )
+        );
       } catch (err) {
         console.error("Failed to log check-in", err);
       }
-      // Fire-and-forget welcome SMS with personal link to /under-vistelsen
+      // Skicka ett välkomst-SMS (edge-funktionen slår upp bokningen själv)
       try {
         supabase.functions.invoke("send-checkin-welcome", {
           body: { booking_number: bn },
@@ -540,19 +567,38 @@ const CheckIn = () => {
 
             {/* Tent info */}
             <div className="bg-secondary rounded-xl p-5 mb-6 text-left">
-              <p className="text-sm font-semibold text-foreground mb-1">{t.yourTent}</p>
-              <p className="font-serif text-lg font-bold text-foreground">{TENT_INFO[lang][tentId].name}</p>
-              <div className="flex items-start gap-2 mt-3">
-                <MapPin className="text-accent shrink-0 mt-0.5" size={16} />
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {TENT_INFO[lang][tentId].directions}
-                </p>
+              <p className="text-sm font-semibold text-foreground mb-3">
+                {tentIds.length > 1
+                  ? (lang === "en" ? "Your tents" : lang === "da" ? "Dine telte" : "Dina tält")
+                  : t.yourTent}
+              </p>
+              <div className="space-y-4">
+                {(tentIds.length > 0 ? tentIds : [tentId]).map((tid) => (
+                  <div key={tid}>
+                    <p className="font-serif text-lg font-bold text-foreground">{TENT_INFO[lang][tid!].name}</p>
+                    <div className="flex items-start gap-2 mt-1">
+                      <MapPin className="text-accent shrink-0 mt-0.5" size={16} />
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {TENT_INFO[lang][tid!].directions}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <p className="text-muted-foreground text-sm mb-4">
+            <p className="text-muted-foreground text-sm mb-2">
               {t.lockCodeLabel}
             </p>
+            {tentIds.length > 1 && (
+              <p className="text-xs text-muted-foreground mb-3">
+                {lang === "en"
+                  ? "The same code opens both tents."
+                  : lang === "da"
+                  ? "Samme kode åbner begge telte."
+                  : "Samma kod öppnar båda tälten."}
+              </p>
+            )}
             <div className="bg-primary rounded-2xl py-8 px-6 mb-6">
               <p className="font-mono text-6xl font-bold text-primary-foreground tracking-[0.3em]">
                 {LOCK_CODE}
