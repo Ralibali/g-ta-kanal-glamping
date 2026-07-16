@@ -354,7 +354,7 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
         {/* Language switcher */}
         <div className="flex justify-end mb-4">
           <div className="inline-flex rounded-full bg-primary-foreground/10 p-1 text-xs font-medium">
-            {(["sv", "en"] as const).map((l) => (
+            {(["sv", "en", "de"] as const).map((l) => (
               <button
                 key={l}
                 type="button"
@@ -366,7 +366,7 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
                 }`}
                 aria-pressed={lang === l}
               >
-                {l === "sv" ? "SV" : "EN"}
+                {l.toUpperCase()}
               </button>
             ))}
           </div>
