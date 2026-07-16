@@ -1145,6 +1145,12 @@ export type Database = {
           user_id: string
         }[]
       }
+      list_tents_for_booking: {
+        Args: { p_booking_number: string }
+        Returns: {
+          tent_id: string
+        }[]
+      }
       lookup_booking_for_checkin: {
         Args: { p_booking_number: string }
         Returns: {
