@@ -219,6 +219,7 @@ const CheckIn = () => {
   const [error, setError] = useState("");
   const [notFound, setNotFound] = useState(false);
   const [tentId, setTentId] = useState<TentId | null>(null);
+  const [tentIds, setTentIds] = useState<TentId[]>([]);
   const [lang, setLang] = useState<Lang>("sv");
   const [termsAccepted, setTermsAccepted] = useState<boolean[]>([]);
 
