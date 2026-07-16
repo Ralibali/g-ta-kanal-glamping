@@ -279,18 +279,15 @@ const Header = ({ t, lang, onLang }: { t: Copy; lang: BokaLang; onLang: (l: Boka
             </a>
           ))}
           <div className="flex items-center gap-1 text-xs" style={{ color: textColor }}>
-            <button
-              onClick={() => onLang("sv")}
-              className={`px-2 py-0.5 rounded-full border ${lang === "sv" ? "font-semibold" : "opacity-70"}`}
-              style={{ borderColor: `${textColor}55` }}
-              aria-pressed={lang === "sv"}
-            >SV</button>
-            <button
-              onClick={() => onLang("en")}
-              className={`px-2 py-0.5 rounded-full border ${lang === "en" ? "font-semibold" : "opacity-70"}`}
-              style={{ borderColor: `${textColor}55` }}
-              aria-pressed={lang === "en"}
-            >EN</button>
+            {(["sv", "en", "de"] as BokaLang[]).map((l) => (
+              <button
+                key={l}
+                onClick={() => onLang(l)}
+                className={`px-2 py-0.5 rounded-full border ${lang === l ? "font-semibold" : "opacity-70"}`}
+                style={{ borderColor: `${textColor}55` }}
+                aria-pressed={lang === l}
+              >{l.toUpperCase()}</button>
+            ))}
           </div>
           <a
             href="#boka"
@@ -303,8 +300,9 @@ const Header = ({ t, lang, onLang }: { t: Copy; lang: BokaLang; onLang: (l: Boka
 
         <div className="md:hidden flex items-center gap-2">
           <div className="flex items-center gap-1 text-[11px]" style={{ color: textColor }}>
-            <button onClick={() => onLang("sv")} className={`px-1.5 py-0.5 rounded-full border ${lang === "sv" ? "font-semibold" : "opacity-70"}`} style={{ borderColor: `${textColor}55` }} aria-pressed={lang === "sv"}>SV</button>
-            <button onClick={() => onLang("en")} className={`px-1.5 py-0.5 rounded-full border ${lang === "en" ? "font-semibold" : "opacity-70"}`} style={{ borderColor: `${textColor}55` }} aria-pressed={lang === "en"}>EN</button>
+            {(["sv", "en", "de"] as BokaLang[]).map((l) => (
+              <button key={l} onClick={() => onLang(l)} className={`px-1.5 py-0.5 rounded-full border ${lang === l ? "font-semibold" : "opacity-70"}`} style={{ borderColor: `${textColor}55` }} aria-pressed={lang === l}>{l.toUpperCase()}</button>
+            ))}
           </div>
           <a href="#boka" className="rounded-full px-4 py-2 text-sm font-medium" style={{ background: PALETTE.primary, color: PALETTE.white }}>
             {t.navBookShort}
