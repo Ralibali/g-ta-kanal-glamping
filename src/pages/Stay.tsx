@@ -679,6 +679,26 @@ export default function Stay({ initialLang }: StayProps = {}) {
 
       <main className="max-w-2xl mx-auto p-4 space-y-5 -mt-4 relative">
 
+        {/* Language switcher (SV / EN / DE) */}
+        <div className="flex justify-end -mb-2">
+          <div className="inline-flex rounded-full border border-border bg-background/80 backdrop-blur p-0.5 text-[11px] font-medium shadow-sm">
+            {(["sv", "en", "de"] as const).map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => setLangOverride(l)}
+                aria-pressed={lang === l}
+                className={`px-2.5 py-1 rounded-full uppercase tracking-wider transition-colors ${
+                  lang === l ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {l.toUpperCase()}
+              </button>
+            ))}
+          </div>
+        </div>
+
+
         {(() => {
           const TENT_NAMES: Record<string,string> = { sjobris: 'Sjöbrisretreatet', naturkarnan: 'Naturkärnan', lugnetsyta: 'Lugnets Yta' };
           const allTents = Array.from(new Set([data.booking.tent_id, ...extraTents])).filter(Boolean);
