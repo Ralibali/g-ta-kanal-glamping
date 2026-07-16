@@ -43,15 +43,30 @@ type Availability = { work_date: string; user_id: string };
 type Session = { tent_id: string; cleaning_date: string; status: string };
 type EarlyFlag = { tent_id: string; date: string; active: boolean };
 
+type TentDayInfo = {
+  tent_id: string;
+  arrivalGuests: number; // adults + children
+  arrivalAdults: number;
+  arrivalChildren: number;
+  hasArrival: boolean;
+  hasDeparture: boolean;
+  early: boolean;
+  done: boolean;
+};
+
 type DayRow = {
   date: string;
   tents: Set<string>;
   arrivals: number;
   departures: number;
   guests: number;
+  adults: number;
+  children: number;
   earlyTents: Set<string>;
   completedTents: Set<string>;
+  perTent: Map<string, TentDayInfo>;
 };
+
 
 type Filter = "all" | "missing" | "assigned" | "self";
 
@@ -167,12 +182,32 @@ export default function CleaningPortal() {
           arrivals: 0,
           departures: 0,
           guests: 0,
+          adults: 0,
+          children: 0,
           earlyTents: new Set(),
           completedTents: new Set(),
+          perTent: new Map(),
         };
         map.set(d, row);
       }
       return row;
+    };
+    const ensureTent = (row: DayRow, tid: string): TentDayInfo => {
+      let t = row.perTent.get(tid);
+      if (!t) {
+        t = {
+          tent_id: tid,
+          arrivalGuests: 0,
+          arrivalAdults: 0,
+          arrivalChildren: 0,
+          hasArrival: false,
+          hasDeparture: false,
+          early: false,
+          done: false,
+        };
+        row.perTent.set(tid, t);
+      }
+      return t;
     };
     const arrivalByKey = new Map<string, Stay>();
     for (const s of stays) arrivalByKey.set(`${s.tent_id}|${s.checkin_date}`, s);
@@ -180,31 +215,44 @@ export default function CleaningPortal() {
     for (const s of stays) {
       if (s.checkout_date >= today && s.checkout_date <= rangeEnd) {
         const row = ensure(s.checkout_date);
+        const tInfo = ensureTent(row, s.tent_id);
         if (!row.tents.has(s.tent_id)) {
           row.tents.add(s.tent_id);
           row.departures += 1;
         }
+        tInfo.hasDeparture = true;
         const arr = arrivalByKey.get(`${s.tent_id}|${s.checkout_date}`);
         if (arr) {
+          const adults = Math.max(0, Number(arr.guests ?? 0));
+          const children = Math.max(0, Number(arr.children ?? 0));
           row.arrivals += 1;
-          row.guests += Number(arr.guests ?? 0);
+          row.guests += adults + children;
+          row.adults += adults;
+          row.children += children;
+          tInfo.hasArrival = true;
+          tInfo.arrivalAdults = adults;
+          tInfo.arrivalChildren = children;
+          tInfo.arrivalGuests = adults + children;
         }
       }
       if (s.checkin_date >= today && s.checkin_date <= rangeEnd) {
-        const key = `${s.tent_id}|${s.checkin_date}`;
-        // Only add as arrival-only day if there's no departure on that same tent+date
         const isTurnover = stays.some(
           (x) => x.tent_id === s.tent_id && x.checkout_date === s.checkin_date,
         );
         if (!isTurnover) {
           const row = ensure(s.checkin_date);
-          if (!row.tents.has(s.tent_id)) {
-            row.tents.add(s.tent_id);
-            // count as arrival preparation only (no departure)
-          }
+          const tInfo = ensureTent(row, s.tent_id);
+          row.tents.add(s.tent_id);
+          const adults = Math.max(0, Number(s.guests ?? 0));
+          const children = Math.max(0, Number(s.children ?? 0));
           row.arrivals += 1;
-          row.guests += Number(s.guests ?? 0);
-          void key;
+          row.guests += adults + children;
+          row.adults += adults;
+          row.children += children;
+          tInfo.hasArrival = true;
+          tInfo.arrivalAdults = adults;
+          tInfo.arrivalChildren = children;
+          tInfo.arrivalGuests = adults + children;
         }
       }
     }
@@ -212,16 +260,19 @@ export default function CleaningPortal() {
     for (const f of earlyFlags) {
       const row = ensure(f.date);
       row.earlyTents.add(f.tent_id);
+      ensureTent(row, f.tent_id).early = true;
     }
     for (const sess of sessions) {
       if (sess.status === "completed") {
         const row = ensure(sess.cleaning_date);
         row.completedTents.add(sess.tent_id);
+        ensureTent(row, sess.tent_id).done = true;
       }
     }
 
     return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
   }, [stays, sessions, earlyFlags, today, rangeEnd]);
+
 
   const filteredDays = useMemo(() => {
     return days.filter((d) => {
@@ -410,9 +461,15 @@ export default function CleaningPortal() {
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2 text-sm">
                   <Badge variant="secondary">{focusRow.tents.size} tält</Badge>
-                  <Badge variant="secondary">{focusRow.arrivals} byten</Badge>
+                  <Badge variant="secondary">{focusRow.arrivals} ankomster</Badge>
+                  <Badge variant="secondary">{focusRow.departures} avresor</Badge>
                   <Badge variant="secondary">
                     <Users className="mr-1 h-3 w-3" /> {focusRow.guests} gäster
+                    {focusRow.children > 0 && (
+                      <span className="ml-1 opacity-70">
+                        ({focusRow.adults}v + {focusRow.children}b)
+                      </span>
+                    )}
                   </Badge>
                   {focusEarly > 0 && (
                     <Badge className="bg-amber-500 text-white">
@@ -421,6 +478,50 @@ export default function CleaningPortal() {
                   )}
                   {focusLate > 0 && <Badge variant="outline">{focusLate} sen utcheckning</Badge>}
                 </div>
+                <ul className="divide-y rounded-md border">
+                  {Array.from(focusRow.perTent.values())
+                    .sort((a, b) => (TENT_BY_ID[a.tent_id]?.no ?? 99) - (TENT_BY_ID[b.tent_id]?.no ?? 99))
+                    .map((t) => {
+                      const meta = TENT_BY_ID[t.tent_id];
+                      return (
+                        <li key={t.tent_id} className="flex flex-wrap items-center justify-between gap-2 p-2 text-sm">
+                          <div className="flex items-center gap-2 min-w-0">
+                            {t.done ? (
+                              <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                            ) : (
+                              <span className="inline-block h-2 w-2 rounded-full bg-muted-foreground/40 shrink-0" />
+                            )}
+                            <span className="font-medium truncate">
+                              {meta ? `${meta.no}. ${meta.name}` : t.tent_id}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            {t.hasArrival ? (
+                              <Badge variant="secondary" className="text-[11px]">
+                                <Users className="mr-1 h-3 w-3" />
+                                {t.arrivalGuests} gäst{t.arrivalGuests === 1 ? "" : "er"}
+                                {t.arrivalChildren > 0 && (
+                                  <span className="ml-1 opacity-70">
+                                    ({t.arrivalAdults}v + {t.arrivalChildren}b)
+                                  </span>
+                                )}
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-[11px]">Endast avresa</Badge>
+                            )}
+                            {t.hasArrival && t.hasDeparture && (
+                              <Badge variant="outline" className="text-[11px]">Byte</Badge>
+                            )}
+                            {t.early && (
+                              <Badge className="bg-amber-500 hover:bg-amber-500 text-white text-[11px]">
+                                <Sunrise className="mr-1 h-3 w-3" /> Tidig
+                              </Badge>
+                            )}
+                          </div>
+                        </li>
+                      );
+                    })}
+                </ul>
                 <div className="h-2 w-full overflow-hidden rounded bg-muted">
                   <div
                     className="h-full bg-green-600 transition-all"
@@ -437,6 +538,7 @@ export default function CleaningPortal() {
                   {focusRow.completedTents.size} av {focusRow.tents.size} tält klara
                 </p>
               </div>
+
             )}
           </CardContent>
         </Card>
@@ -502,39 +604,72 @@ export default function CleaningPortal() {
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 text-xs">
-                    {Array.from(d.tents).map((tid) => {
-                      const t = TENT_BY_ID[tid];
-                      const isEarly = d.earlyTents.has(tid);
-                      const isDone = d.completedTents.has(tid);
-                      return (
-                        <Badge key={tid} variant="outline" className="gap-1">
-                          {isDone && <CheckCircle2 className="h-3 w-3 text-green-600" />}
-                          {t ? `${t.no}. ${t.name}` : tid}
-                          {isEarly && <Sunrise className="h-3 w-3 text-amber-500" />}
-                        </Badge>
-                      );
-                    })}
-                    {d.tents.size === 0 && (
-                      <span className="text-muted-foreground">Inga byten</span>
+                  {d.perTent.size === 0 ? (
+                    <p className="text-xs text-muted-foreground">Inga byten</p>
+                  ) : (
+                    <ul className="divide-y rounded-md border">
+                      {Array.from(d.perTent.values())
+                        .sort((a, b) => (TENT_BY_ID[a.tent_id]?.no ?? 99) - (TENT_BY_ID[b.tent_id]?.no ?? 99))
+                        .map((t) => {
+                          const meta = TENT_BY_ID[t.tent_id];
+                          return (
+                            <li key={t.tent_id} className="flex flex-wrap items-center justify-between gap-2 p-2">
+                              <div className="flex items-center gap-2 min-w-0">
+                                {t.done ? (
+                                  <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+                                ) : (
+                                  <span className="inline-block h-2 w-2 rounded-full bg-muted-foreground/40 shrink-0" />
+                                )}
+                                <span className="font-medium text-sm truncate">
+                                  {meta ? `${meta.no}. ${meta.name}` : t.tent_id}
+                                </span>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                {t.hasArrival ? (
+                                  <Badge variant="secondary" className="text-[11px]">
+                                    <Users className="mr-1 h-3 w-3" />
+                                    {t.arrivalGuests} gäst{t.arrivalGuests === 1 ? "" : "er"}
+                                    {t.arrivalChildren > 0 && (
+                                      <span className="ml-1 opacity-70">
+                                        ({t.arrivalAdults}v + {t.arrivalChildren}b)
+                                      </span>
+                                    )}
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="outline" className="text-[11px]">Endast avresa</Badge>
+                                )}
+                                {t.hasArrival && t.hasDeparture && (
+                                  <Badge variant="outline" className="text-[11px]">Byte</Badge>
+                                )}
+                                {t.early && (
+                                  <Badge className="bg-amber-500 hover:bg-amber-500 text-white text-[11px]">
+                                    <Sunrise className="mr-1 h-3 w-3" /> Tidig
+                                  </Badge>
+                                )}
+                              </div>
+                            </li>
+                          );
+                        })}
+                    </ul>
+                  )}
+
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                    <span>{d.arrivals} ankomster · {d.departures} avresor</span>
+                    <span>
+                      <Users className="mr-1 inline h-3 w-3" />
+                      Totalt {d.guests} gäster
+                      {d.children > 0 && (
+                        <span className="opacity-70"> ({d.adults} vuxna + {d.children} barn)</span>
+                      )}
+                    </span>
+                    {d.earlyTents.size > 0 && (
+                      <span className="text-amber-600">
+                        <Sunrise className="mr-1 inline h-3 w-3" />
+                        {d.earlyTents.size} tidig incheckning
+                      </span>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground">
-                    <div>{d.arrivals} byten</div>
-                    <div>
-                      <Users className="mr-1 inline h-3 w-3" />
-                      {d.guests} gäster
-                    </div>
-                    <div>
-                      {d.earlyTents.size > 0 && (
-                        <span className="text-amber-600">
-                          <Sunrise className="mr-1 inline h-3 w-3" />
-                          {d.earlyTents.size} tidig
-                        </span>
-                      )}
-                    </div>
-                  </div>
 
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <div className="flex-1">
