@@ -294,6 +294,10 @@ function pickLang(raw: string | null | undefined): LangKey {
   return "en";
 }
 
+interface StayProps {
+  initialLang?: "sv" | "en" | "de";
+}
+
 function iconFor(slug: string) {
   if (slug === "breakfast") return <Coffee className="h-5 w-5" />;
   if (slug === "fika_bag") return <Cookie className="h-5 w-5" />;
@@ -423,7 +427,7 @@ function getDetails(slug: string, lang: string) {
   return byLang[lang] ?? byLang.en ?? byLang.sv;
 }
 
-export default function Stay() {
+export default function Stay({ initialLang }: StayProps = {}) {
   const { token } = useParams<{ token: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState<StayData | null>(null);
@@ -437,6 +441,7 @@ export default function Stay() {
   const [paidTotal, setPaidTotal] = useState<number>(0);
   const [swishInfo, setSwishInfo] = useState<{ amount: number; reference: string } | null>(null);
   const [extraTents, setExtraTents] = useState<string[]>([]);
+  const [langOverride, setLangOverride] = useState<LangKey | null>(initialLang ?? null);
 
   const loadStay = async () => {
     if (!token) { setLoading(false); return; }
@@ -523,7 +528,7 @@ export default function Stay() {
   if (loading) return <Centered>{COPY.sv.loading}</Centered>;
   if (!data || !data.booking) return <Centered>{COPY.sv.notFound}</Centered>;
 
-  const lang: LangKey = pickLang(data.booking.language);
+  const lang: LangKey = langOverride ?? pickLang(data.booking.language);
   const t = COPY[lang];
   const isSv = lang === "sv";
   const cutoff = data.settings?.order_cutoff_days ?? 2;
