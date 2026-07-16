@@ -150,6 +150,7 @@ Deno.serve(async (req) => {
             total,
             hasEarlyCheckin: emailItemNames.some(i => i.slug === 'early_checkin'),
             reference: ref,
+            paymentMethod: 'swish',
             adminUrl: 'https://goglampingsweden.se/admin/addon-orders',
           },
         }),
