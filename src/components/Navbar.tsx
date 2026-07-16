@@ -10,11 +10,18 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const homePath = lang === "en" ? "/en" : "/";
-  const bookingPath = lang === "en" ? "/en/boka" : "/boka";
+  const homePath = lang === "en" ? "/en" : lang === "de" ? "/de" : "/";
+  const bookingPath = lang === "en" ? "/en/boka" : lang === "de" ? "/de/boka" : "/boka";
   const sectionHref = (section: string) => `${homePath}#${section}`;
 
-  const navLinks = lang === "en"
+  const navLinks = lang === "de"
+    ? [
+        { label: "Über uns", href: sectionHref("om-oss") },
+        { label: "Zelte", href: sectionHref("talten") },
+        { label: "Aktivitäten", href: sectionHref("aktiviteter") },
+        { label: "Anfahrt", href: sectionHref("kontakt") },
+      ]
+    : lang === "en"
     ? [
         { label: "About", href: sectionHref("om-oss") },
         { label: "Tents", href: sectionHref("talten") },
@@ -37,15 +44,15 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const switchLang = () => {
-    const target = lang === "sv" ? "en" : "sv";
+  const pickLang = (target: Lang) => {
     localStorage.setItem("lang-choice", target);
     setMenuOpen(false);
-    navigate(target === "en" ? "/en" : "/");
+    navigate(target === "en" ? "/en" : target === "de" ? "/de" : "/");
   };
 
-  const otherLang: Lang = lang === "sv" ? "en" : "sv";
-  const flagEmoji = lang === "sv" ? "🇬🇧" : "🇸🇪";
+  const LANGS: Lang[] = ["sv", "en", "de"];
+  const contactLabel = lang === "en" ? "Contact us" : lang === "de" ? "Kontakt" : "Kontakta oss";
+  const bookLabel = lang === "en" ? "Book now" : lang === "de" ? "Jetzt buchen" : "Boka nu";
 
   return (
     <nav
