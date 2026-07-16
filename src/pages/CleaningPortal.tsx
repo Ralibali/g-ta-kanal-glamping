@@ -167,6 +167,58 @@ export default function CleaningPortal() {
       setSelfCleanDates(new Set(((selfRes.data ?? []) as { date: string }[]).map((r) => r.date)));
       setSessions((sessRes.data ?? []) as Session[]);
       setEarlyFlags((earlyRes.data ?? []) as EarlyFlag[]);
+
+      // Beräkna mismatches mellan bookings.raw och tent_stays
+      const staysByBooking = new Map<string, Stay[]>();
+      for (const s of (staysRes.data ?? []) as Stay[]) {
+        if (!staysByBooking.has(s.booking_number)) staysByBooking.set(s.booking_number, []);
+        staysByBooking.get(s.booking_number)!.push(s);
+      }
+      type BookingRow = {
+        booking_number: string;
+        guest_name: string | null;
+        tent_id: string | null;
+        checkin_date: string | null;
+        checkout_date: string | null;
+        raw: Record<string, unknown> | null;
+      };
+      const mismatches: typeof roomMismatches = [];
+      for (const b of ((bookingsRes.data ?? []) as BookingRow[])) {
+        const raw = (b.raw ?? {}) as Record<string, unknown>;
+        const basic = ((raw as any).basic_info ?? {}) as Record<string, string>;
+        const rooms = Number(
+          (raw as any).number_of_rooms ?? basic["Number of rooms"] ?? 0,
+        );
+        const guestsRaw = Number(
+          (raw as any).number_of_guests ?? basic["Number of guests"] ?? 0,
+        );
+        const childrenRaw = Number((raw as any).children_total ?? 0);
+        const totalExpectedGuests = guestsRaw + childrenRaw;
+        const bookingStays = staysByBooking.get(b.booking_number) ?? [];
+        const actualStays = bookingStays.length;
+        const actualGuests = bookingStays.reduce(
+          (acc, s) => acc + Number(s.guests ?? 0) + Number(s.children ?? 0),
+          0,
+        );
+        const roomsMissing = rooms > 0 && actualStays < rooms;
+        const guestsMissing = totalExpectedGuests > 0 && actualGuests < totalExpectedGuests;
+        if (roomsMissing || guestsMissing) {
+          mismatches.push({
+            booking_number: b.booking_number,
+            guest_name: b.guest_name,
+            tent_id: b.tent_id,
+            checkin_date: b.checkin_date,
+            checkout_date: b.checkout_date,
+            expected: rooms || actualStays,
+            actual: actualStays,
+            guests_expected: totalExpectedGuests,
+            guests_actual: actualGuests,
+          });
+        }
+      }
+      mismatches.sort((a, b) => (a.checkin_date ?? "").localeCompare(b.checkin_date ?? ""));
+      setRoomMismatches(mismatches);
+
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Kunde inte hämta data");
     } finally {
