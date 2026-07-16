@@ -620,6 +620,12 @@ export default function CleaningPortal() {
               <p className="text-xs text-amber-900/80 dark:text-amber-100/80">
                 Sirvoy anger fler tält eller gäster än vi har importerat. Importera Booking content-CSV:en igen för att fylla i det saknade tältet, annars kan städaren tro att tältet står tomt.
               </p>
+              <Button asChild size="sm" variant="outline" className="border-amber-500/60 text-amber-900 hover:bg-amber-500/10 dark:text-amber-100">
+                <Link to="/admin/bookings">
+                  <Upload className="mr-1.5 h-3.5 w-3.5" />
+                  Öppna Sirvoy-import
+                </Link>
+              </Button>
               <ul className="space-y-1.5 text-sm">
                 {roomMismatches.map((m) => (
                   <li key={m.booking_number} className="flex flex-wrap items-center gap-2 rounded border border-amber-500/40 bg-background p-2">
