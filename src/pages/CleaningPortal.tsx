@@ -105,7 +105,7 @@ export default function CleaningPortal() {
   const loadAll = async () => {
     setDataLoading(true);
     try {
-      const [staysRes, assignRes, namesRes, availRes, selfRes, sessRes, earlyRes] = await Promise.all([
+      const [staysRes, assignRes, namesRes, availRes, selfRes, sessRes, earlyRes, bookingsRes] = await Promise.all([
         (supabase as any)
           .from("tent_stays")
           .select("booking_number, tent_id, checkin_date, checkout_date, guests, children")
@@ -139,7 +139,13 @@ export default function CleaningPortal() {
           .gte("date", today)
           .lte("date", rangeEnd)
           .eq("active", true),
+        (supabase as any)
+          .from("bookings")
+          .select("booking_number, guest_name, tent_id, checkin_date, checkout_date, raw")
+          .gte("checkin_date", today)
+          .lte("checkin_date", rangeEnd),
       ]);
+
 
       setStays((staysRes.data ?? []) as Stay[]);
 
