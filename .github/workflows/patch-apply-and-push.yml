@@ -1,0 +1,74 @@
+name: Apply verified patch to main
+
+on:
+  push:
+    branches:
+      - agent/gota-kanal-patch-verify-20260717
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-gota-kanal-patch-main
+  cancel-in-progress: false
+
+jobs:
+  apply-test-build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out verification branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reconstruct and verify original patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .patch-verify/chunk-00 \
+              .patch-verify/chunk-01 \
+              .patch-verify/chunk-02 \
+              .patch-verify/chunk-03 \
+              .patch-verify/chunk-04 \
+            | base64 --decode \
+            | gzip --decompress \
+            > /tmp/gota-kanal-alla-andringar.patch
+          echo "a192ffd611ad32e0dc44dcb42bea16acdbfd81f0886bd86ded0c3692474804ac  /tmp/gota-kanal-alla-andringar.patch" | sha256sum --check --strict
+
+      - name: Check main and apply both commits
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "56d9502455abdc48edda86301b2c6f7617dc2500"
+          git reset --hard origin/main
+          git clean -fdx
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git am /tmp/gota-kanal-alla-andringar.patch
+          FIRST_SHA="$(git rev-parse HEAD~1)"
+          SECOND_SHA="$(git rev-parse HEAD)"
+          test "$(git rev-list --count origin/main..HEAD)" = "2"
+          printf 'FIRST_SHA=%s\nSECOND_SHA=%s\n' "$FIRST_SHA" "$SECOND_SHA" >> "$GITHUB_ENV"
+          git status --porcelain | tee /tmp/git-status.txt
+          test ! -s /tmp/git-status.txt
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      - name: Push both commits to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin HEAD:main
+          {
+            echo "## Pushed commits"
+            echo "- $FIRST_SHA"
+            echo "- $SECOND_SHA"
+          } >> "$GITHUB_STEP_SUMMARY"
