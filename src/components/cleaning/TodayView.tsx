@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, CircleDashed, Clock, Loader2, Play, Sparkles, Square, Sun, MoonStar, Coffee, Users } from "lucide-react";
+import { CheckCircle2, CircleDashed, Clock, Loader2, Play, RefreshCw, Sparkles, Square, Sun, MoonStar, Coffee, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -174,7 +174,17 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
                 {doneCount} {labels.progressDone} {total} {labels.progressLabel.toLowerCase()}
               </span>
             </div>
-            <span className="text-xs font-semibold text-primary">{percent}%</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-primary">{percent}%</span>
+              <button
+                type="button"
+                onClick={onReload}
+                aria-label={lang === "sv" ? "Uppdatera" : "Refresh"}
+                className="rounded-full p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} aria-hidden="true" />
+              </button>
+            </div>
           </div>
           <Progress value={percent} className="h-2" aria-label={`${doneCount} ${labels.progressDone} ${total}`} />
         </div>

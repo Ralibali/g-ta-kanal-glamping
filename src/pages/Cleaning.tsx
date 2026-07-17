@@ -244,7 +244,8 @@ export default function Cleaning() {
       const arrival = arrivals.get(`${departure.tent_id}|${departure.checkout_date}`);
       if (arrival) {
         item.arrivals += 1;
-        item.guests += Number(arrival.guests ?? 0);
+        // Räkna både vuxna och barn — annars underskattas gästantalet i översikten
+        item.guests += Number(arrival.guests ?? 0) + Number(arrival.children ?? 0);
       }
       map.set(item.date, item);
     }

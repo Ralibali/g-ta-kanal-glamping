@@ -17,7 +17,7 @@ import {
 
 import { supabase } from "@/integrations/supabase/client";
 import { useCleaner } from "@/hooks/useCleaner";
-import { TENTS, TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
+import { TENT_BY_ID, todayInStockholm } from "@/cleaning/config";
 import Cleaning from "@/pages/Cleaning";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -150,6 +150,16 @@ export default function CleaningPortal() {
       ]);
 
 
+      // Supabase returnerar fel i svaret (kastar inte) — utan denna koll skulle
+      // portalen tyst visa en tom lista om t.ex. RLS nekar eller en tabell saknas.
+      const queryErrors = [
+        staysRes.error, assignRes.error, namesRes.error, availRes.error,
+        selfRes.error, sessRes.error, earlyRes.error, bookingsRes.error,
+      ].filter((e): e is { message: string } => !!e);
+      if (queryErrors.length > 0) {
+        toast.error(`Kunde inte hämta all data: ${queryErrors[0].message}`);
+      }
+
       setStays((staysRes.data ?? []) as Stay[]);
 
       const aMap = new Map<string, string>();
@@ -232,6 +242,10 @@ export default function CleaningPortal() {
   useEffect(() => {
     if (!user || !isAdmin) return;
     void loadAll();
+    // Ladda om när fliken blir aktiv igen — portalen lämnas ofta öppen på en surfplatta
+    const onVisible = () => { if (document.visibilityState === "visible") void loadAll(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isAdmin]);
 
@@ -367,7 +381,6 @@ export default function CleaningPortal() {
   }, [days, assignments, selfCleanDates, today]);
 
   const focusRow = days.find((d) => d.date === today);
-  const focusLate = 0; // sena utcheckningar redovisas via addons på checklistan
   const focusEarly = focusRow?.earlyTents.size ?? 0;
 
   const cleanerOptions = useMemo(
@@ -528,6 +541,15 @@ export default function CleaningPortal() {
                   <Badge variant="secondary">{focusRow.tents.size} tält</Badge>
                   <Badge variant="secondary">{focusRow.arrivals} ankomster</Badge>
                   <Badge variant="secondary">{focusRow.departures} avresor</Badge>
+                  {selfCleanDates.has(today) ? (
+                    <Badge variant="secondary">🧹 Egenstäd idag</Badge>
+                  ) : assignments.has(today) ? (
+                    <Badge variant="outline" className="border-emerald-600/50 text-emerald-700 dark:text-emerald-400">
+                      🧹 {cleanerNames.get(assignments.get(today)!) ?? "Tilldelad"} städar idag
+                    </Badge>
+                  ) : (
+                    <Badge variant="destructive">Ingen städare tilldelad idag</Badge>
+                  )}
                   <Badge variant="secondary">
                     <Users className="mr-1 h-3 w-3" /> {focusRow.guests} gäster
                     {focusRow.children > 0 && (
@@ -541,7 +563,6 @@ export default function CleaningPortal() {
                       <Sunrise className="mr-1 h-3 w-3" /> {focusEarly} tidig
                     </Badge>
                   )}
-                  {focusLate > 0 && <Badge variant="outline">{focusLate} sen utcheckning</Badge>}
                 </div>
                 <ul className="divide-y rounded-md border">
                   {Array.from(focusRow.perTent.values())
@@ -714,8 +735,18 @@ export default function CleaningPortal() {
                         </Badge>
                       )}
                       {isSelf && <Badge variant="secondary">Egenstäd</Badge>}
+                      {assignedId && !isSelf && (
+                        <Badge variant="outline" className="border-emerald-600/50 text-emerald-700 dark:text-emerald-400">
+                          🧹 {cleanerNames.get(assignedId) ?? "Tilldelad"}
+                        </Badge>
+                      )}
                       {!assignedId && !isSelf && d.tents.size > 0 && (
                         <Badge variant="destructive">Saknar städare</Badge>
+                      )}
+                      {!assignedId && !isSelf && interested.length > 0 && (
+                        <Badge variant="outline" className="border-amber-500/60 text-amber-700 dark:text-amber-400">
+                          ⭐ {interested.length} intresserad{interested.length > 1 ? "e" : ""}
+                        </Badge>
                       )}
                     </div>
                   </div>
@@ -889,5 +920,3 @@ function StatCard({
   );
 }
 
-// keep TENTS reference to satisfy tree-shaker warnings if unused elsewhere
-void TENTS;

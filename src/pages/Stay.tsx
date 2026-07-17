@@ -4,13 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, Key, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut, Volume2, Droplets, AlertTriangle, RefreshCw, Download, Copy, Check, Mail, LifeBuoy } from "lucide-react";
+import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut, Volume2, Droplets, AlertTriangle, RefreshCw, Download, Copy, Check, Mail, LifeBuoy } from "lucide-react";
 import jsPDF from "jspdf";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+import { TENT_BY_ID } from "@/cleaning/config";
 import addonEarlyCheckinImg from "@/assets/glamping-exterior-deck.jpg";
 import heroImg from "@/assets/glamping-sunset.jpg";
 import addonBreakfastImg from "@/assets/glamping-interior-cozy.jpg";
@@ -60,30 +60,25 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "natt" : "nätter"}`,
     tooLate: "Tyvärr är det för sent att lägga till tillval inför den här vistelsen — beställning stänger två dygn före incheckning. Hör av dig till oss om något är akut!",
     addons: "Lägg till tillval",
-    intro: "Pricka i vad du vill lägga till. Du betalar tryggt med kort i nästa steg — vi bekräftar direkt när betalningen är genomförd.",
-    already: "Du har redan beställt:",
-    pcs: (n: number) => `${n} st`,
+    intro: "Pricka i vad du vill lägga till. Du betalar tryggt med kort eller Swish i nästa steg — vi bekräftar direkt när betalningen är genomförd.",
     perPerson: "kr/person",
     perStay: "kr",
     total: "Summa",
-    submit: "Gå till betalning",
     sending: "Öppnar betalning…",
     success: "Tack! Betalningen är genomförd och din beställning är bekräftad.",
     error: "Något gick fel. Försök igen om en stund.",
-    pending: "Avvaktar betalning",
-    confirmed: "Bekräftad",
-    paid: "Betald",
-    addLabel: "Lägg till",
     selectedLabel: "✓ Vald",
     currency: "kr",
-    swishTitle: "Betalning genomförd",
-    swishIntro: "Din betalning är genomförd och beställningen är bekräftad.",
+    swishIntro: "Slutför betalningen i Swish-appen — beställningen bekräftas så fort betalningen är registrerad.",
     swishNumber: "Swish-nummer",
     swishPayee: "Mottagare",
     swishAmount: "Belopp",
     swishRef: "Meddelande / referens",
     swishOpen: "Öppna Swish-appen",
     swishCopied: "Kopierat!",
+    swishFallback: "Öppnades inte Swish? Öppna Swish-appen manuellt och använd uppgifterna ovan.",
+    swishHintMobile: "Kopiera nummer, belopp och meddelande ovan.",
+    swishHintDesktop: "Öppna Swish-appen på din mobil och slå in uppgifterna manuellt.",
     copy: "Kopiera",
   },
   en: {
@@ -95,29 +90,26 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "night" : "nights"}`,
     tooLate: "Sorry, it's too late to add extras for this stay — orders close two days before check-in. Reach out if it's urgent!",
     addons: "Add extras",
-    intro: "Pick what you'd like to add. You'll pay securely by card in the next step — we confirm as soon as the payment is complete.",
-    already: "You've already ordered:",
-    pcs: (n: number) => `${n}×`,
+    intro: "Pick what you'd like to add. You'll pay securely by card or Swish in the next step — we confirm as soon as the payment is complete.",
     perPerson: "SEK/person",
     perStay: "SEK",
     total: "Total",
-    submit: "Continue to payment",
     sending: "Opening payment…",
     success: "Thank you! Your payment is complete and your order is confirmed.",
     error: "Something went wrong. Please try again shortly.",
-    pending: "Awaiting payment",
-    confirmed: "Confirmed",
-    paid: "Paid",
-    addLabel: "Add",
     selectedLabel: "✓ Selected",
     currency: "SEK",
-    payTitle: "Payment complete",
-    payIntro: "Your payment is complete and your add-ons are confirmed.",
-    payAmountLabel: "Amount",
-    payRefLabel: "Reference",
-    payContact: "Questions? Email info@auroramedia.se",
+    swishIntro: "Complete the payment in the Swish app — your order is confirmed as soon as the payment is registered.",
+    swishNumber: "Swish number",
+    swishPayee: "Recipient",
+    swishAmount: "Amount",
+    swishRef: "Message / reference",
+    swishOpen: "Open the Swish app",
+    swishCopied: "Copied!",
+    swishFallback: "Swish didn't open? Open the Swish app manually and use the details above.",
+    swishHintMobile: "Copy the number, amount and message above.",
+    swishHintDesktop: "Open the Swish app on your phone and enter the details manually.",
     copy: "Copy",
-    copied: "Copied!",
   },
   de: {
     loading: "Lade deinen Aufenthalt…",
@@ -128,29 +120,26 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "Nacht" : "Nächte"}`,
     tooLate: "Leider ist es zu spät, Extras hinzuzufügen — Bestellungen schließen zwei Tage vor Check-in.",
     addons: "Extras hinzufügen",
-    intro: "Wähle aus, was du hinzufügen möchtest. Im nächsten Schritt bezahlst du sicher per Karte — wir bestätigen, sobald die Zahlung abgeschlossen ist.",
-    already: "Bereits bestellt:",
-    pcs: (n: number) => `${n}×`,
+    intro: "Wähle aus, was du hinzufügen möchtest. Im nächsten Schritt bezahlst du sicher per Karte oder Swish — wir bestätigen, sobald die Zahlung abgeschlossen ist.",
     perPerson: "SEK/Person",
     perStay: "SEK",
     total: "Summe",
-    submit: "Weiter zur Zahlung",
     sending: "Zahlung wird geöffnet…",
     success: "Danke! Die Zahlung ist abgeschlossen und deine Bestellung ist bestätigt.",
     error: "Etwas ist schiefgelaufen. Bitte versuche es gleich erneut.",
-    pending: "Wartet auf Zahlung",
-    confirmed: "Bestätigt",
-    paid: "Bezahlt",
-    addLabel: "Hinzufügen",
     selectedLabel: "✓ Gewählt",
     currency: "SEK",
-    payTitle: "Zahlungsanweisungen folgen",
-    payIntro: "Du erhältst Zahlungsinformationen und wir bestätigen deine Bestellung, sobald die Zahlung eingegangen ist.",
-    payAmountLabel: "Betrag",
-    payRefLabel: "Referenz",
-    payContact: "Fragen? info@auroramedia.se",
+    swishIntro: "Schließe die Zahlung in der Swish-App ab — deine Bestellung wird bestätigt, sobald die Zahlung registriert ist.",
+    swishNumber: "Swish-Nummer",
+    swishPayee: "Empfänger",
+    swishAmount: "Betrag",
+    swishRef: "Nachricht / Referenz",
+    swishOpen: "Swish-App öffnen",
+    swishCopied: "Kopiert!",
+    swishFallback: "Swish hat sich nicht geöffnet? Öffne die Swish-App manuell und verwende die Angaben oben.",
+    swishHintMobile: "Kopiere Nummer, Betrag und Nachricht oben.",
+    swishHintDesktop: "Öffne die Swish-App auf deinem Handy und gib die Daten manuell ein.",
     copy: "Kopieren",
-    copied: "Kopiert!",
   },
   da: {
     loading: "Indlæser dit ophold…",
@@ -161,29 +150,26 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "nat" : "nætter"}`,
     tooLate: "Desværre er det for sent at tilføje ekstra — bestillinger lukker to dage før ankomst.",
     addons: "Tilføj ekstra",
-    intro: "Vælg, hvad du vil tilføje. Du betaler sikkert med kort i næste trin — vi bekræfter, så snart betalingen er gennemført.",
-    already: "Allerede bestilt:",
-    pcs: (n: number) => `${n}×`,
+    intro: "Vælg, hvad du vil tilføje. Du betaler sikkert med kort eller Swish i næste trin — vi bekræfter, så snart betalingen er gennemført.",
     perPerson: "SEK/person",
     perStay: "SEK",
     total: "Total",
-    submit: "Fortsæt til betaling",
     sending: "Åbner betaling…",
     success: "Tak! Betalingen er gennemført, og din bestilling er bekræftet.",
     error: "Noget gik galt. Prøv igen om lidt.",
-    pending: "Afventer betaling",
-    confirmed: "Bekræftet",
-    paid: "Betalt",
-    addLabel: "Tilføj",
     selectedLabel: "✓ Valgt",
     currency: "SEK",
-    payTitle: "Betalingsinstruktioner er på vej",
-    payIntro: "Du får betalingsinstruktioner, og vi bekræfter din bestilling, når betalingen er modtaget.",
-    payAmountLabel: "Beløb",
-    payRefLabel: "Reference",
-    payContact: "Spørgsmål? info@auroramedia.se",
+    swishIntro: "Gennemfør betalingen i Swish-appen — din bestilling bekræftes, så snart betalingen er registreret.",
+    swishNumber: "Swish-nummer",
+    swishPayee: "Modtager",
+    swishAmount: "Beløb",
+    swishRef: "Besked / reference",
+    swishOpen: "Åbn Swish-appen",
+    swishCopied: "Kopieret!",
+    swishFallback: "Åbnede Swish ikke? Åbn Swish-appen manuelt og brug oplysningerne ovenfor.",
+    swishHintMobile: "Kopiér nummer, beløb og besked ovenfor.",
+    swishHintDesktop: "Åbn Swish-appen på din mobil og indtast oplysningerne manuelt.",
     copy: "Kopiér",
-    copied: "Kopieret!",
   },
   no: {
     loading: "Laster oppholdet ditt…",
@@ -194,29 +180,26 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "natt" : "netter"}`,
     tooLate: "Beklager, det er for sent å legge til tillegg — bestillinger lukkes to dager før ankomst.",
     addons: "Legg til tillegg",
-    intro: "Velg hva du vil legge til. Du betaler trygt med kort i neste steg — vi bekrefter så snart betalingen er gjennomført.",
-    already: "Allerede bestilt:",
-    pcs: (n: number) => `${n}×`,
+    intro: "Velg hva du vil legge til. Du betaler trygt med kort eller Swish i neste steg — vi bekrefter så snart betalingen er gjennomført.",
     perPerson: "SEK/person",
     perStay: "SEK",
     total: "Total",
-    submit: "Fortsett til betaling",
     sending: "Åpner betaling…",
     success: "Takk! Betalingen er gjennomført og bestillingen er bekreftet.",
     error: "Noe gikk galt. Prøv igjen om litt.",
-    pending: "Venter på betaling",
-    confirmed: "Bekreftet",
-    paid: "Betalt",
-    addLabel: "Legg til",
     selectedLabel: "✓ Valgt",
     currency: "SEK",
-    payTitle: "Betalingsinstruksjoner på vei",
-    payIntro: "Du får betalingsinstruksjoner, og vi bekrefter bestillingen når betalingen er mottatt.",
-    payAmountLabel: "Beløp",
-    payRefLabel: "Referanse",
-    payContact: "Spørsmål? info@auroramedia.se",
+    swishIntro: "Fullfør betalingen i Swish-appen — bestillingen bekreftes så snart betalingen er registrert.",
+    swishNumber: "Swish-nummer",
+    swishPayee: "Mottaker",
+    swishAmount: "Beløp",
+    swishRef: "Melding / referanse",
+    swishOpen: "Åpne Swish-appen",
+    swishCopied: "Kopiert!",
+    swishFallback: "Åpnet ikke Swish? Åpne Swish-appen manuelt og bruk opplysningene ovenfor.",
+    swishHintMobile: "Kopier nummer, beløp og melding ovenfor.",
+    swishHintDesktop: "Åpne Swish-appen på mobilen og tast inn opplysningene manuelt.",
     copy: "Kopier",
-    copied: "Kopiert!",
   },
   nl: {
     loading: "Verblijf wordt geladen…",
@@ -227,29 +210,26 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "nacht" : "nachten"}`,
     tooLate: "Helaas is het te laat om extra's toe te voegen — bestellingen sluiten twee dagen voor aankomst.",
     addons: "Extra's toevoegen",
-    intro: "Kies wat je wilt toevoegen. Je betaalt veilig met kaart in de volgende stap — we bevestigen zodra de betaling is voltooid.",
-    already: "Al besteld:",
-    pcs: (n: number) => `${n}×`,
+    intro: "Kies wat je wilt toevoegen. Je betaalt veilig met kaart of Swish in de volgende stap — we bevestigen zodra de betaling is voltooid.",
     perPerson: "SEK/persoon",
     perStay: "SEK",
     total: "Totaal",
-    submit: "Doorgaan naar betaling",
     sending: "Betaling openen…",
     success: "Bedankt! De betaling is voltooid en je bestelling is bevestigd.",
     error: "Er ging iets mis. Probeer het zo opnieuw.",
-    pending: "Wacht op betaling",
-    confirmed: "Bevestigd",
-    paid: "Betaald",
-    addLabel: "Toevoegen",
     selectedLabel: "✓ Gekozen",
     currency: "SEK",
-    payTitle: "Betaalinstructies onderweg",
-    payIntro: "Je ontvangt betaalinstructies en we bevestigen je bestelling zodra de betaling is ontvangen.",
-    payAmountLabel: "Bedrag",
-    payRefLabel: "Referentie",
-    payContact: "Vragen? info@auroramedia.se",
+    swishIntro: "Rond de betaling af in de Swish-app — je bestelling wordt bevestigd zodra de betaling is geregistreerd.",
+    swishNumber: "Swish-nummer",
+    swishPayee: "Ontvanger",
+    swishAmount: "Bedrag",
+    swishRef: "Bericht / referentie",
+    swishOpen: "Open de Swish-app",
+    swishCopied: "Gekopieerd!",
+    swishFallback: "Swish niet geopend? Open de Swish-app handmatig en gebruik de gegevens hierboven.",
+    swishHintMobile: "Kopieer nummer, bedrag en bericht hierboven.",
+    swishHintDesktop: "Open de Swish-app op je telefoon en voer de gegevens handmatig in.",
     copy: "Kopiëren",
-    copied: "Gekopieerd!",
   },
   fr: {
     loading: "Chargement de votre séjour…",
@@ -260,31 +240,34 @@ const COPY = {
     nights: (n: number) => `${n} ${n === 1 ? "nuit" : "nuits"}`,
     tooLate: "Désolé, il est trop tard pour ajouter des options — les commandes ferment deux jours avant l'arrivée.",
     addons: "Ajouter des options",
-    intro: "Choisissez ce que vous souhaitez ajouter. Vous paierez par carte en toute sécurité à l’étape suivante — nous confirmerons dès que le paiement sera effectué.",
-    already: "Déjà commandé :",
-    pcs: (n: number) => `${n}×`,
+    intro: "Choisissez ce que vous souhaitez ajouter. Vous paierez par carte ou Swish en toute sécurité à l’étape suivante — nous confirmerons dès que le paiement sera effectué.",
     perPerson: "SEK/pers.",
     perStay: "SEK",
     total: "Total",
-    submit: "Continuer vers le paiement",
     sending: "Ouverture du paiement…",
     success: "Merci ! Le paiement est terminé et votre commande est confirmée.",
     error: "Une erreur est survenue. Réessayez dans un instant.",
-    pending: "En attente de paiement",
-    confirmed: "Confirmé",
-    paid: "Payé",
-    addLabel: "Ajouter",
     selectedLabel: "✓ Choisi",
     currency: "SEK",
-    payTitle: "Instructions de paiement en route",
-    payIntro: "Vous recevrez les instructions de paiement et nous confirmerons votre commande dès réception du paiement.",
-    payAmountLabel: "Montant",
-    payRefLabel: "Référence",
-    payContact: "Questions ? info@auroramedia.se",
+    swishIntro: "Finalisez le paiement dans l’app Swish — votre commande est confirmée dès que le paiement est enregistré.",
+    swishNumber: "Numéro Swish",
+    swishPayee: "Destinataire",
+    swishAmount: "Montant",
+    swishRef: "Message / référence",
+    swishOpen: "Ouvrir l’app Swish",
+    swishCopied: "Copié !",
+    swishFallback: "Swish ne s’est pas ouvert ? Ouvrez l’app Swish manuellement et utilisez les informations ci-dessus.",
+    swishHintMobile: "Copiez le numéro, le montant et le message ci-dessus.",
+    swishHintDesktop: "Ouvrez l’app Swish sur votre téléphone et saisissez les informations manuellement.",
     copy: "Copier",
-    copied: "Copié !",
   },
 } as const;
+
+// Samma nycklar i alla språk, men strängarna skiljer sig — därför vidgas literalerna till string.
+type StayCopy = Record<Exclude<keyof (typeof COPY)["sv"], "welcome" | "nights">, string> & {
+  welcome: (n: string) => string;
+  nights: (n: number) => string;
+};
 
 type LangKey = keyof typeof COPY;
 function pickLang(raw: string | null | undefined): LangKey {
@@ -443,11 +426,16 @@ export default function Stay({ initialLang }: StayProps = {}) {
   const [extraTents, setExtraTents] = useState<string[]>([]);
   const [langOverride, setLangOverride] = useState<LangKey | null>(initialLang ?? null);
 
-  const loadStay = async () => {
-    if (!token) { setLoading(false); return; }
+  const loadStay = async (): Promise<StayData | null> => {
+    if (!token) { setLoading(false); return null; }
     const { data: rpc, error } = await (supabase as any).rpc("get_stay_by_token", { p_token: token });
     if (error) console.error(error);
     const sd = rpc as StayData | null;
+    // Normalisera — RPC:n kan returnera null-arrayer och vi vill aldrig krascha på .map/.filter
+    if (sd) {
+      sd.addons = Array.isArray(sd.addons) ? sd.addons : [];
+      sd.orders = Array.isArray(sd.orders) ? sd.orders : [];
+    }
     setData(sd);
     const fromRpc = sd?.booking?.tent_ids;
     if (Array.isArray(fromRpc) && fromRpc.length > 0) {
@@ -460,6 +448,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
       if (stays) setExtraTents((stays as { tent_id: string }[]).map(s => s.tent_id));
     }
     setLoading(false);
+    return sd;
   };
 
   useEffect(() => { loadStay(); }, [token]);
@@ -515,12 +504,13 @@ export default function Stay({ initialLang }: StayProps = {}) {
         if (!active) return;
         setPaidTotal(Number((verified as any)?.total ?? 0));
         setDone(true);
-        toast.success("Betalningen är genomförd.");
         trackEvent("Add-on Purchased", {
           product_category: "addon",
           payment_method: "stripe",
         });
-        await loadStay();
+        const fresh = await loadStay();
+        if (!active) return;
+        toast.success(COPY[langOverride ?? pickLang(fresh?.booking?.language)].success);
         const next = new URLSearchParams(searchParams);
         next.delete("session_id");
         next.delete("payment");
@@ -536,12 +526,13 @@ export default function Stay({ initialLang }: StayProps = {}) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  if (loading) return <Centered>{COPY.sv.loading}</Centered>;
-  if (!data || !data.booking) return <Centered>{COPY.sv.notFound}</Centered>;
+  if (loading) return <Centered>{COPY[langOverride ?? "sv"].loading}</Centered>;
+  if (!data || !data.booking) return <Centered>{COPY[langOverride ?? "sv"].notFound}</Centered>;
 
   const lang: LangKey = langOverride ?? pickLang(data.booking.language);
   const t = COPY[lang];
   const isSv = lang === "sv";
+  const orders = data.orders ?? [];
   const cutoff = data.settings?.order_cutoff_days ?? 2;
   const todayMs = new Date(new Date().toISOString().slice(0, 10)).getTime();
   const checkinMs = new Date(data.booking.checkin_date).getTime();
@@ -572,18 +563,25 @@ export default function Stay({ initialLang }: StayProps = {}) {
   const total = data.addons.reduce((sum, a) => sum + (qty[a.id] ?? 0) * a.price_sek, 0);
   const itemCount = Object.values(qty).reduce((s, n) => s + n, 0);
 
-  // Vad gästen redan har beställt — styr personlig text, inte bokningsmöjlighet
+  // Vad gästen redan har beställt (inkl. obetalda Swish-ordrar) — styr bara vad som kan beställas igen.
   const orderedSlugs = new Set<string>(
-    (data.orders ?? [])
+    orders
       .filter((o) => ["requested", "confirmed", "paid"].includes(o.status))
       .map((o) => data.addons.find((a) => a.id === o.addon_id)?.slug)
       .filter((s): s is string => !!s),
   );
-  const hasBreakfast = orderedSlugs.has("breakfast");
-  const hasFika = orderedSlugs.has("fika_bag");
-  const hasEarly = orderedSlugs.has("early_checkin");
-  const hasLate = orderedSlugs.has("late_checkout");
-  const hasAnyAddon = orderedSlugs.size > 0;
+  // Betalda/bekräftade tillval — styr det som utlovas i "Det här väntar er" och låskodens visningstid.
+  // En obetald Swish-order (status "requested") ska inte låsa upp tidig incheckning.
+  const confirmedSlugs = new Set<string>(
+    orders
+      .filter((o) => ["confirmed", "paid"].includes(o.status))
+      .map((o) => data.addons.find((a) => a.id === o.addon_id)?.slug)
+      .filter((s): s is string => !!s),
+  );
+  const hasBreakfast = confirmedSlugs.has("breakfast");
+  const hasFika = confirmedSlugs.has("fika_bag");
+  const hasEarly = confirmedSlugs.has("early_checkin");
+  const hasLate = confirmedSlugs.has("late_checkout");
   const lockRevealHour = hasEarly ? 12 : 15;
   const [year, month, day] = data.booking.checkin_date.split("-").map(Number);
   const lockCodeVisible = Boolean(data.booking.checked_in_at) || Date.now() >= new Date(year, month - 1, day, lockRevealHour, 0, 0).getTime();
@@ -632,6 +630,10 @@ export default function Stay({ initialLang }: StayProps = {}) {
       .filter((a) => (qty[a.id] ?? 0) > 0)
       .map((a) => ({ addon_id: a.id, quantity: qty[a.id] }));
     if (items.length === 0) return;
+    // Specialkost är bara relevant när ett mattillval (frukost/fika) ingår
+    const foodSelected = data.addons.some(
+      (a) => (a.slug === "breakfast" || a.slug === "fika_bag") && (qty[a.id] ?? 0) > 0
+    );
     setSubmitting(true);
     setSubmitError(null);
     trackEvent("Add-on Checkout Started", {
@@ -641,7 +643,13 @@ export default function Stay({ initialLang }: StayProps = {}) {
     });
     try {
       const { data: res, error } = await (supabase as any).functions.invoke("submit-addon-request", {
-        body: { public_token: token, items, dietary, dietary_note: dietaryNote.trim() || undefined, payment_method: method },
+        body: {
+          public_token: token,
+          items,
+          dietary: foodSelected ? dietary : [],
+          dietary_note: foodSelected ? dietaryNote.trim() || undefined : undefined,
+          payment_method: method,
+        },
       });
       const rawError = (res as any)?.error ?? error?.message;
       if (error || (res as any)?.error) throw new Error(rawError);
@@ -650,6 +658,8 @@ export default function Stay({ initialLang }: StayProps = {}) {
         const reference = String((res as any)?.reference ?? data.booking.booking_number ?? '');
         setSwishInfo({ amount: totalPaid, reference });
         setQty({});
+        setDietary([]);
+        setDietaryNote("");
         setSubmitting(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
         toast.success(isSv ? "Beställningen är registrerad — öppna Swish för att betala." : "Order registered — open Swish to pay.");
@@ -711,9 +721,8 @@ export default function Stay({ initialLang }: StayProps = {}) {
 
 
         {(() => {
-          const TENT_NAMES: Record<string,string> = { sjobris: 'Sjöbrisretreatet', naturkarnan: 'Naturkärnan', lugnetsyta: 'Lugnets Yta' };
           const allTents = Array.from(new Set([data.booking.tent_id, ...extraTents])).filter(Boolean);
-          const tentNames = allTents.map(id => TENT_NAMES[id] || id);
+          const tentNames = allTents.map(id => TENT_BY_ID[id]?.name ?? (id === data.booking.tent_id ? data.booking.tent_name : id) ?? id);
           const multi = tentNames.length > 1;
           return (
             <Card>
@@ -839,7 +848,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 </li>
               )}
             </ul>
-            {!hasAnyAddon && (
+            {orderedSlugs.size === 0 && (
               <button
                 type="button"
                 onClick={scrollToAddons}
@@ -853,7 +862,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
           </CardContent>
         </Card>
 
-        {data.orders.length > 0 && (
+        {orders.length > 0 && (
           <Card className="border-primary/40 bg-primary/5">
             <CardHeader className="pb-2">
               <CardTitle className="text-base flex items-center gap-2">
@@ -862,7 +871,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {data.orders.map((o) => {
+              {orders.map((o) => {
                 const a = data.addons.find((x) => x.id === o.addon_id);
                 if (!a) return null;
                 return (
@@ -886,7 +895,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 );
               })}
               <NeedHelpSection
-                orders={data.orders}
+                orders={orders}
                 addons={data.addons}
                 bookingNumber={data.booking.booking_number ?? ''}
                 guestName={data.booking.guest_first_name ?? ''}
@@ -923,7 +932,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
           </Card>
-        ) : data.addons.filter((a) => a.slug !== 'sup_rental' && !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).length === 0 ? null : (
+        ) : data.addons.filter((a) => a.slug !== 'sup_rental' && !orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).length === 0 ? null : (
           <>
             <div id="addons-section" className="scroll-mt-4">
               <h2 className="font-serif text-xl text-primary mb-1">{t.addons}</h2>
@@ -960,7 +969,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
               );
             })()}
 
-            {stayHasMondayMorning && !data.orders.some((o) => {
+            {stayHasMondayMorning && !orders.some((o) => {
               const a = data.addons.find((x) => x.id === o.addon_id);
               return a?.slug === 'breakfast' && ['requested','confirmed','paid'].includes(o.status);
             }) && (
@@ -975,7 +984,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
             )}
 
             <div className="space-y-3">
-              {data.addons.filter((a) => a.slug !== 'sup_rental' && !data.orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).map((a) => {
+              {data.addons.filter((a) => a.slug !== 'sup_rental' && !orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).map((a) => {
                 const q = qty[a.id] ?? 0;
                 const name = isSv ? a.name_sv : a.name_en;
                 const desc = isSv ? a.description_sv : a.description_en;
@@ -1404,7 +1413,7 @@ function Centered({ children }: { children: React.ReactNode }) {
 function SwishCard({
   t, amount, reference, swishNumber, payee,
 }: {
-  t: any; amount: number; reference: string; swishNumber: string; payee: string;
+  t: StayCopy; amount: number; reference: string; swishNumber: string; payee: string;
 }) {
   const [copied, setCopied] = useState<string | null>(null);
   const [linkFailed, setLinkFailed] = useState(false);
@@ -1469,7 +1478,7 @@ function SwishCard({
         <div className="rounded-lg bg-background border p-3">
           <Row label={t.swishNumber} value={swishNumber} copyKey="num" />
           <Row label={t.swishPayee} value={payee} copyKey="payee" />
-          <Row label={t.swishAmount} value={`${amount} kr`} copyKey="amt" />
+          <Row label={t.swishAmount} value={`${amount} ${t.currency}`} copyKey="amt" />
           <Row label={t.swishRef} value={reference} copyKey="ref" />
         </div>
 
@@ -1481,46 +1490,15 @@ function SwishCard({
               <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
               <div>
                 <div className="font-semibold text-amber-900 dark:text-amber-200">
-                  {t === undefined || typeof t.swishFallback !== 'string'
-                    ? 'Öppnades inte Swish? Öppna Swish-appen manuellt och använd uppgifterna ovan.'
-                    : t.swishFallback}
+                  {t.swishFallback}
                 </div>
                 <div className="text-xs text-muted-foreground mt-1">
-                  {isMobile
-                    ? 'Kopiera nummer, belopp och meddelande ovan.'
-                    : 'Öppna Swish-appen på din mobil och slå in uppgifterna manuellt.'}
+                  {isMobile ? t.swishHintMobile : t.swishHintDesktop}
                 </div>
               </div>
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
-  );
-}
-
-function PaymentLinkCard({ t, amount, reference }: { t: any; amount: number; reference: string }) {
-  return (
-    <Card className="border-primary/50 bg-primary/5">
-      <CardContent className="p-5 space-y-4">
-        <div className="flex items-center gap-3">
-          <CheckCircle2 className="h-8 w-8 text-primary shrink-0" />
-          <div>
-            <h2 className="font-serif text-xl text-primary">{t.payTitle}</h2>
-            <p className="text-sm text-muted-foreground">{t.payIntro}</p>
-          </div>
-        </div>
-        <div className="rounded-lg bg-background border p-4 space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t.payAmountLabel}</span>
-            <span className="font-medium">{amount} SEK</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">{t.payRefLabel}</span>
-            <span className="font-medium">{reference}</span>
-          </div>
-        </div>
-        <p className="text-xs text-muted-foreground text-center">{t.payContact}</p>
       </CardContent>
     </Card>
   );

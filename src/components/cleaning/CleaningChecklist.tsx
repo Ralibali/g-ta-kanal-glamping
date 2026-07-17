@@ -50,7 +50,8 @@ export function CleaningChecklist({ data, lang, onBack, onCompleted }: Props) {
 
   const ctx = useMemo(() => ({
     sofa: data.guests > SOFA_BED_THRESHOLD,
-    winter: isWinter(new Date(data.date)),
+    // T12:00:00 så att månaden inte kan hoppa vid tolkning nära midnatt/tidszonsgränser
+    winter: isWinter(new Date(`${data.date}T12:00:00`)),
     breakfast: data.breakfast,
     fikapase: data.fikapase,
   }), [data]);
@@ -99,6 +100,9 @@ export function CleaningChecklist({ data, lang, onBack, onCompleted }: Props) {
   };
 
   const toggle = async (taskId: string, checked: boolean) => {
+    // En slutförd städning ska inte kunna återöppnas av misstag — annars skulle
+    // status tyst flippa tillbaka till "in_progress" och försvinna från "klara"-räknaren
+    if (status === "completed") return;
     const next = { ...checklist };
     if (checked) next[taskId] = new Date().toISOString();
     else delete next[taskId];
@@ -215,7 +219,7 @@ export function CleaningChecklist({ data, lang, onBack, onCompleted }: Props) {
               const Icon = t.icon;
               const checked = !!checklist[t.id];
               return (
-                <Card key={t.id} className={`p-4 cursor-pointer transition-colors ${checked ? "bg-primary/5 border-primary/30" : ""}`}
+                <Card key={t.id} className={`p-4 transition-colors ${status === "completed" ? "opacity-70" : "cursor-pointer"} ${checked ? "bg-primary/5 border-primary/30" : ""}`}
                   onClick={() => toggle(t.id, !checked)}>
                   <div className="flex items-start gap-3">
                     <Checkbox checked={checked} className="mt-1 h-5 w-5" />
