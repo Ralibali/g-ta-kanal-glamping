@@ -87,6 +87,8 @@ export default function Cleaning() {
   const [stays, setStays] = useState<Stay[]>([]);
   const [futureStays, setFutureStays] = useState<Stay[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
+  const [pastDepartures, setPastDepartures] = useState<Stay[]>([]);
+  const [pastSessions, setPastSessions] = useState<Session[]>([]);
   const [earlyTents, setEarlyTents] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<TentDayData | null>(null);
   const [overview, setOverview] = useState<OverviewRow[]>([]);
@@ -203,17 +205,34 @@ export default function Cleaning() {
   const loadDay = async () => {
     setDataLoading(true);
     const columns = "booking_number, tent_id, checkin_date, checkout_date, guests, children, breakfast_csv_quantity, breakfast_addon_quantity, fikapase_csv_quantity, fikapase_addon_quantity, late_checkout";
-    const [dayResult, futureResult, sessionResult, earlyResult] = await Promise.all([
+    const today = todayInStockholm();
+    const isToday = date === today;
+    const weekAgo = addDays(today, -7);
+    const [dayResult, futureResult, sessionResult, earlyResult, pastStaysResult, pastSessionResult] = await Promise.all([
       (supabase as any).from("tent_stays").select(columns).or(`checkout_date.eq.${date},checkin_date.eq.${date}`),
       (supabase as any).from("tent_stays").select(columns).gt("checkin_date", date).order("checkin_date", { ascending: true }),
       (supabase as any).from("cleaning_sessions").select("tent_id, cleaning_date, status").eq("cleaning_date", date),
       (supabase as any).from("early_checkin_flags").select("tent_id").eq("date", date).eq("active", true),
+      // Försenade städningar: avresor de senaste 7 dagarna som saknar slutförd städsession —
+      // utan detta försvinner en missad städning ljudlöst ur listan dagen efter.
+      isToday
+        ? (supabase as any).from("tent_stays").select(columns).gte("checkout_date", weekAgo).lt("checkout_date", today)
+        : Promise.resolve({ data: [], error: null }),
+      isToday
+        ? (supabase as any).from("cleaning_sessions").select("tent_id, cleaning_date, status").gte("cleaning_date", weekAgo).lt("cleaning_date", today)
+        : Promise.resolve({ data: [], error: null }),
     ]);
     if (dayResult.error) toast.error(dayResult.error.message);
     if (futureResult.error) toast.error(futureResult.error.message);
+    if (sessionResult.error) toast.error(sessionResult.error.message);
+    if (earlyResult.error) toast.error(earlyResult.error.message);
+    if (pastStaysResult.error) toast.error(pastStaysResult.error.message);
+    if (pastSessionResult.error) toast.error(pastSessionResult.error.message);
     setStays((dayResult.data ?? []) as Stay[]);
     setFutureStays((futureResult.data ?? []) as Stay[]);
     setSessions((sessionResult.data ?? []) as Session[]);
+    setPastDepartures((pastStaysResult.data ?? []) as Stay[]);
+    setPastSessions((pastSessionResult.data ?? []) as Session[]);
     setEarlyTents(new Set((earlyResult.data ?? []).map((row: { tent_id: string }) => row.tent_id)));
     setDataLoading(false);
   };
@@ -362,6 +381,40 @@ export default function Cleaning() {
       .sort((a, b) => Number(b.earlyCheckin) - Number(a.earlyCheckin) || a.tentNo - b.tentNo);
   }, [stays, futureStays, date, lang, earlyTents]);
 
+  // Avresor de senaste 7 dagarna som aldrig fick en slutförd städning.
+  // De läggs överst i dagvyn så att inget tält glöms bort inför nästa bokning.
+  const overdueCards = useMemo(() => {
+    const done = new Set(
+      pastSessions.filter((s) => s.status === "completed").map((s) => `${s.tent_id}|${s.cleaning_date}`),
+    );
+    return pastDepartures
+      .filter((stay) => !done.has(`${stay.tent_id}|${stay.checkout_date}`))
+      .filter((stay) => !selfCleanDates.has(stay.checkout_date))
+      .map((stay) => {
+        const tent = TENTS.find((t) => t.id === stay.tent_id);
+        if (!tent) return null;
+        const preparation = pickPreparationStay(undefined, futureStays, stay.tent_id, date) as Stay | undefined;
+        return {
+          tent_id: tent.id,
+          tentNo: tent.no,
+          tentName: tent.name,
+          position: tent.position[lang],
+          date: stay.checkout_date,
+          hasArrival: false,
+          hasDeparture: true,
+          overdue: true,
+          guests: Number(preparation?.guests ?? 0),
+          children: Number(preparation?.children ?? 0),
+          breakfast: false,
+          fikapase: false,
+          lateCheckout: !!stay.late_checkout,
+          earlyCheckin: false,
+        } satisfies TentDayData;
+      })
+      .filter((card): card is NonNullable<typeof card> => card != null)
+      .sort((a, b) => a.date.localeCompare(b.date) || a.tentNo - b.tentNo);
+  }, [pastDepartures, pastSessions, selfCleanDates, futureStays, date, lang]);
+
   const sessionByTent = useMemo(() => new Map(sessions.map((session) => [session.tent_id, session])), [sessions]);
 
   const nextCleaning = useMemo(() => {
@@ -454,8 +507,8 @@ export default function Cleaning() {
                     <TodayView
                       lang={lang}
                       userId={user.id}
-                      cards={cards}
-                      sessions={sessions}
+                      cards={[...overdueCards, ...cards]}
+                      sessions={[...pastSessions, ...sessions]}
                       loading={dataLoading}
                       onOpen={(card) => setSelected(card)}
                       onReload={() => void loadDay()}

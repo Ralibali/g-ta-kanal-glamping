@@ -14,3 +14,7 @@ verify_jwt = false
 
 [functions.handle-email-suppression]
 verify_jwt = false
+
+# Stripe anropar utan JWT — säkerheten ligger i webhook-signaturen istället.
+[functions.stripe-webhook]
+verify_jwt = false

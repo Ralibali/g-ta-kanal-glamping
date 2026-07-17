@@ -10,10 +10,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { toast } from "sonner";
 import {
   detectSirvoyFile,
+  mergeDietaryIntoStays,
   parseBasicInfo,
   parseBookingContent,
   type CsvRow,
   type ParsedBooking,
+  type SavedDietary,
   type SirvoyFileKind,
 } from "@/lib/sirvoy-import";
 
@@ -279,16 +281,42 @@ export function BookingsManagerV2() {
         if (bookingError) throw new Error(`Booking content/bokningar: ${bookingError.message}`);
 
         // Radera aldrig hela framtiden. Ersätt bara bokningsnummer som faktiskt finns i filen.
+        // Men först: gästernas specialkost (vald på /stay eller vid incheckning) finns
+        // bara på tent_stays — säkra den så den inte försvinner vid om-import.
+        const { data: existingDietaryRows } = await (supabase as any)
+          .from("tent_stays")
+          .select("booking_number, tent_id, dietary, dietary_note")
+          .in("booking_number", content.bookingNumbers);
+
+        const dietaryByStay = new Map<string, SavedDietary>();
+        const dietaryByBooking = new Map<string, SavedDietary>();
+        for (const row of existingDietaryRows ?? []) {
+          const dietary = Array.isArray(row.dietary)
+            ? (row.dietary as unknown[]).filter((d): d is string => typeof d === "string")
+            : [];
+          const note = typeof row.dietary_note === "string" && row.dietary_note.trim() ? row.dietary_note : null;
+          if (dietary.length === 0 && !note) continue;
+          dietaryByStay.set(`${row.booking_number}|${row.tent_id}`, { dietary, note });
+          const prev = dietaryByBooking.get(row.booking_number) ?? { dietary: [] as string[], note: null as string | null };
+          dietaryByBooking.set(row.booking_number, {
+            dietary: Array.from(new Set([...prev.dietary, ...dietary])),
+            note: prev.note ?? note,
+          });
+        }
+
         const { error: deleteError } = await (supabase as any)
           .from("tent_stays")
           .delete()
           .in("booking_number", content.bookingNumbers);
         if (deleteError) throw new Error(`Booking content/rensning: ${deleteError.message}`);
 
-        if (content.stays.length > 0) {
+        // Slå ihop CSV-tolkad kost med den sparade webbkosten (aldrig skriv över webben)
+        const staysToInsert = mergeDietaryIntoStays(content.stays, dietaryByStay, dietaryByBooking);
+
+        if (staysToInsert.length > 0) {
           const { error: stayError } = await (supabase as any)
             .from("tent_stays")
-            .insert(content.stays);
+            .insert(staysToInsert);
           if (stayError) throw new Error(`Booking content/tältvistelser: ${stayError.message}`);
         }
 

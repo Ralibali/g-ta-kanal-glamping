@@ -605,6 +605,10 @@ export default function Stay({ initialLang }: StayProps = {}) {
       title: sv ? 'Kortbetalning ur funktion' : 'Card payment unavailable',
       detail: sv ? 'Just nu går det inte att betala med kort. Använd Swish istället, eller försök igen om en stund.' : 'Card payment is temporarily unavailable. Please use Swish or try again shortly.',
     };
+    if (code.includes('already_ordered')) return {
+      title: sv ? 'Redan beställt' : 'Already ordered',
+      detail: sv ? 'Det här tillvalet är redan beställt för er vistelse. Kontakta oss om du vill ändra något.' : 'This add-on is already ordered for your stay. Contact us if you want to change anything.',
+    };
     if (code.includes('no_valid_items') || code.includes('items required')) return {
       title: sv ? 'Inga tillval valda' : 'No items selected',
       detail: sv ? 'Välj minst ett tillval för att fortsätta.' : 'Please select at least one item.',

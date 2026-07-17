@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { detectSirvoyFile, normalizePhone, parseBasicInfo, parseBookingContent } from "./sirvoy-import";
+import { detectSirvoyFile, mergeDietaryIntoStays, normalizePhone, parseBasicInfo, parseBookingContent, type ParsedTentStay } from "./sirvoy-import";
 
 describe("Sirvoy import", () => {
   it("recognises both export formats", () => {
@@ -37,5 +37,66 @@ describe("Sirvoy import", () => {
 
     expect(parsed.stays.reduce((sum, stay) => sum + stay.children, 0)).toBe(2);
     expect(parsed.stays.reduce((sum, stay) => sum + stay.guests, 0)).toBe(4);
+  });
+});
+
+describe("mergeDietaryIntoStays (webb-specialkost vid om-import)", () => {
+  const baseStay = (overrides: Partial<ParsedTentStay>): ParsedTentStay => ({
+    booking_number: "B1",
+    room_id: "1",
+    tent_id: "sjobris",
+    checkin_date: "2026-07-20",
+    checkout_date: "2026-07-22",
+    adults: 2,
+    children: 0,
+    guests: 2,
+    breakfast: false,
+    fikapase: false,
+    late_checkout: false,
+    late_checkout_csv: false,
+    breakfast_csv_quantity: 0,
+    breakfast_addon_quantity: 0,
+    fikapase_csv_quantity: 0,
+    fikapase_addon_quantity: 0,
+    guest_name: "Test Guest",
+    phone: null,
+    email: null,
+    lang: "sv",
+    note: null,
+    dietary: [],
+    dietary_note: null,
+    raw: {},
+    import_source: "sirvoy_booking_content",
+    imported_at: "2026-07-17T00:00:00Z",
+    ...overrides,
+  });
+
+  it("bevarar webbvald specialkost som CSV:n saknar", () => {
+    const csv = [baseStay({ dietary: [], dietary_note: null })];
+    const byStay = new Map([["B1|sjobris", { dietary: ["gluten_free", "vegan"], note: "Nötallergi barn 1" }]]);
+    const merged = mergeDietaryIntoStays(csv, byStay, new Map());
+    expect(merged[0].dietary).toEqual(["gluten_free", "vegan"]);
+    expect(merged[0].dietary_note).toBe("Nötallergi barn 1");
+  });
+
+  it("slår ihop webb och CSV utan dubbletter", () => {
+    const csv = [baseStay({ dietary: ["vegan"], dietary_note: "Intern notering" })];
+    const byStay = new Map([["B1|sjobris", { dietary: ["gluten_free", "vegan"], note: "Webbanteckning" }]]);
+    const merged = mergeDietaryIntoStays(csv, byStay, new Map());
+    expect(merged[0].dietary).toEqual(["gluten_free", "vegan"]);
+    expect(merged[0].dietary_note).toBe("Webbanteckning\nIntern notering");
+  });
+
+  it("faller tillbaka på bokningsnivå om tältet bytts i nya filen", () => {
+    const csv = [baseStay({ tent_id: "naturkarnan", room_id: "2" })];
+    const byBooking = new Map([["B1", { dietary: ["lactose_free"], note: null }]]);
+    const merged = mergeDietaryIntoStays(csv, new Map(), byBooking);
+    expect(merged[0].dietary).toEqual(["lactose_free"]);
+  });
+
+  it("lämnar rader utan sparad kost orörda", () => {
+    const csv = [baseStay({ dietary: ["nut_allergy"], dietary_note: "Från CSV" })];
+    const merged = mergeDietaryIntoStays(csv, new Map(), new Map());
+    expect(merged[0]).toBe(csv[0]);
   });
 });

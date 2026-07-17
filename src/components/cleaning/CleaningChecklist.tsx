@@ -31,6 +31,8 @@ export interface TentDayData {
   fikapase: boolean;
   lateCheckout: boolean;
   earlyCheckin?: boolean;
+  /** True när städningen inte gjordes på avresedagen — visas som försenad. */
+  overdue?: boolean;
 }
 
 interface Props {
@@ -192,6 +194,11 @@ export function CleaningChecklist({ data, lang, onBack, onCompleted }: Props) {
         <h2 className="font-serif text-2xl">{data.tentName}</h2>
         <p className="text-xs text-muted-foreground">{tr(lang, "tentLabel")} {data.tentNo} • {data.position} • {data.date}</p>
         <div className="flex flex-wrap gap-2 mt-2">
+          {data.overdue && (
+            <Badge variant="destructive">
+              {lang === "sv" ? "Försenad – städades inte vid avresan" : lang === "si" ? "ප්‍රමාද වූ" : "Overdue – not cleaned at checkout"}
+            </Badge>
+          )}
           {data.hasArrival && data.hasDeparture && (
             <Badge className="bg-amber-500">{tr(lang, "changeover")}</Badge>
           )}

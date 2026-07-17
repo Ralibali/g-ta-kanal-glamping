@@ -88,9 +88,11 @@ export default function CleaningPortal() {
   const { user, isCleaner, isAdmin, loading } = useCleaner();
 
   const today = todayInStockholm();
+  const weekAgo = useMemo(() => addDays(today, -7), [today]);
   const rangeEnd = useMemo(() => addDays(today, 45), [today]);
 
   const [stays, setStays] = useState<Stay[]>([]);
+  const [overdue, setOverdue] = useState<{ tent_id: string; checkout_date: string }[]>([]);
   const [assignments, setAssignments] = useState<Map<string, string>>(new Map());
   const [cleanerNames, setCleanerNames] = useState<Map<string, string>>(new Map());
   const [interests, setInterests] = useState<Map<string, Set<string>>>(new Map());
@@ -108,7 +110,7 @@ export default function CleaningPortal() {
   const loadAll = async () => {
     setDataLoading(true);
     try {
-      const [staysRes, assignRes, namesRes, availRes, selfRes, sessRes, earlyRes, bookingsRes] = await Promise.all([
+      const [staysRes, assignRes, namesRes, availRes, selfRes, sessRes, earlyRes, bookingsRes, pastStaysRes, pastSessRes] = await Promise.all([
         (supabase as any)
           .from("tent_stays")
           .select("booking_number, tent_id, checkin_date, checkout_date, guests, children")
@@ -129,7 +131,7 @@ export default function CleaningPortal() {
         (supabase as any)
           .from("self_clean_dates")
           .select("date")
-          .gte("date", today)
+          .gte("date", weekAgo)
           .lte("date", rangeEnd),
         (supabase as any)
           .from("cleaning_sessions")
@@ -147,6 +149,17 @@ export default function CleaningPortal() {
           .select("booking_number, guest_name, tent_id, checkin_date, checkout_date, raw")
           .gte("checkin_date", today)
           .lte("checkin_date", rangeEnd),
+        // Försenade städningar: avresor senaste veckan utan slutförd städsession
+        (supabase as any)
+          .from("tent_stays")
+          .select("booking_number, tent_id, checkin_date, checkout_date, guests, children")
+          .gte("checkout_date", weekAgo)
+          .lt("checkout_date", today),
+        (supabase as any)
+          .from("cleaning_sessions")
+          .select("tent_id, cleaning_date, status")
+          .gte("cleaning_date", weekAgo)
+          .lt("cleaning_date", today),
       ]);
 
 
@@ -155,6 +168,7 @@ export default function CleaningPortal() {
       const queryErrors = [
         staysRes.error, assignRes.error, namesRes.error, availRes.error,
         selfRes.error, sessRes.error, earlyRes.error, bookingsRes.error,
+        pastStaysRes.error, pastSessRes.error,
       ].filter((e): e is { message: string } => !!e);
       if (queryErrors.length > 0) {
         toast.error(`Kunde inte hämta all data: ${queryErrors[0].message}`);
@@ -177,9 +191,22 @@ export default function CleaningPortal() {
       }
       setInterests(iMap);
 
-      setSelfCleanDates(new Set(((selfRes.data ?? []) as { date: string }[]).map((r) => r.date)));
+      const selfSet = new Set(((selfRes.data ?? []) as { date: string }[]).map((r) => r.date));
+      setSelfCleanDates(selfSet);
       setSessions((sessRes.data ?? []) as Session[]);
       setEarlyFlags((earlyRes.data ?? []) as EarlyFlag[]);
+
+      // Försenade städningar: avresa passerad, ingen slutförd session, inte egenstäd-dag
+      const doneKeys = new Set(
+        ((pastSessRes.data ?? []) as Session[])
+          .filter((s) => s.status === "completed")
+          .map((s) => `${s.tent_id}|${s.cleaning_date}`),
+      );
+      const overdueList = ((pastStaysRes.data ?? []) as Stay[])
+        .filter((s) => !doneKeys.has(`${s.tent_id}|${s.checkout_date}`))
+        .filter((s) => !selfSet.has(s.checkout_date))
+        .map((s) => ({ tent_id: s.tent_id, checkout_date: s.checkout_date }));
+      setOverdue(overdueList);
 
       // Beräkna mismatches mellan bookings.raw och tent_stays
       const staysByBooking = new Map<string, Stay[]>();
@@ -524,6 +551,30 @@ export default function CleaningPortal() {
             value={stats.nextDate ? formatSvDate(stats.nextDate) : "–"}
           />
         </div>
+
+        {/* Försenade städningar — ska alltid vara tom så att tälten är redo för nya bokningar */}
+        {overdue.length > 0 && (
+          <Card className="border-red-500/50 bg-red-500/5">
+            <CardContent className="flex flex-wrap items-center gap-3 p-4">
+              <AlertTriangle className="h-5 w-5 shrink-0 text-red-600" />
+              <div className="min-w-[220px] flex-1">
+                <div className="font-semibold text-red-800 dark:text-red-300">
+                  {overdue.length} försenad{overdue.length > 1 ? "e" : ""} städning{overdue.length > 1 ? "ar" : ""}
+                </div>
+                <div className="text-xs text-red-700/80 dark:text-red-300/70">
+                  Avresedagen har passerat men tältet är inte markerat som städat — åtgärda direkt så att tältet är redo för nya bokningar.
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {overdue.map((o) => (
+                  <Badge key={`${o.tent_id}|${o.checkout_date}`} variant="destructive">
+                    {TENT_BY_ID[o.tent_id]?.name ?? o.tent_id} · avresa {o.checkout_date}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Dagens fokus */}
         <Card>

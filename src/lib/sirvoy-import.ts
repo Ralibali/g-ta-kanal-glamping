@@ -78,6 +78,31 @@ const ROOM_TO_TENT: Record<string, { id: string; name: string }> = {
   "3": { id: "lugnetsyta", name: "Lugnets yta" },
 };
 
+export type SavedDietary = { dietary: string[]; note: string | null };
+
+/**
+ * Slår ihop gästernas webbvalda specialkost (sparas på tent_stays via /stay
+ * eller incheckningen) med nyimporterade CSV-rader vid om-import. Webbens
+ * värden ska aldrig skrivas över — de slås ihop med CSV-tolkade värden.
+ */
+export function mergeDietaryIntoStays(
+  stays: ParsedTentStay[],
+  savedByStay: Map<string, SavedDietary>,
+  savedByBooking: Map<string, SavedDietary>,
+): ParsedTentStay[] {
+  return stays.map((stay) => {
+    const saved =
+      savedByStay.get(`${stay.booking_number}|${stay.tent_id}`) ??
+      savedByBooking.get(stay.booking_number);
+    if (!saved) return stay;
+    const dietary = Array.from(new Set([...saved.dietary, ...stay.dietary]));
+    const noteParts = [saved.note, stay.dietary_note]
+      .filter((part): part is string => !!part && part.trim().length > 0)
+      .filter((part, index, arr) => arr.indexOf(part) === index);
+    return { ...stay, dietary, dietary_note: noteParts.join("\n") || null };
+  });
+}
+
 const DIETARY_PATTERNS: Array<{ id: string; re: RegExp }> = [
   { id: "gluten_free", re: /\b(glutenfri|gluten\s*fri|gluten[-\s]?free|coeliac|celiaki)\b/i },
   { id: "vegan", re: /\b(vegan|veganskt|veganisch|vegano)\b/i },

@@ -153,7 +153,7 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
 
   const total = cards.length;
   const doneCount = cards.filter((card) =>
-    sessions.some((session) => session.tent_id === card.tent_id && session.status === "completed"),
+    sessions.some((session) => session.tent_id === card.tent_id && session.cleaning_date === card.date && session.status === "completed"),
   ).length;
   const percent = total === 0 ? 0 : Math.round((doneCount / total) * 100);
 
@@ -287,10 +287,11 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
           })()}
           <ul className="space-y-3" aria-label={tr(lang, "dayView")}>
           {cards.map((card) => {
-            const session = sessions.find((s) => s.tent_id === card.tent_id);
+            // Matcha på tält + datum så att försenade kort inte ärver dagens session
+            const session = sessions.find((s) => s.tent_id === card.tent_id && s.cleaning_date === card.date);
             const isDone = session?.status === "completed";
             return (
-              <li key={card.tent_id}>
+              <li key={`${card.tent_id}|${card.date}`}>
                 <button
                   type="button"
                   onClick={() => onOpen(card)}
@@ -299,9 +300,11 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
                     "w-full text-left rounded-xl border-2 p-4 min-h-16 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 " +
                     (isDone
                       ? "border-emerald-500/50 bg-emerald-500/5 hover:bg-emerald-500/10"
-                      : card.earlyCheckin
-                        ? "border-amber-500/60 bg-amber-500/10 hover:bg-amber-500/15"
-                        : "border-border bg-card hover:bg-accent")
+                      : card.overdue
+                        ? "border-red-500/60 bg-red-500/10 hover:bg-red-500/15"
+                        : card.earlyCheckin
+                          ? "border-amber-500/60 bg-amber-500/10 hover:bg-amber-500/15"
+                          : "border-border bg-card hover:bg-accent")
                   }
                 >
                   <div className="flex items-start gap-3">
@@ -344,6 +347,11 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
                       )}
 
                       <div className="flex flex-wrap gap-1.5 mt-2">
+                        {card.overdue && (
+                          <Badge variant="destructive" className="text-[10px]">
+                            {lang === "sv" ? `Försenad · avresa ${card.date}` : lang === "si" ? "ප්‍රමාද වූ" : `Overdue · checkout ${card.date}`}
+                          </Badge>
+                        )}
                         {card.earlyCheckin && (
                           <Badge className="bg-amber-500 hover:bg-amber-500 text-white text-[10px]">
                             <Sun className="h-3 w-3 mr-1" aria-hidden="true" />{labels.earlyBadge}

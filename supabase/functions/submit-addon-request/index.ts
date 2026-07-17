@@ -57,6 +57,47 @@ Deno.serve(async (req) => {
   const { data: addons } = await supabase.from('addons').select('id, slug, name_sv, name_en, price_sek, unit, max_quantity, active').in('id', addonIds)
   const addonMap = new Map((addons ?? []).map(a => [a.id, a]))
 
+  // Skydda mot dubbelköp: ett tillval som redan är beställt (Swish-request
+  // eller betald/bekräftad) ska inte kunna köpas igen.
+  const { data: existingActive } = await supabase
+    .from('addon_orders')
+    .select('addon_id, status')
+    .eq('booking_id', booking.id)
+    .in('status', ['requested', 'confirmed', 'paid'])
+  const alreadyActive = new Set((existingActive ?? []).map(o => o.addon_id))
+  const freshItems = items.filter(i => !alreadyActive.has(i.addon_id))
+  if (freshItems.length === 0) {
+    return new Response(JSON.stringify({ error: 'already_ordered' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+  }
+
+  // Städa bort gamla övergivna kortbetalningar (status 'pending') för bokningen,
+  // annars hopar de sig och kan betalas två gånger via två öppna checkout-flikar.
+  const { data: stalePending } = await supabase
+    .from('addon_orders')
+    .select('id, stripe_session_id')
+    .eq('booking_id', booking.id)
+    .eq('status', 'pending')
+  if (stalePending && stalePending.length > 0) {
+    // Ogiltigförklara själva checkout-sessionerna hos Stripe så att gamla flikar inte går att betala
+    const stripeKeyForCleanup = Deno.env.get('STRIPE_SECRET_KEY')
+    if (stripeKeyForCleanup) {
+      try {
+        const stripeCleanup = new Stripe(stripeKeyForCleanup, { apiVersion: '2025-08-27.basil' })
+        const sessionIds = Array.from(new Set(stalePending.map(o => o.stripe_session_id).filter(Boolean))) as string[]
+        await Promise.all(sessionIds.map(async sid => {
+          try {
+            const s = await stripeCleanup.checkout.sessions.retrieve(sid)
+            if (s.status === 'open') await stripeCleanup.checkout.sessions.expire(sid)
+          } catch { /* sessionen kan redan vara slutförd/utgången */ }
+        }))
+      } catch (err) { console.error('stripe session cleanup failed', err) }
+    }
+    await supabase
+      .from('addon_orders')
+      .update({ status: 'cancelled' })
+      .in('id', stalePending.map(o => o.id))
+  }
+
   const stayHasMondayMorning = (() => {
     const start = new Date(`${booking.checkin_date}T12:00:00Z`).getTime()
     const end = new Date(`${booking.checkout_date}T12:00:00Z`).getTime()
@@ -65,7 +106,7 @@ Deno.serve(async (req) => {
     }
     return false
   })()
-  if (stayHasMondayMorning && items.some(it => addonMap.get(it.addon_id)?.slug === 'breakfast')) {
+  if (stayHasMondayMorning && freshItems.some(it => addonMap.get(it.addon_id)?.slug === 'breakfast')) {
     return new Response(JSON.stringify({ error: 'breakfast_unavailable_monday' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
@@ -73,7 +114,7 @@ Deno.serve(async (req) => {
   const lineItems: any[] = []
   const emailItemNames: { name: string; quantity: number; total: number; slug: string }[] = []
   let total = 0
-  for (const it of items) {
+  for (const it of freshItems) {
     const a = addonMap.get(it.addon_id)
     if (!a || !a.active) continue
     const qty = Math.min(Math.max(1, Math.floor(it.quantity)), a.max_quantity)

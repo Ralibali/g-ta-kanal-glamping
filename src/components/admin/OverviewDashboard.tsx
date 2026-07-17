@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { OperationsOverview } from '@/components/admin/OperationsOverview';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell
@@ -250,10 +251,17 @@ export const OverviewDashboard = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold font-serif">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Riktig besöksdata från din webbplats</p>
+        <p className="text-muted-foreground mt-1">Det viktigaste just nu — drift, städ och betalningar</p>
+      </div>
+
+      <OperationsOverview />
+
+      <div className="border-t border-border/60 pt-4">
+        <h2 className="text-xl font-bold font-serif">Webbplatstrafik</h2>
+        <p className="text-muted-foreground text-sm mt-0.5">Riktig besöksdata från din webbplats</p>
       </div>
 
       {/* Period selector */}
