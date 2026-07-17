@@ -13,6 +13,7 @@ import heroImg from "@/assets/glamping-sunset.jpg";
 
 const SWISH = "1230628289";
 const SWISH_INTL = "1230628289";
+const LATE_CHECKOUT_URL = `https://app.swish.nu/1/p/sw/?sw=${SWISH}&amt=399&cur=SEK&msg=${encodeURIComponent("Sen utcheckning")}&src=qr`;
 
 const TENT_NAMES: Record<string, string> = {
   sjobris: "Sjöbrisretreatet (Tält 1)",
@@ -88,10 +89,23 @@ export default function UnderVistelsen({ initialLang = "sv" }: UnderVistelsenPro
   }, []);
 
 
+  // På desktop: QR-kod som gästen scannar med mobilen — öppnar Swish förifylld
+  const isMobile = typeof navigator !== "undefined" && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const [lateQr, setLateQr] = useState<string | null>(null);
+  useEffect(() => {
+    if (isMobile) return;
+    let active = true;
+    import("qrcode")
+      .then(({ toDataURL }) =>
+        toDataURL(LATE_CHECKOUT_URL, { width: 220, margin: 1, color: { dark: "#12252b", light: "#ffffff" } })
+          .then((url) => { if (active) setLateQr(url); })
+          .catch(() => {}),
+      )
+      .catch(() => {});
+    return () => { active = false; };
+  }, [isMobile]);
+
   const handleLateCheckout = () => {
-    const amount = 399;
-    const msg = encodeURIComponent("Sen utcheckning");
-    const webUrl = `https://app.swish.nu/1/p/sw/?sw=${SWISH}&amt=${amount}&cur=SEK&msg=${msg}&src=qr`;
     try {
       const params = new URLSearchParams(window.location.search);
       const token = params.get("t") || params.get("token") || undefined;
@@ -100,7 +114,7 @@ export default function UnderVistelsen({ initialLang = "sv" }: UnderVistelsenPro
       }).catch(() => {});
     } catch {}
     toast.success(isSv ? "Tack! Sen utcheckning bokad." : "Thanks! Late check-out booked.");
-    window.open(webUrl, "_blank", "noopener,noreferrer");
+    window.open(LATE_CHECKOUT_URL, "_blank", "noopener,noreferrer");
   };
 
 
@@ -350,6 +364,14 @@ export default function UnderVistelsen({ initialLang = "sv" }: UnderVistelsenPro
                 >
                   {t.payCta}
                 </button>
+                {!isMobile && lateQr && (
+                  <div className="flex flex-col items-center gap-1.5 pt-1">
+                    <img src={lateQr} alt="Swish QR-kod" className="h-32 w-32 rounded" />
+                    <p className="text-[11px] text-muted-foreground text-center">
+                      {isSv ? "Scanna med mobilen — Swish öppnas förifylld" : "Scan with your phone — Swish opens prefilled"}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

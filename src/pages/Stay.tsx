@@ -79,6 +79,7 @@ const COPY = {
     swishFallback: "Öppnades inte Swish? Öppna Swish-appen manuellt och använd uppgifterna ovan.",
     swishHintMobile: "Kopiera nummer, belopp och meddelande ovan.",
     swishHintDesktop: "Öppna Swish-appen på din mobil och slå in uppgifterna manuellt.",
+    swishScan: "Scanna med mobilen — öppna kameran och rikta den mot koden så öppnas Swish med allt förifyllt.",
     copy: "Kopiera",
   },
   en: {
@@ -109,6 +110,7 @@ const COPY = {
     swishFallback: "Swish didn't open? Open the Swish app manually and use the details above.",
     swishHintMobile: "Copy the number, amount and message above.",
     swishHintDesktop: "Open the Swish app on your phone and enter the details manually.",
+    swishScan: "Scan with your phone — point the camera at the code and Swish opens with everything prefilled.",
     copy: "Copy",
   },
   de: {
@@ -139,6 +141,7 @@ const COPY = {
     swishFallback: "Swish hat sich nicht geöffnet? Öffne die Swish-App manuell und verwende die Angaben oben.",
     swishHintMobile: "Kopiere Nummer, Betrag und Nachricht oben.",
     swishHintDesktop: "Öffne die Swish-App auf deinem Handy und gib die Daten manuell ein.",
+    swishScan: "Mit dem Handy scannen — Kamera auf den Code richten und Swish öffnet sich mit allen Angaben ausgefüllt.",
     copy: "Kopieren",
   },
   da: {
@@ -169,6 +172,7 @@ const COPY = {
     swishFallback: "Åbnede Swish ikke? Åbn Swish-appen manuelt og brug oplysningerne ovenfor.",
     swishHintMobile: "Kopiér nummer, beløb og besked ovenfor.",
     swishHintDesktop: "Åbn Swish-appen på din mobil og indtast oplysningerne manuelt.",
+    swishScan: "Scan med mobilen — ret kameraet mod koden, så åbner Swish med alt udfyldt.",
     copy: "Kopiér",
   },
   no: {
@@ -199,6 +203,7 @@ const COPY = {
     swishFallback: "Åpnet ikke Swish? Åpne Swish-appen manuelt og bruk opplysningene ovenfor.",
     swishHintMobile: "Kopier nummer, beløp og melding ovenfor.",
     swishHintDesktop: "Åpne Swish-appen på mobilen og tast inn opplysningene manuelt.",
+    swishScan: "Skann med mobilen — pek kameraet mot koden, så åpnes Swish med alt ferdig utfylt.",
     copy: "Kopier",
   },
   nl: {
@@ -229,6 +234,7 @@ const COPY = {
     swishFallback: "Swish niet geopend? Open de Swish-app handmatig en gebruik de gegevens hierboven.",
     swishHintMobile: "Kopieer nummer, bedrag en bericht hierboven.",
     swishHintDesktop: "Open de Swish-app op je telefoon en voer de gegevens handmatig in.",
+    swishScan: "Scan met je telefoon — richt de camera op de code en Swish opent met alles ingevuld.",
     copy: "Kopiëren",
   },
   fr: {
@@ -259,6 +265,7 @@ const COPY = {
     swishFallback: "Swish ne s’est pas ouvert ? Ouvrez l’app Swish manuellement et utilisez les informations ci-dessus.",
     swishHintMobile: "Copiez le numéro, le montant et le message ci-dessus.",
     swishHintDesktop: "Ouvrez l’app Swish sur votre téléphone et saisissez les informations manuellement.",
+    swishScan: "Scannez avec votre téléphone — visez le code avec l’appareil photo et Swish s’ouvre avec tout prérempli.",
     copy: "Copier",
   },
 } as const;
@@ -1422,6 +1429,22 @@ function SwishCard({
   const [copied, setCopied] = useState<string | null>(null);
   const [linkFailed, setLinkFailed] = useState(false);
   const isMobile = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  // Swish deep link (mobile opens the app, desktop ignores)
+  const swishUrl = `https://app.swish.nu/1/p/sw/?sw=${swishNumber}&amt=${amount}&cur=SEK&msg=${encodeURIComponent(reference)}&src=qr`;
+  // På desktop: QR-kod som gästen scannar med mobilen — öppnar Swish med allt förifyllt
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (isMobile) return;
+    let active = true;
+    import("qrcode")
+      .then(({ toDataURL }) =>
+        toDataURL(swishUrl, { width: 220, margin: 1, color: { dark: "#12252b", light: "#ffffff" } })
+          .then((url) => { if (active) setQrDataUrl(url); })
+          .catch(() => {}),
+      )
+      .catch(() => {});
+    return () => { active = false; };
+  }, [swishUrl, isMobile]);
   const copy = async (val: string, key: string) => {
     try {
       await navigator.clipboard.writeText(val);
@@ -1432,9 +1455,6 @@ function SwishCard({
       toast.error(t.copy + ' ✗');
     }
   };
-  // Swish deep link (mobile opens the app, desktop ignores)
-  const swishUrl = `https://app.swish.nu/1/p/sw/?sw=${swishNumber}&amt=${amount}&cur=SEK&msg=${encodeURIComponent(reference)}&src=qr`;
-
   const openSwish = () => {
     if (!isMobile) {
       setLinkFailed(true);
@@ -1485,6 +1505,13 @@ function SwishCard({
           <Row label={t.swishAmount} value={`${amount} ${t.currency}`} copyKey="amt" />
           <Row label={t.swishRef} value={reference} copyKey="ref" />
         </div>
+
+        {!isMobile && qrDataUrl && (
+          <div className="flex flex-col items-center gap-2 rounded-lg bg-background border p-4">
+            <img src={qrDataUrl} alt="Swish QR-kod" className="h-44 w-44 rounded" />
+            <p className="max-w-xs text-center text-xs text-muted-foreground">{t.swishScan}</p>
+          </div>
+        )}
 
         <Button className="w-full" size="lg" onClick={openSwish}>{t.swishOpen}</Button>
 
