@@ -206,7 +206,10 @@ export default function SiteMetaManager() {
         : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
     );
 
-    const canonical = `${SITE_URL}${path}`;
+    // Alias routes canonicalize to their primary equivalent.
+    const CANONICAL_ALIASES: Record<string, string> = { "/en/book": "/en/boka" };
+    const canonicalPath = CANONICAL_ALIASES[path] ?? path;
+    const canonical = `${SITE_URL}${canonicalPath}`;
     setCanonical(canonical);
     setMeta('meta[property="og:url"]', "property", "og:url", canonical);
     setMeta('meta[property="og:site_name"]', "property", "og:site_name", "Go Glamping Sweden");
