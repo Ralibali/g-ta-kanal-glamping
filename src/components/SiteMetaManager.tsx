@@ -228,7 +228,7 @@ export default function SiteMetaManager() {
       document.title = exactTitle;
       setMeta('meta[property="og:title"]', "property", "og:title", exactTitle);
     } else {
-      let meta = ROUTE_META[path];
+      let meta = ROUTE_META[path] ?? ROUTE_META[canonicalPath];
       let breadcrumb: { name: string; url: string }[] | null = null;
 
       // Blog post pages
