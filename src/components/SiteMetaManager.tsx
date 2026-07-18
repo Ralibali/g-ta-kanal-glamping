@@ -326,14 +326,16 @@ export default function SiteMetaManager() {
       }
     }
 
-    // hreflang for bilingual pages
-    if (path === "/" || path === "/en") {
+    // hreflang for multilingual pages
+    if (path === "/" || path === "/en" || path === "/de") {
       addAlternate("sv", `${SITE_URL}/`);
       addAlternate("en", `${SITE_URL}/en`);
+      addAlternate("de", `${SITE_URL}/de`);
       addAlternate("x-default", `${SITE_URL}/`);
-    } else if (path === "/boka" || path === "/en/boka" || path === "/en/book") {
+    } else if (path === "/boka" || path === "/en/boka" || path === "/en/book" || path === "/de/boka") {
       addAlternate("sv", `${SITE_URL}/boka`);
       addAlternate("en", `${SITE_URL}/en/boka`);
+      addAlternate("de", `${SITE_URL}/de/boka`);
       addAlternate("x-default", `${SITE_URL}/boka`);
     }
   }, [pathname, params?.slug]);
