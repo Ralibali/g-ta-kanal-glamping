@@ -740,9 +740,24 @@ export default function Stay({ initialLang }: StayProps = {}) {
 
 
         {(() => {
+          const ROOM_TO_EXPECTED: Record<string, string> = { "1": "sjobris", "2": "naturkarnan", "3": "lugnetsyta" };
           const allTents = Array.from(new Set([data.booking.tent_id, ...extraTents])).filter(Boolean);
-          const tentNames = allTents.map(id => TENT_BY_ID[id]?.name ?? (id === data.booking.tent_id ? data.booking.tent_name : id) ?? id);
-          const multi = tentNames.length > 1;
+          const tentLabels = allTents.map(id => {
+            const meta = TENT_BY_ID[id];
+            const name = meta?.name ?? (id === data.booking.tent_id ? data.booking.tent_name : id) ?? id;
+            return { id, no: meta?.no, name, label: meta?.no ? `Tält ${meta.no} · ${name}` : name };
+          });
+          const moves = tentAssignments
+            .filter(s => s.room_id && ROOM_TO_EXPECTED[s.room_id] && ROOM_TO_EXPECTED[s.room_id] !== s.tent_id)
+            .map(s => {
+              const fromMeta = TENT_BY_ID[ROOM_TO_EXPECTED[s.room_id!]];
+              const toMeta = TENT_BY_ID[s.tent_id];
+              return {
+                from: fromMeta ? `Tält ${fromMeta.no} · ${fromMeta.name}` : ROOM_TO_EXPECTED[s.room_id!],
+                to: toMeta ? `Tält ${toMeta.no} · ${toMeta.name}` : s.tent_id,
+              };
+            });
+          const multi = tentLabels.length > 1;
           return (
             <Card>
               <CardHeader className="pb-2">
@@ -752,19 +767,39 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 {multi ? (
                   <>
                     <div className="font-medium text-base">
-                      {isSv ? `Era ${tentNames.length} tält` : `Your ${tentNames.length} tents`}
+                      {isSv ? `Era ${tentLabels.length} tält` : `Your ${tentLabels.length} tents`}
                     </div>
                     <ul className="space-y-1 pl-1">
-                      {tentNames.map(n => (
-                        <li key={n} className="flex items-center gap-2">
+                      {tentLabels.map(tl => (
+                        <li key={tl.id} className="flex items-center gap-2">
                           <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
-                          <span>{n}</span>
+                          <span className="font-medium">{tl.label}</span>
                         </li>
                       ))}
                     </ul>
                   </>
                 ) : (
-                  <div className="font-medium text-base">{tentNames[0] || data.booking.tent_name}</div>
+                  <div className="font-medium text-base">{tentLabels[0]?.label || data.booking.tent_name}</div>
+                )}
+                {moves.length > 0 && (
+                  <div className="mt-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+                    <div className="font-semibold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
+                      <AlertTriangle className="h-4 w-4" />
+                      {isSv ? "Obs — vi har bytt tält åt er" : "Note — we have changed your tent"}
+                    </div>
+                    <ul className="mt-1 space-y-0.5 text-amber-900/90 dark:text-amber-100/90">
+                      {moves.map((m, i) => (
+                        <li key={i}>
+                          {isSv ? "Från" : "From"} <span className="font-medium">{m.from}</span> → <span className="font-medium">{m.to}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-1 text-xs text-amber-900/80 dark:text-amber-100/80">
+                      {isSv
+                        ? "Gå till det tält som står här ovan — inte det som stod på er ursprungliga bokning."
+                        : "Please go to the tent listed above — not the one on your original booking."}
+                    </div>
+                  </div>
                 )}
                 <div className="text-muted-foreground">
                   {ci} → {co} · {t.nights(data.booking.nights ?? 1)}
