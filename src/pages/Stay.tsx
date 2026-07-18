@@ -816,7 +816,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
                   )}
                   {lockCodeVisible && multi && (
                     <div className="text-xs text-muted-foreground mt-1">
-                      {isSv ? `Samma kod till alla ${tentNames.length} tälten.` : `Same code for all ${tentNames.length} tents.`}
+                      {isSv ? `Samma kod till alla ${tentLabels.length} tälten.` : `Same code for all ${tentLabels.length} tents.`}
                     </div>
                   )}
                 </div>
