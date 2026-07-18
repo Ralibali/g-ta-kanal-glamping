@@ -25,7 +25,7 @@ type Meta = { title: string; description: string; ogType?: string };
 
 const ROUTE_META: Record<string, Meta> = {
   "/": {
-    title: "Go Glamping Sweden – glamping vid Göta kanal & Bergs slussar",
+    title: "Glamping Bergs slussar – tält vid Göta kanal",
     description:
       "Ombonade glampingtält med bäddade sängar, värme och el vid Bergs slussar och Göta kanal. Boka direkt – bekräftelse på minuten, 15 minuter från Linköping.",
     ogType: "website",
@@ -48,10 +48,16 @@ const ROUTE_META: Record<string, Meta> = {
       "Book a cosy glamping tent by Bergs Locks and the Göta Canal. Instant confirmation, made-up beds, heating and electricity – from 1,595 SEK / night.",
     ogType: "website",
   },
-  "/en/book": {
-    title: "Book glamping by the Göta Canal | Go Glamping Sweden",
+  "/de": {
+    title: "Glamping am Götakanal – Bergs Slussar in Schweden",
     description:
-      "Book a cosy glamping tent by Bergs Locks and the Göta Canal. Instant confirmation, made-up beds, heating and electricity – from 1,595 SEK / night.",
+      "Gemütliche Glamping-Zelte mit gemachten Betten, Heizung und Strom an den Bergs-Schleusen und dem Götakanal. Direktbuchung, 15 Minuten von Linköping.",
+    ogType: "website",
+  },
+  "/de/boka": {
+    title: "Glamping am Götakanal buchen | Go Glamping Sweden",
+    description:
+      "Buchen Sie ein gemütliches Glamping-Zelt an den Bergs-Schleusen und dem Götakanal. Sofortbestätigung, gemachte Betten, Heizung und Strom – ab 1.595 SEK / Nacht.",
     ogType: "website",
   },
   "/blogg": {
@@ -200,7 +206,10 @@ export default function SiteMetaManager() {
         : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
     );
 
-    const canonical = `${SITE_URL}${path}`;
+    // Alias routes canonicalize to their primary equivalent.
+    const CANONICAL_ALIASES: Record<string, string> = { "/en/book": "/en/boka" };
+    const canonicalPath = CANONICAL_ALIASES[path] ?? path;
+    const canonical = `${SITE_URL}${canonicalPath}`;
     setCanonical(canonical);
     setMeta('meta[property="og:url"]', "property", "og:url", canonical);
     setMeta('meta[property="og:site_name"]', "property", "og:site_name", "Go Glamping Sweden");
@@ -219,7 +228,7 @@ export default function SiteMetaManager() {
       document.title = exactTitle;
       setMeta('meta[property="og:title"]', "property", "og:title", exactTitle);
     } else {
-      let meta = ROUTE_META[path];
+      let meta = ROUTE_META[path] ?? ROUTE_META[canonicalPath];
       let breadcrumb: { name: string; url: string }[] | null = null;
 
       // Blog post pages
@@ -317,14 +326,16 @@ export default function SiteMetaManager() {
       }
     }
 
-    // hreflang for bilingual pages
-    if (path === "/" || path === "/en") {
+    // hreflang for multilingual pages
+    if (path === "/" || path === "/en" || path === "/de") {
       addAlternate("sv", `${SITE_URL}/`);
       addAlternate("en", `${SITE_URL}/en`);
+      addAlternate("de", `${SITE_URL}/de`);
       addAlternate("x-default", `${SITE_URL}/`);
-    } else if (path === "/boka" || path === "/en/boka" || path === "/en/book") {
+    } else if (path === "/boka" || path === "/en/boka" || path === "/en/book" || path === "/de/boka") {
       addAlternate("sv", `${SITE_URL}/boka`);
       addAlternate("en", `${SITE_URL}/en/boka`);
+      addAlternate("de", `${SITE_URL}/de/boka`);
       addAlternate("x-default", `${SITE_URL}/boka`);
     }
   }, [pathname, params?.slug]);

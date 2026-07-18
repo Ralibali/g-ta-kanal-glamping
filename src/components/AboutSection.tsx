@@ -32,12 +32,12 @@ const AboutSection = () => {
             <p className="text-accent font-sans text-sm tracking-[0.2em] uppercase mb-4 font-semibold">
               {lang === "en" ? "About the experience" : "Om upplevelsen"}
             </p>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-8 leading-tight">
               {lang === "en" ? "Glamping at Bergs Slussar" : "Glamping Bergs Slussar"}
               <span className="block italic font-normal text-accent">
               {lang === "en" ? "– by Göta Canal outside Linköping" : "– vid Göta kanal utanför Linköping"}
               </span>
-            </h1>
+            </h2>
             <p className="text-muted-foreground text-lg leading-relaxed mb-6">
               {lang === "en"
                 ? "Welcome to Bergs Slussar Glamping – cosy tents by Göta Canal in Vreta Kloster, just outside Linköping."
