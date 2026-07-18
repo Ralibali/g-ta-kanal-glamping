@@ -115,9 +115,16 @@ const HeroSection = () => {
       </div>
 
       {/* Slide indicators */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2.5">
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2.5" role="tablist" aria-label={lang === "en" ? "Hero image slides" : "Bildspel"}>
         {slides.map((_, i) => (
-          <button key={i} onClick={() => setCurrent(i)} className={`h-1 rounded-full transition-all duration-500 ${i === current ? "w-8 bg-white/80" : "w-3 bg-white/30"}`} />
+          <button
+            key={i}
+            onClick={() => setCurrent(i)}
+            role="tab"
+            aria-selected={i === current}
+            aria-label={lang === "en" ? `Go to slide ${i + 1}` : `Gå till bild ${i + 1}`}
+            className={`h-1 rounded-full transition-all duration-500 ${i === current ? "w-8 bg-white/80" : "w-3 bg-white/30"}`}
+          />
         ))}
       </div>
 

@@ -25,7 +25,7 @@ type Meta = { title: string; description: string; ogType?: string };
 
 const ROUTE_META: Record<string, Meta> = {
   "/": {
-    title: "Go Glamping Sweden – glamping vid Göta kanal & Bergs slussar",
+    title: "Glamping Bergs slussar – tält vid Göta kanal",
     description:
       "Ombonade glampingtält med bäddade sängar, värme och el vid Bergs slussar och Göta kanal. Boka direkt – bekräftelse på minuten, 15 minuter från Linköping.",
     ogType: "website",
