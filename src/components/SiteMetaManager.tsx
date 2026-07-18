@@ -48,10 +48,16 @@ const ROUTE_META: Record<string, Meta> = {
       "Book a cosy glamping tent by Bergs Locks and the Göta Canal. Instant confirmation, made-up beds, heating and electricity – from 1,595 SEK / night.",
     ogType: "website",
   },
-  "/en/book": {
-    title: "Book glamping by the Göta Canal | Go Glamping Sweden",
+  "/de": {
+    title: "Glamping am Götakanal – Bergs Slussar in Schweden",
     description:
-      "Book a cosy glamping tent by Bergs Locks and the Göta Canal. Instant confirmation, made-up beds, heating and electricity – from 1,595 SEK / night.",
+      "Gemütliche Glamping-Zelte mit gemachten Betten, Heizung und Strom an den Bergs-Schleusen und dem Götakanal. Direktbuchung, 15 Minuten von Linköping.",
+    ogType: "website",
+  },
+  "/de/boka": {
+    title: "Glamping am Götakanal buchen | Go Glamping Sweden",
+    description:
+      "Buchen Sie ein gemütliches Glamping-Zelt an den Bergs-Schleusen und dem Götakanal. Sofortbestätigung, gemachte Betten, Heizung und Strom – ab 1.595 SEK / Nacht.",
     ogType: "website",
   },
   "/blogg": {
