@@ -448,12 +448,19 @@ export default function Stay({ initialLang }: StayProps = {}) {
     const fromRpc = sd?.booking?.tent_ids;
     if (Array.isArray(fromRpc) && fromRpc.length > 0) {
       setExtraTents(fromRpc);
-    } else if (sd?.booking?.booking_number) {
+    }
+    if (sd?.booking?.booking_number) {
       const { data: stays } = await (supabase as any)
         .from("tent_stays")
-        .select("tent_id")
+        .select("tent_id, room_id")
         .eq("booking_number", sd.booking.booking_number);
-      if (stays) setExtraTents((stays as { tent_id: string }[]).map(s => s.tent_id));
+      if (stays) {
+        const list = (stays as { tent_id: string; room_id: string | null }[]).filter(s => s.tent_id);
+        setTentAssignments(list);
+        if (!(Array.isArray(fromRpc) && fromRpc.length > 0)) {
+          setExtraTents(list.map(s => s.tent_id));
+        }
+      }
     }
     setLoading(false);
     return sd;
