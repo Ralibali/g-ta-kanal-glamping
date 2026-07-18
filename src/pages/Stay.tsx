@@ -431,6 +431,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
   const [paidTotal, setPaidTotal] = useState<number>(0);
   const [swishInfo, setSwishInfo] = useState<{ amount: number; reference: string } | null>(null);
   const [extraTents, setExtraTents] = useState<string[]>([]);
+  const [tentAssignments, setTentAssignments] = useState<{ tent_id: string; room_id: string | null }[]>([]);
   const [langOverride, setLangOverride] = useState<LangKey | null>(initialLang ?? null);
 
   const loadStay = async (): Promise<StayData | null> => {
