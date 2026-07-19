@@ -52,8 +52,10 @@ lines.push('\n-- Replace tent_stays for imported bookings');
 lines.push(`DELETE FROM public.tent_stays WHERE booking_number IN (${bookingNumbers.map(esc).join(',')});`);
 
 for (const s of p.stays) {
+  const stayRaw: Record<string, any> = {};
+  if (s.raw?.child_allocation) stayRaw.child_allocation = s.raw.child_allocation;
   lines.push(`INSERT INTO public.tent_stays (booking_number, room_id, tent_id, checkin_date, checkout_date, adults, children, breakfast, fikapase, late_checkout, late_checkout_csv, breakfast_csv_quantity, breakfast_addon_quantity, fikapase_csv_quantity, fikapase_addon_quantity, guest_name, phone, email, lang, note, dietary, dietary_note, raw, import_source, imported_at)
-VALUES (${esc(s.booking_number)}, ${esc(s.room_id)}, ${esc(s.tent_id)}, ${esc(s.checkin_date)}, ${esc(s.checkout_date)}, ${num(s.adults)}, ${num(s.children)}, ${bool(s.breakfast)}, ${bool(s.fikapase)}, ${bool(s.late_checkout)}, ${bool(s.late_checkout_csv)}, ${num(s.breakfast_csv_quantity)}, ${num(s.breakfast_addon_quantity)}, ${num(s.fikapase_csv_quantity)}, ${num(s.fikapase_addon_quantity)}, ${esc(s.guest_name)}, ${esc(s.phone)}, ${esc(s.email)}, ${esc(s.lang)}, ${esc(s.note)}, ${arr(s.dietary)}, ${esc(s.dietary_note)}, ${jsonb(s.raw)}, ${esc(s.import_source)}, ${esc(s.imported_at)});`);
+VALUES (${esc(s.booking_number)}, ${esc(s.room_id)}, ${esc(s.tent_id)}, ${esc(s.checkin_date)}, ${esc(s.checkout_date)}, ${num(s.adults)}, ${num(s.children)}, ${bool(s.breakfast)}, ${bool(s.fikapase)}, ${bool(s.late_checkout)}, ${bool(s.late_checkout_csv)}, ${num(s.breakfast_csv_quantity)}, ${num(s.breakfast_addon_quantity)}, ${num(s.fikapase_csv_quantity)}, ${num(s.fikapase_addon_quantity)}, ${esc(s.guest_name)}, ${esc(s.phone)}, ${esc(s.email)}, ${esc(s.lang)}, ${esc(s.note)}, ${arr(s.dietary)}, ${esc(s.dietary_note)}, ${jsonb(stayRaw)}, ${esc(s.import_source)}, ${esc(s.imported_at)});`);
 }
 
 // Delete cancelled bookings not in CSV (future only)
