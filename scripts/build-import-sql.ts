@@ -12,7 +12,12 @@ const merged = new Map<string, any>();
 for (const b of p.basic) merged.set(b.booking_number, { ...b });
 for (const b of p.content_bookings) {
   const prev = merged.get(b.booking_number) ?? {};
-  merged.set(b.booking_number, { ...prev, ...b, raw: { ...(prev.raw || {}), ...(b.raw || {}) } });
+  const minRaw: Record<string, any> = {};
+  const src = { ...(prev.raw || {}), ...(b.raw || {}) };
+  for (const k of ['children_total', 'number_of_guests', 'number_of_rooms', 'tent_ids', 'breakfast_csv_quantity', 'fikapase_csv_quantity']) {
+    if (src[k] !== undefined) minRaw[k] = src[k];
+  }
+  merged.set(b.booking_number, { ...prev, ...b, raw: minRaw });
 }
 
 const lines: string[] = [];
