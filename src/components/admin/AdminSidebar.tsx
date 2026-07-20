@@ -18,6 +18,7 @@ import {
   MessageSquare,
   Send,
   Briefcase,
+  CalendarSync,
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -55,6 +56,7 @@ const contentItems = [
   { title: "Blogginlägg", url: "/admin/blog", icon: FileText },
   { title: "Bildgalleri", url: "/admin/gallery", icon: Image },
   { title: "Priser & Tält", url: "/admin/pricing", icon: Tag },
+  { title: "iCal-synk (Airbnb/Booking)", url: "/admin/ical", icon: CalendarSync },
 ];
 
 const settingsItems = [

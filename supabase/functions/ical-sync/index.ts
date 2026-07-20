@@ -51,10 +51,20 @@ Deno.serve(async (req) => {
     authorized = true;
   }
 
-  const { data: sources, error: srcErr } = await admin
+  let bodySourceId: string | null = null;
+  try {
+    if (req.method === "POST") {
+      const b = await req.json().catch(() => ({}));
+      if (b && typeof b.source_id === "string") bodySourceId = b.source_id;
+    }
+  } catch { /* no body */ }
+
+  let srcQuery = admin
     .from("be_ical_sources")
-    .select("id, property_id, unit_id, name, url")
-    .eq("active", true);
+    .select("id, property_id, unit_id, name, url");
+  if (bodySourceId) srcQuery = srcQuery.eq("id", bodySourceId);
+  else srcQuery = srcQuery.eq("active", true);
+  const { data: sources, error: srcErr } = await srcQuery;
   if (srcErr) return json({ error: srcErr.message }, 500);
 
   const today = new Date().toISOString().slice(0, 10);

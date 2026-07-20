@@ -20,6 +20,7 @@ import { AddonOrdersManager } from "@/components/admin/AddonOrdersManager";
 import { SmsManager } from "@/components/admin/SmsManager";
 import { PrearrivalPreview } from "@/components/admin/PrearrivalPreview";
 import { EmployeeManager } from "@/components/admin/EmployeeManager";
+import { IcalSourcesManager } from "@/components/admin/IcalSourcesManager";
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdmin();
@@ -68,6 +69,7 @@ const Admin = () => {
               <Route path="sms" element={<SmsManager />} />
               <Route path="prearrival" element={<PrearrivalPreview />} />
               <Route path="employees" element={<EmployeeManager />} />
+              <Route path="ical" element={<IcalSourcesManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </main>
