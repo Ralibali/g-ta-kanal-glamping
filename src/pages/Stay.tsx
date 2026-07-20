@@ -1366,10 +1366,8 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 : "Our robot mows the lawn during the day, between 10:00 and 15:00, to keep the place looking its best for you. If the sound bothers you right then, just say the word and we'll pause it."}
             </InfoRow>
 
-            <InfoRow icon={<Wifi className="h-4 w-4" />} title={isSv ? "Wifi & täckning" : "Wifi & coverage"}>
-              {isSv
-                ? "Vi har medvetet valt att inte installera wifi — platsen är till för att koppla av från skärmar. 4G/5G-täckningen är dock utmärkt om du behöver vara uppkopplad."
-                : "We've intentionally skipped wifi — this place is for unplugging. 4G/5G coverage is excellent if you do need to stay connected."}
+            <InfoRow icon={<Wifi className="h-4 w-4" />} title={isSv ? "Wifi" : "Wifi"}>
+              <WifiCard isSv={isSv} />
             </InfoRow>
 
             <InfoRow icon={<Flame className="h-4 w-4" />} title={isSv ? "Eldning & grill" : "Fire & BBQ"}>
