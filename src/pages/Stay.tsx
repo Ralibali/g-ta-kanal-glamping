@@ -1458,6 +1458,60 @@ function InfoRow({ icon, title, children }: { icon: React.ReactNode; title: stri
   );
 }
 
+function WifiCard({ isSv }: { isSv: boolean }) {
+  const ssid = "Mercusys_6858";
+  const password = "70048594";
+  const wifiString = `WIFI:T:WPA;S:${ssid};P:${password};;`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(wifiString)}`;
+  const [copied, setCopied] = useState<string | null>(null);
+  const copy = async (value: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(key);
+      setTimeout(() => setCopied(null), 1500);
+    } catch {}
+  };
+  return (
+    <div className="mt-1 rounded-xl border border-border bg-card p-3 sm:p-4">
+      <div className="flex flex-col sm:flex-row gap-4 items-start">
+        <div className="flex-1 min-w-0 w-full space-y-2">
+          <div>
+            <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+              {isSv ? "Nätverk" : "Network"}
+            </div>
+            <button
+              onClick={() => copy(ssid, "ssid")}
+              className="w-full flex items-center justify-between gap-2 rounded-lg bg-muted/60 hover:bg-muted px-3 py-2 text-left transition"
+            >
+              <span className="font-mono text-sm sm:text-base text-foreground truncate">{ssid}</span>
+              {copied === "ssid" ? <Check className="h-4 w-4 text-primary shrink-0" /> : <Copy className="h-4 w-4 text-muted-foreground shrink-0" />}
+            </button>
+          </div>
+          <div>
+            <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+              {isSv ? "Lösenord" : "Password"}
+            </div>
+            <button
+              onClick={() => copy(password, "pw")}
+              className="w-full flex items-center justify-between gap-2 rounded-lg bg-muted/60 hover:bg-muted px-3 py-2 text-left transition"
+            >
+              <span className="font-mono text-sm sm:text-base text-foreground truncate">{password}</span>
+              {copied === "pw" ? <Check className="h-4 w-4 text-primary shrink-0" /> : <Copy className="h-4 w-4 text-muted-foreground shrink-0" />}
+            </button>
+          </div>
+          <p className="text-xs text-muted-foreground pt-1">
+            {isSv
+              ? "Skanna QR-koden med kameran för att ansluta direkt. Täckningen är starkast nära servicehuset."
+              : "Scan the QR code with your camera to connect instantly. Signal is strongest near the service house."}
+          </p>
+        </div>
+        <div className="mx-auto sm:mx-0 shrink-0 rounded-lg bg-white p-2 border border-border">
+          <img src={qrUrl} alt={isSv ? "QR-kod för wifi" : "Wifi QR code"} width={140} height={140} className="block" />
+        </div>
+      </div>
+    </div>
+  );
+
 function Centered({ children }: { children: React.ReactNode }) {
   return <div className="min-h-screen flex items-center justify-center p-6 text-center text-muted-foreground">{children}</div>;
 }
