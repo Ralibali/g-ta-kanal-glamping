@@ -21,6 +21,7 @@ import { SmsManager } from "@/components/admin/SmsManager";
 import { PrearrivalPreview } from "@/components/admin/PrearrivalPreview";
 import { EmployeeManager } from "@/components/admin/EmployeeManager";
 import { IcalSourcesManager } from "@/components/admin/IcalSourcesManager";
+import { DirectBookingsManager } from "@/components/admin/DirectBookingsManager";
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdmin();
