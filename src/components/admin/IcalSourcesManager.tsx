@@ -101,11 +101,11 @@ export function IcalSourcesManager() {
         body: sourceId ? { source_id: sourceId } : {},
       });
       if (error) throw error;
-      const results = (data?.results ?? []) as Array<{ name: string; status: string; events?: number; error?: string }>;
-      const ok = results.filter(r => r.status === "ok").length;
-      const failed = results.filter(r => r.status !== "ok");
-      toast.success(`Synkat ${ok} källa(-or)${failed.length ? `, ${failed.length} misslyckades` : ""}`);
-      if (failed.length) failed.forEach(f => toast.error(`${f.name}: ${f.error || f.status}`));
+      const results = (data?.results ?? []) as Array<{ source: string; ok: boolean; error?: string; created?: number; updated?: number; cancelled?: number }>;
+      const okCount = results.filter(r => r.ok).length;
+      const failed = results.filter(r => !r.ok);
+      toast.success(`Synkat ${okCount} källa(-or)${failed.length ? `, ${failed.length} misslyckades` : ""}`);
+      if (failed.length) failed.forEach(f => toast.error(`${f.source}: ${f.error || "fel"}`));
       await load();
     } catch (e: any) {
       toast.error("Synk misslyckades: " + (e?.message ?? e));
