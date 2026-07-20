@@ -18,3 +18,15 @@ verify_jwt = false
 # Stripe anropar utan JWT — säkerheten ligger i webhook-signaturen istället.
 [functions.stripe-webhook]
 verify_jwt = false
+
+# Publik bokningsmotor: GET (ledighet) och POST (skapa bokning) från gästsidan.
+[functions.booking-engine]
+verify_jwt = false
+
+# Publik iCal-export för Airbnb/Booking.com — säkras via feed-token i URL:en.
+[functions.ical-export]
+verify_jwt = false
+
+# iCal-sync: cron-secret (alla källor) eller admin-JWT ("Synka nu"-knapp).
+[functions.ical-sync]
+verify_jwt = false
