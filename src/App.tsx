@@ -34,6 +34,7 @@ import ShortRedirect from "./pages/ShortRedirect";
 import Sup from "./pages/Sup";
 import Employee from "./pages/Employee";
 import CleaningPortal from "./pages/CleaningPortal";
+import BokaDirekt from "./pages/BokaDirekt";
 
 const queryClient = new QueryClient();
 
@@ -85,6 +86,8 @@ const App = () => (
             <Route path="/en/book" element={<Boka lang="en" />} />
             <Route path="/de/boka" element={<Boka lang="de" />} />
             <Route path="/de/buchen" element={<Boka lang="de" />} />
+            <Route path="/boka-direkt" element={<BokaDirekt />} />
+            <Route path="/boka-direkt/:slug" element={<BokaDirekt />} />
             <Route path="/stay/:token" element={<Stay />} />
             <Route path="/en/stay/:token" element={<Stay initialLang="en" />} />
             <Route path="/de/stay/:token" element={<Stay initialLang="de" />} />
