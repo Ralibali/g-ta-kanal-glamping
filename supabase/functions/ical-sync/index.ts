@@ -32,6 +32,11 @@ Deno.serve(async (req) => {
   const expected = Deno.env.get("CRON_SECRET");
   let authorized = Boolean(expected && cronSecret === expected);
   if (!authorized) {
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    if (serviceKey && authHeader === `Bearer ${serviceKey}`) authorized = true;
+  }
+  if (!authorized) {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) return json({ error: "unauthorized" }, 401);
     const userClient = createClient(
