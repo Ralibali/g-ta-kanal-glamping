@@ -21,6 +21,7 @@ import { SmsManager } from "@/components/admin/SmsManager";
 import { PrearrivalPreview } from "@/components/admin/PrearrivalPreview";
 import { EmployeeManager } from "@/components/admin/EmployeeManager";
 import { IcalSourcesManager } from "@/components/admin/IcalSourcesManager";
+import { DirectBookingsManager } from "@/components/admin/DirectBookingsManager";
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAdmin();
@@ -70,6 +71,7 @@ const Admin = () => {
               <Route path="prearrival" element={<PrearrivalPreview />} />
               <Route path="employees" element={<EmployeeManager />} />
               <Route path="ical" element={<IcalSourcesManager />} />
+              <Route path="direct-bookings" element={<DirectBookingsManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </main>

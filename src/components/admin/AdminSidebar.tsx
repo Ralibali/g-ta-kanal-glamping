@@ -57,6 +57,7 @@ const contentItems = [
   { title: "Bildgalleri", url: "/admin/gallery", icon: Image },
   { title: "Priser & Tält", url: "/admin/pricing", icon: Tag },
   { title: "iCal-synk (Airbnb/Booking)", url: "/admin/ical", icon: CalendarSync },
+  { title: "Direktbokningar (Stripe/Swish)", url: "/admin/direct-bookings", icon: CalendarCheck },
 ];
 
 const settingsItems = [
