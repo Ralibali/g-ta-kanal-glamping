@@ -505,6 +505,7 @@ export type Database = {
           description: string | null
           door_code: string | null
           external_ref: string | null
+          ical_feed_token: string
           id: string
           legacy_tent_id: string | null
           min_stay: number
@@ -524,6 +525,7 @@ export type Database = {
           description?: string | null
           door_code?: string | null
           external_ref?: string | null
+          ical_feed_token?: string
           id?: string
           legacy_tent_id?: string | null
           min_stay?: number
@@ -543,6 +545,7 @@ export type Database = {
           description?: string | null
           door_code?: string | null
           external_ref?: string | null
+          ical_feed_token?: string
           id?: string
           legacy_tent_id?: string | null
           min_stay?: number
