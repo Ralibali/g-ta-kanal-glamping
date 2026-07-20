@@ -71,6 +71,7 @@ const Admin = () => {
               <Route path="prearrival" element={<PrearrivalPreview />} />
               <Route path="employees" element={<EmployeeManager />} />
               <Route path="ical" element={<IcalSourcesManager />} />
+              <Route path="direct-bookings" element={<DirectBookingsManager />} />
               <Route path="settings" element={<AdminSettings />} />
             </Routes>
           </main>
