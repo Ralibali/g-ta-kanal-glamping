@@ -31,12 +31,26 @@ Deno.serve(async (req) => {
   const cronSecret = req.headers.get("x-cron-secret");
   const expected = Deno.env.get("CRON_SECRET");
   let authorized = Boolean(expected && cronSecret === expected);
+  if (!authorized && cronSecret) {
+    const { data: row } = await admin
+      .from("app_settings")
+      .select("value")
+      .eq("key", "cron_secret")
+      .maybeSingle();
+    const stored = typeof row?.value === "string" ? row.value : null;
+    if (stored && stored === cronSecret) authorized = true;
+  }
   if (!authorized) {
     const authHeader = req.headers.get("Authorization") ?? "";
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     if (serviceKey && authHeader === `Bearer ${serviceKey}`) authorized = true;
   }
   if (!authorized) {
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) return json({ error: "unauthorized" }, 401);
+    const userClient = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) return json({ error: "unauthorized" }, 401);
     const userClient = createClient(
