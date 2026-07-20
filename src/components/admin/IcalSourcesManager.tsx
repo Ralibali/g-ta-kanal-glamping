@@ -138,6 +138,23 @@ export function IcalSourcesManager() {
         </Button>
       </div>
 
+      {(() => {
+        const times = sources.map(s => s.last_synced_at).filter(Boolean) as string[];
+        const latest = times.length ? new Date(Math.max(...times.map(t => new Date(t).getTime()))) : null;
+        const failing = sources.filter(s => s.last_status && s.last_status !== "ok").length;
+        const active = sources.filter(s => s.active).length;
+        return (
+          <Card className="bg-muted/30">
+            <CardContent className="pt-6 grid gap-3 md:grid-cols-4 text-sm">
+              <div><div className="text-xs text-muted-foreground">Automatisk synk</div><div className="font-medium">Var 15:e minut</div></div>
+              <div><div className="text-xs text-muted-foreground">Aktiva källor</div><div className="font-medium">{active} av {sources.length}</div></div>
+              <div><div className="text-xs text-muted-foreground">Senaste synk</div><div className="font-medium">{latest ? latest.toLocaleString("sv-SE") : "–"}</div></div>
+              <div><div className="text-xs text-muted-foreground">Fel just nu</div><div className={`font-medium ${failing ? "text-destructive" : ""}`}>{failing}</div></div>
+            </CardContent>
+          </Card>
+        );
+      })()}
+
       <Card>
         <CardHeader><CardTitle className="text-lg">Lägg till ny iCal-källa</CardTitle></CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-4">
