@@ -146,6 +146,423 @@ export type Database = {
         }
         Relationships: []
       }
+      be_addons: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          description_en: string | null
+          id: string
+          image_url: string | null
+          legacy_addon_id: string | null
+          max_quantity: number
+          name: string
+          name_en: string | null
+          price: number
+          price_type: string
+          property_id: string
+          slug: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          description_en?: string | null
+          id?: string
+          image_url?: string | null
+          legacy_addon_id?: string | null
+          max_quantity?: number
+          name: string
+          name_en?: string | null
+          price?: number
+          price_type?: string
+          property_id: string
+          slug?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          description_en?: string | null
+          id?: string
+          image_url?: string | null
+          legacy_addon_id?: string | null
+          max_quantity?: number
+          name?: string
+          name_en?: string | null
+          price?: number
+          price_type?: string
+          property_id?: string
+          slug?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "be_addons_legacy_addon_id_fkey"
+            columns: ["legacy_addon_id"]
+            isOneToOne: false
+            referencedRelation: "addons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "be_addons_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "be_properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      be_booking_addons: {
+        Row: {
+          addon_id: string
+          booking_id: string
+          created_at: string
+          line_total: number
+          price_type: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          addon_id: string
+          booking_id: string
+          created_at?: string
+          line_total?: number
+          price_type?: string
+          quantity?: number
+          unit_price: number
+        }
+        Update: {
+          addon_id?: string
+          booking_id?: string
+          created_at?: string
+          line_total?: number
+          price_type?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "be_booking_addons_addon_id_fkey"
+            columns: ["addon_id"]
+            isOneToOne: false
+            referencedRelation: "be_addons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "be_booking_addons_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "be_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      be_bookings: {
+        Row: {
+          addons_total: number
+          checkin_date: string
+          checkout_date: string
+          created_at: string
+          external_id: string | null
+          guest_email: string | null
+          guest_name: string | null
+          guest_phone: string | null
+          guest_token: string
+          guests: number | null
+          ical_source_id: string | null
+          ical_uid: string | null
+          id: string
+          language: string
+          notes: string | null
+          payment_amount: number | null
+          payment_method: string
+          payment_ref: string | null
+          payment_status: string
+          property_id: string
+          public_token: string
+          source: string
+          status: string
+          stripe_session_id: string | null
+          total_amount: number
+          unit_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          addons_total?: number
+          checkin_date: string
+          checkout_date: string
+          created_at?: string
+          external_id?: string | null
+          guest_email?: string | null
+          guest_name?: string | null
+          guest_phone?: string | null
+          guest_token?: string
+          guests?: number | null
+          ical_source_id?: string | null
+          ical_uid?: string | null
+          id?: string
+          language?: string
+          notes?: string | null
+          payment_amount?: number | null
+          payment_method?: string
+          payment_ref?: string | null
+          payment_status?: string
+          property_id: string
+          public_token?: string
+          source?: string
+          status?: string
+          stripe_session_id?: string | null
+          total_amount?: number
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          addons_total?: number
+          checkin_date?: string
+          checkout_date?: string
+          created_at?: string
+          external_id?: string | null
+          guest_email?: string | null
+          guest_name?: string | null
+          guest_phone?: string | null
+          guest_token?: string
+          guests?: number | null
+          ical_source_id?: string | null
+          ical_uid?: string | null
+          id?: string
+          language?: string
+          notes?: string | null
+          payment_amount?: number | null
+          payment_method?: string
+          payment_ref?: string | null
+          payment_status?: string
+          property_id?: string
+          public_token?: string
+          source?: string
+          status?: string
+          stripe_session_id?: string | null
+          total_amount?: number
+          unit_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "be_bookings_ical_source_id_fkey"
+            columns: ["ical_source_id"]
+            isOneToOne: false
+            referencedRelation: "be_ical_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "be_bookings_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "be_properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "be_bookings_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "be_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      be_ical_sources: {
+        Row: {
+          active: boolean
+          created_at: string
+          events_count: number
+          id: string
+          last_error: string | null
+          last_status: string | null
+          last_synced_at: string | null
+          name: string
+          property_id: string
+          unit_id: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          events_count?: number
+          id?: string
+          last_error?: string | null
+          last_status?: string | null
+          last_synced_at?: string | null
+          name: string
+          property_id: string
+          unit_id: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          events_count?: number
+          id?: string
+          last_error?: string | null
+          last_status?: string | null
+          last_synced_at?: string | null
+          name?: string
+          property_id?: string
+          unit_id?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "be_ical_sources_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "be_properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "be_ical_sources_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "be_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      be_properties: {
+        Row: {
+          active: boolean
+          checkin_time: string
+          checkout_time: string
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          currency: string
+          directions: string | null
+          house_rules: string | null
+          id: string
+          name: string
+          review_url: string | null
+          slug: string
+          swish_number: string | null
+          updated_at: string
+          wifi_name: string | null
+          wifi_password: string | null
+        }
+        Insert: {
+          active?: boolean
+          checkin_time?: string
+          checkout_time?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          directions?: string | null
+          house_rules?: string | null
+          id?: string
+          name: string
+          review_url?: string | null
+          slug?: string
+          swish_number?: string | null
+          updated_at?: string
+          wifi_name?: string | null
+          wifi_password?: string | null
+        }
+        Update: {
+          active?: boolean
+          checkin_time?: string
+          checkout_time?: string
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          currency?: string
+          directions?: string | null
+          house_rules?: string | null
+          id?: string
+          name?: string
+          review_url?: string | null
+          slug?: string
+          swish_number?: string | null
+          updated_at?: string
+          wifi_name?: string | null
+          wifi_password?: string | null
+        }
+        Relationships: []
+      }
+      be_units: {
+        Row: {
+          active: boolean
+          base_price: number
+          capacity: number
+          cleaning_fee: number
+          created_at: string
+          description: string | null
+          door_code: string | null
+          external_ref: string | null
+          id: string
+          legacy_tent_id: string | null
+          min_stay: number
+          monthly_mult: number[]
+          name: string
+          property_id: string
+          sort_order: number
+          updated_at: string
+          weekend_pct: number
+        }
+        Insert: {
+          active?: boolean
+          base_price?: number
+          capacity?: number
+          cleaning_fee?: number
+          created_at?: string
+          description?: string | null
+          door_code?: string | null
+          external_ref?: string | null
+          id?: string
+          legacy_tent_id?: string | null
+          min_stay?: number
+          monthly_mult?: number[]
+          name: string
+          property_id: string
+          sort_order?: number
+          updated_at?: string
+          weekend_pct?: number
+        }
+        Update: {
+          active?: boolean
+          base_price?: number
+          capacity?: number
+          cleaning_fee?: number
+          created_at?: string
+          description?: string | null
+          door_code?: string | null
+          external_ref?: string | null
+          id?: string
+          legacy_tent_id?: string | null
+          min_stay?: number
+          monthly_mult?: number[]
+          name?: string
+          property_id?: string
+          sort_order?: number
+          updated_at?: string
+          weekend_pct?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "be_units_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "be_properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           address: string | null
@@ -1067,7 +1484,28 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      all_bookings_v: {
+        Row: {
+          checkin_date: string | null
+          checkout_date: string | null
+          created_at: string | null
+          engine: string | null
+          guest_email: string | null
+          guest_name: string | null
+          guest_phone: string | null
+          id: string | null
+          language: string | null
+          legacy_tent_id: string | null
+          nights: number | null
+          payment_status: string | null
+          public_token: string | null
+          reference: string | null
+          status: string | null
+          total_amount: number | null
+          unit_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       auto_assign_missing_tents: {
@@ -1075,6 +1513,17 @@ export type Database = {
         Returns: {
           assigned_tent: string
           booking_number: string
+        }[]
+      }
+      be_check_availability: {
+        Args: { p_checkin: string; p_checkout: string; p_property_slug: string }
+        Returns: {
+          available: boolean
+          base_price: number
+          capacity: number
+          cleaning_fee: number
+          unit_id: string
+          unit_name: string
         }[]
       }
       delete_email: {

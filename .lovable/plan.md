@@ -1,125 +1,69 @@
-## Översikt
+## Utgångsläge
 
-Bygger ovanpå befintligt system. Återanvänder `bookings` (email/phone-kolumner finns redan), `46elks` (ELKS46_*-secrets finns), Lovable Emails (Brevo via Resend-connector finns), Stripe (måste aktiveras), och städmodulen i `src/pages/Cleaning.tsx`.
+StayBoost är en **flertenants-plattform** byggd på TanStack Start (annan tech-stack än det här projektet, som är React + Vite). Databasen är helt separat med tabellerna `properties`, `bookings`, `addons`, `rooms`, `templates`, `sources`, `messages` m.m. Vi kan inte "koppla in" StayBoost — vi måste **portera** de delar vi behöver till detta projekts stack och databas.
 
-## Steg 1 — Databas (migration)
+Bra nyhet: schema och edge functions är rimligt fristående och kan översättas rakt av. Din glamping blir "property 1" i det nya schemat.
 
-Lägg till på `bookings`:
-- `language text` (kopiera från `lang` om null)
-- `country_code text`
-- `public_token uuid default gen_random_uuid()` + unikt index
-- `guest_first_name text` (härled från `guest_name` vid import)
-- `tent_name text`
-- `nights integer`
-- `sirvoy_booking_no text unique` (samma som `booking_number` om saknas)
-- `needs_contact_info boolean generated` (true om email eller phone saknas)
+## Vad som portas över
 
-Nya tabeller:
-- `addons` — katalog (sv/en namn+beskrivning, pris, unit, max_quantity, sort_order, active)
-- `addon_orders` — booking_id, addon_id, quantity, unit_price_sek, total_sek, status, stripe_session_id, stripe_payment_intent, paid_at
-- `prearrival_messages` — booking_id + channel unik (idempotens)
-- `early_checkin_flags` — tent_id + date unik (driver städ-sortering)
-- `app_settings` — key/value för PREARRIVAL_LEAD_DAYS, ORDER_CUTOFF_DAYS, OWNER_EMAIL
+**Databas (nya tabeller vid sidan av Sirvoy-bookings):**
+- `properties` — din anläggning som en rad (förberett för fler i framtiden)
+- `rooms` — de tre tälten, priser, kapacitet, sängkonfig
+- `booking_engine_bookings` — direktbokningar från nya motorn (separat från `bookings` som fortsätter få Sirvoy-import)
+- `booking_addons` — kopplingar till befintliga `addons`
+- `sources` — Sirvoy-iCal-feed som en source så tillgänglighet kan blockeras
+- `booking_engine_settings` — cutoff-regler, min/max nätter, prisregler
 
-GRANTs + RLS:
-- `addons`: public SELECT (active=true), admin all
-- `addon_orders`: ingen anon, admin all, service_role för webhooks
-- `prearrival_messages`, `early_checkin_flags`, `app_settings`: admin all + service_role
-- RPC `get_stay_by_token(uuid)` (SECURITY DEFINER) — returnerar booking + addons + orders, **utan email/phone/adress** (skyddar PII)
-- RPC `list_bookings_missing_contact(int)` (admin) — för admin-flagga
-- RPC `set_early_checkin_flag(tent_id, date, bool)` (service_role)
+**Edge functions (portade från StayBoost):**
+- `booking-engine` — sök tillgänglighet, skapa bokning, kollar konflikter mot både Sirvoy-import och egna bokningar
+- `stripe-webhook` (utökar befintlig) — hanterar både addon-orders och nya bokningar
+- `ical-sync` — hämtar Sirvoys iCal-feed så dubbelbokning undviks
+- `ical-export` — publicerar din nya-motor-tillgänglighet till Sirvoy
 
-Seed: 3 addons (frukost 209, fikapåse 89, tidig incheckning 399).
+**Frontend:**
+- Ny route `/boka-direkt` (behåller Sirvoy-widgeten på `/` och `/boka` under övergången)
+- Datumväljare, tältval, gästinfo, tillval, Stripe checkout eller Swish
+- Admin: `AdminBookingEngine.tsx` — se direktbokningar, bekräfta Swish, hantera priser/regler
+- Toggle i admin: "Visa direktboknings-widget istället för Sirvoy" när du är redo att byta helt
 
-## Steg 2 — CSV-import i admin
+**Stripe:**
+- Behåller din befintliga `STRIPE_SECRET_KEY` (BYOK)
+- Återanvänder redan aktiverad `stripe-webhook`-funktion — utökas med `booking.created`-flöde
+- Ny prislista i Stripe skapas inte; vi använder `price_data` inline eftersom priserna sätts i din databas
 
-I `BookingsManager.tsx`, lägg till "Importera Sirvoy CSV"-knapp:
-- Parsar CSV (Sirvoy-fält: Booking no, First name, Last name, email, phone, country, Specification, Room ID, Check-in, Check-out, Units)
-- Upsert på `sirvoy_booking_no` (eller `booking_number`)
-- Sätter `language` från country_code (SE→sv, annars en)
-- Visar diff: nya / uppdaterade / saknar kontakt
-- All parsing klientsida → batch insert via supabase-client
+## Parallelldrift under 2026-säsongen
 
-## Steg 3 — Edge functions
+- Sirvoy fortsätter äga alla befintliga bokningar (fram till du väljer att stänga)
+- CSV-import fortsätter fungera exakt som idag
+- Nya direktbokningar hamnar i `booking_engine_bookings` och syns i admin bredvid Sirvoy-listan
+- Städ-, incheckning- och stay-flödena läser från **båda** tabellerna via en vy `all_bookings_v` så gästen märker ingen skillnad
+- iCal-sync håller kalendrarna synk så samma tält inte dubbelbokas
 
-**`send-prearrival-batch`** (cron, dagligen 09:00 Stockholm)
-- Hämtar bookings där checkin_date = today + lead_days (från app_settings, default 5)
-- För varje utan rad i prearrival_messages: rendera mail (via send-transactional-email) + SMS (46elks direkt)
-- Mall-nyckel: `prearrival-offer` (ny tsx-mall i transactional-email-templates/)
-- Hoppar och loggar om email/phone saknas
-- pg_cron schemaläggs via `supabase--insert`
+## Ordning
 
-**`create-addon-checkout`** (public, ingen JWT)
-- Body: `{ public_token, items: [{addon_id, quantity}] }`
-- Validerar: token finns, checkin_date - today >= cutoff_days, addons aktiva
-- Skapar Stripe Checkout (mode=payment, payment_method_types=['card'], **Swish aktiveras separat i Stripe Dashboard**)
-- Skapar `addon_orders`-rader status=pending
-- Returnerar checkout URL
-
-**`stripe-addon-webhook`** (public, signaturverifiering)
-- `checkout.session.completed` → uppdatera orders till `paid` (frukost/fika) eller `confirmed` (tidig incheckning)
-- Om tidig incheckning: anropa `set_early_checkin_flag`
-- Skickar gästbekräftelse (mail + SMS) + ägarnotis (mail till app_settings.OWNER_EMAIL)
-- Idempotent via stripe_session_id
-
-## Steg 4 — Mallar (React Email, sv/en i samma fil)
-
-- `prearrival-offer.tsx` — meny + länk
-- `addon-confirmation-guest.tsx` — tack-mail till gäst
-- `addon-notification-owner.tsx` — ägarnotis
-
-Skriv ut antal dagar i bokstäver (`fem`/`five`-helper).
-
-## Steg 5 — Frontend
-
-**Ny route `/stay/:token`** (`src/pages/Stay.tsx`)
-- Anropar `get_stay_by_token` RPC
-- Visar vistelse + addon-meny på rätt språk
-- Frukost/fika: antalsväljare 1–max
-- Tidig incheckning: toggle
-- Visar redan köpta tillval
-- Cutoff-check: om <2 dygn → "Tyvärr för sent"-meddelande
-- "Lägg till & betala" → anropar `create-addon-checkout` → redirect
-- `/stay/:token/tack` — tack-sida
-- Mobile-first, samma färg/typsnitt (#2c5f2e, Playfair/DM Sans)
-
-**Admin tillägg:**
-- `AddonsManager.tsx` — CRUD på addons + edit app_settings (lead_days, owner_email)
-- `BookingsManager.tsx`: 
-  - CSV-import-knapp + diff-modal
-  - Sektion "Saknar kontaktuppgifter" (röda rader för bokningar inom utskicksfönstret)
-- `AddonOrdersManager.tsx` — filtrerbar lista
-- Sidebar-länkar
-
-**Städsida (`src/pages/Cleaning.tsx`):**
-- Läs `early_checkin_flags` för datumet
-- Sortera tält så flaggade hamnar överst
-- Orange ram + badge "⏰ Tidig incheckning kl 12.00 – städa detta tält först" / EN
-
-## Steg 6 — Stripe-aktivering
-
-Använder **Lovable's built-in Stripe payments** (`enable_stripe_payments`). Användaren får ett formulär att fylla i. Efter aktivering konfigureras webhooks automatiskt. Swish aktiveras manuellt i Stripe Dashboard.
+1. **Migration** — nya tabeller, GRANTs, RLS, seed av `properties`/`rooms` från din config, `all_bookings_v`-vy
+2. **Edge functions** — porta `booking-engine`, `ical-sync`, `ical-export` (behåller StayBoosts logik)
+3. **Admin** — `AdminBookingEngine.tsx` + Sirvoy iCal-konfiguration
+4. **Publik `/boka-direkt`** — bokningsflöde med Stripe/Swish
+5. **Stay-integration** — läs bokningar från `all_bookings_v` så alla befintliga flöden funkar för direktbokningar också
+6. **Toggle** — låt dig aktivera direktmotor som primär widget när du är trygg
 
 ## Tekniska detaljer
 
-- Tidszon: SQL använder `(now() AT TIME ZONE 'Europe/Stockholm')::date` för datum-jämförelser
-- PUBLIC_BASE_URL: hämtas från app_settings (default `https://goglampingsweden.se`)
-- Telefon-normalisering vid CSV-import: lägger till `+46` om svenskt nummer börjar med 0
-- Säkerhet: `get_stay_by_token` returnerar INTE email/phone/address i svaret
-- `prearrival_messages` har `(booking_id, channel)` unique constraint
-- Webhook idempotens: kollar `paid_at IS NULL` innan uppdatering
+- **Framework-översättning:** StayBoosts TanStack routes → React Router pages här. Logik i `src/lib/` och `supabase/functions/_shared/` kan kopieras nästan orört.
+- **Multi-tenant → single-tenant:** vi behåller `property_id`-kolumnen men hårdkodar din property som default så vi kan expandera senare utan ny migration.
+- **Sirvoy iCal:** din Sirvoy-panel har "Kalenderfeeder" per rum — vi läser den. Kräver att du kopierar in tre iCal-URL:er i admin (en per tält) första gången.
+- **Ingen data raderas eller ändras** i befintliga tabeller. `booking_engine_bookings` är helt ny.
 
-## Vad jag INTE bygger nu
+## Vad jag INTE gör i det här steget
 
-- Sirvoy API-sync (du valde CSV-import)
-- Marknadsföringsmail / drip campaigns
-- Återbetalningsflöde via UI (görs i Stripe Dashboard; flaggan tas bort manuellt eller via cron som kollar webhook `charge.refunded`)
+- Portera StayBoosts meddelandemallar / drip-kampanjer (du har redan detta i Lovable Emails)
+- Portera StayBoosts multi-property-admin (du är ensam property)
+- Automatisk data-sync från Sirvoy → nya schemat (fortsätt CSV-importera som idag)
+- Faktisk avstängning av Sirvoy (görs manuellt när du är nöjd)
 
-## Reihenfolge
+## Ungefärlig omfattning
 
-1. Migration (databas + RPC)
-2. Edge functions + mallar + Stripe
-3. CSV-import + admin-sidor
-4. /stay/:token-flöde
-5. Städ-prioritering
-6. Cron-schema (pg_cron via supabase--insert)
+Cirka 6 migrations, 4 edge functions, 3 admin-komponenter, 1 publik bokningssida. Detta är **flera timmars implementation** och kommer att göras i steg — du får testa varje del innan vi går vidare.
+
+Vill du att jag börjar med steg 1 (databas + vy) direkt?
