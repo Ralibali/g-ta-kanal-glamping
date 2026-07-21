@@ -2,11 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import Stripe from 'https://esm.sh/stripe@18.5.0'
 
 // Tar emot Stripe-webhooks så att betalningar bekräftas även om gästen
-// stänger fliken innan den skickas tillbaka till /stay eller /boka-direkt.
-//
-// Hanterar:
-//   - Tillvalsbeställningar  (metadata.order_id / addon_orders.stripe_session_id)
-//   - Direktbokningar        (metadata.be_booking_id / be_bookings.stripe_session_id)
+// stänger fliken innan den skickas tillbaka till /stay efter köpet.
 //
 // Konfiguration (engångssteg i Stripe Dashboard):
 //   1. Developers → Webhooks → Add endpoint:
@@ -41,28 +37,10 @@ Deno.serve(async (req) => {
   const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
   const session = event.data.object as Stripe.Checkout.Session
   const sessionId = session.id
-  const beBookingId = session.metadata?.be_booking_id ?? null
 
   try {
     if (event.type === 'checkout.session.completed') {
-      // 1) Direktbokning (be_bookings) — markera paid + confirmed
-      if (beBookingId) {
-        const amount = typeof session.amount_total === 'number' ? session.amount_total / 100 : null
-        const { error } = await supabase
-          .from('be_bookings')
-          .update({
-            payment_status: 'paid',
-            status: 'confirmed',
-            stripe_session_id: sessionId,
-            payment_amount: amount ?? undefined,
-          })
-          .eq('id', beBookingId)
-        if (error) console.error('be_bookings update failed', error)
-        console.log('be_booking paid via webhook', beBookingId, sessionId, amount)
-        return json({ received: true, be_booking: !error })
-      }
-
-      // 2) Tillvalsbeställning — återanvänd verify-flödet (mail/SMS, idempotent)
+      // Återanvänd hela bekräftelseflödet (markerar paid + skickar mail/SMS, idempotent)
       const supabaseUrl = Deno.env.get('SUPABASE_URL')!
       const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
       const res = await fetch(`${supabaseUrl}/functions/v1/verify-addon-payment`, {
@@ -76,15 +54,7 @@ Deno.serve(async (req) => {
     }
 
     if (event.type === 'checkout.session.expired') {
-      if (beBookingId) {
-        const { error } = await supabase
-          .from('be_bookings')
-          .update({ payment_status: 'cancelled', status: 'cancelled' })
-          .eq('id', beBookingId)
-          .eq('payment_status', 'pending')
-        if (error) console.error('cancel expired be_booking failed', error)
-        return json({ received: true, be_cancelled: !error })
-      }
+      // Gästen betalade aldrig — släpp tillvalen så de kan beställas igen.
       const { error } = await supabase
         .from('addon_orders')
         .update({ status: 'cancelled' })

@@ -118,26 +118,21 @@ export default function Breakfast() {
   const [savingDiet, setSavingDiet] = useState(false);
 
   useEffect(() => {
-    if (loading) return;
-    if (user && isBreakfast) return;
-    (async () => {
-      // Om vi redan är inloggade som någon utan frukostbehörighet — logga ut först
-      // så vi kan auto-logga in det delade frukost-kontot.
-      if (user && !isBreakfast) {
-        await supabase.auth.signOut();
-      }
-      const tryLogin = async (password: string) =>
-        await supabase.auth.signInWithPassword({ email: "karin@bostallet.se", password });
-      let result = await tryLogin("bostället");
-      if (result.error) result = await tryLogin("Bostället");
-      if (result.error) {
-        try {
-          await supabase.functions.invoke("provision-breakfast");
-          await tryLogin("bostället");
-        } catch {}
-      }
-    })();
-  }, [loading, user, isBreakfast]);
+    if (!loading && !user) {
+      (async () => {
+        const tryLogin = async (password: string) =>
+          await supabase.auth.signInWithPassword({ email: "karin@bostallet.se", password });
+        let result = await tryLogin("bostället");
+        if (result.error) result = await tryLogin("Bostället");
+        if (result.error) {
+          try {
+            await supabase.functions.invoke("provision-breakfast");
+            await tryLogin("bostället");
+          } catch {}
+        }
+      })();
+    }
+  }, [loading, user]);
 
   useEffect(() => {
     const previousTitle = document.title;
