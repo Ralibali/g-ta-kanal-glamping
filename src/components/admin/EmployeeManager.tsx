@@ -55,7 +55,7 @@ export function EmployeeManager() {
     const [a, e, p] = await Promise.all([
       (supabase as any).from("employee_availability").select("id, user_id, work_date, note")
         .gte("work_date", from).lte("work_date", to).order("work_date"),
-      (supabase as any).from("time_entries").select("id, user_id, started_at, ended_at, hours, note, source, approved")
+      (supabase as any).from("time_entries").select("id, user_id, started_at, ended_at, hours, note, source, approved, paid_at")
         .gte("started_at", `${from}T00:00:00`).lte("started_at", `${to}T23:59:59`)
         .order("started_at", { ascending: false }),
       (supabase as any).from("cleaner_profiles")
