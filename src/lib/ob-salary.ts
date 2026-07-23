@@ -119,8 +119,8 @@ function obRateFor(iso: string, minute: number, dow: number): number {
   const holiday = isSwedishHoliday(iso);
   if (dow === 0 || holiday) return OB_EVENING_RATE; // söndag / röd dag
   if (dow === 6) {
-    // lördag efter 16:00
-    return minute >= 16 * 60 ? OB_EVENING_RATE : 0;
+    // lördag från 12:00
+    return minute >= 12 * 60 ? OB_EVENING_RATE : 0;
   }
   // vardag efter 20:00
   return minute >= 20 * 60 ? OB_EVENING_RATE : 0;
