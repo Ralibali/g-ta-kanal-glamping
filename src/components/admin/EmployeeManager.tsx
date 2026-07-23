@@ -13,6 +13,7 @@ type Availability = { id: string; user_id: string; work_date: string; note: stri
 type TimeEntry = {
   id: string; user_id: string; started_at: string; ended_at: string | null;
   hours: number | null; note: string | null; source: string; approved: boolean;
+  paid_at: string | null;
 };
 type Profile = {
   user_id: string;
@@ -54,7 +55,7 @@ export function EmployeeManager() {
     const [a, e, p] = await Promise.all([
       (supabase as any).from("employee_availability").select("id, user_id, work_date, note")
         .gte("work_date", from).lte("work_date", to).order("work_date"),
-      (supabase as any).from("time_entries").select("id, user_id, started_at, ended_at, hours, note, source, approved")
+      (supabase as any).from("time_entries").select("id, user_id, started_at, ended_at, hours, note, source, approved, paid_at")
         .gte("started_at", `${from}T00:00:00`).lte("started_at", `${to}T23:59:59`)
         .order("started_at", { ascending: false }),
       (supabase as any).from("cleaner_profiles")
@@ -103,6 +104,26 @@ export function EmployeeManager() {
     else { toast.success("Sparat"); load(); }
   };
 
+  const markPaid = async (uid: string) => {
+    if (!confirm(`Markera alla obetalda tidsposter för ${nameFor(uid)} mellan ${from} och ${to} som utbetalda?`)) return;
+    const { data, error } = await (supabase as any).rpc("mark_time_entries_paid", {
+      p_user_id: uid, p_from: from, p_to: to, p_batch: `payout-${new Date().toISOString().slice(0, 10)}`,
+    });
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${data ?? 0} tidsposter markerade som utbetalda`);
+    load();
+  };
+
+  const unmarkPaid = async (uid: string) => {
+    if (!confirm(`Ångra utbetalningsmarkering för ${nameFor(uid)} i period ${from}–${to}?`)) return;
+    const { data, error } = await (supabase as any).rpc("unmark_time_entries_paid", {
+      p_user_id: uid, p_from: from, p_to: to,
+    });
+    if (error) { toast.error(error.message); return; }
+    toast.success(`${data ?? 0} tidsposter återställda`);
+    load();
+  };
+
   const byUser = useMemo(() => {
     const ids = new Set<string>();
     profiles.forEach((p) => ids.add(p.user_id));
@@ -111,15 +132,21 @@ export function EmployeeManager() {
     return Array.from(ids).map((uid) => {
       const prof = profiles.find((p) => p.user_id === uid) ?? null;
       const uEntries = entries.filter((e) => e.user_id === uid);
+      const uUnpaid = uEntries.filter((e) => !e.paid_at);
+      const uPaid = uEntries.filter((e) => !!e.paid_at);
       const uAvail = availability.filter((a) => a.user_id === uid).sort((a, b) => a.work_date.localeCompare(b.work_date));
-      const ob = computeObBreakdown(uEntries);
-      const hours = ob.totalHours || uEntries.reduce((s, e) => s + Number(e.hours ?? 0), 0);
+      const ob = computeObBreakdown(uUnpaid);
+      const paidOb = computeObBreakdown(uPaid);
+      const hours = ob.totalHours;
       const rate = Number(prof?.hourly_rate ?? 0);
       const vac = Number(prof?.vacation_pct ?? 0);
       const baseGross = hours * rate;
       const gross = baseGross + ob.obTotal;
       const vp = gross * vac / 100;
-      return { uid, prof, entries: uEntries, availability: uAvail, hours, ob, baseGross, gross, vp, total: gross + vp };
+      const paidGross = paidOb.totalHours * rate + paidOb.obTotal;
+      const paidTotal = paidGross * (1 + vac / 100);
+      return { uid, prof, entries: uEntries, availability: uAvail, hours, ob, baseGross, gross, vp, total: gross + vp,
+               paidHours: paidOb.totalHours, paidTotal, unpaidCount: uUnpaid.length, paidCount: uPaid.length };
     }).sort((a, b) => nameFor(a.uid).localeCompare(nameFor(b.uid)));
   }, [profiles, entries, availability]);
 
@@ -175,7 +202,7 @@ export function EmployeeManager() {
         <Card><CardContent className="py-8 text-center text-muted-foreground text-sm">Inga anställda hittades.</CardContent></Card>
       )}
 
-      {byUser.map(({ uid, prof, entries: uEntries, availability: uAvail, hours, ob, baseGross, gross, vp, total }) => (
+      {byUser.map(({ uid, prof, entries: uEntries, availability: uAvail, hours, ob, baseGross, gross, vp, total, paidHours, paidTotal, unpaidCount, paidCount }) => (
         <Card key={uid}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 flex-wrap">
@@ -213,8 +240,9 @@ export function EmployeeManager() {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
                   <div className="rounded border p-2">
-                    <div className="text-muted-foreground">Timmar totalt</div>
+                    <div className="text-muted-foreground">Timmar obetalt</div>
                     <div className="font-semibold text-sm">{hours.toFixed(2)} h</div>
+                    {paidHours > 0 && <div className="text-[10px] text-emerald-700">+{paidHours.toFixed(2)} h utbetalt</div>}
                   </div>
                   <div className="rounded border p-2">
                     <div className="text-muted-foreground">OB kväll/helg</div>
@@ -231,6 +259,24 @@ export function EmployeeManager() {
                     <div className="font-semibold text-sm">{total.toFixed(2)} kr</div>
                     <div className="text-[10px] text-muted-foreground">Grund {baseGross.toFixed(2)} + OB {ob.obTotal.toFixed(2)} + Sem {vp.toFixed(2)}</div>
                   </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {unpaidCount > 0 && (
+                    <Button size="sm" variant="default" onClick={() => markPaid(uid)}>
+                      <Check className="mr-2 h-4 w-4" /> Markera {unpaidCount} som utbetalda ({total.toFixed(0)} kr)
+                    </Button>
+                  )}
+                  {paidCount > 0 && (
+                    <>
+                      <Badge variant="outline" className="border-emerald-300 text-emerald-800">
+                        {paidCount} utbetalda · {paidTotal.toFixed(0)} kr
+                      </Badge>
+                      <Button size="sm" variant="ghost" onClick={() => unmarkPaid(uid)}>
+                        <X className="mr-1 h-4 w-4" /> Ångra utbetalning
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -270,6 +316,7 @@ export function EmployeeManager() {
                           <span>{e.hours ? `${Number(e.hours).toFixed(2)} h` : "–"}</span>
                           <Badge variant="outline" className="text-[10px]">{e.source === "manual" ? "manuell" : "stämpel"}</Badge>
                           {e.approved && <Badge className="bg-green-600 text-[10px]">godkänd</Badge>}
+                          {e.paid_at && <Badge className="bg-emerald-700 text-[10px]">utbetald</Badge>}
                         </div>
                         {e.note && <p className="text-xs mt-1">{e.note}</p>}
                       </div>
