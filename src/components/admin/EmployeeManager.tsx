@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RefreshCw, Download, Check, X, CalendarDays, Clock, User as UserIcon, Save } from "lucide-react";
 import { toast } from "sonner";
+import { computeObBreakdown, OB_EVENING_RATE, OB_NIGHT_RATE } from "@/lib/ob-salary";
 
 type Availability = { id: string; user_id: string; work_date: string; note: string | null };
 type TimeEntry = {
