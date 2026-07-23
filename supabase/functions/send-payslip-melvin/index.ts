@@ -28,10 +28,13 @@ Deno.serve(async (req) => {
         to: ['melvin@r8a.se'],
         bcc: ['info@auroramedia.se'],
         reply_to: 'info@auroramedia.se',
-        subject: 'Lönespecifikation juli 2026 – Go Glamping Sweden',
+        subject: 'Lönespecifikation juli 2026 – Go Glamping Sweden (korrigerad)',
         html: `<p>Hej Melvin!</p>
-<p>Bifogat hittar du din lönespecifikation för juli 2026.</p>
-<p><strong>Att betala ut: 983,62 kr</strong><br/>Utbetalning: <strong>24 juli 2026</strong> via Swish 0722254993.</p>
+<p>Bifogat hittar du din korrigerade lönespecifikation för juli 2026.</p>
+<p><strong>Att betala ut: 983,62 kr</strong><br/>Utbetalning: <strong>24 juli 2026</strong> till bankkonto <strong>5319-0334064</strong>.</p>
+<p>Semesterersättning (118,03 kr) sparas separat och betalas ut senare.</p>
+<p>Hör av dig om något ser fel ut. Tack för fint jobb i juli!</p>
+<p>Mvh,<br/>Christoffer<br/>Aurora Media AB / Go Glamping Sweden</p>`,
 <p>Semesterersättning (118,03 kr) sparas separat och betalas ut senare.</p>
 <p>Hör av dig om något ser fel ut. Tack för fint jobb i juli!</p>
 <p>Mvh,<br/>Christoffer<br/>Aurora Media AB / Go Glamping Sweden</p>`,
