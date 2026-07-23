@@ -24,9 +24,9 @@ describe("computeObBreakdown", () => {
     expect(r.obEveningAmount).toBeCloseTo(3 * OB_EVENING_RATE, 1);
   });
 
-  it("lördag 15–18 ger 2h OB (efter 16)", () => {
+  it("lördag 10–14 ger 2h OB (från 12)", () => {
     const r = computeObBreakdown([
-      { started_at: local("2026-07-18T15:00", 2), ended_at: local("2026-07-18T18:00", 2) },
+      { started_at: local("2026-07-18T10:00", 2), ended_at: local("2026-07-18T14:00", 2) },
     ]);
     expect(r.eveningObHours).toBeCloseTo(2, 1);
   });
