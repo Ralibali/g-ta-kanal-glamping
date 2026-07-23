@@ -35,9 +35,6 @@ Deno.serve(async (req) => {
 <p>Semesterersättning (118,03 kr) sparas separat och betalas ut senare.</p>
 <p>Hör av dig om något ser fel ut. Tack för fint jobb i juli!</p>
 <p>Mvh,<br/>Christoffer<br/>Aurora Media AB / Go Glamping Sweden</p>`,
-<p>Semesterersättning (118,03 kr) sparas separat och betalas ut senare.</p>
-<p>Hör av dig om något ser fel ut. Tack för fint jobb i juli!</p>
-<p>Mvh,<br/>Christoffer<br/>Aurora Media AB / Go Glamping Sweden</p>`,
         attachments: [{ filename: 'lonespec-melvin-juli-2026.pdf', content: b64 }],
       }),
     });
