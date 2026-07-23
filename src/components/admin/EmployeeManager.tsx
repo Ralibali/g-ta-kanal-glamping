@@ -175,7 +175,7 @@ export function EmployeeManager() {
         <Card><CardContent className="py-8 text-center text-muted-foreground text-sm">Inga anställda hittades.</CardContent></Card>
       )}
 
-      {byUser.map(({ uid, prof, entries: uEntries, availability: uAvail, hours, gross, vp, total }) => (
+      {byUser.map(({ uid, prof, entries: uEntries, availability: uAvail, hours, ob, baseGross, gross, vp, total }) => (
         <Card key={uid}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 flex-wrap">
@@ -189,7 +189,7 @@ export function EmployeeManager() {
           <CardContent className="space-y-5">
             {/* Lönesatser */}
             {prof && (
-              <div className="rounded-lg border p-3 bg-muted/30">
+              <div className="rounded-lg border p-3 bg-muted/30 space-y-3">
                 <div className="flex flex-wrap items-end gap-3">
                   <div>
                     <Label className="text-xs">Timlön (SEK)</Label>
@@ -210,11 +210,26 @@ export function EmployeeManager() {
                   <Button size="sm" onClick={() => saveRate(uid)} disabled={savingRate === uid}>
                     <Save className="mr-2 h-4 w-4" /> Spara
                   </Button>
-                  <div className="ml-auto text-sm space-x-3">
-                    <Badge variant="secondary">{hours.toFixed(2)} h</Badge>
-                    <Badge variant="secondary">Brutto {gross.toFixed(2)} kr</Badge>
-                    <Badge variant="secondary">Semester {vp.toFixed(2)} kr</Badge>
-                    <Badge>Totalt {total.toFixed(2)} kr</Badge>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                  <div className="rounded border p-2">
+                    <div className="text-muted-foreground">Timmar totalt</div>
+                    <div className="font-semibold text-sm">{hours.toFixed(2)} h</div>
+                  </div>
+                  <div className="rounded border p-2">
+                    <div className="text-muted-foreground">OB kväll/helg</div>
+                    <div className="font-semibold text-sm">{ob.eveningObHours.toFixed(2)} h · {ob.obEveningAmount.toFixed(2)} kr</div>
+                    <div className="text-[10px] text-muted-foreground">+{OB_EVENING_RATE} kr/h</div>
+                  </div>
+                  <div className="rounded border p-2">
+                    <div className="text-muted-foreground">OB natt 01–06</div>
+                    <div className="font-semibold text-sm">{ob.nightObHours.toFixed(2)} h · {ob.obNightAmount.toFixed(2)} kr</div>
+                    <div className="text-[10px] text-muted-foreground">+{OB_NIGHT_RATE} kr/h</div>
+                  </div>
+                  <div className="rounded border p-2 bg-primary/5">
+                    <div className="text-muted-foreground">Att betala ut</div>
+                    <div className="font-semibold text-sm">{total.toFixed(2)} kr</div>
+                    <div className="text-[10px] text-muted-foreground">Grund {baseGross.toFixed(2)} + OB {ob.obTotal.toFixed(2)} + Sem {vp.toFixed(2)}</div>
                   </div>
                 </div>
               </div>
