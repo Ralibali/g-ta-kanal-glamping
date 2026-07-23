@@ -1432,6 +1432,8 @@ export type Database = {
           hours: number | null
           id: string
           note: string | null
+          paid_at: string | null
+          paid_batch: string | null
           source: string
           started_at: string
           updated_at: string
@@ -1446,6 +1448,8 @@ export type Database = {
           hours?: number | null
           id?: string
           note?: string | null
+          paid_at?: string | null
+          paid_batch?: string | null
           source?: string
           started_at: string
           updated_at?: string
@@ -1460,6 +1464,8 @@ export type Database = {
           hours?: number | null
           id?: string
           note?: string | null
+          paid_at?: string | null
+          paid_batch?: string | null
           source?: string
           started_at?: string
           updated_at?: string
@@ -1618,6 +1624,15 @@ export type Database = {
           tent_id: string
         }[]
       }
+      mark_time_entries_paid: {
+        Args: {
+          p_batch?: string
+          p_from: string
+          p_to: string
+          p_user_id: string
+        }
+        Returns: number
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -1659,6 +1674,10 @@ export type Database = {
           p_tent_id: string
         }
         Returns: undefined
+      }
+      unmark_time_entries_paid: {
+        Args: { p_from: string; p_to: string; p_user_id: string }
+        Returns: number
       }
     }
     Enums: {
