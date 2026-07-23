@@ -112,12 +112,14 @@ export function EmployeeManager() {
       const prof = profiles.find((p) => p.user_id === uid) ?? null;
       const uEntries = entries.filter((e) => e.user_id === uid);
       const uAvail = availability.filter((a) => a.user_id === uid).sort((a, b) => a.work_date.localeCompare(b.work_date));
-      const hours = uEntries.reduce((s, e) => s + Number(e.hours ?? 0), 0);
+      const ob = computeObBreakdown(uEntries);
+      const hours = ob.totalHours || uEntries.reduce((s, e) => s + Number(e.hours ?? 0), 0);
       const rate = Number(prof?.hourly_rate ?? 0);
       const vac = Number(prof?.vacation_pct ?? 0);
-      const gross = hours * rate;
+      const baseGross = hours * rate;
+      const gross = baseGross + ob.obTotal;
       const vp = gross * vac / 100;
-      return { uid, prof, entries: uEntries, availability: uAvail, hours, gross, vp, total: gross + vp };
+      return { uid, prof, entries: uEntries, availability: uAvail, hours, ob, baseGross, gross, vp, total: gross + vp };
     }).sort((a, b) => nameFor(a.uid).localeCompare(nameFor(b.uid)));
   }, [profiles, entries, availability]);
 
