@@ -155,7 +155,7 @@ export function SalaryPanel({ userId }: { userId: string }) {
               <div className="rounded-lg bg-muted/50 border p-3 text-xs text-muted-foreground flex gap-2">
                 <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
                 <div>
-                  OB enligt Gröna riksavtalet: +27,59 kr/h vardag efter 20.00, lör efter 16.00, sön &amp; röda dagar hela dagen. Natt 01–06: sammanlagt +51,90 kr/h.
+                  OB enligt Gröna riksavtalet: +27,59 kr/h vardag efter 20.00, lör från 12.00, sön &amp; röda dagar hela dagen. Natt 01–06: sammanlagt +51,90 kr/h.
                 </div>
               </div>
 
