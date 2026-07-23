@@ -1,7 +1,7 @@
 // Beräknar OB-tillägg enligt Gröna riksavtalet (hotell & besöksnäring)
 // Regler:
 //  - Vardag (mån–fre) efter kl. 20.00: +27,59 kr/h
-//  - Lördag efter kl. 16.00: +27,59 kr/h
+//  - Lördag från kl. 12.00: +27,59 kr/h
 //  - Söndag och röda dagar hela dagen: +27,59 kr/h
 //  - Natt kl. 01.00–06.00 (alla dagar): sammanlagt +51,90 kr/h (ersätter övriga OB-nivåer)
 // Tider tolkas i Europe/Stockholm.
@@ -119,8 +119,8 @@ function obRateFor(iso: string, minute: number, dow: number): number {
   const holiday = isSwedishHoliday(iso);
   if (dow === 0 || holiday) return OB_EVENING_RATE; // söndag / röd dag
   if (dow === 6) {
-    // lördag efter 16:00
-    return minute >= 16 * 60 ? OB_EVENING_RATE : 0;
+    // lördag från 12:00
+    return minute >= 12 * 60 ? OB_EVENING_RATE : 0;
   }
   // vardag efter 20:00
   return minute >= 20 * 60 ? OB_EVENING_RATE : 0;
