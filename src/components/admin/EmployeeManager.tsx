@@ -316,6 +316,7 @@ export function EmployeeManager() {
                           <span>{e.hours ? `${Number(e.hours).toFixed(2)} h` : "–"}</span>
                           <Badge variant="outline" className="text-[10px]">{e.source === "manual" ? "manuell" : "stämpel"}</Badge>
                           {e.approved && <Badge className="bg-green-600 text-[10px]">godkänd</Badge>}
+                          {e.paid_at && <Badge className="bg-emerald-700 text-[10px]">utbetald</Badge>}
                         </div>
                         {e.note && <p className="text-xs mt-1">{e.note}</p>}
                       </div>
