@@ -202,7 +202,7 @@ export function EmployeeManager() {
         <Card><CardContent className="py-8 text-center text-muted-foreground text-sm">Inga anställda hittades.</CardContent></Card>
       )}
 
-      {byUser.map(({ uid, prof, entries: uEntries, availability: uAvail, hours, ob, baseGross, gross, vp, total }) => (
+      {byUser.map(({ uid, prof, entries: uEntries, availability: uAvail, hours, ob, baseGross, gross, vp, total, paidHours, paidTotal, unpaidCount, paidCount }) => (
         <Card key={uid}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 flex-wrap">
@@ -240,8 +240,9 @@ export function EmployeeManager() {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
                   <div className="rounded border p-2">
-                    <div className="text-muted-foreground">Timmar totalt</div>
+                    <div className="text-muted-foreground">Timmar obetalt</div>
                     <div className="font-semibold text-sm">{hours.toFixed(2)} h</div>
+                    {paidHours > 0 && <div className="text-[10px] text-emerald-700">+{paidHours.toFixed(2)} h utbetalt</div>}
                   </div>
                   <div className="rounded border p-2">
                     <div className="text-muted-foreground">OB kväll/helg</div>
@@ -258,6 +259,24 @@ export function EmployeeManager() {
                     <div className="font-semibold text-sm">{total.toFixed(2)} kr</div>
                     <div className="text-[10px] text-muted-foreground">Grund {baseGross.toFixed(2)} + OB {ob.obTotal.toFixed(2)} + Sem {vp.toFixed(2)}</div>
                   </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {unpaidCount > 0 && (
+                    <Button size="sm" variant="default" onClick={() => markPaid(uid)}>
+                      <Check className="mr-2 h-4 w-4" /> Markera {unpaidCount} som utbetalda ({total.toFixed(0)} kr)
+                    </Button>
+                  )}
+                  {paidCount > 0 && (
+                    <>
+                      <Badge variant="outline" className="border-emerald-300 text-emerald-800">
+                        {paidCount} utbetalda · {paidTotal.toFixed(0)} kr
+                      </Badge>
+                      <Button size="sm" variant="ghost" onClick={() => unmarkPaid(uid)}>
+                        <X className="mr-1 h-4 w-4" /> Ångra utbetalning
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             )}
