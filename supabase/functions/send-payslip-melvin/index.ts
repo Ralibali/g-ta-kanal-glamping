@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
         'X-Connection-Api-Key': RESEND_API_KEY,
       },
       body: JSON.stringify({
-        from: 'Go Glamping Sweden <lonespec@notify.goglampingsweden.se>',
+        from: 'Go Glamping Sweden <lonespec@goglampingsweden.se>',
         to: ['melvin@r8a.se'],
         bcc: ['info@auroramedia.se'],
         reply_to: 'info@auroramedia.se',
