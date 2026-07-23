@@ -13,6 +13,7 @@ type Availability = { id: string; user_id: string; work_date: string; note: stri
 type TimeEntry = {
   id: string; user_id: string; started_at: string; ended_at: string | null;
   hours: number | null; note: string | null; source: string; approved: boolean;
+  paid_at: string | null;
 };
 type Profile = {
   user_id: string;
