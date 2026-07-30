@@ -1042,7 +1042,9 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 const q = qty[a.id] ?? 0;
                 const name = isSv ? a.name_sv : a.name_en;
                 const desc = isSv ? a.description_sv : a.description_en;
-                const priceLabel = a.unit === "per_quantity" ? t.perPerson : t.perStay;
+                const priceLabel = a.slug === "sup_rental"
+                  ? (isSv ? "kr/st per dygn" : "SEK/board per 24h")
+                  : a.unit === "per_quantity" ? t.perPerson : t.perStay;
                 const addCta: Record<string, string> = {
                   sv: `Lägg till ${name.toLowerCase()} • ${a.price_sek} kr`,
                   en: `Add ${name.toLowerCase()} • ${a.price_sek} SEK`,
