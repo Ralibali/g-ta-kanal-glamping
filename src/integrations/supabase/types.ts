@@ -1257,6 +1257,27 @@ export type Database = {
           },
         ]
       }
+      sirvoy_import_staging: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          payload: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          payload: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          payload?: Json
+        }
+        Relationships: []
+      }
       sms_outbox: {
         Row: {
           body: string
@@ -1517,6 +1538,7 @@ export type Database = {
       }
     }
     Functions: {
+      apply_sirvoy_import_staging: { Args: never; Returns: Json }
       auto_assign_missing_tents: {
         Args: never
         Returns: {
