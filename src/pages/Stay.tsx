@@ -412,6 +412,28 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
       note: "The tents remain strictly non-smoking and pets must be supervised on site.",
     },
   },
+  sup_rental: {
+    sv: {
+      tagline: "Paddla ut på Göta kanal — SUP med flytväst i ett helt dygn.",
+      bullets: [
+        "En SUP-bräda med paddel och flytväst",
+        "24 timmar från att ni hämtar den",
+        "Lugnt vatten precis vid tälten",
+        "Max två brädor per bokning",
+      ],
+      note: "100 kr per bräda och dygn. Vi visar var brädan står och hur ni gör när ni är klara.",
+    },
+    en: {
+      tagline: "Paddle out on the Göta Canal — SUP with life vest for a full 24 hours.",
+      bullets: [
+        "One SUP board with paddle and life vest",
+        "24 hours from pick-up",
+        "Calm water right by the tents",
+        "Maximum two boards per booking",
+      ],
+      note: "100 SEK per board per 24h. We'll show you where the board is and what to do when you're done.",
+    },
+  },
 };
 
 function getDetails(slug: string, lang: string) {
