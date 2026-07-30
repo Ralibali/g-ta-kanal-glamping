@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut, Volume2, Droplets, AlertTriangle, RefreshCw, Download, Copy, Check, Mail, LifeBuoy } from "lucide-react";
+import { Minus, Plus, CheckCircle2, Coffee, Cookie, Clock, ShieldCheck, CreditCard, MessageCircle, Bed, Sparkles, Trees, Car, MapPin, Wifi, UtensilsCrossed, ShowerHead, Phone, Info, Dog, Flame, Cigarette, Wheat, Sprout, Leaf, Milk as MilkIcon, Nut, Volume2, Droplets, AlertTriangle, RefreshCw, Download, Copy, Check, Mail, LifeBuoy, Waves } from "lucide-react";
 import jsPDF from "jspdf";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,7 @@ import addonEarlyCheckinImg from "@/assets/glamping-exterior-deck.jpg";
 import heroImg from "@/assets/glamping-sunset.jpg";
 import addonBreakfastImg from "@/assets/glamping-interior-cozy.jpg";
 import addonFikaImg from "@/assets/glamping-reading.jpg";
+import addonSupImg from "@/assets/sup-canal.jpg";
 
 // Använder endast riktiga bilder från hemsidan.
 const ADDON_IMAGES: Record<string, string> = {
@@ -23,6 +24,7 @@ const ADDON_IMAGES: Record<string, string> = {
   breakfast: addonBreakfastImg,
   fika_bag: addonFikaImg,
   pet: addonEarlyCheckinImg,
+  sup_rental: addonSupImg,
 };
 
 
@@ -294,6 +296,7 @@ function iconFor(slug: string) {
   if (slug === "early_checkin") return <Clock className="h-5 w-5" />;
   if (slug === "late_checkout") return <Clock className="h-5 w-5" />;
   if (slug === "pet") return <Dog className="h-5 w-5" />;
+  if (slug === "sup_rental") return <Waves className="h-5 w-5" />;
   return null;
 }
 
@@ -407,6 +410,28 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
         "We'll prepare the tent so the stay works smoothly for everyone",
       ],
       note: "The tents remain strictly non-smoking and pets must be supervised on site.",
+    },
+  },
+  sup_rental: {
+    sv: {
+      tagline: "Paddla ut på Göta kanal — SUP med flytväst i ett helt dygn.",
+      bullets: [
+        "En SUP-bräda med paddel och flytväst",
+        "24 timmar från att ni hämtar den",
+        "Lugnt vatten precis vid tälten",
+        "Max två brädor per bokning",
+      ],
+      note: "100 kr per bräda och dygn. Vi visar var brädan står och hur ni gör när ni är klara.",
+    },
+    en: {
+      tagline: "Paddle out on the Göta Canal — SUP with life vest for a full 24 hours.",
+      bullets: [
+        "One SUP board with paddle and life vest",
+        "24 hours from pick-up",
+        "Calm water right by the tents",
+        "Maximum two boards per booking",
+      ],
+      note: "100 SEK per board per 24h. We'll show you where the board is and what to do when you're done.",
     },
   },
 };
@@ -986,7 +1011,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
           </Card>
-        ) : data.addons.filter((a) => a.slug !== 'sup_rental' && !orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).length === 0 ? null : (
+        ) : data.addons.filter((a) => !orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).length === 0 ? null : (
           <>
             <div id="addons-section" className="scroll-mt-4">
               <h2 className="font-serif text-xl text-primary mb-1">{t.addons}</h2>
@@ -1038,11 +1063,13 @@ export default function Stay({ initialLang }: StayProps = {}) {
             )}
 
             <div className="space-y-3">
-              {data.addons.filter((a) => a.slug !== 'sup_rental' && !orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).map((a) => {
+              {data.addons.filter((a) => !orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).map((a) => {
                 const q = qty[a.id] ?? 0;
                 const name = isSv ? a.name_sv : a.name_en;
                 const desc = isSv ? a.description_sv : a.description_en;
-                const priceLabel = a.unit === "per_quantity" ? t.perPerson : t.perStay;
+                const priceLabel = a.slug === "sup_rental"
+                  ? (isSv ? "kr/st per dygn" : "SEK/board per 24h")
+                  : a.unit === "per_quantity" ? t.perPerson : t.perStay;
                 const addCta: Record<string, string> = {
                   sv: `Lägg till ${name.toLowerCase()} • ${a.price_sek} kr`,
                   en: `Add ${name.toLowerCase()} • ${a.price_sek} SEK`,
