@@ -15,6 +15,7 @@ import addonEarlyCheckinImg from "@/assets/glamping-exterior-deck.jpg";
 import heroImg from "@/assets/glamping-sunset.jpg";
 import addonBreakfastImg from "@/assets/glamping-interior-cozy.jpg";
 import addonFikaImg from "@/assets/glamping-reading.jpg";
+import addonSupImg from "@/assets/sup-canal.jpg";
 
 // Använder endast riktiga bilder från hemsidan.
 const ADDON_IMAGES: Record<string, string> = {
@@ -23,6 +24,7 @@ const ADDON_IMAGES: Record<string, string> = {
   breakfast: addonBreakfastImg,
   fika_bag: addonFikaImg,
   pet: addonEarlyCheckinImg,
+  sup_rental: addonSupImg,
 };
 
 
