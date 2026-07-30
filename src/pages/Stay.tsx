@@ -296,6 +296,7 @@ function iconFor(slug: string) {
   if (slug === "early_checkin") return <Clock className="h-5 w-5" />;
   if (slug === "late_checkout") return <Clock className="h-5 w-5" />;
   if (slug === "pet") return <Dog className="h-5 w-5" />;
+  if (slug === "sup_rental") return <Waves className="h-5 w-5" />;
   return null;
 }
 
