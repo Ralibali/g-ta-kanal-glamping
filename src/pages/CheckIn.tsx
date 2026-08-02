@@ -599,20 +599,44 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
             <p className="text-muted-foreground text-sm mb-2">
               {t.lockCodeLabel}
             </p>
-            {tentIds.length > 1 && (
-              <p className="text-xs text-muted-foreground mb-3">
-                {lang === "en"
-                  ? "The same code opens both tents."
-                  : lang === "de"
-                  ? "Derselbe Code öffnet beide Zelte."
-                  : "Samma kod öppnar båda tälten."}
-              </p>
-            )}
-            <div className="bg-primary rounded-2xl py-8 px-6 mb-6">
-              <p className="font-mono text-6xl font-bold text-primary-foreground tracking-[0.3em]">
-                {LOCK_CODE}
-              </p>
-            </div>
+            {(() => {
+              const activeTents = (tentIds.length > 0 ? tentIds : [tentId]).filter(Boolean) as string[];
+              const codes = Array.from(new Set(activeTents.map((tid) => lockCodeFor(tid))));
+              const sameCode = codes.length === 1;
+              return (
+                <>
+                  {activeTents.length > 1 && (
+                    <p className="text-xs text-muted-foreground mb-3">
+                      {sameCode
+                        ? lang === "en"
+                          ? "The same code opens both tents."
+                          : lang === "de"
+                          ? "Derselbe Code öffnet beide Zelte."
+                          : "Samma kod öppnar båda tälten."
+                        : lang === "en"
+                        ? "Each tent has its own code."
+                        : lang === "de"
+                        ? "Jedes Zelt hat einen eigenen Code."
+                        : "Varje tält har sin egen kod."}
+                    </p>
+                  )}
+                  <div className="space-y-3 mb-6">
+                    {(sameCode ? [activeTents[0]] : activeTents).map((tid) => (
+                      <div key={tid} className="bg-primary rounded-2xl py-8 px-6">
+                        {!sameCode && (
+                          <p className="text-xs uppercase tracking-wide text-primary-foreground/80 mb-2">
+                            {TENT_INFO[lang][tid as keyof typeof TENT_INFO["sv"]].name}
+                          </p>
+                        )}
+                        <p className="font-mono text-6xl font-bold text-primary-foreground tracking-[0.3em]">
+                          {lockCodeFor(tid)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              );
+            })()}
             <div className="flex items-center justify-center gap-2 mb-6">
               <Phone className="text-accent shrink-0" size={16} />
               <p className="text-sm text-muted-foreground">
