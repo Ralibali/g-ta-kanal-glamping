@@ -9,6 +9,7 @@ import { usePageTracking, useAutoClickTracking } from "./hooks/useTracking";
 import { useContactLinkTracking } from "./hooks/useContactLinkTracking";
 import Index from "./pages/Index";
 import CheckIn from "./pages/CheckIn";
+import CheckedIn from "./pages/CheckedIn";
 import BookingTerms from "./pages/BookingTerms";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
@@ -69,6 +70,9 @@ const App = () => (
             <Route path="/checka-in" element={<CheckIn />} />
             <Route path="/en/checkin" element={<CheckIn initialLang="en" />} />
             <Route path="/de/checkin" element={<CheckIn initialLang="de" />} />
+            <Route path="/incheckad" element={<CheckedIn />} />
+            <Route path="/en/checked-in" element={<CheckedIn initialLang="en" />} />
+            <Route path="/de/eingecheckt" element={<CheckedIn initialLang="de" />} />
             <Route path="/bokningsvillkor" element={<BookingTerms />} />
             <Route path="/blogg" element={<Blog />} />
             <Route path="/blogg/:slug" element={<BlogPost />} />

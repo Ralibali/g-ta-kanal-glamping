@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, AlertCircle, MessageSquare, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -225,6 +226,7 @@ const TERMS: Record<Lang, string[]> = {
 type Step = "booking" | "terms" | "code";
 
 const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
+  const navigate = useNavigate();
   const [step, setStep] = useState<Step>("booking");
   const [bookingNumber, setBookingNumber] = useState("");
   const [error, setError] = useState("");
@@ -352,6 +354,9 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
       } catch (err) {
         console.error("Failed to send check-in welcome SMS", err);
       }
+      // Egen bekräftelsesida med tältnummer, placering och låskod
+      const path = lang === "en" ? "/en/checked-in" : lang === "de" ? "/de/eingecheckt" : "/incheckad";
+      navigate(`${path}?tents=${tents.join(",")}&lang=${lang}`);
     }
   };
 
