@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
-import { TENT_BY_ID } from "@/cleaning/config";
+import { TENT_BY_ID, lockCodeFor } from "@/cleaning/config";
 import addonEarlyCheckinImg from "@/assets/glamping-exterior-deck.jpg";
 import heroImg from "@/assets/glamping-sunset.jpg";
 import addonBreakfastImg from "@/assets/glamping-interior-cozy.jpg";
@@ -832,7 +832,14 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 <div className="mt-3 rounded-md border border-primary/30 bg-primary/5 p-3">
                   {lockCodeVisible ? (
                     <div className="font-medium text-foreground">
-                      🔒 {isSv ? "Kod till hänglåset" : "Code for the lock"}: <span className="font-mono text-lg tracking-widest">2018</span>
+                      🔒 {isSv ? "Kod till hänglåset" : "Code for the lock"}:{" "}
+                      {Array.from(new Set(allTents.map((id) => lockCodeFor(id)))).length === 1 ? (
+                        <span className="font-mono text-lg tracking-widest">{lockCodeFor(allTents[0])}</span>
+                      ) : (
+                        <span className="font-mono text-lg tracking-widest">
+                          {tentLabels.map((tl) => `${tl.no ? `Tält ${tl.no}` : tl.name}: ${lockCodeFor(tl.id)}`).join(" · ")}
+                        </span>
+                      )}
                     </div>
                   ) : (
                     <div className="font-medium text-foreground">
@@ -841,7 +848,9 @@ export default function Stay({ initialLang }: StayProps = {}) {
                   )}
                   {lockCodeVisible && multi && (
                     <div className="text-xs text-muted-foreground mt-1">
-                      {isSv ? `Samma kod till alla ${tentLabels.length} tälten.` : `Same code for all ${tentLabels.length} tents.`}
+                      {Array.from(new Set(allTents.map((id) => lockCodeFor(id)))).length === 1
+                        ? (isSv ? `Samma kod till alla ${tentLabels.length} tälten.` : `Same code for all ${tentLabels.length} tents.`)
+                        : (isSv ? "Varje tält har sin egen kod." : "Each tent has its own code.")}
                     </div>
                   )}
                 </div>

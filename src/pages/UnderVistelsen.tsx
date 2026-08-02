@@ -10,6 +10,7 @@ import { LanguageProvider } from "@/i18n/LanguageContext";
 import ChatWidget from "@/components/ChatWidget";
 import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/glamping-sunset.jpg";
+import { lockCodeFor } from "@/cleaning/config";
 
 const SWISH = "1230628289";
 const SWISH_INTL = "1230628289";
@@ -334,9 +335,25 @@ export default function UnderVistelsen({ initialLang = "sv" }: UnderVistelsenPro
             </div>
             <div className="rounded-xl border border-primary/30 bg-primary/5 p-3">
               <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                {t.lockCode}{personal?.tentIds && personal.tentIds.length > 1 ? (isSv ? " (samma kod till alla era tält)" : " (same code for all your tents)") : ""}
+                {t.lockCode}
               </div>
-              <div className="font-mono text-2xl tracking-widest text-foreground mt-0.5">2018</div>
+              {(() => {
+                const ids = personal?.tentIds && personal.tentIds.length > 0 ? personal.tentIds : [];
+                const codes = Array.from(new Set(ids.map((id) => lockCodeFor(id))));
+                if (ids.length === 0 || codes.length === 1) {
+                  return <div className="font-mono text-2xl tracking-widest text-foreground mt-0.5">{codes[0] ?? "2018"}</div>;
+                }
+                return (
+                  <div className="mt-0.5 space-y-1">
+                    {ids.map((id) => (
+                      <div key={id} className="flex items-center justify-between gap-3">
+                        <span className="text-sm text-muted-foreground">{TENT_NAMES[id] || id}</span>
+                        <span className="font-mono text-2xl tracking-widest text-foreground">{lockCodeFor(id)}</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
             </div>
           </CardContent>
         </Card>
