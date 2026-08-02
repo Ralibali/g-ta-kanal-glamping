@@ -226,6 +226,7 @@ const TERMS: Record<Lang, string[]> = {
 type Step = "booking" | "terms" | "code";
 
 const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
+  const navigate = useNavigate();
   const [step, setStep] = useState<Step>("booking");
   const [bookingNumber, setBookingNumber] = useState("");
   const [error, setError] = useState("");
