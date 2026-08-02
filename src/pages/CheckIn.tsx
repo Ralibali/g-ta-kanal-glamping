@@ -23,6 +23,8 @@ const VALID_BOOKINGS: Record<string, Booking> = {
 
 const VALID_TENT_IDS: TentId[] = ["sjobris", "naturkarnan", "lugnetsyta"];
 
+const TENT_NO: Record<TentId, number> = { sjobris: 1, naturkarnan: 2, lugnetsyta: 3 };
+
 const TENT_INFO: Record<Lang, Record<TentId, { name: string; directions: string }>> = {
   sv: {
     sjobris: {
@@ -583,12 +585,27 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
               </p>
               <div className="space-y-4">
                 {(tentIds.length > 0 ? tentIds : [tentId]).map((tid) => (
-                  <div key={tid}>
-                    <p className="font-serif text-lg font-bold text-foreground">{TENT_INFO[lang][tid!].name}</p>
-                    <div className="flex items-start gap-2 mt-1">
-                      <MapPin className="text-accent shrink-0 mt-0.5" size={16} />
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {TENT_INFO[lang][tid!].directions}
+                  <div key={tid} className="rounded-xl border-2 border-primary/40 bg-background p-4 flex gap-4">
+                    <div className="shrink-0 w-16 h-16 rounded-xl bg-primary text-primary-foreground flex flex-col items-center justify-center leading-none">
+                      <span className="text-[9px] uppercase tracking-wider opacity-80">
+                        {lang === "de" ? "Zelt" : lang === "en" ? "Tent" : "Tält"}
+                      </span>
+                      <span className="text-3xl font-bold">{TENT_NO[tid!]}</span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-serif text-lg font-bold text-foreground">{TENT_INFO[lang][tid!].name}</p>
+                      <div className="flex items-start gap-2 mt-1">
+                        <MapPin className="text-accent shrink-0 mt-0.5" size={16} />
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {TENT_INFO[lang][tid!].directions}
+                        </p>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {lang === "en"
+                          ? "Check the wooden sign by the entrance — it shows the tent number and name."
+                          : lang === "de"
+                          ? "Prüfen Sie das Holzschild am Eingang — es zeigt Nummer und Name des Zeltes."
+                          : "Kolla träskylten vid ingången — den visar tältets nummer och namn."}
                       </p>
                     </div>
                   </div>
