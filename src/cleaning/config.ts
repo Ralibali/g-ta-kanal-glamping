@@ -46,3 +46,15 @@ export function todayInStockholm(): string {
   });
   return fmt.format(new Date());
 }
+
+export const DEFAULT_LOCK_CODE = "2018";
+
+export const LOCK_CODES: Record<string, string> = {
+  sjobris: "2018",
+  naturkarnan: "2018",
+  lugnetsyta: "2026",
+};
+
+export function lockCodeFor(tentId?: string | null): string {
+  return (tentId && LOCK_CODES[tentId]) || DEFAULT_LOCK_CODE;
+}
