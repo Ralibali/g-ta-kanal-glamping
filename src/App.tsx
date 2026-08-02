@@ -9,6 +9,7 @@ import { usePageTracking, useAutoClickTracking } from "./hooks/useTracking";
 import { useContactLinkTracking } from "./hooks/useContactLinkTracking";
 import Index from "./pages/Index";
 import CheckIn from "./pages/CheckIn";
+import CheckedIn from "./pages/CheckedIn";
 import BookingTerms from "./pages/BookingTerms";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
