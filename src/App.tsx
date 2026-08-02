@@ -70,6 +70,9 @@ const App = () => (
             <Route path="/checka-in" element={<CheckIn />} />
             <Route path="/en/checkin" element={<CheckIn initialLang="en" />} />
             <Route path="/de/checkin" element={<CheckIn initialLang="de" />} />
+            <Route path="/incheckad" element={<CheckedIn />} />
+            <Route path="/en/checked-in" element={<CheckedIn initialLang="en" />} />
+            <Route path="/de/eingecheckt" element={<CheckedIn initialLang="de" />} />
             <Route path="/bokningsvillkor" element={<BookingTerms />} />
             <Route path="/blogg" element={<Blog />} />
             <Route path="/blogg/:slug" element={<BlogPost />} />
