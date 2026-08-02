@@ -789,23 +789,62 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 <CardTitle className="font-serif text-lg">{t.stayInfo}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
-                {multi ? (
-                  <>
-                    <div className="font-medium text-base">
-                      {isSv ? `Era ${tentLabels.length} tält` : `Your ${tentLabels.length} tents`}
-                    </div>
-                    <ul className="space-y-1 pl-1">
-                      {tentLabels.map(tl => (
-                        <li key={tl.id} className="flex items-center gap-2">
-                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
-                          <span className="font-medium">{tl.label}</span>
-                        </li>
+                {(() => {
+                  const POS: Record<string, { sv: string; en: string; de: string }> = {
+                    sjobris: { sv: "Rakt fram – närmast kanalen", en: "Straight ahead – closest to the canal", de: "Geradeaus – am nächsten zum Kanal" },
+                    naturkarnan: { sv: "Längst till vänster", en: "Far left", de: "Ganz links" },
+                    lugnetsyta: { sv: "I mitten", en: "In the middle", de: "In der Mitte" },
+                  };
+                  const posOf = (id: string) => {
+                    const p = POS[id];
+                    if (!p) return "";
+                    return lang === "en" ? p.en : lang === "de" ? p.de : p.sv;
+                  };
+                  return (
+                    <div className="space-y-2">
+                      <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+                        {multi
+                          ? (lang === "en" ? `Your ${tentLabels.length} tents` : lang === "de" ? `Ihre ${tentLabels.length} Zelte` : `Era ${tentLabels.length} tält`)
+                          : (lang === "en" ? "Your tent" : lang === "de" ? "Ihr Zelt" : "Ert tält")}
+                      </div>
+                      {tentLabels.map((tl) => (
+                        <div
+                          key={tl.id}
+                          className="rounded-2xl border-2 border-primary/40 bg-primary/5 p-4 flex items-center gap-4"
+                        >
+                          <div className="shrink-0 w-16 h-16 rounded-xl bg-primary text-primary-foreground flex flex-col items-center justify-center leading-none">
+                            <span className="text-[9px] uppercase tracking-wider opacity-80">
+                              {lang === "de" ? "Zelt" : lang === "en" ? "Tent" : "Tält"}
+                            </span>
+                            <span className="text-3xl font-bold">{tl.no ?? "?"}</span>
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-serif text-xl font-bold text-foreground leading-tight">{tl.name}</div>
+                            {posOf(tl.id) && (
+                              <div className="mt-1 flex items-center gap-1.5 text-sm text-foreground/80">
+                                <MapPin className="h-4 w-4 text-primary shrink-0" />
+                                <span className="font-medium">{posOf(tl.id)}</span>
+                              </div>
+                            )}
+                            {lockCodeVisible && (
+                              <div className="mt-1 text-sm text-muted-foreground">
+                                🔒 {lang === "en" ? "Lock code" : lang === "de" ? "Schlosscode" : "Kod till hänglåset"}:{" "}
+                                <span className="font-mono tracking-widest text-foreground font-semibold">{lockCodeFor(tl.id)}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       ))}
-                    </ul>
-                  </>
-                ) : (
-                  <div className="font-medium text-base">{tentLabels[0]?.label || data.booking.tent_name}</div>
-                )}
+                      <div className="text-xs text-muted-foreground">
+                        {lang === "en"
+                          ? "Each tent has a wooden sign with its number and name by the entrance — check it before you go in."
+                          : lang === "de"
+                          ? "An jedem Zelt hängt ein Holzschild mit Nummer und Name — bitte prüfen Sie es vor dem Betreten."
+                          : "Varje tält har en träskylt med nummer och namn vid ingången — kolla den innan ni går in."}
+                      </div>
+                    </div>
+                  );
+                })()}
                 {moves.length > 0 && (
                   <div className="mt-2 rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
                     <div className="font-semibold text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
@@ -829,31 +868,20 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 <div className="text-muted-foreground">
                   {ci} → {co} · {t.nights(data.booking.nights ?? 1)}
                 </div>
-                <div className="mt-3 rounded-md border border-primary/30 bg-primary/5 p-3">
-                  {lockCodeVisible ? (
-                    <div className="font-medium text-foreground">
-                      🔒 {isSv ? "Kod till hänglåset" : "Code for the lock"}:{" "}
-                      {Array.from(new Set(allTents.map((id) => lockCodeFor(id)))).length === 1 ? (
-                        <span className="font-mono text-lg tracking-widest">{lockCodeFor(allTents[0])}</span>
-                      ) : (
-                        <span className="font-mono text-lg tracking-widest">
-                          {tentLabels.map((tl) => `${tl.no ? `Tält ${tl.no}` : tl.name}: ${lockCodeFor(tl.id)}`).join(" · ")}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
+                {!lockCodeVisible && (
+                  <div className="mt-3 rounded-md border border-primary/30 bg-primary/5 p-3">
                     <div className="font-medium text-foreground">
                       🔒 {isSv ? "Koden till hänglåset visas här när det är dags att checka in." : "The lock code appears here when it is time to check in."}
                     </div>
-                  )}
-                  {lockCodeVisible && multi && (
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {Array.from(new Set(allTents.map((id) => lockCodeFor(id)))).length === 1
-                        ? (isSv ? `Samma kod till alla ${tentLabels.length} tälten.` : `Same code for all ${tentLabels.length} tents.`)
-                        : (isSv ? "Varje tält har sin egen kod." : "Each tent has its own code.")}
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
+                {lockCodeVisible && multi && (
+                  <div className="text-xs text-muted-foreground">
+                    {Array.from(new Set(allTents.map((id) => lockCodeFor(id)))).length === 1
+                      ? (isSv ? `Samma kod till alla ${tentLabels.length} tälten.` : `Same code for all ${tentLabels.length} tents.`)
+                      : (isSv ? "Varje tält har sin egen kod — se ovan." : "Each tent has its own code — see above.")}
+                  </div>
+                )}
                 {/* Snabbåtgärder — direkt access till det gästen behöver mest */}
                 <div className="grid grid-cols-3 gap-2 pt-1">
                   <a
