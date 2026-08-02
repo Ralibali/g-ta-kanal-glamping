@@ -68,8 +68,13 @@ const TENT_INFO: Record<Lang, Record<TentId, { name: string; directions: string 
   },
 };
 
-// Låskod (samma för alla tält)
-const LOCK_CODE = "2018";
+// Låskod per tält (Tält 3 har egen kod)
+const LOCK_CODES: Record<string, string> = {
+  sjobris: "2018",
+  naturkarnan: "2018",
+  lugnetsyta: "2026",
+};
+const lockCodeFor = (tid?: string | null) => (tid && LOCK_CODES[tid]) || "2018";
 
 // ─── Översättningar ──────────────────────────────────────────
 const T: Record<Lang, Record<string, string>> = {
