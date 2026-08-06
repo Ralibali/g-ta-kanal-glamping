@@ -9,7 +9,7 @@ import { CleanerLoginForm } from "@/components/cleaning/CleanerLoginForm";
 import { TimeTracker } from "@/components/cleaning/TimeTracker";
 import { TodayView } from "@/components/cleaning/TodayView";
 import { SalaryPanel } from "@/components/cleaning/SalaryPanel";
-import { pickPreparationStay, towelInstruction, type CleaningStayLike } from "@/lib/cleaning-operations";
+import { findRebookedTents, pickPreparationStay, towelInstruction, type ActiveStayLike, type CleaningStayLike, type RecentSessionLike } from "@/lib/cleaning-operations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
