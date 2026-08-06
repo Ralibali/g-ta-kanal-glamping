@@ -550,7 +550,7 @@ export default function Cleaning() {
                     <TodayView
                       lang={lang}
                       userId={user.id}
-                      cards={[...overdueCards, ...cards]}
+                      cards={[...overdueCards, ...rebookedCards, ...cards]}
                       sessions={[...pastSessions, ...sessions]}
                       loading={dataLoading}
                       onOpen={(card) => setSelected(card)}
