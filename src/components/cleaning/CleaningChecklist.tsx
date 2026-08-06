@@ -33,6 +33,8 @@ export interface TentDayData {
   earlyCheckin?: boolean;
   /** True när städningen inte gjordes på avresedagen — visas som försenad. */
   overdue?: boolean;
+  /** True när tältet blivit ledigt genom en ombokning mellan tält. */
+  rebooked?: boolean;
 }
 
 interface Props {
