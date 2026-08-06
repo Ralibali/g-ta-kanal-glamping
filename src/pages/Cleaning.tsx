@@ -210,7 +210,7 @@ export default function Cleaning() {
     const today = todayInStockholm();
     const isToday = date === today;
     const weekAgo = addDays(today, -7);
-    const [dayResult, futureResult, sessionResult, earlyResult, pastStaysResult, pastSessionResult] = await Promise.all([
+    const [dayResult, futureResult, sessionResult, earlyResult, pastStaysResult, pastSessionResult, recentSessionResult, activeStayResult] = await Promise.all([
       (supabase as any).from("tent_stays").select(columns).or(`checkout_date.eq.${date},checkin_date.eq.${date}`),
       (supabase as any).from("tent_stays").select(columns).gt("checkin_date", date).order("checkin_date", { ascending: true }),
       (supabase as any).from("cleaning_sessions").select("tent_id, cleaning_date, status").eq("cleaning_date", date),
@@ -222,6 +222,13 @@ export default function Cleaning() {
         : Promise.resolve({ data: [], error: null }),
       isToday
         ? (supabase as any).from("cleaning_sessions").select("tent_id, cleaning_date, status").gte("cleaning_date", weekAgo).lt("cleaning_date", today)
+        : Promise.resolve({ data: [], error: null }),
+      // Ombokningar: städsessioner som förbereddes för en bokning som numera bor i ett annat tält.
+      isToday
+        ? (supabase as any).from("cleaning_sessions").select("tent_id, cleaning_date, status, arrival_booking").gte("cleaning_date", weekAgo).lte("cleaning_date", today)
+        : Promise.resolve({ data: [], error: null }),
+      isToday
+        ? (supabase as any).from("tent_stays").select("booking_number, tent_id, checkin_date, checkout_date").lte("checkin_date", today).gt("checkout_date", today)
         : Promise.resolve({ data: [], error: null }),
     ]);
     if (dayResult.error) toast.error(dayResult.error.message);
@@ -235,6 +242,8 @@ export default function Cleaning() {
     setSessions((sessionResult.data ?? []) as Session[]);
     setPastDepartures((pastStaysResult.data ?? []) as Stay[]);
     setPastSessions((pastSessionResult.data ?? []) as Session[]);
+    setRecentSessions((recentSessionResult.data ?? []) as RecentSessionLike[]);
+    setActiveStays((activeStayResult.data ?? []) as ActiveStayLike[]);
     setEarlyTents(new Set((earlyResult.data ?? []).map((row: { tent_id: string }) => row.tent_id)));
     setDataLoading(false);
   };
