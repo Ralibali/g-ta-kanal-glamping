@@ -352,6 +352,11 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
                             {lang === "sv" ? `Försenad · avresa ${card.date}` : lang === "si" ? "ප්‍රමාද වූ" : `Overdue · checkout ${card.date}`}
                           </Badge>
                         )}
+                        {card.rebooked && (
+                          <Badge className="bg-sky-600 hover:bg-sky-600 text-white text-[10px]">
+                            {lang === "sv" ? "Ombokat tält · städa" : lang === "si" ? "කූඩාරම වෙනස් විය" : "Rebooked tent · clean"}
+                          </Badge>
+                        )}
                         {card.earlyCheckin && (
                           <Badge className="bg-amber-500 hover:bg-amber-500 text-white text-[10px]">
                             <Sun className="h-3 w-3 mr-1" aria-hidden="true" />{labels.earlyBadge}

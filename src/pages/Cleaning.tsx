@@ -9,7 +9,7 @@ import { CleanerLoginForm } from "@/components/cleaning/CleanerLoginForm";
 import { TimeTracker } from "@/components/cleaning/TimeTracker";
 import { TodayView } from "@/components/cleaning/TodayView";
 import { SalaryPanel } from "@/components/cleaning/SalaryPanel";
-import { pickPreparationStay, towelInstruction, type CleaningStayLike } from "@/lib/cleaning-operations";
+import { findRebookedTents, pickPreparationStay, towelInstruction, type ActiveStayLike, type CleaningStayLike, type RecentSessionLike } from "@/lib/cleaning-operations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -90,6 +90,8 @@ export default function Cleaning() {
   const [pastDepartures, setPastDepartures] = useState<Stay[]>([]);
   const [pastSessions, setPastSessions] = useState<Session[]>([]);
   const [earlyTents, setEarlyTents] = useState<Set<string>>(new Set());
+  const [recentSessions, setRecentSessions] = useState<RecentSessionLike[]>([]);
+  const [activeStays, setActiveStays] = useState<ActiveStayLike[]>([]);
   const [selected, setSelected] = useState<TentDayData | null>(null);
   const [overview, setOverview] = useState<OverviewRow[]>([]);
   const [calendarData, setCalendarData] = useState<Map<string, CalendarInfo>>(new Map());
@@ -208,7 +210,7 @@ export default function Cleaning() {
     const today = todayInStockholm();
     const isToday = date === today;
     const weekAgo = addDays(today, -7);
-    const [dayResult, futureResult, sessionResult, earlyResult, pastStaysResult, pastSessionResult] = await Promise.all([
+    const [dayResult, futureResult, sessionResult, earlyResult, pastStaysResult, pastSessionResult, recentSessionResult, activeStayResult] = await Promise.all([
       (supabase as any).from("tent_stays").select(columns).or(`checkout_date.eq.${date},checkin_date.eq.${date}`),
       (supabase as any).from("tent_stays").select(columns).gt("checkin_date", date).order("checkin_date", { ascending: true }),
       (supabase as any).from("cleaning_sessions").select("tent_id, cleaning_date, status").eq("cleaning_date", date),
@@ -220,6 +222,13 @@ export default function Cleaning() {
         : Promise.resolve({ data: [], error: null }),
       isToday
         ? (supabase as any).from("cleaning_sessions").select("tent_id, cleaning_date, status").gte("cleaning_date", weekAgo).lt("cleaning_date", today)
+        : Promise.resolve({ data: [], error: null }),
+      // Ombokningar: städsessioner som förbereddes för en bokning som numera bor i ett annat tält.
+      isToday
+        ? (supabase as any).from("cleaning_sessions").select("tent_id, cleaning_date, status, arrival_booking").gte("cleaning_date", weekAgo).lte("cleaning_date", today)
+        : Promise.resolve({ data: [], error: null }),
+      isToday
+        ? (supabase as any).from("tent_stays").select("booking_number, tent_id, checkin_date, checkout_date").lte("checkin_date", today).gt("checkout_date", today)
         : Promise.resolve({ data: [], error: null }),
     ]);
     if (dayResult.error) toast.error(dayResult.error.message);
@@ -233,6 +242,8 @@ export default function Cleaning() {
     setSessions((sessionResult.data ?? []) as Session[]);
     setPastDepartures((pastStaysResult.data ?? []) as Stay[]);
     setPastSessions((pastSessionResult.data ?? []) as Session[]);
+    setRecentSessions((recentSessionResult.data ?? []) as RecentSessionLike[]);
+    setActiveStays((activeStayResult.data ?? []) as ActiveStayLike[]);
     setEarlyTents(new Set((earlyResult.data ?? []).map((row: { tent_id: string }) => row.tent_id)));
     setDataLoading(false);
   };
@@ -415,6 +426,38 @@ export default function Cleaning() {
       .sort((a, b) => a.date.localeCompare(b.date) || a.tentNo - b.tentNo);
   }, [pastDepartures, pastSessions, selfCleanDates, futureStays, date, lang]);
 
+  // Ombokningar idag: tält som blivit lediga för att gästen flyttats till ett annat tält.
+  // De saknar avresa i tent_stays och skulle annars aldrig dyka upp i städlistan.
+  const rebookedCards = useMemo(() => {
+    if (date !== todayInStockholm()) return [] as TentDayData[];
+    const cardTents = new Set(cards.map((card) => card.tent_id));
+    return findRebookedTents(recentSessions, activeStays, date)
+      .filter((item) => !cardTents.has(item.tent_id))
+      .map((item) => {
+        const tent = TENTS.find((t) => t.id === item.tent_id);
+        if (!tent) return null;
+        const preparation = pickPreparationStay(undefined, futureStays, tent.id, date) as Stay | undefined;
+        return {
+          tent_id: tent.id,
+          tentNo: tent.no,
+          tentName: tent.name,
+          position: tent.position[lang],
+          date,
+          hasArrival: false,
+          hasDeparture: true,
+          rebooked: true,
+          guests: Number(preparation?.guests ?? 0),
+          children: Number(preparation?.children ?? 0),
+          breakfast: false,
+          fikapase: false,
+          lateCheckout: false,
+          earlyCheckin: false,
+        } satisfies TentDayData;
+      })
+      .filter((card): card is NonNullable<typeof card> => card != null)
+      .sort((a, b) => a.tentNo - b.tentNo);
+  }, [recentSessions, activeStays, cards, futureStays, date, lang]);
+
   const sessionByTent = useMemo(() => new Map(sessions.map((session) => [session.tent_id, session])), [sessions]);
 
   const nextCleaning = useMemo(() => {
@@ -507,7 +550,7 @@ export default function Cleaning() {
                     <TodayView
                       lang={lang}
                       userId={user.id}
-                      cards={[...overdueCards, ...cards]}
+                      cards={[...overdueCards, ...rebookedCards, ...cards]}
                       sessions={[...pastSessions, ...sessions]}
                       loading={dataLoading}
                       onOpen={(card) => setSelected(card)}
