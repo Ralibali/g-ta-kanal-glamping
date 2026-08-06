@@ -426,6 +426,38 @@ export default function Cleaning() {
       .sort((a, b) => a.date.localeCompare(b.date) || a.tentNo - b.tentNo);
   }, [pastDepartures, pastSessions, selfCleanDates, futureStays, date, lang]);
 
+  // Ombokningar idag: tält som blivit lediga för att gästen flyttats till ett annat tält.
+  // De saknar avresa i tent_stays och skulle annars aldrig dyka upp i städlistan.
+  const rebookedCards = useMemo(() => {
+    if (date !== todayInStockholm()) return [] as TentDayData[];
+    const cardTents = new Set(cards.map((card) => card.tent_id));
+    return findRebookedTents(recentSessions, activeStays, date)
+      .filter((item) => !cardTents.has(item.tent_id))
+      .map((item) => {
+        const tent = TENTS.find((t) => t.id === item.tent_id);
+        if (!tent) return null;
+        const preparation = pickPreparationStay(undefined, futureStays, tent.id, date) as Stay | undefined;
+        return {
+          tent_id: tent.id,
+          tentNo: tent.no,
+          tentName: tent.name,
+          position: tent.position[lang],
+          date,
+          hasArrival: false,
+          hasDeparture: true,
+          rebooked: true,
+          guests: Number(preparation?.guests ?? 0),
+          children: Number(preparation?.children ?? 0),
+          breakfast: false,
+          fikapase: false,
+          lateCheckout: false,
+          earlyCheckin: false,
+        } satisfies TentDayData;
+      })
+      .filter((card): card is NonNullable<typeof card> => card != null)
+      .sort((a, b) => a.tentNo - b.tentNo);
+  }, [recentSessions, activeStays, cards, futureStays, date, lang]);
+
   const sessionByTent = useMemo(() => new Map(sessions.map((session) => [session.tent_id, session])), [sessions]);
 
   const nextCleaning = useMemo(() => {
