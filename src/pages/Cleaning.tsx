@@ -90,6 +90,8 @@ export default function Cleaning() {
   const [pastDepartures, setPastDepartures] = useState<Stay[]>([]);
   const [pastSessions, setPastSessions] = useState<Session[]>([]);
   const [earlyTents, setEarlyTents] = useState<Set<string>>(new Set());
+  const [recentSessions, setRecentSessions] = useState<RecentSessionLike[]>([]);
+  const [activeStays, setActiveStays] = useState<ActiveStayLike[]>([]);
   const [selected, setSelected] = useState<TentDayData | null>(null);
   const [overview, setOverview] = useState<OverviewRow[]>([]);
   const [calendarData, setCalendarData] = useState<Map<string, CalendarInfo>>(new Map());
