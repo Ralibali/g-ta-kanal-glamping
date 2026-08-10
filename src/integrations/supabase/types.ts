@@ -1565,14 +1565,24 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
-      find_free_tent: {
-        Args: {
-          p_checkin: string
-          p_checkout: string
-          p_exclude_booking?: string
-        }
-        Returns: string
-      }
+      find_free_tent:
+        | {
+            Args: {
+              p_checkin: string
+              p_checkout: string
+              p_exclude_booking?: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_checkin: string
+              p_checkout: string
+              p_exclude_booking?: string
+              p_guests?: number
+            }
+            Returns: string
+          }
       get_breakfast_booking_notes: {
         Args: { p_booking_numbers: string[] }
         Returns: {
