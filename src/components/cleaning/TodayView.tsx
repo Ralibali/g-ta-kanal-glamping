@@ -286,7 +286,14 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
             );
           })()}
           <ul className="space-y-3" aria-label={tr(lang, "dayView")}>
-          {cards.map((card) => {
+          {[...cards].sort((a, b) => {
+            const done = (c: TentDayData) =>
+              sessions.some((s) => s.tent_id === c.tent_id && s.cleaning_date === c.date && s.status === "completed") ? 1 : 0;
+            const urgency = (c: TentDayData) =>
+              c.overdue ? 0 : c.earlyCheckin ? 1 : c.hasArrival ? 2 : 3;
+            return done(a) - done(b) || urgency(a) - urgency(b) || a.tentNo - b.tentNo;
+          }).map((card) => {
+
             // Matcha på tält + datum så att försenade kort inte ärver dagens session
             const session = sessions.find((s) => s.tent_id === card.tent_id && s.cleaning_date === card.date);
             const isDone = session?.status === "completed";
@@ -372,11 +379,17 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
                             {lang === "sv" ? "Byte" : lang === "si" ? "මාරුව" : "Turnover"}
                           </Badge>
                         )}
+                        {card.hasArrival && card.guests + card.children > 2 && (
+                          <Badge className="bg-violet-600 hover:bg-violet-600 text-white text-[10px]">
+                            {lang === "sv" ? "Bädda bäddsoffan" : lang === "si" ? "සෝෆා-ඇඳ සකසන්න" : "Make up sofa bed"}
+                          </Badge>
+                        )}
                         {card.breakfast && (
                           <Badge variant="outline" className="text-[10px]">
                             <Coffee className="h-3 w-3 mr-1" aria-hidden="true" />
                           </Badge>
                         )}
+
                       </div>
                     </div>
                     <div className="text-primary text-sm font-medium shrink-0 self-center">
