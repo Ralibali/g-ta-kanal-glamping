@@ -379,11 +379,17 @@ export function TodayView({ lang, userId, cards, sessions, loading, onOpen, onRe
                             {lang === "sv" ? "Byte" : lang === "si" ? "මාරුව" : "Turnover"}
                           </Badge>
                         )}
+                        {card.hasArrival && card.guests + card.children > 2 && (
+                          <Badge className="bg-violet-600 hover:bg-violet-600 text-white text-[10px]">
+                            {lang === "sv" ? "Bädda bäddsoffan" : lang === "si" ? "සෝෆා-ඇඳ සකසන්න" : "Make up sofa bed"}
+                          </Badge>
+                        )}
                         {card.breakfast && (
                           <Badge variant="outline" className="text-[10px]">
                             <Coffee className="h-3 w-3 mr-1" aria-hidden="true" />
                           </Badge>
                         )}
+
                       </div>
                     </div>
                     <div className="text-primary text-sm font-medium shrink-0 self-center">
