@@ -98,16 +98,18 @@ Deno.serve(async (req) => {
       .in('id', stalePending.map(o => o.id))
   }
 
-  const stayHasMondayMorning = (() => {
+  // Frukost levereras bara fredag (5), lördag (6) och söndag (0).
+  const breakfastUnavailable = (() => {
     const start = new Date(`${booking.checkin_date}T12:00:00Z`).getTime()
     const end = new Date(`${booking.checkout_date}T12:00:00Z`).getTime()
     for (let t = start + 86400000; t <= end; t += 86400000) {
-      if (new Date(t).getUTCDay() === 1) return true
+      const wd = new Date(t).getUTCDay()
+      if (wd === 5 || wd === 6 || wd === 0) return false
     }
-    return false
+    return true
   })()
-  if (stayHasMondayMorning && freshItems.some(it => addonMap.get(it.addon_id)?.slug === 'breakfast')) {
-    return new Response(JSON.stringify({ error: 'breakfast_unavailable_monday' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+  if (breakfastUnavailable && freshItems.some(it => addonMap.get(it.addon_id)?.slug === 'breakfast')) {
+    return new Response(JSON.stringify({ error: 'breakfast_unavailable_days' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
   const orderRows: any[] = []

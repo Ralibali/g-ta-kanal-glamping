@@ -579,15 +579,16 @@ export default function Stay({ initialLang }: StayProps = {}) {
   const daysLeft = Math.floor((checkinMs - todayMs) / 86400000);
   const tooLate = daysLeft < cutoff;
 
-  // Frukost levereras inte på måndagar. Om vistelsen innehåller en måndagsmorgon
-  // (checkin+1 … checkout) kan gästen inte beställa frukost alls.
-  const stayHasMondayMorning = (() => {
+  // Frukost levereras bara fredag, lördag och söndag. Gästen kan bara beställa
+  // om vistelsen innehåller minst en sådan morgon (checkin+1 … checkout).
+  const breakfastUnavailable = (() => {
     const start = new Date(`${data.booking.checkin_date}T12:00:00Z`);
     const end = new Date(`${data.booking.checkout_date}T12:00:00Z`);
     for (let d = new Date(start.getTime() + 86400000); d.getTime() <= end.getTime(); d = new Date(d.getTime() + 86400000)) {
-      if (d.getUTCDay() === 1) return true;
+      const wd = d.getUTCDay();
+      if (wd === 5 || wd === 6 || wd === 0) return false;
     }
-    return false;
+    return true;
   })();
 
 
@@ -637,9 +638,9 @@ export default function Stay({ initialLang }: StayProps = {}) {
       title: sv ? 'För sent att beställa' : 'Too late to order',
       detail: sv ? 'Beställning stänger två dygn före incheckning. Hör av dig direkt till oss så löser vi det.' : 'Orders close two days before check-in. Please contact us directly.',
     };
-    if (code.includes('breakfast_unavailable_monday')) return {
-      title: sv ? 'Frukost ej tillgänglig på måndagar' : 'Breakfast unavailable on Mondays',
-      detail: sv ? 'Ta bort frukost ur beställningen för att fortsätta.' : 'Please remove breakfast to continue.',
+    if (code.includes('breakfast_unavailable')) return {
+      title: sv ? 'Frukost ej tillgänglig' : 'Breakfast unavailable',
+      detail: sv ? 'Frukost levereras bara fredag, lördag och söndag. Ta bort frukost ur beställningen för att fortsätta.' : 'Breakfast is only delivered on Fridays, Saturdays and Sundays. Please remove breakfast to continue.',
     };
     if (code.includes('missing_stripe_price') || code.includes('stripe_not_configured')) return {
       title: sv ? 'Kortbetalning ur funktion' : 'Card payment unavailable',
@@ -1048,7 +1049,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
           <Card className="border-amber-500/50 bg-amber-500/5">
             <CardContent className="p-5 text-sm">{t.tooLate}</CardContent>
           </Card>
-        ) : data.addons.filter((a) => !orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).length === 0 ? null : (
+        ) : data.addons.filter((a) => !orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(breakfastUnavailable && a.slug === 'breakfast')).length === 0 ? null : (
           <>
             <div id="addons-section" className="scroll-mt-4">
               <h2 className="font-serif text-xl text-primary mb-1">{t.addons}</h2>
@@ -1085,7 +1086,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
               );
             })()}
 
-            {stayHasMondayMorning && !orders.some((o) => {
+            {breakfastUnavailable && !orders.some((o) => {
               const a = data.addons.find((x) => x.id === o.addon_id);
               return a?.slug === 'breakfast' && ['requested','confirmed','paid'].includes(o.status);
             }) && (
@@ -1093,14 +1094,14 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 <Info className="h-5 w-5 shrink-0 text-amber-700 mt-0.5" />
                 <div className="text-sm text-amber-900">
                   {isSv
-                    ? "Frukost går tyvärr inte att beställa denna vistelse — vårt lokala bageri levererar inte på måndagar. Fikapåsen finns fortfarande som ett mysigt alternativ. 🍪"
-                    : "Breakfast can't be ordered for this stay — our local bakery doesn't deliver on Mondays. The fika bag is still available as a cozy alternative. 🍪"}
+                    ? "Frukost går tyvärr inte att beställa denna vistelse — vårt lokala bageri levererar bara fredag, lördag och söndag. Fikapåsen finns fortfarande som ett mysigt alternativ. 🍪"
+                    : "Breakfast can't be ordered for this stay — our local bakery only delivers on Fridays, Saturdays and Sundays. The fika bag is still available as a cozy alternative. 🍪"}
                 </div>
               </div>
             )}
 
             <div className="space-y-3">
-              {data.addons.filter((a) => !orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(stayHasMondayMorning && a.slug === 'breakfast')).map((a) => {
+              {data.addons.filter((a) => !orders.some((o) => o.addon_id === a.id && ['requested','confirmed','paid'].includes(o.status)) && !(breakfastUnavailable && a.slug === 'breakfast')).map((a) => {
                 const q = qty[a.id] ?? 0;
                 const name = isSv ? a.name_sv : a.name_en;
                 const desc = isSv ? a.description_sv : a.description_en;
