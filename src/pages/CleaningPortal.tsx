@@ -369,12 +369,17 @@ export default function CleaningPortal() {
       ensureTent(row, f.tent_id).early = true;
     }
     for (const sess of sessions) {
+      if (sess.cleaning_date < today || sess.cleaning_date > rangeEnd) continue;
+      const row = ensure(sess.cleaning_date);
+      // Manuellt tillagda städuppdrag (utan avresa i tent_stays) ska också synas
+      row.tents.add(sess.tent_id);
+      const tInfo = ensureTent(row, sess.tent_id);
       if (sess.status === "completed") {
-        const row = ensure(sess.cleaning_date);
         row.completedTents.add(sess.tent_id);
-        ensureTent(row, sess.tent_id).done = true;
+        tInfo.done = true;
       }
     }
+
 
     return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
   }, [stays, sessions, earlyFlags, today, rangeEnd]);
