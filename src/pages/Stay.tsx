@@ -638,9 +638,9 @@ export default function Stay({ initialLang }: StayProps = {}) {
       title: sv ? 'För sent att beställa' : 'Too late to order',
       detail: sv ? 'Beställning stänger två dygn före incheckning. Hör av dig direkt till oss så löser vi det.' : 'Orders close two days before check-in. Please contact us directly.',
     };
-    if (code.includes('breakfast_unavailable_monday')) return {
-      title: sv ? 'Frukost ej tillgänglig på måndagar' : 'Breakfast unavailable on Mondays',
-      detail: sv ? 'Ta bort frukost ur beställningen för att fortsätta.' : 'Please remove breakfast to continue.',
+    if (code.includes('breakfast_unavailable')) return {
+      title: sv ? 'Frukost ej tillgänglig' : 'Breakfast unavailable',
+      detail: sv ? 'Frukost levereras bara fredag, lördag och söndag. Ta bort frukost ur beställningen för att fortsätta.' : 'Breakfast is only delivered on Fridays, Saturdays and Sundays. Please remove breakfast to continue.',
     };
     if (code.includes('missing_stripe_price') || code.includes('stripe_not_configured')) return {
       title: sv ? 'Kortbetalning ur funktion' : 'Card payment unavailable',
