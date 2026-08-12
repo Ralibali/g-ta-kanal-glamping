@@ -1094,8 +1094,8 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 <Info className="h-5 w-5 shrink-0 text-amber-700 mt-0.5" />
                 <div className="text-sm text-amber-900">
                   {isSv
-                    ? "Frukost går tyvärr inte att beställa denna vistelse — vårt lokala bageri levererar inte på måndagar. Fikapåsen finns fortfarande som ett mysigt alternativ. 🍪"
-                    : "Breakfast can't be ordered for this stay — our local bakery doesn't deliver on Mondays. The fika bag is still available as a cozy alternative. 🍪"}
+                    ? "Frukost går tyvärr inte att beställa denna vistelse — vårt lokala bageri levererar bara fredag, lördag och söndag. Fikapåsen finns fortfarande som ett mysigt alternativ. 🍪"
+                    : "Breakfast can't be ordered for this stay — our local bakery only delivers on Fridays, Saturdays and Sundays. The fika bag is still available as a cozy alternative. 🍪"}
                 </div>
               </div>
             )}
