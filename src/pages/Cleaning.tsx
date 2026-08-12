@@ -31,6 +31,9 @@ type Session = {
   tent_id: string;
   cleaning_date: string;
   status: string;
+  arrival_booking: string | null;
+  guests: number | null;
+  sofa_bed_needed: boolean;
 };
 
 type OverviewRow = {
@@ -213,7 +216,7 @@ export default function Cleaning() {
     const [dayResult, futureResult, sessionResult, earlyResult, pastStaysResult, pastSessionResult, recentSessionResult, activeStayResult] = await Promise.all([
       (supabase as any).from("tent_stays").select(columns).or(`checkout_date.eq.${date},checkin_date.eq.${date}`),
       (supabase as any).from("tent_stays").select(columns).gt("checkin_date", date).order("checkin_date", { ascending: true }),
-      (supabase as any).from("cleaning_sessions").select("tent_id, cleaning_date, status").eq("cleaning_date", date),
+      (supabase as any).from("cleaning_sessions").select("tent_id, cleaning_date, status, arrival_booking, guests, sofa_bed_needed").eq("cleaning_date", date),
       (supabase as any).from("early_checkin_flags").select("tent_id").eq("date", date).eq("active", true),
       // Försenade städningar: avresor de senaste 7 dagarna som saknar slutförd städsession —
       // utan detta försvinner en missad städning ljudlöst ur listan dagen efter.
@@ -368,7 +371,8 @@ export default function Cleaning() {
   const cards = useMemo(() => {
     return TENTS.map((tent) => {
       const departure = stays.find((stay) => stay.tent_id === tent.id && stay.checkout_date === date);
-      if (!departure) return null;
+      const scheduledSession = sessions.find((session) => session.tent_id === tent.id && session.cleaning_date === date);
+      if (!departure && !scheduledSession) return null;
       const arrival = stays.find((stay) => stay.tent_id === tent.id && stay.checkin_date === date);
       const preparation = pickPreparationStay(arrival, futureStays, tent.id, date) as Stay | undefined;
       return {
@@ -378,19 +382,19 @@ export default function Cleaning() {
         position: tent.position[lang],
         date,
         hasArrival: !!arrival,
-        hasDeparture: true,
-        arrivalBooking: arrival?.booking_number,
-        guests: Number(preparation?.guests ?? 0),
+        hasDeparture: !!departure,
+        arrivalBooking: arrival?.booking_number ?? scheduledSession?.arrival_booking ?? preparation?.booking_number,
+        guests: Number(scheduledSession?.guests ?? preparation?.guests ?? 0),
         children: Number(preparation?.children ?? 0),
         breakfast: Number(preparation?.breakfast_csv_quantity ?? 0) + Number(preparation?.breakfast_addon_quantity ?? 0) > 0,
         fikapase: Number(preparation?.fikapase_csv_quantity ?? 0) + Number(preparation?.fikapase_addon_quantity ?? 0) > 0,
-        lateCheckout: !!departure.late_checkout,
+        lateCheckout: !!departure?.late_checkout,
         earlyCheckin: earlyTents.has(tent.id),
       } satisfies TentDayData;
     })
       .filter((card): card is NonNullable<typeof card> => card != null)
       .sort((a, b) => Number(b.earlyCheckin) - Number(a.earlyCheckin) || a.tentNo - b.tentNo);
-  }, [stays, futureStays, date, lang, earlyTents]);
+  }, [stays, futureStays, sessions, date, lang, earlyTents]);
 
   // Avresor de senaste 7 dagarna som aldrig fick en slutförd städning.
   // De läggs överst i dagvyn så att inget tält glöms bort inför nästa bokning.
