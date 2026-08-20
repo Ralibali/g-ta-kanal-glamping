@@ -1,0 +1,2 @@
+UPDATE public.tent_stays SET tent_id = 'lugnetsyta' WHERE booking_number IN ('26399','26531');
+UPDATE public.bookings SET tent_id = 'lugnetsyta', tent_name = 'Lugnets Yta' WHERE booking_number IN ('26399','26531');
