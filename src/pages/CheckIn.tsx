@@ -356,7 +356,7 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
       }
       // Egen bekräftelsesida med tältnummer, placering och låskod
       const path = lang === "en" ? "/en/checked-in" : lang === "de" ? "/de/eingecheckt" : "/incheckad";
-      navigate(`${path}?tents=${tents.join(",")}&lang=${lang}`);
+      navigate(`${path}?tents=${tents.join(",")}&lang=${lang}&b=${encodeURIComponent(bn)}`);
     }
   };
 
