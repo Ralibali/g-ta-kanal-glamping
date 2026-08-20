@@ -122,10 +122,35 @@ const CheckedIn = ({ initialLang = "sv" }: { initialLang?: Lang } = {}) => {
   const lang: Lang = ["sv", "en", "de"].includes(langParam) ? langParam : initialLang;
   const t = T[lang];
 
-  const tents = (params.get("tents") ?? "")
+  const urlTents = (params.get("tents") ?? "")
     .split(",")
     .map((s) => s.trim())
     .filter((s): s is TentId => VALID_TENT_IDS.includes(s as TentId));
+
+  const bookingNumber = (params.get("b") ?? "").trim();
+  const [liveTents, setLiveTents] = useState<TentId[] | null>(null);
+
+  // Hämta alltid aktuella tält från bokningen så koden stämmer även om
+  // gästen flyttats till ett annat tält efter incheckningen.
+  useEffect(() => {
+    if (!bookingNumber) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.rpc("list_tents_for_booking", {
+        p_booking_number: bookingNumber.toUpperCase(),
+      });
+      if (cancelled || !Array.isArray(data)) return;
+      const ids = data
+        .map((r: { tent_id: string }) => r.tent_id as TentId)
+        .filter((id): id is TentId => VALID_TENT_IDS.includes(id));
+      if (ids.length > 0) setLiveTents(ids);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [bookingNumber]);
+
+  const tents = liveTents ?? urlTents;
 
   const stayPath = lang === "en" ? "/during-your-stay" : lang === "de" ? "/de/under-vistelsen" : "/under-vistelsen";
 
