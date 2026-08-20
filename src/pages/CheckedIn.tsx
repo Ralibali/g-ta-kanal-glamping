@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { CheckCircle, MapPin, KeyRound, Phone, ArrowRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type TentId = "sjobris" | "naturkarnan" | "lugnetsyta";
 type Lang = "sv" | "en" | "de";
