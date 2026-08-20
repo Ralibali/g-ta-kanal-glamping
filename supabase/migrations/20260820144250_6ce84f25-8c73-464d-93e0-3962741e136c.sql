@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.lock_tent_after_checkin() FROM PUBLIC, anon, authenticated;
