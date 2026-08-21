@@ -12,7 +12,6 @@ export interface TemplateEntry {
 import { template as chatNotification } from './chat-notification.tsx'
 import { template as chatReply } from './chat-reply.tsx'
 import { template as cleaningComplete } from './cleaning-complete.tsx'
-
 import { template as tentReadyGuest } from './tent-ready-guest.tsx'
 import { template as prearrivalOffer } from './prearrival-offer.tsx'
 import { template as addonRequestOwner } from './addon-request-owner.tsx'
@@ -21,7 +20,7 @@ import { template as breakfastNewOrder } from './breakfast-new-order.tsx'
 import { template as breakfastDigest } from './breakfast-digest.tsx'
 import { template as simpleOwnerNotice } from './simple-owner-notice.tsx'
 import { template as swishPaymentReminder } from './swish-payment-reminder.tsx'
-
+import { template as nativeBookingConfirmation } from './native-booking-confirmation.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'chat-notification': chatNotification,
@@ -35,5 +34,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'breakfast-digest': breakfastDigest,
   'simple-owner-notice': simpleOwnerNotice,
   'swish-payment-reminder': swishPaymentReminder,
+  'native-booking-confirmation': nativeBookingConfirmation,
 }
-
