@@ -28,4 +28,17 @@ export default defineConfig(({ mode }) => {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-}));
+  define: {
+    "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(
+      env.VITE_SUPABASE_URL || FALLBACK_SUPABASE_URL,
+    ),
+    "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY": JSON.stringify(
+      env.VITE_SUPABASE_PUBLISHABLE_KEY || FALLBACK_SUPABASE_PUBLISHABLE_KEY,
+    ),
+    "import.meta.env.VITE_SUPABASE_PROJECT_ID": JSON.stringify(
+      env.VITE_SUPABASE_PROJECT_ID || FALLBACK_SUPABASE_PROJECT_ID,
+    ),
+  },
+  };
+});
+
