@@ -102,7 +102,6 @@ const SirvoyBookingWidget = ({ formId = "9482eece181add59", className }: Props) 
     script.setAttribute("data-sirvoy-injected", "true");
 
     script.onload = () => {
-      // Sirvoy may render asynchronously after the script itself has loaded.
       window.setTimeout(inspect, 250);
       window.setTimeout(() => {
         if (!settled) {
@@ -130,16 +129,18 @@ const SirvoyBookingWidget = ({ formId = "9482eece181add59", className }: Props) 
 
   return (
     <div className={className}>
-      <div ref={containerRef} className="w-full min-h-[420px] relative" aria-live="polite" />
+      <div className={status === "error" ? "hidden" : "relative min-h-[420px]"}>
+        <div ref={containerRef} className="w-full min-h-[420px]" aria-live="polite" />
 
-      {status === "loading" && (
-        <div className="flex min-h-[180px] items-center justify-center text-[#5e6b5a]" aria-live="polite">
-          <div className="flex flex-col items-center gap-3">
-            <div className="h-8 w-8 rounded-full border-2 border-[#617457]/30 border-t-[#617457] animate-spin" />
-            <p className="text-sm font-sans">{copy.loading}</p>
+        {status === "loading" && (
+          <div className="absolute inset-0 flex items-center justify-center bg-[#FFFDF8]/90 text-[#5e6b5a]" aria-live="polite">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-8 w-8 rounded-full border-2 border-[#617457]/30 border-t-[#617457] animate-spin" />
+              <p className="text-sm font-sans">{copy.loading}</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {status === "error" && (
         <div className="rounded-3xl border border-[#617457]/20 bg-[#F6F2E9] px-6 py-8 text-center">
