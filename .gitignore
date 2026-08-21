@@ -12,10 +12,9 @@ dist
 dist-ssr
 *.local
 
-# Environment / secrets
-.env
-.env.*
-!.env.example
+# Environment (Lovable Cloud publishable config must stay tracked)
+.env.local
+.env.*.local
 
 # Editor directories and files
 .vscode/*
