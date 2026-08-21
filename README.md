@@ -1,73 +1,108 @@
-# Welcome to your Lovable project
+# Bergs Slussar Glamping
 
-## Project info
+Production website and operations app for **Bergs Slussar Glamping** at the Göta Canal outside Linköping.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Public site: `https://goglampingsweden.se`
 
-## How can I edit this code?
+## Product surfaces
 
-There are several ways of editing your application.
+This repository is not only a marketing site. It also contains operational flows used by the glamping business.
 
-**Use Lovable**
+Production-critical routes include:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- `/boka` — direct booking funnel / Sirvoy booking surface
+- `/frukost` — breakfast operations
+- `/stad` — cleaning operations portal
+- `/checka-in` and `/checkin` — guest check-in
+- `/stay/:token` — guest stay page
+- `/admin/*` — operations/admin
+- `/blogg` and SEO landing pages — organic acquisition
 
-Changes made via Lovable will be committed automatically to this repo.
+Treat changes to booking, breakfast, cleaning, guest access, payments and admin as production-sensitive.
 
-**Use your preferred IDE**
+## Tech
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- React 18
+- TypeScript
+- Vite
+- Tailwind / shadcn-ui
+- Supabase
+- React Query
+- React Router
+- Vitest
+- Bun / npm lockfiles are currently present; CI uses Bun
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Integrations
 
-Follow these steps:
+The application contains integrations for business-critical flows such as:
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- Supabase data/auth
+- Sirvoy booking widget
+- booking/check-in operations
+- site analytics stored in Supabase
+- guest communication and operational tooling
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Do not replace an existing integration only because a new implementation looks cleaner. Preserve production behaviour until the replacement is verified end-to-end.
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Local development
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+bun install --frozen-lockfile
+bun run dev
 ```
 
-**Edit a file directly in GitHub**
+Validation before merge:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+bun run lint
+bun run test
+bun run build
+```
 
-**Use GitHub Codespaces**
+All three checks are intended to be merge gates.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Environment variables and secrets
 
-## What technologies are used for this project?
+Never commit `.env` files, private API keys, service-role keys, payment secrets or credentials.
 
-This project is built with:
+Use local/hosting environment configuration. `.env.example` may document variable names but must never contain production credentials.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+If a secret is ever committed to Git history, removing the file from the latest commit is not enough: rotate the affected credential and clean history if appropriate.
 
-## How can I deploy this project?
+## Business priorities
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+When improving this repository, prioritize in this order:
 
-## Can I connect a custom domain to my Lovable project?
+1. Booking reliability and completed direct bookings
+2. Guest experience and operational reliability
+3. `/frukost` and `/stad` workflows
+4. Reduced manual administration
+5. Conversion rate and mobile UX
+6. Revenue per stay / useful add-ons
+7. SEO that leads to qualified booking intent
+8. Cosmetic improvements
 
-Yes, you can!
+Do not create features merely to increase feature count.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## StayBoost relationship
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Bergs Slussar Glamping is the ideal real-world lighthouse environment for StayBoost.
+
+Long-term direction:
+
+- keep the glamping site highly converting and guest-facing
+- progressively let StayBoost own reusable booking/guest/operations capabilities
+- use real Bergs Slussar stays to validate breakfast, cleaning, add-ons, channel reconciliation and automation
+- avoid duplicating the same business logic permanently in two products
+
+Any migration from an existing working flow to StayBoost must be parallel-tested and reversible before cutover.
+
+## Agent rules
+
+Before starting a large audit, first inspect current `main`, open PRs and production behaviour. Do not redo work already implemented or create parallel versions of the same flow.
+
+Prefer:
+
+`real production problem → smallest valuable fix → tests → build → preview → production verification → measure`
+
+For booking/channel work, reliability and avoiding double bookings are more important than architectural elegance.
