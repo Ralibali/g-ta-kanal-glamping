@@ -5,7 +5,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
     const sb = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
-    const { data: file, error: dlErr } = await sb.storage.from('payslips').download('melvin/lonespec-juli-2026.pdf');
+    const { data: file, error: dlErr } = await sb.storage.from('payslips').download('melvin/lonespec-aug-2026.pdf');
     if (dlErr || !file) throw new Error(dlErr?.message ?? 'download failed');
     const buf = new Uint8Array(await file.arrayBuffer());
     let bin = '';
@@ -28,14 +28,16 @@ Deno.serve(async (req) => {
         to: ['melvin@r8a.se'],
         bcc: ['info@auroramedia.se'],
         reply_to: 'info@auroramedia.se',
-        subject: 'Lönespecifikation juli 2026 – Go Glamping Sweden (korrigerad)',
+        subject: 'Lönespecifikation augusti 2026 – Go Glamping Sweden',
         html: `<p>Hej Melvin!</p>
-<p>Bifogat hittar du din korrigerade lönespecifikation för juli 2026.</p>
-<p><strong>Att betala ut: 983,62 kr</strong><br/>Utbetalning: <strong>24 juli 2026</strong> till bankkonto <strong>5319-0334064</strong>.</p>
-<p>Semesterersättning (118,03 kr) sparas separat och betalas ut senare.</p>
-<p>Hör av dig om något ser fel ut. Tack för fint jobb i juli!</p>
+<p>Bifogat hittar du lönespecifikationen för allt arbete sedan förra utbetalningen (24 juli–24 augusti 2026).</p>
+<p><strong>13,60 timmar</strong> varav 2,85 h med OB-tillägg.<br/>
+Grundlön 2 312,00 kr + OB 78,63 kr = brutto 2 390,63 kr<br/>
+Semesterersättning 12 % : 286,88 kr</p>
+<p><strong>Att betala ut: 2 677,51 kr</strong><br/>Utbetalning: <strong>25 augusti 2026</strong> till bankkonto <strong>5319-0334064</strong>.</p>
+<p>Hör av dig om något ser fel ut. Tack för fint jobb!</p>
 <p>Mvh,<br/>Christoffer<br/>Aurora Media AB / Go Glamping Sweden</p>`,
-        attachments: [{ filename: 'lonespec-melvin-juli-2026.pdf', content: b64 }],
+        attachments: [{ filename: 'lonespec-melvin-aug-2026.pdf', content: b64 }],
       }),
     });
     const text = await res.text();
