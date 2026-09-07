@@ -5,12 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/generate-editorial.mjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "editorial:check": "node scripts/editorial-check.mjs",
+    "prebuild": "npm run editorial:check"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

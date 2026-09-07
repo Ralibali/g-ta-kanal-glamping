@@ -1,3 +1,5 @@
+import editorialArticles from '@/content/editorial/articles.json';
+import { EditorialBody } from '@/components/EditorialBody';
 import { useEffect } from "react";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { ArrowLeft, Clock } from "lucide-react";
@@ -8,6 +10,7 @@ const SITE = "https://goglampingsweden.se";
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = blogPosts.find((p) => p.slug === slug);
+  const editorialArticle = editorialArticles.find(p => p.slug === slug);
 
   const canonical = post ? `${SITE}/blogg/${post.slug}` : `${SITE}/blogg`;
 
@@ -199,7 +202,7 @@ const BlogPost = () => {
 
       {/* Content */}
       <article className="container max-w-3xl py-12 md:py-20">
-        {renderContent(post.content)}
+        {editorialArticle ? <EditorialBody article={editorialArticle} /> : renderContent(post.content)}
       </article>
 
       {/* CTA */}
