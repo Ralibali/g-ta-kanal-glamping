@@ -27,9 +27,12 @@ Deno.serve(async (req) => {
 
   const svBreakfast = breakfast ? ' Frukost serveras 08:30-09:00 vid portalen och ni får ett SMS när den levererats från bageriet.' : ''
   const enBreakfast = breakfast ? ' Breakfast is served 08:30-09:00 at the portal and you will get an SMS when it is delivered from the bakery.' : ''
+  const deBreakfast = breakfast ? ' Das Frühstück wird von 08:30-09:00 Uhr am Eingangstor serviert, und Sie erhalten eine SMS, sobald es von der Bäckerei geliefert wurde.' : ''
   const sv = `${name ? `Hej ${name}` : 'Hej'} och välkommen till oss på Bergs Slussar Glamping! Våra städare har markerat ${tent} som klart, så ni är välkomna att checka in från nu. Incheckning sker via QR-koden vid entrén, där kan ni checka in med namn eller bokningsnummer och får sedan koden till tältet.${svBreakfast} Soliga hälsningar, Bergs Slussar Glamping`
   const en = `${name ? `Hi ${name}` : 'Hi'} and welcome to Bergs Slussar Glamping! Our cleaners have marked ${tent} as ready, so you are welcome to check in from now. Check in via the QR code at the entrance, where you can use your name or booking number, and you will then get the code to your tent.${enBreakfast} Kind regards, Bergs Slussar Glamping`
-  const base = lang.startsWith('sv') ? sv : en
+  const de = `${name ? `Hallo ${name}` : 'Hallo'} und herzlich willkommen bei Bergs Slussar Glamping! Unser Reinigungsteam hat ${tent} als fertig markiert, Sie können also ab sofort einchecken. Der Check-in erfolgt über den QR-Code am Eingang, dort können Sie mit Namen oder Buchungsnummer einchecken und erhalten anschließend den Code für das Zelt.${deBreakfast} Sonnige Grüße, Bergs Slussar Glamping`
+  const base = lang.startsWith('sv') ? sv : lang.startsWith('de') ? de : en
+
   const message = extra ? `${base}\n\n${extra}` : base
 
   const fromRaw = Deno.env.get('ELKS46_FROM') || 'Glamping'
