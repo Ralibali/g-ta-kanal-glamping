@@ -1,3 +1,4 @@
+import editorialArticles from '../content/editorial/articles.json';
 import glampingSunset from "@/assets/glamping-sunset.jpg";
 import glampingExterior from "@/assets/glamping-exterior-deck.jpg";
 import glampingInterior from "@/assets/glamping-interior-cozy.jpg";
@@ -21,6 +22,11 @@ export interface BlogPost {
 }
 
 export const blogPosts: BlogPost[] = [
+  ...editorialArticles.map(article => ({
+    slug: article.slug, title: article.title, excerpt: article.intro, date: article.publishedDate,
+    readTime: '5 min', heroImage: glampingReading, images: [], metaDescription: article.metaDescription,
+    content: article.intro + '\n\n' + article.sections.map(s => `## ${s.heading}\n\n${s.content}`).join('\n\n'),
+  })),
   {
     slug: "boende-nara-bergs-slussar-tips",
     title: "Boende nära Bergs Slussar – tips inför besöket",

@@ -1,0 +1,8 @@
+{
+  "origin": "https://goglampingsweden.se",
+  "name": "Bergs Slussar Glamping",
+  "blogTitle": "Bloggen",
+  "blogDescription": "Inspiration och förberedelser inför en vistelse vid Göta kanal.",
+  "sectionSitemap": false,
+  "legacySource": "src/data/blogPosts.ts"
+}
