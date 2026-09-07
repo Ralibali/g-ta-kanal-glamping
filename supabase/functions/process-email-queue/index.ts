@@ -86,25 +86,25 @@ function parseJwtClaims(token: string): Record<string, unknown> | null {
 
 // Move a message to the dead letter queue and log the reason.
 async function moveToDlq(
-  supabase: ReturnType<typeof createClient>,
+  supabase: any,
   queue: string,
   msg: { msg_id: number; message: Record<string, unknown> },
   reason: string
 ): Promise<void> {
   const payload = msg.message
-  await supabase.from('email_send_log').insert({
+  await (supabase.from('email_send_log') as any).insert({
     message_id: payload.message_id,
     template_name: (payload.label || queue) as string,
     recipient_email: payload.to,
     status: 'dlq',
     error_message: reason,
   })
-  const { error } = await supabase.rpc('move_to_dlq', {
+  const { error } = await (supabase.rpc('move_to_dlq', {
     source_queue: queue,
     dlq_name: `${queue}_dlq`,
     message_id: msg.msg_id,
     payload,
-  })
+  }) as any)
   if (error) {
     console.error('Failed to move message to DLQ', { queue, msg_id: msg.msg_id, reason, error })
   }
@@ -170,7 +170,7 @@ Deno.serve(async (req) => {
 
   // 2. Process auth_emails first (priority), then transactional_emails
   for (const queue of ['auth_emails', 'transactional_emails']) {
-    const { data: messages, error: readError } = await supabase.rpc('read_email_batch', {
+    const { data: rawMessages, error: readError } = await supabase.rpc('read_email_batch', {
       queue_name: queue,
       batch_size: batchSize,
       vt: 30,
@@ -181,7 +181,8 @@ Deno.serve(async (req) => {
       continue
     }
 
-    if (!messages?.length) continue
+    const messages = (rawMessages as any[] | null) ?? []
+    if (!messages.length) continue
 
     // Retry budget is based on real send failures, not pgmq read_ct.
     // read_ct increments for every message in a claimed batch, including
@@ -189,12 +190,12 @@ Deno.serve(async (req) => {
     const messageIds = Array.from(
       new Set(
         messages
-          .map((msg) =>
+          .map((msg: any) =>
             msg?.message?.message_id && typeof msg.message.message_id === 'string'
               ? msg.message.message_id
               : null
           )
-          .filter((id): id is string => Boolean(id))
+          .filter((id: any): id is string => Boolean(id))
       )
     )
     const failedAttemptsByMessageId = new Map<string, number>()
@@ -270,10 +271,10 @@ Deno.serve(async (req) => {
             msg_id: msg.msg_id,
             message_id: payload.message_id,
           })
-          const { error: dupDelError } = await supabase.rpc('delete_email', {
+          const { error: dupDelError } = await (supabase.rpc('delete_email', {
             queue_name: queue,
             message_id: msg.msg_id,
-          })
+          }) as any)
           if (dupDelError) {
             console.error('Failed to delete duplicate message from queue', { queue, msg_id: msg.msg_id, error: dupDelError })
           }
@@ -285,7 +286,7 @@ Deno.serve(async (req) => {
         await sendViaResend(payload, apiKey, resendApiKey)
 
         // Log success
-        await supabase.from('email_send_log').insert({
+        await (supabase.from('email_send_log') as any).insert({
           message_id: payload.message_id,
           template_name: payload.label || queue,
           recipient_email: payload.to,
@@ -293,10 +294,10 @@ Deno.serve(async (req) => {
         })
 
         // Delete from queue
-        const { error: delError } = await supabase.rpc('delete_email', {
+        const { error: delError } = await (supabase.rpc('delete_email', {
           queue_name: queue,
           message_id: msg.msg_id,
-        })
+        }) as any)
         if (delError) {
           console.error('Failed to delete sent message from queue', { queue, msg_id: msg.msg_id, error: delError })
         }
@@ -312,7 +313,7 @@ Deno.serve(async (req) => {
         })
 
         if (isRateLimited(error)) {
-          await supabase.from('email_send_log').insert({
+          await (supabase.from('email_send_log') as any).insert({
             message_id: payload.message_id,
             template_name: payload.label || queue,
             recipient_email: payload.to,
@@ -349,7 +350,7 @@ Deno.serve(async (req) => {
         }
 
         // Log non-429 failures to track real retry attempts.
-        await supabase.from('email_send_log').insert({
+        await (supabase.from('email_send_log') as any).insert({
           message_id: payload.message_id,
           template_name: payload.label || queue,
           recipient_email: payload.to,

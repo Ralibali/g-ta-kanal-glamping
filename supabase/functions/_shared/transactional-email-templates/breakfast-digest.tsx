@@ -41,7 +41,7 @@ const Email = ({ windowLabel = 'kommande dagar', rows = [] }: Props) => {
   return (
     <Html lang="sv" dir="ltr">
       <Head />
-      <Preview>Frukost & fika – uppdatering ({rows.length} leveranser)</Preview>
+      <Preview>Frukost & fika – uppdatering ({String(rows.length)} leveranser)</Preview>
       <Body style={main}>
         <Container style={container}>
           <Heading style={h1}>Frukost & fika 🥐</Heading>
