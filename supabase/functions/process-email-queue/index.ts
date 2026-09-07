@@ -271,10 +271,10 @@ Deno.serve(async (req) => {
             msg_id: msg.msg_id,
             message_id: payload.message_id,
           })
-          const { error: dupDelError } = await supabase.rpc('delete_email', {
+          const { error: dupDelError } = await (supabase.rpc('delete_email', {
             queue_name: queue,
             message_id: msg.msg_id,
-          })
+          }) as any)
           if (dupDelError) {
             console.error('Failed to delete duplicate message from queue', { queue, msg_id: msg.msg_id, error: dupDelError })
           }
