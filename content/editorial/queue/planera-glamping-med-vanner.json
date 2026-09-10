@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "status": "draft",
+  "writtenAt": "2026-09-10T18:29:08Z",
+  "repository": "Ralibali/g-ta-kanal-glamping",
+  "publicationGate": "Recheck current main and all published content; complete previous live article and product/source-link browser checks before promotion. Set actual publication dates only at publication.",
+  "sourceReview": {
+    "checkedAt": "2026-09-10T18:29:08Z",
+    "status": "repository_reviewed_live_product_pending",
+    "note": "Original editorial work template. Recheck the live product and links before publishing; no human review or measured outcomes claimed."
+  },
+  "article": {
+    "slug": "planera-glamping-med-vanner",
+    "title": "Planera glamping med vänner: samla gruppens beslut före bokningen",
+    "metaDescription": "Gör gruppens glampingresa lättare att planera. Samla datum, behov och ansvar innan ni jämför tillgängliga boenden och bokar.",
+    "intro": "I gruppchatten vill någon resa en annan helg, någon behöver veta hur man tar sig dit och någon väntar på besked om boendet. Samla först de beslut som hela sällskapet behöver vara överens om. Då blir det lättare att gå vidare till en konkret bokning.",
+    "sections": [
+      {
+        "heading": "Skilj önskemål från villkor för resan",
+        "content": "Be varje person ange möjliga datum och sådant som måste fungera för att resan ska bli av. Låt önskade aktiviteter stå separat. En favoritutflykt och ett nödvändigt resebehov ska inte se ut som samma sorts punkt.\n\nSkriv upp frågor som behöver ställas till boendet. Anta inte att en generell beskrivning av glamping svarar på frågor om just ert sällskap. En gemensam lista gör det också enklare att se vilka besked som redan finns."
+      },
+      {
+        "heading": "Samla ett kort bokningsunderlag",
+        "content": "Använd en anteckning som alla i sällskapet kan läsa:\n\n- Vilka som planerar att följa med.\n- Datumförslag och när ni vill fatta beslut.\n- Behov som måste bekräftas av boendet.\n- Hur ni tänker resa och vad som återstår att ordna.\n- Vem som samlar beskeden.\n- Vilka frågor som fortfarande är öppna.\n\nKontrollera kapacitet och boendealternativ för era datum på bokningssidan. Utgå inte från att ett visst antal personer kan bo tillsammans bara för att ni har sett en bild av ett tält."
+      },
+      {
+        "heading": "Jämför samma alternativ tillsammans",
+        "content": "Dela länken till det boende och de datum ni faktiskt tittar på. Om ni jämför flera alternativ, skriv vad som skiljer dem enligt den aktuella informationen. Då undviker ni att olika personer tror att gruppen har valt olika saker.\n\nLäs vad som ingår och vilka villkor som visas innan bokningen genomförs. Samla oklarheter och be om besked där uppgiften saknas. Den här mallen anger varken aktuella priser, ledighet eller villkor för en särskild bokning."
+      },
+      {
+        "heading": "Fördela gemensamma uppgifter",
+        "content": "Utse en person per uppgift, till exempel att samla resealternativ eller hålla ordning på bekräftad ankomstinformation. Den som sköter en uppgift behöver inte fatta alla gruppens beslut.\n\nGör en separat lista för gemensamma saker som ska tas med, när ni har kontrollerat vad boendet tillhandahåller. Låt personliga behov hanteras av var och en. Undvik att alla packar samma gemensamma utrustning utifrån olika versioner av listan."
+      },
+      {
+        "heading": "Lämna utrymme för olika sätt att vara ledig",
+        "content": "Välj någon gemensam hållpunkt och prata om vad som är valfritt. Alla behöver inte vilja fylla varje timme på samma sätt. Det kan räcka att bestämma när ni ses igen efter en egen stund.\n\nOm ni vill göra en utflykt, kontrollera arrangörens aktuella information för era datum. Förbered en enkel plan som går att ändra med hjälp av [guiden för växlande väder](/blogg/planera-glampingvistelse-vaxlande-vader)."
+      },
+      {
+        "heading": "Bekräfta planen efter bokningen",
+        "content": "Samla den bekräftade informationen på en plats och markera äldre datumförslag som inaktuella. Dela det som resesällskapet behöver för ankomsten, men håll personliga bokningsuppgifter och eventuella koder privata.\n\nGå vidare till [boende och bokning](/boka) hos Bergs Slussar Glamping när gruppens grundbeslut är klara. Kontrollera erbjudandet där innan ni bestämmer er. AI-assisterad originalguide med en planeringsmall; den innebär inget löfte om särskilda grupppaket, aktiviteter eller tillgängliga platser."
+      }
+    ],
+    "ctaHref": "/boka",
+    "ctaLabel": "Se boende och bokning",
+    "editorial": {
+      "createdWith": "ChatGPT",
+      "aiAssisted": true,
+      "searchIntent": "Resesällskap som behöver samordna deltagare, datum och beslut före glampingbokning; skiljer sig från väder- och packguiden.",
+      "sourceUrls": [
+        "https://goglampingsweden.se/boka"
+      ]
+    }
+  }
+}
