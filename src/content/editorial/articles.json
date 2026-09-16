@@ -1,5 +1,50 @@
 [
   {
+    "slug": "ankomstplan-glamping-resa",
+    "title": "Gör en enkel ankomstplan inför din glampingvistelse",
+    "metaDescription": "Samla rätt adress, bekräftade ankomstbesked och öppna frågor före glampingresan. En praktisk plan för sista sträckan och kontakten med boendet.",
+    "intro": "Det mesta kan vara packat samtidigt som den sista biten av resan är oklar. Vilken adress ska användas, var finns ankomstinformationen och vad gör ni om planen ändras? En liten ankomstplan samlar de besked som faktiskt gäller för er bokning.",
+    "sections": [
+      {
+        "heading": "Utgå från den bekräftade bokningen",
+        "content": "Leta fram bokningsbekräftelsen och de ankomstbesked som boendet har skickat. Kontrollera att de gäller rätt datum och det alternativ ni har bokat. En allmän beskrivning av området behöver inte innehålla instruktionerna för just er ankomst.\n\nSkriv vad som är bekräftat och lämna en separat rad för frågor. Om ett besked saknas, kontakta boendet via den angivna kontaktvägen. Fyll inte luckan med en tid eller ett tillvägagångssätt som gällde vid en tidigare resa."
+      },
+      {
+        "heading": "Samla bara det ni behöver under resdagen",
+        "content": "En användbar ankomstanteckning kan innehålla:\n\n- Datum och det boende som bokningen avser.\n- Bekräftad adress och eventuell särskild vägbeskrivning.\n- Ankomstinstruktionerna enligt ert aktuella besked.\n- Kontaktvägen om ni behöver ställa en fråga.\n- Resesällskapets överenskomna mötespunkt.\n- Frågor som fortfarande behöver svar.\n\nSpara personliga bokningsuppgifter och eventuella koder på en plats där bara rätt personer kommer åt dem. En delad reseplan behöver inte innehålla hela bokningsbekräftelsen."
+      },
+      {
+        "heading": "Kontrollera sista sträckan separat",
+        "content": "Planera resvägen hela vägen fram till den bekräftade destinationen. Om någon kommer på annat sätt än resten av sällskapet, låt den personen gå igenom sin sista anslutning. Det är lätt att en gemensam plan bara beskriver resan för den som kör bilen.\n\nBehöver ni besked om parkering, avlastning eller att ta er fram med viss utrustning, ställ den konkreta frågan till boendet. Den här guiden anger inga sådana förutsättningar. En kartbild eller ett foto ger inte i sig svar på vad som fungerar för just ert behov."
+      },
+      {
+        "heading": "Bestäm vem som håller ihop ändrade besked",
+        "content": "Låt en person samla nya besked från boendet och dela det som övriga resenärer behöver veta. Det behöver inte vara samma person som planerar varje aktivitet. Poängen är att gruppen ska veta var den aktuella ankomstplanen finns.\n\nMarkera en äldre tid eller adressnotering som inaktuell om den ersätts. Läs gärna [guiden för att planera glamping med vänner](/blogg/planera-glamping-med-vanner) om gruppens datum, ansvar och gemensamma beslut fortfarande behöver ordnas före resan."
+      },
+      {
+        "heading": "Ha en rutin om resan ändras",
+        "content": "Fundera på vilket besked boendet kan behöva om resplanen förändras. Använd kontaktuppgifterna och instruktionerna i er bokning. Skicka en konkret fråga om det blir oklart hur en ändring påverkar ankomsten; utgå inte från att en annan ankomsttid alltid går att ordna.\n\nFörbered också hur ni hittar viktig information om ni tillfälligt saknar uppkoppling. En privat sparad anteckning kan vara ett stöd. Den ska hållas aktuell och inte ersätta nya meddelanden som kommit efter att anteckningen gjordes."
+      },
+      {
+        "heading": "Lämna plats för att komma fram i lugn och ro",
+        "content": "Bygg inte hela första delen av vistelsen på ett obekräftat ankomstbesked. Samla först den information ni behöver och anpassa därefter era egna planer. Om ni vill ha alternativ vid olika väder kan [guiden om växlande väder](/blogg/planera-glampingvistelse-vaxlande-vader) hjälpa er att ordna önskemålen.\n\nSe [boende och bokning hos Bergs Slussar Glamping](/boka) när ni undersöker en vistelse. Läs de villkor och besked som gäller för ert val. AI-assisterad originalguide med en ankomstmall; den anger inga fasta incheckningstider och utlovar inte särskilda transport- eller mottagningstjänster."
+      }
+    ],
+    "ctaHref": "/boka",
+    "ctaLabel": "Se boende och bokning",
+    "editorial": {
+      "createdWith": "ChatGPT",
+      "aiAssisted": true,
+      "searchIntent": "Redan bokade glampinggäster som behöver samla bekräftad adress, ankomstinstruktioner och kontaktväg för resdagen. Skiljer sig från väderplanering, gruppens bokningsbeslut och lokala utflyktsguider.",
+      "sourceUrls": [
+        "https://goglampingsweden.se/boka"
+      ],
+      "publishedAt": "2026-09-16T16:40:19.645Z",
+      "sourceCheckedAt": "2026-09-16T16:40:19.645Z"
+    },
+    "publishedDate": "2026-09-16"
+  },
+  {
     "slug": "planera-glamping-med-vanner",
     "title": "Planera glamping med vänner: samla gruppens beslut före bokningen",
     "metaDescription": "Gör gruppens glampingresa lättare att planera. Samla datum, behov och ansvar innan ni jämför tillgängliga boenden och bokar.",
