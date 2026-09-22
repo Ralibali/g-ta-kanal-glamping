@@ -17,7 +17,7 @@ type PlausibleFn = (
 
 declare global {
   interface Window {
-    plausible?: PlausibleFn & { q?: unknown[] };
+    analyticsEvent?: PlausibleFn & { q?: unknown[] };
   }
 }
 
@@ -79,7 +79,7 @@ export function trackEvent(event: AnalyticsEvent, options?: TrackOptions): void 
   if (typeof window === "undefined") return;
   try {
     if (isBlockedPath(window.location.pathname)) return;
-    const fn = window.plausible;
+    const fn = window.analyticsEvent;
     if (typeof fn !== "function") return;
     const props = sanitizeProps(options as Record<string, unknown> | undefined);
     fn(event, props ? { props } : undefined);
