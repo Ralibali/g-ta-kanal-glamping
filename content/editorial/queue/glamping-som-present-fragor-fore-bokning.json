@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "status": "draft",
+  "writtenAt": "2026-09-25T10:06:46.303229+00:00",
+  "repository": "Ralibali/g-ta-kanal-glamping",
+  "publicationGate": "Earliest 2026-09-27, and only after a fresh previous-publication reader check, current main, complete published inventory and current primary-source review. Keep unpublished until all checks pass; assign actual publication dates at release.",
+  "sourceReview": {
+    "checkedAt": "2026-09-25T10:06:46.303229+00:00",
+    "publishedInventoryReviewed": 15,
+    "distinctIntent": "Givaren som vill planera en glampingpresent och reda ut mottagarens behov före bokning; skilt från packning och utan att anta att presentkort erbjuds.",
+    "note": "Owned product entry reviewed; article is an original procedural template. No invented outcomes, prices or automatic product features. Fresh source review required before publication."
+  },
+  "article": {
+    "slug": "glamping-som-present-fragor-fore-bokning",
+    "title": "Glamping som present: frågor före bokningen",
+    "metaDescription": "Samla frågor om datum, bokare och aktuella villkor när glamping ska ges som present. Planera överraskningen utifrån vad boendet faktiskt har bekräftat.",
+    "intro": "En glampingvistelse kan vara en uppskattad present, men själva överraskningen och bokningen är två olika delar att planera. Mottagaren kan behöva vara med och välja datum, resväg eller sällskap. Börja därför med vad du vet om personens önskemål och vilka uppgifter som behöver kontrolleras innan något bokas.\n\nDen här frågemallen hjälper dig att samla underlaget. Den innebär inte att ett visst boende säljer presentkort, erbjuder öppna datum eller kan ändra namnet på en bokning. Sådana möjligheter behöver bekräftas av boendet för det erbjudande som du faktiskt överväger.\n",
+    "sections": [
+      {
+        "heading": "Bestäm vad överraskningen ska omfatta",
+        "content": "Fundera på om presenten ska vara ett färdigt datum eller en inbjudan att planera vistelsen tillsammans. Om mottagarens kalender är okänd kan det vara klokt att först prata om möjliga perioder. Skriv inte ett bestämt datum på presenten som om det vore bokat när tillgängligheten ännu inte har kontrollerats.\n\nTänk också igenom vem som ska följa med och hur resan ska ordnas. Uppgifter om antal gäster och eventuella särskilda behov måste stämma med det aktuella bokningsalternativet. Låt mottagaren beskriva sina behov själv när du inte säkert vet vad som fungerar."
+      },
+      {
+        "heading": "Fråga hur bokningen ska göras",
+        "content": "Kontrollera med boendet vem som ska stå som bokare och hur rätt gäster anges. Fråga vart bekräftelser och praktisk information skickas, särskilt om mottagaren ska få presenten först senare. Utgå inte från att kontaktuppgifterna går att byta på ett visst sätt utan ett besked.\n\nOm du vill fråga om presentkort eller ett erbjudande med valbart datum, håll den frågan öppen tills boendet har svarat. Be i så fall om tydlig information om vad erbjudandet omfattar och hur det används. En egen presenthälsning är inget bevis på att boendet har gjort en reservation."
+      },
+      {
+        "heading": "Läs villkoren för det valda alternativet",
+        "content": "Gå igenom det aktuella priset, vad som ingår och de villkor som visas vid bokningen. Kontrollera särskilt det som är viktigt när du bokar åt någon annan, exempelvis hur frågor om ändringar hanteras. Spara den information som hör till just ditt val och be boendet förklara oklarheter.\n\nUndvik att använda en gammal skärmbild eller någon annans tidigare vistelse som grund för vad som ingår nu. Det kan vara samma plats men ett annat erbjudande. Artikeln tolkar inte avtal eller avbokningsvillkor; den hjälper dig att hitta frågorna som behöver ett aktuellt svar."
+      },
+      {
+        "heading": "Samla presentens praktiska underlag",
+        "content": "En kort lista kan innehålla:\n\n- Mottagarens önskemål och sådant ni behöver välja tillsammans.\n- Datum som är bokat, eller datum som ännu bara diskuteras.\n- Vem bokningen gäller och vem som har kontakten med boendet.\n- Vad det aktuella erbjudandet omfattar enligt bekräftelsen.\n- Var villkor och kontaktväg finns sparade.\n- När mottagaren behöver få den praktiska informationen.\n\nFörvara bokningsnummer och personuppgifter i den privata bekräftelsen. Själva presentkortet eller hälsningen behöver inte innehålla allt. Det räcker att mottagaren vet hur ni tillsammans hittar rätt underlag när det är dags att planera resan."
+      },
+      {
+        "heading": "Gör överlämningen användbar för mottagaren",
+        "content": "Berätta tydligt vad som redan är ordnat och vad som återstår att bestämma. När datumet är bekräftat kan ni göra en [ankomstplan](/blogg/ankomstplan-glamping-resa) och gå igenom [packningen utifrån vad som ingår](/blogg/packlista-glamping-eget-och-ingar).\n\nÖppna [Bergs Slussar Glampings bokningssida](/boka) för det aktuella bokningsunderlaget och kontakta boendet om presentupplägget behöver förklaras. AI-assisterad originalguide med en frågemall. Texten utlovar inget presentkort, någon viss tillgänglighet eller möjlighet att ändra en bokning."
+      }
+    ],
+    "ctaHref": "/boka",
+    "ctaLabel": "Se boendet och bokningen",
+    "editorial": {
+      "createdWith": "ChatGPT",
+      "aiAssisted": true,
+      "searchIntent": "Givaren som vill planera en glampingpresent och reda ut mottagarens behov före bokning; skilt från packning och utan att anta att presentkort erbjuds.",
+      "sourceUrls": [
+        "https://goglampingsweden.se/boka"
+      ],
+      "sourceCheckedAt": "2026-09-25T10:06:46.303229+00:00"
+    }
+  }
+}
