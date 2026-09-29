@@ -74,7 +74,7 @@ const HeroSection = () => {
         >
           {lang === "en"
             ? "Cosy tents with double bed, sofa bed for two, heating and fridge – 15 minutes from Linköping. Breakfast available as add-on."
-            : "Ombonade tält med dubbelsäng, bäddsoffa för två, värme och kylskåp – 15 minuter från Linköping. Frukost ingår som tillval."}
+            : "Ombonade tält med dubbelsäng, bäddsoffa för två, värme och kylskåp – 15 minuter från Linköping. Frukost kan bokas som tillval."}
         </motion.p>
 
         <motion.div
