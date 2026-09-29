@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "status": "draft",
+  "writtenAt": "2026-09-27T09:59:39.112836+00:00",
+  "repository": "Ralibali/g-ta-kanal-glamping",
+  "publicationGate": "Earliest 2026-10-01, and at least two calendar days after the preceding article is actually published and fully verified. Require current main, full inventory and fresh source review. Do not assign publication dates while draft. Resolve pending product deployment dependencies before any frontend release.",
+  "sourceReview": {
+    "checkedAt": "2026-09-27T09:59:39.112836+00:00",
+    "publishedInventoryReviewed": 15,
+    "distinctIntent": "Gästens praktiska plan för avresedagen utifrån bekräftade besked, skilt från ankomstplan och utan antagna utcheckningstider eller faciliteter.",
+    "note": "Owned product entry reviewed; article is an original procedural template. No invented outcomes, prices or automatic product features. Fresh source review required before publication."
+  },
+  "article": {
+    "slug": "avreseplan-glamping-utcheckning",
+    "title": "Gör en enkel plan för avresedagen efter glampingvistelsen",
+    "metaDescription": "Gör en enkel plan för avresedagen efter glampingvistelsen. Samla aktuella besked om utcheckning, packning och nästa resa innan dagen börjar.",
+    "intro": "Avresedagen blir lättare att planera när sällskapet vet vilka besked som gäller och vad som återstår att ordna. Det kan handla om transporten hem, egna saker som ligger på flera platser och praktiska frågor till boendet. En kort plan samlar uppgifterna utan att hela sista förmiddagen behöver detaljstyras.\n\nUtgå från den aktuella bokningsbekräftelsen och boendets egna instruktioner. Den här mallen anger inga utcheckningstider eller städkrav och utlovar ingen förvaring, sen avresa eller annan särskild tjänst. Fråga boendet om sådant som behöver bekräftas för just er vistelse.\n",
+    "sections": [
+      {
+        "heading": "Läs avreseinformationen i förväg",
+        "content": "Kontrollera vilket besked ni har fått om när vistelsen avslutas och hur den praktiska utcheckningen går till. Spara hänvisningen till informationen så att fler i sällskapet kan hitta den. Ett minne från en tidigare bokning behöver inte stämma med det aktuella alternativet.\n\nOm något verkar motsägelsefullt, be boendet förtydliga det innan avresedagen. Ange vilken information ni tittar på så att frågan går att besvara. Skriv inte om ett oklart besked till en egen bestämd regel som resten av sällskapet sedan planerar efter."
+      },
+      {
+        "heading": "Koppla hemresan till de bekräftade tiderna",
+        "content": "Gå igenom hur ni ska ta er vidare och vilka avgångar eller upphämtningar som faktiskt är bokade. Kontrollera aktuella reseuppgifter hos den ansvariga transportören när ni behöver dem. Skilj en tänkt avresetid från ett bekräftat arrangemang.\n\nOm ni vill stanna i området efter vistelsen behöver ni själva reda ut hur egna saker och den fortsatta dagen ska ordnas. Utgå inte från att boendet kan förvara packning eller låta er använda utrymmen efter avslutad vistelse. Ställ frågan först om lösningen är viktig för planen."
+      },
+      {
+        "heading": "Gör en lista över det som behöver samlas ihop",
+        "content": "En enkel avreselista kan innehålla:\n\n- Bekräftad information om utcheckning och kontaktväg.\n- Hemresa eller fortsatt färd med aktuell hänvisning.\n- Egna saker som finns utanför den vanliga packningen.\n- Lånat eller tillhandahållet material enligt boendets instruktioner.\n- Praktiska uppgifter som sällskapet har kommit överens om.\n- Öppna frågor som behöver svar före avresan.\n\nAnvänd [packlistan inför glamping](/blogg/packlista-glamping-eget-och-ingar) som minnesstöd för vad ni tog med. Markera hellre några viktiga saker än att försöka skapa en detaljerad inventering av varje personligt föremål."
+      },
+      {
+        "heading": "Fördela de gemensamma uppgifterna",
+        "content": "Bestäm vem som håller kontakt med boendet och vem som följer den gemensamma reseplanen. Om flera personer har fått olika besked ska de samlas innan ni fördelar uppgifterna. Låt varje person också ansvara för att kontrollera sina egna saker.\n\nGå igenom vad som enligt boendets aktuella instruktioner ska lämnas eller ordnas innan ni går. Skilj detta från sådant som sällskapet väljer att göra på eget initiativ. Planen ska hjälpa er att följa beskeden, inte hitta på villkor som inte finns i bokningen."
+      },
+      {
+        "heading": "Avsluta vistelsen med en tydlig överlämning",
+        "content": "Följ den kontakt- eller utcheckningsväg ni har fått beskriven. Om ni upptäcker något ni behöver ta upp, lämna ett konkret besked till rätt person. Be om förtydligande om ni är osäkra på vilket steg som återstår.\n\nPå [Bergs Slussar Glampings bokningssida](/boka) finns underlag och kontaktvägar inför en vistelse. Planera den fortsatta resan med samma tydlighet som er [ankomst till glampingen](/blogg/ankomstplan-glamping-resa). AI-assisterad originalguide med en planeringsmall; texten anger inga särskilda faciliteter, tider eller inkluderade tjänster."
+      }
+    ],
+    "ctaHref": "/boka",
+    "ctaLabel": "Se boendet och bokningen",
+    "editorial": {
+      "createdWith": "ChatGPT",
+      "aiAssisted": true,
+      "searchIntent": "Gästens praktiska plan för avresedagen utifrån bekräftade besked, skilt från ankomstplan och utan antagna utcheckningstider eller faciliteter.",
+      "sourceUrls": [
+        "https://goglampingsweden.se/boka"
+      ],
+      "sourceCheckedAt": "2026-09-27T09:59:39.112836+00:00"
+    }
+  }
+}
