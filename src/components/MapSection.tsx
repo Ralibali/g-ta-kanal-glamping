@@ -1,3 +1,4 @@
+import ExternalEmbedGate from '@/components/ExternalEmbedGate';
 import { motion } from "framer-motion";
 import { MapPin, Car, Bus, ExternalLink } from "lucide-react";
 import { useLang } from "@/i18n/LanguageContext";
@@ -86,7 +87,7 @@ const MapSection = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="rounded-2xl overflow-hidden shadow-xl"
           >
-            <iframe
+            <ExternalEmbedGate service="Google Maps" english={lang === "en"}><iframe
               src="https://maps.google.com/maps?q=58.5357,15.5012&z=14&output=embed"
               width="100%"
               height="350"
@@ -94,7 +95,7 @@ const MapSection = () => {
               allowFullScreen
               loading="lazy"
               title={lang === "en" ? "Map to Bergs Slussar Glamping" : "Karta till Bergs Slussar Glamping"}
-            />
+            /></ExternalEmbedGate>
           </motion.div>
         </div>
       </div>

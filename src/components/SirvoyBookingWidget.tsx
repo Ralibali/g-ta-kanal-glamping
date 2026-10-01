@@ -8,10 +8,12 @@ interface Props {
 const SCRIPT_SRC = "https://secured.sirvoy.com/widget/sirvoy.js";
 
 const SirvoyBookingWidget = ({ formId = "9482eece181add59", className }: Props) => {
+  const [enabled, setEnabled] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
+    if (!enabled) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -36,11 +38,19 @@ const SirvoyBookingWidget = ({ formId = "9482eece181add59", className }: Props) 
 
     container.appendChild(script);
 
-    return () => {
+  return () => {
       window.clearTimeout(readyTimer);
       if (container) container.innerHTML = "";
     };
-  }, [formId]);
+  }, [formId, enabled]);
+
+  if (!enabled) return <div className={className}>
+    <div className="flex min-h-[300px] flex-col items-center justify-center gap-4 rounded-xl border p-6 text-center">
+      <p className="max-w-md text-sm">Bokningen hanteras av Sirvoy. När du öppnar bokningsformuläret ansluter din webbläsare till Sirvoy, som får din IP-adress och webbläsarinformation.</p>
+      <a href="/integritet" className="text-sm underline">Läs vår integritetspolicy</a>
+      <button type="button" onClick={() => setEnabled(true)} className="rounded-full bg-[#617457] px-6 py-3 text-sm font-medium text-white">Öppna bokningsformuläret</button>
+    </div>
+  </div>;
 
   return (
     <div className={className}>

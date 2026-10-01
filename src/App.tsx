@@ -1,3 +1,4 @@
+import Privacy from './pages/Privacy';
 import AnalyticsConsent from './components/AnalyticsConsent';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -57,6 +58,7 @@ const App = () => (
           <LanguageRedirect />
           <SiteMetaManager />
           <Routes>
+            <Route path="/integritet" element={<Privacy />} />
             <Route path="/" element={<Index lang="sv" />} />
             <Route path="/en" element={<Index lang="en" />} />
             <Route path="/de" element={<Index lang="de" />} />

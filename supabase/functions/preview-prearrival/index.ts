@@ -1,3 +1,4 @@
+import { requireAdminOrService } from '../_shared/require-admin.ts';
 import * as React from 'npm:react@18.3.1'
 import { renderAsync } from 'npm:@react-email/components@0.0.22'
 import { createClient } from 'npm:@supabase/supabase-js@2'
@@ -103,12 +104,12 @@ function buildSmsBody(name: string | null, link: string | null, lang: Lang, avai
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
 
+  const denied = await requireAdminOrService(req, corsHeaders);
+  if (denied) return denied;
+
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
-  // Preview is intentionally open (no admin auth required) so it can be viewed
-  // without being logged in. It only renders template output — no writes, no PII beyond
-  // what the requested booking already contains for admin-facing preview use.
   const admin = createClient(supabaseUrl, serviceKey)
 
   let body: { booking_id?: string } = {}

@@ -27,7 +27,7 @@ export function BreakfastLogin() {
         <CardHeader className="text-center">
           <Coffee className="mx-auto h-8 w-8 text-primary" />
           <CardTitle>Frukostleverans</CardTitle>
-          <p className="text-sm text-muted-foreground">Lösenord: <strong>Bostället</strong></p>
+          <p className="text-sm text-muted-foreground">Logga in med ditt tilldelade lösenord.</p>
         </CardHeader>
 
         <CardContent>

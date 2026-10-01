@@ -1,3 +1,4 @@
+import { hasTelemetryConsent, telemetryPath, telemetryReferrer, telemetryMetadata } from '@/lib/privacyTelemetry';
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,7 +24,9 @@ export function usePageTracking() {
   const lastPath = useRef('');
 
   useEffect(() => {
-    const path = location.pathname;
+    if (!hasTelemetryConsent()) return;
+    const path = telemetryPath(location.pathname);
+    if (!path) return;
     if (path === lastPath.current) return;
     lastPath.current = path;
 
@@ -31,8 +34,8 @@ export function usePageTracking() {
 
     supabase.from('page_views').insert({
       path,
-      referrer: document.referrer || null,
-      user_agent: navigator.userAgent,
+      referrer: telemetryReferrer(),
+
       session_id: sessionId,
       device_type: getDeviceType(),
     } as any).then(() => {});
@@ -44,14 +47,17 @@ export function trackClick(eventName: string, opts?: {
   elementText?: string;
   metadata?: Record<string, any>;
 }) {
+  if (!hasTelemetryConsent()) return;
+  const path = telemetryPath();
+  if (!path) return;
   const sessionId = getSessionId();
   supabase.from('click_events').insert({
     event_name: eventName,
     element_id: opts?.elementId,
-    element_text: opts?.elementText,
-    path: window.location.pathname,
+    element_text: undefined,
+    path,
     session_id: sessionId,
-    metadata: opts?.metadata || {},
+    metadata: telemetryMetadata(opts?.metadata),
   } as any).then(() => {});
 }
 
@@ -65,6 +71,7 @@ const TRACKED_ROLES = ['button', 'link', 'menuitem'];
 export function useAutoClickTracking() {
   useEffect(() => {
     const handler = (e: MouseEvent) => {
+      if (!hasTelemetryConsent() || !telemetryPath()) return;
       const target = e.target as HTMLElement;
       if (!target) return;
 

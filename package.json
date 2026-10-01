@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "editorial:check": "node scripts/editorial-check.mjs",
-    "prebuild": "npm run editorial:check"
+    "prebuild": "npm run editorial:check",
+    "test:privacy-edge": "node scripts/test-edge-privacy.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

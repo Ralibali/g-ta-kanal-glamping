@@ -1,51 +1,14 @@
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors'
+// Retired one-off endpoint. Never recreate accounts, reset passwords or resend private payroll/test messages.
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders })
-
-  const user = Deno.env.get('ELKS46_USERNAME')
-  const pass = Deno.env.get('ELKS46_PASSWORD')
-  if (!user || !pass) {
-    return new Response(JSON.stringify({ error: 'Missing 46elks credentials' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
-  }
-
-  let body: { to?: string; name?: string; tent?: string; lang?: string; breakfast?: boolean; extra?: string } = {}
-  try { body = await req.json() } catch { /* ignore */ }
-  const to = body.to
-  const name = body.name ?? null
-  const tent = body.tent ?? 'erat tält'
-  const lang = (body.lang ?? 'sv').toLowerCase()
-  const breakfast = !!body.breakfast
-  const extra = (body.extra ?? '').trim()
-  if (!to) {
-    return new Response(JSON.stringify({ error: 'to required' }), {
-      status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
-  }
-
-  const svBreakfast = breakfast ? ' Frukost serveras 08:30-09:00 vid portalen och ni får ett SMS när den levererats från bageriet.' : ''
-  const enBreakfast = breakfast ? ' Breakfast is served 08:30-09:00 at the portal and you will get an SMS when it is delivered from the bakery.' : ''
-  const deBreakfast = breakfast ? ' Das Frühstück wird von 08:30-09:00 Uhr am Eingangstor serviert, und Sie erhalten eine SMS, sobald es von der Bäckerei geliefert wurde.' : ''
-  const sv = `${name ? `Hej ${name}` : 'Hej'} och välkommen till oss på Bergs Slussar Glamping! Våra städare har markerat ${tent} som klart, så ni är välkomna att checka in från nu. Incheckning sker via QR-koden vid entrén, där kan ni checka in med namn eller bokningsnummer och får sedan koden till tältet.${svBreakfast} Soliga hälsningar, Bergs Slussar Glamping`
-  const en = `${name ? `Hi ${name}` : 'Hi'} and welcome to Bergs Slussar Glamping! Our cleaners have marked ${tent} as ready, so you are welcome to check in from now. Check in via the QR code at the entrance, where you can use your name or booking number, and you will then get the code to your tent.${enBreakfast} Kind regards, Bergs Slussar Glamping`
-  const de = `${name ? `Hallo ${name}` : 'Hallo'} und herzlich willkommen bei Bergs Slussar Glamping! Unser Reinigungsteam hat ${tent} als fertig markiert, Sie können also ab sofort einchecken. Der Check-in erfolgt über den QR-Code am Eingang, dort können Sie mit Namen oder Buchungsnummer einchecken und erhalten anschließend den Code für das Zelt.${deBreakfast} Sonnige Grüße, Bergs Slussar Glamping`
-  const base = lang.startsWith('sv') ? sv : lang.startsWith('de') ? de : en
-
-  const message = extra ? `${base}\n\n${extra}` : base
-
-  const fromRaw = Deno.env.get('ELKS46_FROM') || 'Glamping'
-  const from = fromRaw.replace(/[^A-Za-z0-9]/g, '').slice(0, 11) || 'Glamping'
-  const auth = btoa(`${user}:${pass}`)
-  const res = await fetch('https://api.46elks.com/a1/sms', {
-    method: 'POST',
-    headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ from, to, message }),
-  })
-  const text = await res.text()
-  return new Response(JSON.stringify({ ok: res.ok, status: res.status, body: text }), {
-    status: res.ok ? 200 : 502,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-  })
-})
+Deno.serve((req) => {
+  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  return new Response(JSON.stringify({ error: 'endpoint_retired' }), {
+    status: 410,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+  });
+});

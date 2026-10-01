@@ -30,6 +30,7 @@ const Footer = () => {
               <a href={sectionHref("kontakt")} className="hover:text-white transition-colors">{lang === "en" ? "Find us" : "Hitta hit"}</a>
               <a href={sectionHref("faq")} className="hover:text-white transition-colors">FAQ</a>
               <a href="/blogg" className="hover:text-white transition-colors">{lang === "en" ? "Guides and inspiration" : "Guider och inspiration"}</a>
+              <a href="/integritet" className="hover:text-white transition-colors">{lang === "en" ? "Privacy and cookies" : "Integritet och cookies"}</a>
               <a href="/bokningsvillkor" className="hover:text-white transition-colors">{lang === "en" ? "Booking terms" : "Bokningsvillkor"}</a>
               <a href="/glamping-linkoping" className="hover:text-white transition-colors">Glamping nära Linköping</a>
               <a href="/glamping-gota-kanal" className="hover:text-white transition-colors">Glamping vid Göta kanal</a>

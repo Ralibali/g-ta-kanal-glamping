@@ -19,7 +19,7 @@ initGa4({
     "/s",
     "/check-in",
     "/checked-in",
-    "/unsubscribe"
+    "/unsubscribe", "/checkin", "/checka-in", "/en/checkin", "/de/checkin", "/incheckad", "/en/checked-in", "/de/eingecheckt"
   ],
-  "consentKey": "glamping_ga4_consent_v1"
+  "consentKey": "glamping_ga4_consent_v2"
 });

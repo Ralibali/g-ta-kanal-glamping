@@ -672,7 +672,7 @@ const Boka = ({ lang: initialLang }: BokaProps = {}) => {
       const link = document.createElement("link");
       link.id = id;
       link.rel = "stylesheet";
-      link.href = "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300;400;500;600;700&display=swap";
+      link.href = "/fonts/site-fonts.css";
       document.head.appendChild(link);
     }
   }, []);
