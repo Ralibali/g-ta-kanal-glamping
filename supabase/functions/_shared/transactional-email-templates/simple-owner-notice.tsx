@@ -20,6 +20,7 @@ const Email = ({ subject = 'Ny händelse', body = '' }: Props) => (
 
 export const template = {
   component: Email,
+  to: 'info@auroramedia.se',
   subject: (d: Record<string, any>) => String(d?.subject ?? 'Ny händelse'),
   displayName: 'Enkel adminnotis',
   previewData: { subject: 'Test', body: 'Detta är ett test.' },

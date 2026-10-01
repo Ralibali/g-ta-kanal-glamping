@@ -74,6 +74,7 @@ const Email = ({
 
 export const template = {
   component: Email,
+  to: 'info@auroramedia.se',
   subject: (d: Record<string, any>) => {
     const stage = d?.stage === '2h' ? '⚠️ 2h' : '⏰ 30 min'
     return `${stage} – Swish obetald: ${d?.guestName ?? 'gäst'} (${d?.total ?? 0} kr)`

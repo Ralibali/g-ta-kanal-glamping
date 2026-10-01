@@ -146,6 +146,7 @@ const Email = ({
 
 export const template = {
   component: Email,
+  to: 'info@auroramedia.se',
   subject: (d: Record<string, any>) => {
     const flag = (d?.guestLang ?? 'sv').toLowerCase().startsWith('sv') ? '🇸🇪' : '🌍'
     const prefix = d?.paymentMethod === 'swish' ? 'Swish-önskemål' : 'Tillvalsönskemål'

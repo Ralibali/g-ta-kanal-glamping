@@ -22,7 +22,7 @@ export function AddonsManager() {
   const [loading, setLoading] = useState(true);
   const [leadDays, setLeadDays] = useState(5);
   const [cutoffDays, setCutoffDays] = useState(2);
-  const [ownerEmail, setOwnerEmail] = useState("");
+  const ownerEmail = "info@auroramedia.se";
   const [savingId, setSavingId] = useState<string | null>(null);
   const [savingSettings, setSavingSettings] = useState(false);
 
@@ -37,7 +37,6 @@ export function AddonsManager() {
     for (const r of ((settingsRes.data as any[]) ?? [])) sMap[r.key] = r.value;
     setLeadDays(Number(sMap["prearrival_lead_days"] ?? 5));
     setCutoffDays(Number(sMap["order_cutoff_days"] ?? 2));
-    setOwnerEmail(String(sMap["owner_email"] ?? ""));
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -98,7 +97,7 @@ export function AddonsManager() {
             </div>
             <div>
               <Label>Ägar-mejl (notiser)</Label>
-              <Input type="email" value={ownerEmail} onChange={(e) => setOwnerEmail(e.target.value)} />
+              <Input type="email" value={ownerEmail} readOnly />
             </div>
           </div>
           <Button onClick={saveSettings} disabled={savingSettings}>
