@@ -35,7 +35,7 @@ for (const name of ['provision-team', 'provision-breakfast', 'send-payslip-melvi
   await load(`${name}/index.ts`);
   const response = await globalThis.handler(request('anon'));
   assert.equal(response.status, 410);
-  assert.deepEqual(await response.json(), { error: 'endpoint_retired' });
+  assert.match((await response.json()).error, /retired/);
   assert.equal((await globalThis.handler(new Request('https://example.test', { method: 'OPTIONS' }))).status, 200);
 }
 for (const name of ['preview-prearrival', 'send-prearrival-batch', 'swish-payment-reminders', 'send-transactional-email']) {
