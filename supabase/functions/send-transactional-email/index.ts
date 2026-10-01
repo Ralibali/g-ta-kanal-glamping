@@ -306,3 +306,5 @@ Deno.serve(async (req) => {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 });
+
+// Central contact deployment: 2026-10-01.
