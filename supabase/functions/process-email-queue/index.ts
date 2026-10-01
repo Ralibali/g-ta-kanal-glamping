@@ -14,6 +14,7 @@ async function sendViaResend(payload: Record<string, any>, lovableApiKey: string
     },
     body: JSON.stringify({
       from: payload.from,
+      reply_to: "info@auroramedia.se",
       to: [payload.to],
       subject: payload.subject,
       html: payload.html,

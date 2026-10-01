@@ -8,7 +8,7 @@ export default function Privacy() {
       <h1 className="text-3xl font-serif">Integritet och cookies</h1>
       <p>Information för Bergs Slussar Glamping / Go Glamping Sweden. Uppdaterad 1 oktober 2026.</p>
       <h2 className="text-xl font-semibold">Ansvarig och kontakt</h2>
-      <p>Aurora Media AB, organisationsnummer 559272-0220, driver verksamheten. Kontakta oss om personuppgifter och dina rättigheter på <a className="underline" href="mailto:hej@goglampingsweden.se">hej@goglampingsweden.se</a>.</p>
+      <p>Aurora Media AB, organisationsnummer 559272-0220, driver verksamheten. Kontakta oss om personuppgifter och dina rättigheter på <a className="underline" href="mailto:info@auroramedia.se">info@auroramedia.se</a>.</p>
       <h2 className="text-xl font-semibold">Bokning, vistelse och kontakt</h2>
       <p>Vi behandlar de uppgifter du lämnar vid bokning och kontakt: namn, e-post, telefon, bokningsnummer, vistelsedatum, valt tält, beställningar, betalningsstatus och meddelanden. De används för att besvara förfrågningar och fullgöra bokningsavtalet. Du kan också lämna önskemål om mat. Lämna bara den information som behövs för beställningen.</p>
       <p>Sirvoy tillhandahåller bokningsformuläret. Det laddas när du väljer att öppna det. Betalningar och tillägg kan hanteras av Stripe; meddelanden levereras genom våra e-post- och SMS-tjänster (Resend och 46elks). Webbplatsens databas och inloggning drivs med Lovable Cloud/Supabase.</p>

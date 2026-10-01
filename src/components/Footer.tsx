@@ -48,8 +48,8 @@ const Footer = () => {
               >
                 <MessageCircle size={14} aria-hidden="true" /> {lang === "en" ? "Contact us (chat)" : "Kontakta oss (chatt)"}
               </button>
-              <a href="mailto:hej@goglampingsweden.se" className="hover:text-white flex items-center gap-2 transition-colors">
-                <Mail size={14} aria-hidden="true" /> hej@goglampingsweden.se
+              <a href="mailto:info@auroramedia.se" className="hover:text-white flex items-center gap-2 transition-colors">
+                <Mail size={14} aria-hidden="true" /> info@auroramedia.se
               </a>
               <a
                 href="https://maps.google.com/?q=58.5357,15.5012"

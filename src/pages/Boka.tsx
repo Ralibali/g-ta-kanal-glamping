@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Link } from "react-router-dom";
-import { Menu, X, Leaf, BedDouble, Flame, Sparkles, TreePine, Coffee, Waves, ShieldCheck, CalendarCheck, MailCheck, ChevronDown, Phone, ArrowRight } from "lucide-react";
+import { Menu, X, Leaf, BedDouble, Flame, Sparkles, TreePine, Coffee, Waves, ShieldCheck, CalendarCheck, MailCheck, ChevronDown, ArrowRight, Mail } from "lucide-react";
 import SirvoyBookingWidget from "@/components/SirvoyBookingWidget";
 import Footer from "@/components/Footer";
 import { LanguageProvider, type Lang } from "@/i18n/LanguageContext";
@@ -42,7 +42,7 @@ const COPY = {
     menuOpen: "Öppna meny",
     menuClose: "Stäng meny",
     stickyCta: "Se lediga datum",
-    stickyCall: "Ring oss",
+    stickyCall: "Mejla oss",
     stickyStrap: "Direktbokning · Bästa pris · Bekräftelse direkt",
     heroEyebrow: "Glamping vid Göta kanal",
     heroTitle1: "Sov mjukt.",
@@ -111,7 +111,7 @@ const COPY = {
     menuOpen: "Open menu",
     menuClose: "Close menu",
     stickyCta: "See available dates",
-    stickyCall: "Call us",
+    stickyCall: "Email us",
     stickyStrap: "Direct booking · Best price · Instant confirmation",
     heroEyebrow: "Glamping by the Göta Canal",
     heroTitle1: "Sleep softly.",
@@ -180,7 +180,7 @@ const COPY = {
     menuOpen: "Menü öffnen",
     menuClose: "Menü schließen",
     stickyCta: "Verfügbare Daten ansehen",
-    stickyCall: "Rufen Sie uns an",
+    stickyCall: "Schreiben Sie uns",
     stickyStrap: "Direktbuchung · Bester Preis · Sofortige Bestätigung",
     heroEyebrow: "Glamping am Göta-Kanal",
     heroTitle1: "Weich schlafen.",
@@ -379,12 +379,12 @@ const StickyMobileCTA = ({ t }: { t: Copy }) => {
           <ArrowRight size={17} strokeWidth={1.8} />
         </a>
         <a
-          href="tel:+46722254993"
+          href="mailto:info@auroramedia.se"
           aria-label={t.stickyCall}
           className="flex items-center justify-center rounded-full"
           style={{ width: 52, height: 52, border: `1px solid ${PALETTE.primary}55`, color: PALETTE.primary, background: PALETTE.white }}
         >
-          <Phone size={18} strokeWidth={1.7} />
+          <Mail size={18} strokeWidth={1.7} />
         </a>
       </div>
       <p className="text-center text-[11px] mt-1.5" style={{ color: "#3a4a3d99" }}>
@@ -445,12 +445,12 @@ const Hero = ({ t }: { t: Copy }) => (
           <ArrowRight size={18} strokeWidth={1.8} />
         </a>
         <a
-          href="tel:+46722254993"
+          href="mailto:info@auroramedia.se"
           className="inline-flex items-center justify-center gap-2 rounded-full px-7 py-4 text-base font-medium border transition-colors"
           style={{ borderColor: `${PALETTE.white}66`, color: PALETTE.white, minHeight: 56, background: "rgba(255,253,248,0.08)", backdropFilter: "blur(6px)" }}
         >
-          <Phone size={17} strokeWidth={1.6} />
-          072-225 49 93
+          <Mail size={17} strokeWidth={1.6} />
+          info@auroramedia.se
         </a>
       </div>
 

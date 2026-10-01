@@ -884,7 +884,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
                   </div>
                 )}
                 {/* Snabbåtgärder — direkt access till det gästen behöver mest */}
-                <div className="grid grid-cols-3 gap-2 pt-1">
+                <div className="grid grid-cols-2 gap-2 pt-1">
                   <a
                     href="https://www.google.com/maps/dir/?api=1&destination=Go+Glamping+Sweden+Bergs+Slussar"
                     target="_blank"
@@ -893,13 +893,6 @@ export default function Stay({ initialLang }: StayProps = {}) {
                   >
                     <MapPin className="h-4 w-4 text-primary" />
                     <span className="text-xs font-medium">{isSv ? "Hitta hit" : "Directions"}</span>
-                  </a>
-                  <a
-                    href="tel:+46722254993"
-                    className="flex flex-col items-center gap-1 rounded-lg border bg-card hover:bg-muted/40 transition-colors p-2.5 text-center"
-                  >
-                    <Phone className="h-4 w-4 text-primary" />
-                    <span className="text-xs font-medium">{isSv ? "Ring oss" : "Call us"}</span>
                   </a>
                   <a
                     href="mailto:info@auroramedia.se"
@@ -1312,8 +1305,8 @@ export default function Stay({ initialLang }: StayProps = {}) {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground text-center">
-                    {isSv ? "Kvarstår problemet? Ring oss på " : "Still stuck? Call us at "}
-                    <a href="tel:+46722254993" className="underline">072-225 49 93</a>.
+                    {isSv ? "Kvarstår problemet? Mejla oss på " : "Still stuck? Email us at "}
+                    <a href="mailto:info@auroramedia.se" className="underline">info@auroramedia.se</a>.
                   </p>
                 </CardContent>
               </Card>
@@ -1461,9 +1454,9 @@ export default function Stay({ initialLang }: StayProps = {}) {
 
             <InfoRow icon={<Phone className="h-4 w-4" />} title={isSv ? "Kontakt under vistelsen" : "Contact during your stay"}>
               {isSv ? (
-                <>Christoffer svarar i mobilen per sms: <a href="sms:+46722254993" className="text-primary underline font-medium">072-225 49 93</a>. Mejl: <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a>. Vi finns nära till hands om något behövs.</>
+                <>Mejla <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a> om ni behöver hjälp.</>
               ) : (
-                <>Christoffer replies by text on mobile: <a href="sms:+46722254993" className="text-primary underline font-medium">+46 72-225 49 93</a>. Email: <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a>. We're close by if anything comes up.</>
+                <>Email <a href="mailto:info@auroramedia.se" className="text-primary underline">info@auroramedia.se</a> if you need help.</>
               )}
             </InfoRow>
           </CardContent>
@@ -1989,17 +1982,12 @@ function NeedHelpSection({
     }
   };
 
-  const phone = '+46722254993';
-  const phoneDisplay = '072-225 49 93';
   const email = 'info@auroramedia.se';
   const subject = encodeURIComponent(
     isSv ? `Hjälp med beställning – bokning ${bookingNumber || ''}`
          : `Help with order – booking ${bookingNumber || ''}`,
   );
   const mailBody = encodeURIComponent(reference + '\n\n');
-  const smsBody = encodeURIComponent(
-    (isSv ? 'Hej! Jag behöver hjälp med min beställning:\n\n' : 'Hi! I need help with my order:\n\n') + reference,
-  );
 
   return (
     <div className={`rounded-lg border p-3 space-y-3 ${anyCancelled ? 'border-destructive/40 bg-destructive/5' : 'border-amber-500/40 bg-amber-500/5'}`}>
@@ -2040,19 +2028,9 @@ function NeedHelpSection({
         </pre>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-        <Button asChild size="sm" className="h-9 text-xs">
-          <a href={`tel:${phone}`}>
-            <Phone className="h-3.5 w-3.5 mr-1.5" />
-            {isSv ? `Ring ${phoneDisplay}` : `Call ${phoneDisplay}`}
-          </a>
-        </Button>
-        <Button asChild size="sm" variant="outline" className="h-9 text-xs">
-          <a href={`sms:${phone}?body=${smsBody}`}>
-            <MessageCircle className="h-3.5 w-3.5 mr-1.5" />
-            {isSv ? 'Skicka SMS' : 'Send SMS'}
-          </a>
-        </Button>
+      <div className="grid grid-cols-1 gap-2">
+
+
         <Button asChild size="sm" variant="outline" className="h-9 text-xs">
           <a href={`mailto:${email}?subject=${subject}&body=${mailBody}`}>
             <Mail className="h-3.5 w-3.5 mr-1.5" />

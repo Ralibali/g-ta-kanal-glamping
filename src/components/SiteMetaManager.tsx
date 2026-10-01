@@ -286,7 +286,6 @@ export default function SiteMetaManager() {
           "@type": "LodgingBusiness",
           name: "Go Glamping Sweden",
           url: SITE_URL,
-          telephone: "+46722254993",
           email: "info@auroramedia.se",
           address: {
             "@type": "PostalAddress",

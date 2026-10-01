@@ -47,7 +47,7 @@ const BookingTerms = () => {
             <li><strong className="text-foreground">Utebliven ankomst (no-show):</strong> Ingen återbetalning.</li>
             <li><strong className="text-foreground">Sjukdom/olycka:</strong> Kostnadsfri avbokning mot uppvisande av läkarintyg.</li>
             <li><strong className="text-foreground">Avbokningsskydd:</strong> Köp avbokningsskydd för 399 kr vid bokning – då får du full återbetalning oavsett anledning, ända fram till ankomstdagen.</li>
-            <li>Avbokning görs via e-post till <a href="mailto:hej@goglampingsweden.se" className="text-accent font-medium hover:underline">hej@goglampingsweden.se</a> eller via bokningssystemet.</li>
+            <li>Avbokning görs via e-post till <a href="mailto:info@auroramedia.se" className="text-accent font-medium hover:underline">info@auroramedia.se</a> eller via bokningssystemet.</li>
           </ul>
         </section>
 
@@ -104,7 +104,7 @@ const BookingTerms = () => {
           <h2 className="font-serif text-lg font-bold text-foreground mb-2">Frågor?</h2>
           <p className="text-muted-foreground text-sm leading-relaxed">
             Kontakta oss på{" "}
-            <a href="mailto:hej@goglampingsweden.se" className="text-accent font-medium hover:underline">hej@goglampingsweden.se</a>
+            <a href="mailto:info@auroramedia.se" className="text-accent font-medium hover:underline">info@auroramedia.se</a>
             {" "}så hjälper vi dig.
           </p>
         </section>

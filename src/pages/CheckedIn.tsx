@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { CheckCircle, MapPin, KeyRound, Phone, ArrowRight } from "lucide-react";
+import { CheckCircle, MapPin, KeyRound, ArrowRight, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type TentId = "sjobris" | "naturkarnan" | "lugnetsyta";
@@ -245,11 +245,11 @@ const CheckedIn = ({ initialLang = "sv" }: { initialLang?: Lang } = {}) => {
             <ArrowRight size={16} />
           </Link>
           <a
-            href="tel:0722254993"
+            href="mailto:info@auroramedia.se"
             className="flex items-center justify-center gap-2 w-full border border-primary-foreground/25 text-primary-foreground rounded-xl py-3 text-sm"
           >
-            <Phone size={15} />
-            {t.help} 072-225 49 93
+            <Mail size={15} />
+            {t.help} info@auroramedia.se
           </a>
           <div className="text-center">
             <Link to="/" className="text-primary-foreground/60 hover:text-primary-foreground text-sm">

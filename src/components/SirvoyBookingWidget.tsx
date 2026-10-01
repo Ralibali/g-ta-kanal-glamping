@@ -72,7 +72,7 @@ const SirvoyBookingWidget = ({ formId = "9482eece181add59", className }: Props) 
             <div className="text-center max-w-md">
               <p className="font-serif text-xl text-[#243027] mb-2">Bokningen kunde inte laddas</p>
               <p className="text-sm text-[#5e6b5a] mb-4">
-                Kontrollera din internetanslutning eller försök igen om en stund. Du kan också ringa oss på <a href="tel:+46722254993" className="underline text-[#617457]">0722-25 49 93</a>.
+                Kontrollera din internetanslutning eller försök igen om en stund. Du kan också mejla oss på <a href="mailto:info@auroramedia.se" className="underline text-[#617457]">info@auroramedia.se</a>.
               </p>
               <button
                 onClick={() => window.location.reload()}

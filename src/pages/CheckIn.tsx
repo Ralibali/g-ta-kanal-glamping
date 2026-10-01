@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, AlertCircle, MessageSquare, Phone } from "lucide-react";
+import { CheckCircle, KeyRound, ShieldCheck, ArrowLeft, MapPin, AlertCircle, MessageSquare, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 // ─── Aktiva bokningsnummer ───────────────────────────────────
@@ -90,12 +90,12 @@ const T: Record<Lang, Record<string, string>> = {
     enterBookingError: "Ange ditt bokningsnummer eller namn.",
     bookingNotFound: "Bokningen hittades inte. Kontrollera och försök igen.",
     notFoundTitle: "Vi hittade ingen bokning",
-    notFoundHelp: "Dubbelkolla stavning och siffror. Hittar systemet fortfarande inte din bokning – SMS:a Christoffer direkt så löser vi det på en minut.",
-    smsNow: "SMS:a Christoffer nu",
-    callNow: "Ring 072-225 49 93",
+    notFoundHelp: "Dubbelkolla stavning och siffror. Hittar systemet fortfarande inte din bokning – mejla oss på info@auroramedia.se för hjälp.",
+    smsNow: "Mejla oss nu",
+    callNow: "Mejla info@auroramedia.se",
     continue: "Fortsätt",
     problemSms: "Problem?",
-    smsContact: "SMS:a Christoffer",
+    smsContact: "Mejla oss",
     termsTitle: "Villkor för vistelsen",
     termsSubtitle: "Godkänn villkoren för att få din låskod.",
     back: "Tillbaka",
@@ -112,7 +112,7 @@ const T: Record<Lang, Record<string, string>> = {
     swish: "Swisha",
     notifyUs: "Meddela oss",
     notWorking: "Fungerar något inte?",
-    contactChristoffer: "Kontakta Christoffer via SMS",
+    contactChristoffer: "Mejla oss",
     contactHost: "Frågor eller akuta ärenden under vistelsen? Kontakta värden:",
     goHome: "Gå till startsidan →",
   },
@@ -125,12 +125,12 @@ const T: Record<Lang, Record<string, string>> = {
     enterBookingError: "Bitte geben Sie Ihre Buchungsnummer oder Ihren Namen ein.",
     bookingNotFound: "Buchung nicht gefunden. Bitte überprüfen und erneut versuchen.",
     notFoundTitle: "Wir konnten Ihre Buchung nicht finden",
-    notFoundHelp: "Überprüfen Sie Schreibweise und Zahlen. Wenn das System Ihre Buchung weiterhin nicht findet – schreiben Sie Christoffer eine SMS und wir lösen es in einer Minute.",
-    smsNow: "Jetzt SMS an Christoffer",
-    callNow: "Anruf +46 72-225 49 93",
+    notFoundHelp: "Überprüfen Sie Schreibweise und Zahlen. Wenn das System Ihre Buchung weiterhin nicht findet – schreiben Sie uns an info@auroramedia.se.",
+    smsNow: "Jetzt E-Mail senden",
+    callNow: "E-Mail senden",
     continue: "Weiter",
     problemSms: "Probleme?",
-    smsContact: "SMS an Christoffer",
+    smsContact: "E-Mail senden",
     termsTitle: "Bedingungen für den Aufenthalt",
     termsSubtitle: "Akzeptieren Sie die Bedingungen, um Ihren Türschloss-Code zu erhalten.",
     back: "Zurück",
@@ -147,7 +147,7 @@ const T: Record<Lang, Record<string, string>> = {
     swish: "Swish",
     notifyUs: "Uns benachrichtigen",
     notWorking: "Funktioniert etwas nicht?",
-    contactChristoffer: "Christoffer per SMS kontaktieren",
+    contactChristoffer: "E-Mail an info@auroramedia.se",
     contactHost: "Fragen oder dringende Anliegen während Ihres Aufenthalts? Kontaktieren Sie den Gastgeber:",
     goHome: "Zur Startseite →",
   },
@@ -160,12 +160,12 @@ const T: Record<Lang, Record<string, string>> = {
     enterBookingError: "Enter your booking number or name.",
     bookingNotFound: "Booking not found. Please check and try again.",
     notFoundTitle: "We couldn't find your booking",
-    notFoundHelp: "Double-check the spelling and numbers. If the system still can't find your booking – text Christoffer right away and we'll sort it in a minute.",
-    smsNow: "Text Christoffer now",
-    callNow: "Call +46 72-225 49 93",
+    notFoundHelp: "Double-check the spelling and numbers. If the system still can't find your booking – email info@auroramedia.se for help.",
+    smsNow: "Email us now",
+    callNow: "Email us",
     continue: "Continue",
     problemSms: "Problem?",
-    smsContact: "Text Christoffer",
+    smsContact: "Email us",
     termsTitle: "Terms of stay",
     termsSubtitle: "Accept the terms to get your lock code.",
     back: "Back",
@@ -182,7 +182,7 @@ const T: Record<Lang, Record<string, string>> = {
     swish: "Swish",
     notifyUs: "Notify us",
     notWorking: "Something not working?",
-    contactChristoffer: "Contact Christoffer via SMS",
+    contactChristoffer: "Email us",
     contactHost: "Questions or urgent matters during your stay? Contact the host:",
     goHome: "Go to homepage →",
   },
@@ -470,17 +470,11 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
                     </div>
                   </div>
                   <a
-                    href="sms:0722254993"
+                    href="mailto:info@auroramedia.se"
                     className="flex items-center justify-center gap-2 w-full bg-accent text-accent-foreground py-3 rounded-xl font-semibold text-sm hover:scale-[1.02] transition-transform shadow-md"
                   >
                     <MessageSquare size={16} />
                     {t.smsNow}
-                  </a>
-                  <a
-                    href="tel:0722254993"
-                    className="block text-center text-xs text-muted-foreground mt-3 hover:text-foreground underline-offset-2 hover:underline"
-                  >
-                    {t.callNow}
                   </a>
                 </div>
               ) : error ? (
@@ -495,7 +489,7 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
               </button>
             </form>
             <p className="text-muted-foreground text-xs text-center mt-5">
-              {t.problemSms}{" "}<a href="sms:0722254993" className="text-accent font-semibold hover:underline">{t.smsContact}</a>
+              {t.problemSms}{" "}<a href="mailto:info@auroramedia.se" className="text-accent font-semibold hover:underline">{t.smsContact}</a>
             </p>
           </div>
         )}
@@ -660,11 +654,11 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
               );
             })()}
             <div className="flex items-center justify-center gap-2 mb-6">
-              <Phone className="text-accent shrink-0" size={16} />
+              <Mail className="text-accent shrink-0" size={16} />
               <p className="text-sm text-muted-foreground">
                 {t.contactHost}{" "}
-                <a href="tel:0722254993" className="text-accent font-semibold hover:underline">
-                  072-225 49 93
+                <a href="mailto:info@auroramedia.se" className="text-accent font-semibold hover:underline">
+                  info@auroramedia.se
                 </a>
               </p>
             </div>
@@ -693,7 +687,7 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
                   {t.swish}
                 </a>
                 <a
-                  href={`sms:0722254993?body=${encodeURIComponent(
+                  href={`mailto:info@auroramedia.se?subject=Kontakt&body=${encodeURIComponent(
                     lang === "en"
                       ? `Hi! I've Swished 399 SEK for late check-out (12:00). Booking: ${bookingNumber} / ${TENT_INFO[lang][tentId].name}`
                       : lang === "de"
@@ -711,7 +705,7 @@ const CheckIn = ({ initialLang = "sv" }: CheckInProps = {}) => {
             <div className="bg-muted rounded-xl p-4 mb-6">
               <p className="text-sm text-muted-foreground text-center">
                 {t.notWorking}{" "}
-                <a href="sms:0722254993" className="text-accent font-semibold hover:underline">
+                <a href="mailto:info@auroramedia.se" className="text-accent font-semibold hover:underline">
                   {t.contactChristoffer}
                 </a>
               </p>

@@ -45,3 +45,15 @@ for (const name of ['preview-prearrival', 'send-prearrival-batch', 'swish-paymen
   assert.ok(guard < source.indexOf('const supabase', source.indexOf('Deno.serve')), `${name} authorizes before its privileged client`);
 }
 console.log('Privacy edge checks passed: deny unknown/public/unprivileged callers, allow verified admins/server, retired endpoints cannot send or reset anything.');
+
+// Reply contacts are centralized while the requested customer's recipient is preserved.
+const { sendViaResend } = await load('process-email-queue/index.ts', source => source.slice(0, source.indexOf("import { createClient")) + '\nexport { sendViaResend };');
+const previousFetch = globalThis.fetch;
+let dispatched;
+globalThis.fetch = async (_url, options) => { dispatched = JSON.parse(options.body); return new Response(JSON.stringify({ id: 'test-email' }), { status: 200 }); };
+await sendViaResend({ from: 'Glamping <sender@example.test>', to: 'guest@example.test', subject: 'Requested booking', html: '<p>Booking</p>', text: 'Booking' }, 'server-key', 'provider-key');
+globalThis.fetch = previousFetch;
+assert.deepEqual(dispatched.to, ['guest@example.test']);
+assert.equal(dispatched.reply_to, 'info@auroramedia.se');
+assert.equal(dispatched.from, 'Glamping <sender@example.test>');
+console.log('Public reply contact centralized; guest recipient and verified sender preserved.');
