@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import {
-  MapPin, Phone, Clock, Key, UtensilsCrossed, Trees, Waves,
+  MapPin, Mail, Clock, Key, UtensilsCrossed, Trees, Waves,
   Wifi, Flame, Dog, Info, Footprints, CheckCircle2, AlertCircle,
-  Coffee, MessageCircle, ShoppingBag, Car, Heart, Copy, Star, Instagram, Beer, ArrowRight, Volume2, Droplets
+  Coffee, ShoppingBag, Car, Heart, Copy, Star, Instagram, Beer, ArrowRight, Volume2, Droplets
 } from "lucide-react";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import ChatWidget from "@/components/ChatWidget";
@@ -13,7 +13,6 @@ import heroImg from "@/assets/glamping-sunset.jpg";
 import { lockCodeFor } from "@/cleaning/config";
 
 const SWISH = "1230628289";
-const SWISH_INTL = "1230628289";
 const LATE_CHECKOUT_URL = `https://app.swish.nu/1/p/sw/?sw=${SWISH}&amt=399&cur=SEK&msg=${encodeURIComponent("Sen utcheckning")}&src=qr`;
 
 const TENT_NAMES: Record<string, string> = {
@@ -132,7 +131,7 @@ export default function UnderVistelsen({ initialLang = "sv" }: UnderVistelsenPro
     lateHow: "Tryck på Swisha så öppnas Swish-appen med 399 kr förifyllt. Vi får en notis direkt och bekräftar er sena utcheckning.",
     payCta: "Swisha 399 kr",
     paidToast: "Tack! Sen utcheckning bokad.",
-    sms: "Sms:a oss",
+    email: "Mejla info@auroramedia.se",
 
     truckBadge: "Vårt tips",
     truckTitle: "Bartrucken vid slussarna",
@@ -211,7 +210,7 @@ export default function UnderVistelsen({ initialLang = "sv" }: UnderVistelsenPro
     lateHow: "Tap Swish and the Swish app opens with 399 SEK prefilled. We get a notification instantly and confirm your late check-out.",
     payCta: "Swish 399 SEK",
     paidToast: "Thanks! Late check-out booked.",
-    sms: "Text us",
+    email: "Email info@auroramedia.se",
 
     truckBadge: "Our tip",
     truckTitle: "The Bar Truck by the locks",
@@ -555,14 +554,14 @@ export default function UnderVistelsen({ initialLang = "sv" }: UnderVistelsenPro
         <Card className="rounded-2xl shadow-sm bg-card border-primary/20">
           <CardContent className="p-4 space-y-3">
             <div className="flex items-center gap-2 text-foreground font-medium">
-              <Phone className="h-5 w-5 text-primary" /> {t.contactTitle}
+              <Mail className="h-5 w-5 text-primary" /> {t.contactTitle}
             </div>
             <div className="grid grid-cols-1 gap-2">
               <a
-                href={`sms:${SWISH_INTL}`}
+                href="mailto:info@auroramedia.se"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors py-2.5 text-sm font-medium"
               >
-                <MessageCircle className="h-4 w-4" /> {t.sms}
+                <Mail className="h-4 w-4" /> {t.email}
               </a>
             </div>
           </CardContent>
@@ -619,4 +618,3 @@ function NearbyItem({ icon, title, body, href, cta }: { icon: React.ReactNode; t
     </div>
   );
 }
-

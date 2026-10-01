@@ -1850,7 +1850,7 @@ function downloadReceipt(params: {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.setTextColor(90);
-  doc.text('Aurora Media AB  ·  info@auroramedia.se  ·  +46 72 225 49 93', 56, y);
+  doc.text('Aurora Media AB  ·  info@auroramedia.se', 56, y);
   y += 8;
   doc.text('goglampingsweden.se  ·  Bergs Slussar, Ljungsbro', 56, y);
   y += 24;
