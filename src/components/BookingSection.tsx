@@ -2,25 +2,28 @@ import { useEffect, useRef, useState } from "react";
 import { useLang } from "@/i18n/LanguageContext";
 import { Calendar, ChevronDown } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
+import { bookingConfig } from "@/lib/booking-provider";
+import BookingWidget from "./BookingWidget";
 
 const BookingSection = () => {
   const lang = useLang();
+  const usesSirvoy = bookingConfig.provider === "sirvoy";
   const widgetRef = useRef<HTMLDivElement>(null);
   const availabilityRef = useRef<HTMLDivElement>(null);
   const [showAvailability, setShowAvailability] = useState(false);
 
   useEffect(() => {
-    if (widgetRef.current && !widgetRef.current.querySelector("script")) {
+    if (usesSirvoy && widgetRef.current && !widgetRef.current.querySelector("script")) {
       const script = document.createElement("script");
       script.async = true;
       script.setAttribute("data-form-id", "9482eece181add59");
       script.src = "https://secured.sirvoy.com/widget/sirvoy.js";
       widgetRef.current.appendChild(script);
     }
-  }, []);
+  }, [usesSirvoy]);
 
   useEffect(() => {
-    if (showAvailability && availabilityRef.current && !availabilityRef.current.querySelector("script")) {
+    if (usesSirvoy && showAvailability && availabilityRef.current && !availabilityRef.current.querySelector("script")) {
       const script = document.createElement("script");
       script.async = true;
       script.setAttribute("data-form-id", "9482eece181add59");
@@ -28,7 +31,7 @@ const BookingSection = () => {
       script.src = "https://secured.sirvoy.com/widget/sirvoy.js";
       availabilityRef.current.appendChild(script);
     }
-  }, [showAvailability]);
+  }, [showAvailability, usesSirvoy]);
 
   return (
     <section id="boka" className="py-20 md:py-28 bg-primary">
@@ -47,19 +50,20 @@ const BookingSection = () => {
           </p>
         </div>
 
-        <div
+        {usesSirvoy ? <div
           ref={widgetRef}
           className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]"
           onPointerDownCapture={() => {
-            if ((window as any).__bookingStartedFired) return;
-            (window as any).__bookingStartedFired = true;
+            const trackingWindow = window as Window & { __bookingStartedFired?: boolean };
+            if (trackingWindow.__bookingStartedFired) return;
+            trackingWindow.__bookingStartedFired = true;
             trackEvent("Booking Started", {
               product_category: "booking",
               language: lang,
               source: "sirvoy_widget",
             });
           }}
-        />
+        /> : <BookingWidget />}
 
 
         <p className="text-center text-primary-foreground/70 text-sm mt-4">
@@ -70,7 +74,7 @@ const BookingSection = () => {
           )}
         </p>
 
-        <div className="text-center mt-6">
+        {usesSirvoy && <div className="text-center mt-6">
           <button
             type="button"
             onClick={() => {
@@ -94,9 +98,9 @@ const BookingSection = () => {
               : lang === "en" ? "Show availability" : "Visa tillgänglighet"}
             <ChevronDown className={`h-4 w-4 transition-transform ${showAvailability ? "rotate-180" : ""}`} />
           </button>
-        </div>
+        </div>}
 
-        {showAvailability && (
+        {usesSirvoy && showAvailability && (
           <div className="mt-6">
             <div ref={availabilityRef} className="bg-card rounded-2xl p-6 md:p-8 shadow-2xl min-h-[300px]" />
           </div>
@@ -107,7 +111,9 @@ const BookingSection = () => {
             {lang === "en" ? "Manage your booking" : "Hantera din bokning"}
           </a>
           <p className="text-primary-foreground/40 text-sm mt-3">
-            {lang === "en" ? "Change, cancel or view details of an existing booking" : "Ändra, avboka eller se detaljer för en befintlig bokning"}
+            {usesSirvoy
+              ? lang === "en" ? "Change, cancel or view details of an existing booking" : "Ändra, avboka eller se detaljer för en befintlig bokning"
+              : lang === "en" ? "Find your booking details and contact us" : "Hitta dina bokningsuppgifter och kontakta oss"}
           </p>
         </div>
       </div>

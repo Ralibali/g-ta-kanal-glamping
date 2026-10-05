@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { Menu, X, Leaf, BedDouble, Flame, Sparkles, TreePine, Coffee, Waves, ShieldCheck, CalendarCheck, MailCheck, ChevronDown, ArrowRight, Mail } from "lucide-react";
-import SirvoyBookingWidget from "@/components/SirvoyBookingWidget";
+import BookingWidget from "@/components/BookingWidget";
 import Footer from "@/components/Footer";
 import { LanguageProvider, type Lang } from "@/i18n/LanguageContext";
 import heroImg from "@/assets/glamping-sunset.jpg";
@@ -486,7 +486,7 @@ const BookingCard = ({ t }: { t: Copy }) => (
           </p>
         </div>
 
-        <SirvoyBookingWidget />
+        <BookingWidget />
 
         <div className="mt-8 md:mt-10 pt-6 md:pt-8 border-t grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-sm" style={{ borderColor: `${PALETTE.sand}66`, color: "#3a4a3d" }}>
           {[

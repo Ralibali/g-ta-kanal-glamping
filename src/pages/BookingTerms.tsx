@@ -30,7 +30,7 @@ const BookingTerms = () => {
         <section>
           <h2 className="font-serif text-xl font-bold text-foreground mb-3">Bokning och betalning</h2>
           <ul className="space-y-2 text-muted-foreground text-sm leading-relaxed list-disc list-inside">
-            <li>Bokning sker via vår hemsida eller genom vårt bokningssystem (Sirvoy).</li>
+            <li>Bokning sker via vår hemsida eller genom vårt bokningssystem.</li>
             <li>Full betalning sker vid bokningstillfället om inte annat anges.</li>
             <li>En bokningsbekräftelse skickas via e-post efter genomförd bokning.</li>
             <li>Alla priser anges i svenska kronor (SEK) inklusive moms.</li>

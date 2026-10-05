@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Footer from '@/components/Footer';
+import { bookingConfig } from '@/lib/booking-provider';
 
 export default function Privacy() {
   return <main className="min-h-screen bg-background text-foreground">
@@ -11,7 +12,7 @@ export default function Privacy() {
       <p>Aurora Media AB, organisationsnummer 559272-0220, driver verksamheten. Kontakta oss om personuppgifter och dina rättigheter på <a className="underline" href="mailto:info@auroramedia.se">info@auroramedia.se</a>.</p>
       <h2 className="text-xl font-semibold">Bokning, vistelse och kontakt</h2>
       <p>Vi behandlar de uppgifter du lämnar vid bokning och kontakt: namn, e-post, telefon, bokningsnummer, vistelsedatum, valt tält, beställningar, betalningsstatus och meddelanden. De används för att besvara förfrågningar och fullgöra bokningsavtalet. Du kan också lämna önskemål om mat. Lämna bara den information som behövs för beställningen.</p>
-      <p>Sirvoy tillhandahåller bokningsformuläret. Det laddas när du väljer att öppna det. Betalningar och tillägg kan hanteras av Stripe; meddelanden levereras genom våra e-post- och SMS-tjänster (Resend och 46elks). Webbplatsens databas och inloggning drivs med Lovable Cloud/Supabase.</p>
+      <p>{bookingConfig.provider === 'stayboost' ? 'StayBoost tillhandahåller bokningsformuläret.' : bookingConfig.provider === 'sirvoy' ? 'Sirvoy tillhandahåller bokningsformuläret.' : 'Bokningsformuläret är tillfälligt otillgängligt.'} Det laddas när du väljer att öppna det. Betalningar och tillägg kan hanteras av Stripe; meddelanden levereras genom våra e-post- och SMS-tjänster (Resend och 46elks). Webbplatsens databas och inloggning drivs med Lovable Cloud/Supabase.</p>
       <h2 className="text-xl font-semibold">Personalens uppgifter</h2>
       <p>Personalportaler används för arbetsuppgifter, tidrapportering och löneunderlag. Sådana uppgifter behandlas för anställningen och de skyldigheter som följer av bland annat bokförings- och skatteregler. Åtkomst kräver inloggning och en tilldelad personalroll.</p>
       <h2 className="text-xl font-semibold">Valfri statistik och externa kartor</h2>
