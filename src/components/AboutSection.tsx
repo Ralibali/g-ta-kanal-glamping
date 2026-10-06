@@ -114,7 +114,7 @@ const AboutSection = () => {
                   För par, familjer och weekendgäster
                 </h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Våra tre ombonade tält har samma bekväma upplägg – alla har en dubbelsäng och en lite mindre bäddsoffa för två, vilket gör att de passar upp till fyra personer vardera. Perfekt för par, familjer eller vänner som vill dela en naturupplevelse utan att kompromissa på komforten.
+                  Tält 1, Sjöbrisretreatet, och tält 2, Naturkärnan, har plats för upp till fyra gäster med dubbelsäng och en mindre bäddsoffa för två. Tält 3, Lugnets yta, har plats för högst två gäster. Här kan par, familjer eller vänner välja ett tält som passar sällskapet och dela en naturupplevelse utan att kompromissa på komforten.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
                   För dig som söker en weekend nära Linköping fungerar två nätter ofta bäst – då hinner du både med en kvällspromenad längs kanalen, en cykeltur eller paddleboard på Roxen och en lugn morgon med kaffet i handen.

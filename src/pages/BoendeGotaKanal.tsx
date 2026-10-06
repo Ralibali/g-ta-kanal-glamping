@@ -20,8 +20,8 @@ const BoendeGotaKanal = () => {
             kanalpartier.
           </p>
           <p>
-Våra tre tält har samma bekväma upplägg – i varje tält finns en dubbelsäng
-            och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster.
+Tält 1 och 2 har dubbelsäng och en mindre bäddsoffa för två, med plats
+            för upp till fyra gäster vardera. Tält 3 har plats för högst två gäster.
             Dessutom ingår värme, el och minikylskåp. Det är ett naturnära boende vid Göta kanal
             för dig som vill ha lugnet och utsikten utan att kompromissa på
             komforten. Du bor i Vreta Kloster, en kort bilresa från
