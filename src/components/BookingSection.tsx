@@ -45,8 +45,8 @@ const BookingSection = () => {
           </h2>
           <p className="text-primary-foreground/70 text-lg max-w-lg mx-auto">
             {lang === "en"
-              ? "Select dates and number of guests below. All three tents fit up to four guests with a double bed and a smaller sofa bed for two."
-              : "Välj datum och antal gäster nedan. Alla tre tält passar upp till fyra personer med en dubbelsäng och en mindre bäddsoffa för två."}
+              ? "Select dates and number of guests below. Tents 1 and 2 accommodate up to four guests each; tent 3 accommodates up to two."
+              : "Välj datum och antal gäster nedan. Tält 1 och 2 har plats för upp till fyra gäster vardera; tält 3 har plats för högst två."}
           </p>
         </div>
 

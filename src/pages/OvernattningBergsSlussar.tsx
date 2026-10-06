@@ -79,8 +79,8 @@ const OvernattningBergsSlussar = () => {
           body: (
             <>
               <p>
-              Våra tre tält har samma bekväma upplägg – i varje tält finns en dubbelsäng
-                och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster.
+              Tält 1 och 2 har dubbelsäng och en mindre bäddsoffa för två, med plats
+                för upp till fyra gäster vardera. Tält 3 har plats för högst två gäster.
                 Oavsett om du reser som par, familj eller med vänner sover ni gott
                 med samma standard på utrustning i alla tält.
               </p>

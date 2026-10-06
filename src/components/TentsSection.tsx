@@ -12,12 +12,12 @@ const TentsSection = () => {
     ? [
         { name: "Sjöbrisretreatet", image: tentImg1, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
         { name: "Naturkärnan", image: tentImg2, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
-        { name: "The Calm Space", image: tentImg3, features: ["Double bed", "Sofa bed", "Max 4 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
+        { name: "The Calm Space", image: tentImg3, features: ["Double bed", "Sofa bed", "Max 2 guests", "Heating", "Fridge"], price: "From 700 kr/person" },
       ]
     : [
         { name: "Sjöbrisretreatet", image: tentImg1, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
         { name: "Naturkärnan", image: tentImg2, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
-        { name: "Lugnets yta", image: tentImg3, features: ["Dubbelsäng", "Bäddsoffa", "Max 4 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
+        { name: "Lugnets yta", image: tentImg3, features: ["Dubbelsäng", "Bäddsoffa", "Max 2 pers", "Värme", "Kylskåp"], price: "Från 700 kr/person" },
       ];
 
   return (

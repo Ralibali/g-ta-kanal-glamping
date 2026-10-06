@@ -57,8 +57,8 @@ const BoendeBergsSlussar = () => {
           body: (
             <>
               <p>
-                Våra tre tält har samma bekväma upplägg – i varje tält finns en dubbelsäng
-                och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster.
+                Tält 1 och 2 har dubbelsäng och en mindre bäddsoffa för två, med plats
+                för upp till fyra gäster vardera. Tält 3 har plats för högst två gäster.
                 Sängarna är bäddade vid ankomst, med riktigt sänglinne och rena
                 handdukar. I varje tält finns el för laddning, värme för svala
                 kvällar, ett minikylskåp och en fläkt för varma dagar. Kaffe,

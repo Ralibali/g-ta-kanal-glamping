@@ -37,8 +37,8 @@ const RomantiskWeekendOstergotland = () => {
                 Det fina med glamping är just kombinationen – ni får
                 naturens lugn utan att kompromissa på sömnen. Våra tre
                 tält, Sjöbrisretreatet, Naturkärnan och Lugnets yta, är alla fina för
-                par och familjer. Varje tält har en dubbelsäng och en lite mindre bäddsoffa för två,
-                vilket ger plats för upp till fyra gäster. Bäddade sängar med riktigt
+                par. Tält 1 och 2 har plats för upp till fyra gäster vardera, med dubbelsäng
+                och en mindre bäddsoffa för två. Tält 3 har plats för högst två gäster. Bäddade sängar med riktigt
                 sänglinne, en fläkt, en värmare för svala kvällar och kaffe
                 framställt vid ankomst ingår.
               </p>
@@ -136,7 +136,7 @@ const RomantiskWeekendOstergotland = () => {
       faqs={[
         {
           q: "Vilket tält passar bäst för par?",
-          a: "Alla tre tält passar fint för par. Varje tält har en dubbelsäng och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster och en mysig, ombonad känsla.",
+          a: "Alla tre tält passar fint för par. Tält 1 och 2 har plats för upp till fyra gäster vardera, med dubbelsäng och en mindre bäddsoffa för två. Tält 3 har plats för högst två gäster. Alla tält har en mysig, ombonad känsla.",
         },
         {
           q: "Kan ni ordna något extra inför ankomsten?",

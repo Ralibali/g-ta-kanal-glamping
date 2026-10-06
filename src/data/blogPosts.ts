@@ -144,7 +144,7 @@ För dig som vill ha fler tips på området finns en översikt på sidan om [gla
 
 Många familjer som överväger camping landar i glamping istället när de tänker efter. Anledningen är enkel: ni slipper packa madrasser, sovsäckar och köksutrustning. Sängarna är bäddade, det finns värme om kvällen blir sval, minikylskåp för dryck och el för laddning.
 
-Alla våra tält har samma bekväma upplägg med dubbelsäng och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster. Perfekt för familjer med ett eller två barn. Servicehuset med dusch och toalett ligger nära. Mer info hittar ni på sidan om [boende vid Bergs Slussar](/boende-bergs-slussar).
+Tält 1 och 2 har dubbelsäng och en mindre bäddsoffa för två, med plats för upp till fyra gäster vardera. De passar familjer med ett eller två barn. Tält 3 har plats för högst två gäster. Servicehuset med dusch och toalett ligger nära. Mer info hittar ni på sidan om [boende vid Bergs Slussar](/boende-bergs-slussar).
 
 ## Praktiska tips för en lyckad familjeresa
 
@@ -172,7 +172,7 @@ Det finns inga stora lekplatser direkt vid slussarna, men området självt funge
 
 ## Vilket tält passar bäst för en familj?
 
-Alla tre tält passar utmärkt för familjer. Varje tält har en dubbelsäng och en lite mindre bäddsoffa för två, vilket ger plats för upp till fyra gäster – perfekt för en familj med ett eller två barn.
+Tält 1 och 2 passar familjer med upp till fyra gäster vardera. De har dubbelsäng och en mindre bäddsoffa för två – för en familj med ett eller två barn. Tält 3 har plats för högst två gäster.
 
 ## Boka familjens glamping vid Bergs Slussar
 
