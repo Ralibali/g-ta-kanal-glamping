@@ -61,7 +61,7 @@ const GlampingLinkoping = () => {
             <div className="bg-sand rounded-2xl p-6 mb-8">
               <h3 className="font-serif text-xl font-bold text-foreground mb-4">Snabbfakta</h3>
               <div className="space-y-3">
-                <div className="flex items-center gap-3"><MapPin className="text-primary shrink-0" size={18} /><span className="text-foreground">Adress: Bergs Slussar, Vreta Kloster (590 74)</span></div>
+                <div className="flex items-center gap-3"><MapPin className="text-primary shrink-0" size={18} /><span className="text-foreground">Adress: Bergs Slussar, Vreta Kloster (590 77)</span></div>
                 <div className="flex items-center gap-3"><Car className="text-primary shrink-0" size={18} /><span className="text-foreground">15 min med bil från Linköping, parkering på plats</span></div>
                 <div className="flex items-center gap-3"><Clock className="text-primary shrink-0" size={18} /><span className="text-foreground">Incheckning kl. 15:00, utcheckning kl. 10:00</span></div>
               </div>
