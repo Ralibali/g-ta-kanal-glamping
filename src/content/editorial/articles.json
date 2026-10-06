@@ -1,5 +1,42 @@
 [
   {
+    "slug": "glomt-kvar-efter-glamping",
+    "title": "Glömt något efter glampingen? Samla rätt uppgifter",
+    "metaDescription": "Samla vistelsedatum, en tydlig beskrivning och kontaktväg när du tror att något blev kvar efter glampingen. Fråga om nästa steg innan något ordnas.",
+    "intro": "Om du upptäcker att något saknas efter en glampingvistelse är första steget att kontrollera den egna packningen och prata med resten av sällskapet. Om föremålet fortfarande saknas kan ett tydligt meddelande till boendet göra frågan lättare att undersöka. Beskriv vad du vet och vad du bara misstänker.\n\nGuiden är en praktisk kontaktmall. Den lovar inte att ett föremål finns kvar eller att boendet erbjuder förvaring, hämtning eller försändelse. Be om besked om vad som gäller i det aktuella fallet.",
+    "sections": [
+      {
+        "heading": "Kontrollera sällskapets packning först",
+        "content": "Fråga om någon flyttade saken när ni packade eller lastade. Titta i de väskor och utrymmen där den rimligen kan ha hamnat. Använd er [avreseplan för glampingvistelsen](/blogg/avreseplan-glamping-utcheckning) som stöd om ni hade delat upp packningen.\n\nSkriv när och var du senast minns att du såg föremålet. Markera om platsen är osäker. En konkret men ärlig beskrivning är mer användbar än en bestämd platsangivelse som bygger på en gissning."
+      },
+      {
+        "heading": "Beskriv föremålet så att det går att känna igen",
+        "content": "Ange typ, färg, storlek och något särskiljande kännetecken. En kort beskrivning som ”mörkblå tygpåse med vit dragkedja” är tydligare än ”min påse”. Ta med vistelsedatum och det boende eller tält som framgår av bokningen.\n\nUndvik att skicka känsliga uppgifter som inte behövs för efterlysningen. Om föremålet innehåller privata dokument kan du beskriva det översiktligt och fråga hur en eventuell identifiering ska gå till i den privata kontakten med boendet."
+      },
+      {
+        "heading": "Skicka en samlad fråga till rätt kontaktväg",
+        "content": "Utgå från boendets aktuella kontaktuppgifter. Samla följande i ett meddelande: vistelsedatum, namn eller bokningsreferens som behövs för att hitta vistelsen, beskrivning av föremålet, möjlig plats och hur du kan nås. Fråga om någon kan kontrollera och återkomma.\n\nVälj gärna en person i sällskapet som håller kontakten. Flera parallella meddelanden med olika beskrivningar kan göra det oklart om frågorna gäller samma sak. Uppdatera kontaktpersonen om föremålet sedan hittas i er egen packning."
+      },
+      {
+        "heading": "Kom överens om nästa steg först efter svar",
+        "content": "Om boendet hittar ett föremål behöver ni komma överens om hur det identifieras och vad som ska hända därefter. Fråga om möjliga alternativ, tider och eventuella kostnader innan ni planerar hämtning eller försändelse. Räkna inte med en viss lösning innan den har bekräftats.\n\nPå [Bergs Slussar Glampings bokningssida](/boka) finns boendets aktuella information och kontaktvägar. AI-assisterad originalguide med en kontaktmall. Kontrollera alltid det enskilda beskedet från boendet."
+      }
+    ],
+    "ctaHref": "/boka",
+    "ctaLabel": "Se boendet och bokningen",
+    "editorial": {
+      "createdWith": "ChatGPT",
+      "aiAssisted": true,
+      "searchIntent": "Gästens kontaktunderlag efter vistelsen för ett möjligt kvarglömt föremål, skilt från packning före resan och praktisk utcheckning.",
+      "sourceUrls": [
+        "https://goglampingsweden.se/boka"
+      ],
+      "sourceCheckedAt": "2026-10-06T07:08:27.655062+00:00",
+      "publishedAt": "2026-10-06T07:08:27.655062+00:00"
+    },
+    "publishedDate": "2026-10-06"
+  },
+  {
     "slug": "avreseplan-glamping-utcheckning",
     "title": "Gör en enkel plan för avresedagen efter glampingvistelsen",
     "metaDescription": "Gör en enkel plan för avresedagen efter glampingvistelsen. Samla aktuella besked om utcheckning, packning och nästa resa innan dagen börjar.",
