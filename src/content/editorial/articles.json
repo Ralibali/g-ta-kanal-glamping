@@ -1,5 +1,46 @@
 [
   {
+    "slug": "separata-bokningar-gemensam-glampingresa",
+    "title": "Samordna en glampingresa med separata bokningar",
+    "metaDescription": "Håll datum, bokningsansvar och gemensamma önskemål tydliga när sällskapet bokar var för sig. Frågor att reda ut före en gemensam glampingresa.",
+    "intro": "När flera personer reser tillsammans kan var och en behöva boka sitt eget boende. Då finns det flera bekräftelser att hålla reda på, även om resan planeras som en gemensam helg. En enkel avstämning hjälper er att upptäcka skillnader innan någon utgår från att alla har bokat samma sak.\n\nUtgå alltid från varje faktisk bokning och boendets besked. Den här guiden lovar inte att separata bokningar kan kopplas ihop, att tälten ligger intill varandra eller att ett gemensamt önskemål kan ordnas.",
+    "sections": [
+      {
+        "heading": "Jämför datum innan ni planerar detaljerna",
+        "content": "Kontrollera ankomstdag, avresedag och antal nätter i varje bekräftelse. Läs datumen högt tillsammans i stället för att bara fråga om alla bokat ”samma helg”. En person kan ha valt en extra natt eller råkat titta på ett annat alternativ.\n\nSkriv därefter vilka delar av resan ni faktiskt delar. Några kanske kommer senare eller åker hem tidigare. Gemensam middag eller utflykt behöver då planeras utifrån de tider då personerna verkligen är på plats, inte utifrån ett antaget gemensamt schema."
+      },
+      {
+        "heading": "Låt varje bokning ha en ansvarig kontakt",
+        "content": "Bestäm vem som håller reda på sin bekräftelse och följer upp frågor om den egna bokningen. Dela bara de uppgifter i gruppen som behövs för att samordna resan. Det räcker ofta med datum, vem som ansvarar och vilka praktiska frågor som återstår.\n\nOm en person sammanställer en fråga till boendet bör det framgå vilka bokningar frågan gäller. Använd den kontaktväg boendet anger. Skicka inte betalkortsuppgifter eller hela privata mejltrådar till gruppen för att förenkla planeringen."
+      },
+      {
+        "heading": "Skilj gemensamma önskemål från bekräftelser",
+        "content": "Skriv vad ni önskar, till exempel om ni vill kunna umgås på en viss plats, och be boendet förklara vilka möjligheter som finns. Att ni nämnt varandra i en kommentar är inte samma sak som att ett arrangemang har bekräftats.\n\nSpara boendets svar och ange om det gäller hela sällskapet eller en viss bokning. Om svaret bara beskriver ett möjligt alternativ ska det inte bli ett säkert besked i gruppens planering. För frågor om boendets egenskaper, använd också [guiden om tillgänglighetsfrågor](/blogg/tillganglighet-glamping-fragor-fore-bokning) när den är relevant för ert sällskap."
+      },
+      {
+        "heading": "Läs villkoren för varje bokning",
+        "content": "Kontrollera vad som står i respektive bekräftelse om ändringar, kontaktvägar och sådant ni behöver ta ställning till före resan. Två bokningar som gjordes vid olika tillfällen behöver inte automatiskt ha samma förutsättningar. Be boendet förklara otydliga delar innan någon ändrar sin plan.\n\nOm en person får förhinder, håll frågan knuten till den berörda bokningen. Förutsätt inte att ett besked om den bokningen också ändrar de andras. Guiden tolkar inga avtalsvillkor; den hjälper er att samla rätt frågor och hitta det besked som faktiskt gäller."
+      },
+      {
+        "heading": "Gör en sista gemensam avstämning",
+        "content": "Gå igenom vilka som kommer, vilka bokningar som är bekräftade och vilka frågor som fortfarande väntar på svar. Låt sedan var och en behålla sitt eget bokningsunderlag. En gemensam sammanfattning ska hjälpa gruppen att hitta rätt uppgift, inte ersätta originalbekräftelserna.\n\nPå [Bergs Slussar Glampings bokningssida](/boka) hittar du vägen till aktuell bokning och kontakt. AI-assisterad originalguide för resans planering. Boendets aktuella bekräftelser och svar avgör vad som går att ordna för ert sällskap."
+      }
+    ],
+    "ctaHref": "/boka",
+    "ctaLabel": "Se boendet och bokningen",
+    "editorial": {
+      "createdWith": "ChatGPT",
+      "aiAssisted": true,
+      "searchIntent": "Samordna flera separata bokningsbekräftelser för ett resesällskap utan att anta gemensamma villkor, närliggande boenden eller bekräftade önskemål.",
+      "sourceUrls": [
+        "https://goglampingsweden.se/boka"
+      ],
+      "sourceCheckedAt": "2026-10-08T07:20:27.247238+00:00",
+      "publishedAt": "2026-10-08T07:20:27.247238+00:00"
+    },
+    "publishedDate": "2026-10-08"
+  },
+  {
     "slug": "glomt-kvar-efter-glamping",
     "title": "Glömt något efter glampingen? Samla rätt uppgifter",
     "metaDescription": "Samla vistelsedatum, en tydlig beskrivning och kontaktväg när du tror att något blev kvar efter glampingen. Fråga om nästa steg innan något ordnas.",
