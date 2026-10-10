@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "status": "draft",
+  "writtenAt": "2026-10-10T08:50:49.988416+00:00",
+  "repository": "Ralibali/g-ta-kanal-glamping",
+  "publicationGate": "Earliest 2026-10-12, at least two Stockholm calendar days after the previous original is live. Require fresh current main, inventory, sources and previous-article checks. No publication dates while draft.",
+  "sourceReview": {
+    "checkedAt": "2026-10-10T08:50:49.988416+00:00",
+    "distinctIntent": "Planera övergången mellan kollektivtrafik och boendets bekräftade ankomstpunkt vid en bilfri glampingresa, utan obekräftade tidtabeller eller transportlöften.",
+    "note": "Original manual guide. Owned product path verified live on Oct10. Recheck offer and links before publication. No claimed product automation or customer results."
+  },
+  "article": {
+    "slug": "glamping-utan-bil-sista-strackan",
+    "title": "Planera sista sträckan till glampingen när du reser utan bil",
+    "metaDescription": "Planera resan till Bergs slussar utan att gissa tider eller gångväg. Stäm av ankomstpunkt, packning, hemresa och boendets aktuella besked.",
+    "intro": "En tågbiljett till rätt stad är bara en del av en resa utan bil. Innan du bokar glamping behöver du också veta hur du tar dig från sista hållplatsen till boendets faktiska ankomstpunkt och hur hemresan fungerar. Gör den kontrollen för resans riktiga datum, med den packning och de behov ni har.\n\nDen här guiden ger en planeringsmall för en vistelse vid Bergs slussar. Den anger inga avgångstider, gångavstånd eller priser och lovar ingen hämtning från boendet. Använd aktuell trafikinformation och boendets bekräftade besked innan du bestämmer att hela reskedjan fungerar.",
+    "sections": [
+      {
+        "heading": "Utgå från rätt ankomstpunkt och datum",
+        "content": "Be boendet ange var ni faktiskt ska komma fram och vad som gäller för ankomst vid den tid ni planerar. Ett områdesnamn eller en markering vid en sevärdhet är inte tillräckligt för att avgöra var vistelsen börjar. Spara den bekräftade platsen tillsammans med bokningsuppgifterna.\n\nSök därefter hela resan för rätt veckodag och datum i [Östgötatrafikens reseplanerare](https://www.ostgotatrafiken.se/res-med-oss/sok-resa). Östgötatrafiken har även en [avgångssida för Bergs slussar](https://avgangar.ostgotatrafiken.se/bergs-slussar). Kontrollera den faktiska resvägen; en hållplats med ett bekant namn avgör inte om just din anslutning eller sista sträcka passar."
+      },
+      {
+        "heading": "Bedöm sista sträckan utifrån ert sällskap",
+        "content": "Ta reda på hur sträckan från hållplats eller annan avlämningsplats ser ut. Fråga om sådant som är viktigt för er: underlag, orientering, trappor, ljusförhållanden eller möjlighet att ta sig fram med den packning ni har. Beskriv behovet konkret så att svaret blir användbart.\n\nBedöm inte sträckan enbart utifrån ett kartavstånd. En kort sträcka kan ändå behöva planeras på ett annat sätt när ni bär väskor eller reser med någon som har särskilda behov. Om tillgängligheten är avgörande, använd också frågorna i guiden om [tillgänglighet inför glampingbokningen](/blogg/tillganglighet-glamping-fragor-fore-bokning) och be om besked före bokning."
+      },
+      {
+        "heading": "Planera packningen och båda resdagarna",
+        "content": "Lägg fram det ni tänker ta med och kontrollera vad var och en kan hantera genom hela resan. Samordna gemensamma saker så att ni inte bär flera exemplar i onödan. Kontrollera vad boendet faktiskt tillhandahåller och vilka egna saker som fortfarande behövs för just er vistelse.\n\nSök hemresan separat. Ankomst och avresa kan infalla på olika veckodagar med olika förutsättningar. Stäm av utcheckning, resans starttid och eventuell väntan utan att förutsätta att väskor kan lämnas kvar. Be boendet om besked om förvaring om den möjligheten behövs för att planen ska fungera."
+      },
+      {
+        "heading": "Spara en reservplan och kontrollera före avresa",
+        "content": "Bestäm vad ni gör om en anslutning ändras eller om ni blir senare än planerat. Spara boendets kontaktväg och skriv vem i sällskapet som följer trafikinformationen. Om ni överväger en annan transport behöver dess tillgänglighet och kostnad kontrolleras innan ni räknar med den.\n\nLäs aktuella vistelseuppgifter på [Bergs Slussar Glampings bokningssida](/boka) och kontrollera trafiken på nytt nära avresan. AI-assisterad originalguide för reseplanering. Länkarna är kontrollvägar, inte ett löfte om en viss linje, avgång, gångväg eller tillgänglig transport för era datum."
+      }
+    ],
+    "ctaHref": "/boka",
+    "ctaLabel": "Se boendet och bokningen",
+    "editorial": {
+      "createdWith": "ChatGPT",
+      "aiAssisted": true,
+      "searchIntent": "Planera övergången mellan kollektivtrafik och boendets bekräftade ankomstpunkt vid en bilfri glampingresa, utan obekräftade tidtabeller eller transportlöften.",
+      "sourceUrls": [
+        "https://goglampingsweden.se/boka",
+        "https://www.ostgotatrafiken.se/res-med-oss/sok-resa",
+        "https://avgangar.ostgotatrafiken.se/bergs-slussar"
+      ],
+      "sourceCheckedAt": "2026-10-10T08:50:49.988416+00:00"
+    }
+  }
+}
