@@ -115,7 +115,7 @@ const RomantiskWeekendOstergotland = () => {
               <p>
                 Vi finns i Vreta Kloster, cirka femton minuter med bil från
                 Linköping centrum. Incheckning sker från klockan 15:00 och
-                utcheckning klockan 10:00, men sen utcheckning kan bokas
+                utcheckning klockan 11:00, men sen utcheckning kan bokas
                 som tillval i mån av plats om ni vill njuta lite längre.
                 Frukost kan bokas via Bostället på området.
               </p>

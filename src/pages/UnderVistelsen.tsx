@@ -329,7 +329,7 @@ export default function UnderVistelsen({ initialLang = "sv" }: UnderVistelsenPro
               </div>
             )}
             <div className="text-muted-foreground">
-              {t.checkout} <strong className="text-foreground">10:00</strong>
+              {t.checkout} <strong className="text-foreground">11:00</strong>
               {personal?.checkoutDate ? <span className="text-foreground/70"> · {personal.checkoutDate}</span> : null}
             </div>
             <div className="rounded-xl border border-primary/30 bg-primary/5 p-3">

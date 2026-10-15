@@ -89,7 +89,7 @@ const COPY = {
     faqTitle: "Bra att veta",
     faqs: [
       { q: "När kan vi checka in?", a: "Incheckning sker från klockan 15:00. Du får en personlig incheckningslänk via e-post med kod och praktisk information innan ankomst." },
-      { q: "När behöver vi checka ut?", a: "Utcheckning sker senast klockan 10:00. Vill ni stanna längre kan sen utcheckning ofta läggas till mot en tilläggsavgift." },
+      { q: "När behöver vi checka ut?", a: "Utcheckning sker senast klockan 11:00. Vill ni stanna längre kan sen utcheckning ofta läggas till mot en tilläggsavgift." },
       { q: "Finns det toalett och dusch?", a: "Ja, det finns ett servicehus med moderna toaletter och duschar i närheten av tälten." },
       { q: "Kan vi lägga till frukost?", a: "Ja, frukost kan läggas till vid bokningen och levereras runt 08:30 av Boställets Vedugnsbageri – ni får ett SMS så fort den är på plats.", stayboostAnswer: "När frukost erbjuds för dina datum visas den bland tillvalen i bokningen. Frukost från Boställets Vedugnsbageri levereras runt 08:30. Dina bokade tillval visas i bokningsbekräftelsen via e-post och på din gästsida." },
       { q: "Får barn bo i tälten?", a: "Ja, barn är varmt välkomna. Tält 1 och 2 har plats för upp till fyra gäster vardera med dubbelsäng och en mindre bäddsoffa för två. Tält 3 har plats för högst två gäster." },
@@ -158,7 +158,7 @@ const COPY = {
     faqTitle: "Good to know",
     faqs: [
       { q: "When can we check in?", a: "Check-in is from 3:00 pm. You'll get a personal check-in link by email with your code and practical info before arrival." },
-      { q: "When do we need to check out?", a: "Check-out is by 10:00 am. If you'd like to stay longer, late check-out can often be added for a small fee." },
+      { q: "When do we need to check out?", a: "Check-out is by 11:00 am. If you'd like to stay longer, late check-out can often be added for a small fee." },
       { q: "Are there toilets and showers?", a: "Yes, there's a service house with modern toilets and showers close to the tents." },
       { q: "Can we add breakfast?", a: "Yes, breakfast can be added at booking. It's delivered around 8:30 by Boställets Vedugnsbageri – you'll get a text as soon as it's ready.", stayboostAnswer: "When breakfast is offered for your dates, it appears among the extras in the booking form. Breakfast from Boställets Vedugnsbageri is delivered around 8:30. Your booked extras are listed in your confirmation email and on your guest page." },
       { q: "Are children welcome?", a: "Yes, children are warmly welcome. Tents 1 and 2 accommodate up to four guests each, with a double bed and a small sofa bed for two. Tent 3 accommodates up to two guests." },
@@ -227,7 +227,7 @@ const COPY = {
     faqTitle: "Gut zu wissen",
     faqs: [
       { q: "Wann können wir einchecken?", a: "Check-in ist ab 15:00 Uhr. Sie erhalten vor der Ankunft einen persönlichen Check-in-Link per E-Mail mit Code und praktischen Informationen." },
-      { q: "Wann müssen wir auschecken?", a: "Check-out ist bis spätestens 10:00 Uhr. Wenn Sie länger bleiben möchten, kann oft ein später Check-out gegen einen kleinen Aufpreis hinzugefügt werden." },
+      { q: "Wann müssen wir auschecken?", a: "Check-out ist bis spätestens 11:00 Uhr. Wenn Sie länger bleiben möchten, kann oft ein später Check-out gegen einen kleinen Aufpreis hinzugefügt werden." },
       { q: "Gibt es Toiletten und Duschen?", a: "Ja, es gibt ein Servicehaus mit modernen Toiletten und Duschen in der Nähe der Zelte." },
       { q: "Können wir Frühstück hinzufügen?", a: "Ja, das Frühstück kann bei der Buchung hinzugefügt werden. Es wird gegen 8:30 Uhr von Boställets Vedugnsbageri geliefert – Sie erhalten eine SMS, sobald es bereit ist.", stayboostAnswer: "Wenn Frühstück für Ihre Reisedaten angeboten wird, erscheint es unter den Extras im Buchungsformular. Das Frühstück von Boställets Vedugnsbageri wird gegen 8:30 Uhr geliefert. Ihre gebuchten Extras finden Sie in der Buchungsbestätigung per E-Mail und auf Ihrer Gästeseite." },
       { q: "Sind Kinder willkommen?", a: "Ja, Kinder sind herzlich willkommen. Zelt 1 und Zelt 2 bieten jeweils Platz für bis zu vier Gäste, mit einem Doppelbett und einem kleinen Schlafsofa für zwei. Zelt 3 bietet Platz für höchstens zwei Gäste." },
