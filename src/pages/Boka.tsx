@@ -5,6 +5,7 @@ import { Menu, X, Leaf, BedDouble, Flame, Sparkles, TreePine, Coffee, Waves, Shi
 import BookingWidget from "@/components/BookingWidget";
 import Footer from "@/components/Footer";
 import { LanguageProvider, type Lang } from "@/i18n/LanguageContext";
+import { bookingConfig } from "@/lib/booking-provider";
 import heroImg from "@/assets/glamping-sunset.jpg";
 import editorialA from "@/assets/glamping-exterior-deck.jpg";
 import editorialB from "@/assets/glamping-interior-beds.jpg";
@@ -69,7 +70,7 @@ const COPY = {
       { title: "Värme och el i tältet", text: "Behaglig temperatur året om och uttag för det ni behöver." },
       { title: "Handdukar och sänglinne ingår", text: "Inget att packa eller bära – allt finns på plats när ni anländer." },
       { title: "Egen uteplats", text: "Sitt ute med en kopp kaffe och låt morgonen vakna i lugn och ro." },
-      { title: "Frukost kan läggas till", text: "Lägg till en god frukost vid bokningen och börja dagen ostressat." },
+      { title: "Frukost kan läggas till", text: "Lägg till en god frukost vid bokningen och börja dagen ostressat.", stayboost: { title: "Frukost när den erbjuds", text: "Se vilka tillval som är tillgängliga för dina datum i bokningen." } },
       { title: "Göta kanal runt hörnet", text: "Slussar, promenadstråk och båtliv ligger bara några steg bort." },
     ],
     editorialEyebrow: "Tre tält",
@@ -90,7 +91,7 @@ const COPY = {
       { q: "När kan vi checka in?", a: "Incheckning sker från klockan 15:00. Du får en personlig incheckningslänk via e-post med kod och praktisk information innan ankomst." },
       { q: "När behöver vi checka ut?", a: "Utcheckning sker senast klockan 10:00. Vill ni stanna längre kan sen utcheckning ofta läggas till mot en tilläggsavgift." },
       { q: "Finns det toalett och dusch?", a: "Ja, det finns ett servicehus med moderna toaletter och duschar i närheten av tälten." },
-      { q: "Kan vi lägga till frukost?", a: "Ja, frukost kan läggas till vid bokningen och levereras runt 08:30 av Boställets Vedugnsbageri – ni får ett SMS så fort den är på plats." },
+      { q: "Kan vi lägga till frukost?", a: "Ja, frukost kan läggas till vid bokningen och levereras runt 08:30 av Boställets Vedugnsbageri – ni får ett SMS så fort den är på plats.", stayboostAnswer: "När frukost erbjuds för dina datum visas den bland tillvalen i bokningen. Frukost från Boställets Vedugnsbageri levereras runt 08:30. Dina bokade tillval visas i bokningsbekräftelsen via e-post och på din gästsida." },
       { q: "Får barn bo i tälten?", a: "Ja, barn är varmt välkomna. Tält 1 och 2 har plats för upp till fyra gäster vardera med dubbelsäng och en mindre bäddsoffa för två. Tält 3 har plats för högst två gäster." },
       { q: "Finns det värme och el?", a: "Ja, alla tält har värme och eluttag så att vistelsen blir behaglig oavsett väder." },
       { q: "Hur fungerar incheckningen?", a: "Incheckningen är digital. Ni får en kod via e-post i god tid innan ankomst och kan checka in själva när det passar er." },
@@ -138,7 +139,7 @@ const COPY = {
       { title: "Heating & electricity", text: "Comfortable temperature year-round and outlets for what you need." },
       { title: "Towels and linens included", text: "Nothing to pack or carry – it's all waiting for you on arrival." },
       { title: "Private terrace", text: "Sit outside with a cup of coffee and let the morning wake up in peace." },
-      { title: "Breakfast can be added", text: "Add a lovely breakfast at booking and start the day without a rush." },
+      { title: "Breakfast can be added", text: "Add a lovely breakfast at booking and start the day without a rush.", stayboost: { title: "Breakfast when available", text: "See which extras are available for your dates in the booking form." } },
       { title: "The Göta Canal next door", text: "Locks, walking paths and boat life are just a few steps away." },
     ],
     editorialEyebrow: "Three tents",
@@ -159,7 +160,7 @@ const COPY = {
       { q: "When can we check in?", a: "Check-in is from 3:00 pm. You'll get a personal check-in link by email with your code and practical info before arrival." },
       { q: "When do we need to check out?", a: "Check-out is by 10:00 am. If you'd like to stay longer, late check-out can often be added for a small fee." },
       { q: "Are there toilets and showers?", a: "Yes, there's a service house with modern toilets and showers close to the tents." },
-      { q: "Can we add breakfast?", a: "Yes, breakfast can be added at booking. It's delivered around 8:30 by Boställets Vedugnsbageri – you'll get a text as soon as it's ready." },
+      { q: "Can we add breakfast?", a: "Yes, breakfast can be added at booking. It's delivered around 8:30 by Boställets Vedugnsbageri – you'll get a text as soon as it's ready.", stayboostAnswer: "When breakfast is offered for your dates, it appears among the extras in the booking form. Breakfast from Boställets Vedugnsbageri is delivered around 8:30. Your booked extras are listed in your confirmation email and on your guest page." },
       { q: "Are children welcome?", a: "Yes, children are warmly welcome. Tents 1 and 2 accommodate up to four guests each, with a double bed and a small sofa bed for two. Tent 3 accommodates up to two guests." },
       { q: "Is there heating and electricity?", a: "Yes, every tent has heating and power outlets so your stay stays comfortable in any weather." },
       { q: "How does check-in work?", a: "Check-in is digital. You'll get a code by email in good time before arrival and can check in yourself whenever suits you." },
@@ -207,7 +208,7 @@ const COPY = {
       { title: "Heizung & Strom im Zelt", text: "Angenehme Temperatur das ganze Jahr über und Steckdosen für alles, was Sie brauchen." },
       { title: "Handtücher und Bettwäsche inklusive", text: "Nichts zu packen oder zu tragen – alles ist bei Ihrer Ankunft vorbereitet." },
       { title: "Eigene Terrasse", text: "Sitzen Sie draußen mit einer Tasse Kaffee und lassen Sie den Morgen in Ruhe erwachen." },
-      { title: "Frühstück kann hinzugefügt werden", text: "Fügen Sie ein leckeres Frühstück bei der Buchung hinzu und starten Sie den Tag entspannt." },
+      { title: "Frühstück kann hinzugefügt werden", text: "Fügen Sie ein leckeres Frühstück bei der Buchung hinzu und starten Sie den Tag entspannt.", stayboost: { title: "Frühstück nach Verfügbarkeit", text: "Im Buchungsformular sehen Sie, welche Extras für Ihre Reisedaten verfügbar sind." } },
       { title: "Göta-Kanal um die Ecke", text: "Schleusen, Wanderwege und Bootsleben sind nur wenige Schritte entfernt." },
     ],
     editorialEyebrow: "Drei Zelte",
@@ -228,7 +229,7 @@ const COPY = {
       { q: "Wann können wir einchecken?", a: "Check-in ist ab 15:00 Uhr. Sie erhalten vor der Ankunft einen persönlichen Check-in-Link per E-Mail mit Code und praktischen Informationen." },
       { q: "Wann müssen wir auschecken?", a: "Check-out ist bis spätestens 10:00 Uhr. Wenn Sie länger bleiben möchten, kann oft ein später Check-out gegen einen kleinen Aufpreis hinzugefügt werden." },
       { q: "Gibt es Toiletten und Duschen?", a: "Ja, es gibt ein Servicehaus mit modernen Toiletten und Duschen in der Nähe der Zelte." },
-      { q: "Können wir Frühstück hinzufügen?", a: "Ja, das Frühstück kann bei der Buchung hinzugefügt werden. Es wird gegen 8:30 Uhr von Boställets Vedugnsbageri geliefert – Sie erhalten eine SMS, sobald es bereit ist." },
+      { q: "Können wir Frühstück hinzufügen?", a: "Ja, das Frühstück kann bei der Buchung hinzugefügt werden. Es wird gegen 8:30 Uhr von Boställets Vedugnsbageri geliefert – Sie erhalten eine SMS, sobald es bereit ist.", stayboostAnswer: "Wenn Frühstück für Ihre Reisedaten angeboten wird, erscheint es unter den Extras im Buchungsformular. Das Frühstück von Boställets Vedugnsbageri wird gegen 8:30 Uhr geliefert. Ihre gebuchten Extras finden Sie in der Buchungsbestätigung per E-Mail und auf Ihrer Gästeseite." },
       { q: "Sind Kinder willkommen?", a: "Ja, Kinder sind herzlich willkommen. Zelt 1 und Zelt 2 bieten jeweils Platz für bis zu vier Gäste, mit einem Doppelbett und einem kleinen Schlafsofa für zwei. Zelt 3 bietet Platz für höchstens zwei Gäste." },
       { q: "Gibt es Heizung und Strom?", a: "Ja, jedes Zelt hat Heizung und Steckdosen, damit Ihr Aufenthalt bei jedem Wetter angenehm bleibt." },
       { q: "Wie funktioniert der Check-in?", a: "Der Check-in ist digital. Sie erhalten einen Code per E-Mail rechtzeitig vor der Ankunft und können selbst einchecken, wann es Ihnen passt." },
@@ -528,8 +529,8 @@ const Benefits = ({ t }: { t: Copy }) => {
           {t.benefits.map((it, i) => (
             <div key={it.title} className="border-t pt-6" style={{ borderColor: `${PALETTE.primary}33` }}>
               <div style={{ color: PALETTE.primary }} className="mb-4">{icons[i]}</div>
-              <h3 className="text-2xl mb-2">{it.title}</h3>
-              <p className="text-[15px] leading-relaxed" style={{ color: "#3a4a3d" }}>{it.text}</p>
+              <h3 className="text-2xl mb-2">{bookingConfig.provider === "stayboost" ? (it.stayboost?.title ?? it.title) : it.title}</h3>
+              <p className="text-[15px] leading-relaxed" style={{ color: "#3a4a3d" }}>{bookingConfig.provider === "stayboost" ? (it.stayboost?.text ?? it.text) : it.text}</p>
             </div>
           ))}
         </div>
@@ -634,7 +635,7 @@ const FAQ = ({ t }: { t: Copy }) => {
                 </button>
                 {isOpen && (
                   <p className="pb-6 text-[15px] leading-relaxed" style={{ color: "#3a4a3d" }}>
-                    {f.a}
+                    {bookingConfig.provider === "stayboost" ? (f.stayboostAnswer ?? f.a) : f.a}
                   </p>
                 )}
               </div>
