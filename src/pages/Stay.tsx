@@ -375,7 +375,7 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
       tagline: "Stanna kvar till kl 12:00 istället för ordinarie kl 11:00 — en lugn extratimme innan hemresan.",
       bullets: [
         "Utcheckning senast kl 12:00",
-        "Två extra timmar på morgonen",
+        "En extra timme på morgonen",
         "Perfekt för en långfrukost vid kanalen",
         "Garanterad tid (bokningsbart tillval)",
       ],
@@ -385,7 +385,7 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
       tagline: "Stay until 12:00 instead of the usual 11:00 — one calm extra hour before heading home.",
       bullets: [
         "Check-out by 12:00",
-        "Two extra hours in the morning",
+        "One extra hour in the morning",
         "Perfect for a slow breakfast by the canal",
         "Guaranteed time (bookable extra)",
       ],
