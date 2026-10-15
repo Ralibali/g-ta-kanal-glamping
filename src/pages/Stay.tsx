@@ -372,20 +372,20 @@ const ADDON_DETAILS: Record<string, Record<string, { tagline: string; bullets: s
   },
   late_checkout: {
     sv: {
-      tagline: "Stanna kvar till kl 12:00 istället för ordinarie kl 10:00 — två lugna extratimmar innan hemresan.",
+      tagline: "Stanna kvar till kl 12:00 istället för ordinarie kl 11:00 — en lugn extratimme innan hemresan.",
       bullets: [
         "Utcheckning senast kl 12:00",
-        "Två extra timmar på morgonen",
+        "En extra timme på morgonen",
         "Perfekt för en långfrukost vid kanalen",
         "Garanterad tid (bokningsbart tillval)",
       ],
       note: "399 kr per bokning, oavsett antal gäster.",
     },
     en: {
-      tagline: "Stay until 12:00 instead of the usual 10:00 — two calm extra hours before heading home.",
+      tagline: "Stay until 12:00 instead of the usual 11:00 — one calm extra hour before heading home.",
       bullets: [
         "Check-out by 12:00",
-        "Two extra hours in the morning",
+        "One extra hour in the morning",
         "Perfect for a slow breakfast by the canal",
         "Guaranteed time (bookable extra)",
       ],
@@ -940,7 +940,7 @@ export default function Stay({ initialLang }: StayProps = {}) {
                 <span>
                   {hasLate
                     ? (isSv ? "Sen utcheckning — ni kan stanna till kl 12:00 🌤️" : "Late check-out — you can stay until 12:00 🌤️")
-                    : (isSv ? "Utcheckning senast kl 10:00." : "Check-out by 10:00 am.")}
+                    : (isSv ? "Utcheckning senast kl 11:00." : "Check-out by 11:00 am.")}
                 </span>
               </li>
               {hasBreakfast && (
@@ -1396,8 +1396,8 @@ export default function Stay({ initialLang }: StayProps = {}) {
 
             <InfoRow icon={<Clock className="h-4 w-4" />} title={isSv ? "Incheckning & utcheckning" : "Check-in & check-out"}>
               {isSv
-                ? "Incheckning från kl 15:00, utcheckning senast kl 10:00. Vill ni ha mer tid? Tidig incheckning (kl 12:00) och sen utcheckning (till kl 12:00) finns som tillval här ovan, 399 kr styck. Ni checkar in själva, i lugn och ro — koden till tältet visas här på sidan när det är dags att checka in."
-                : "Check-in from 3:00 pm, check-out by 10:00 am. Want more time? Early check-in (12:00) and late check-out (until 12:00) are available as extras above, 399 SEK each. You check in yourselves at your own pace — the code to the tent appears here on this page when it's time to check in."}
+                ? "Incheckning från kl 15:00, utcheckning senast kl 11:00. Vill ni ha mer tid? Tidig incheckning (kl 12:00) och sen utcheckning (till kl 12:00) finns som tillval här ovan, 399 kr styck. Ni checkar in själva, i lugn och ro — koden till tältet visas här på sidan när det är dags att checka in."
+                : "Check-in from 3:00 pm, check-out by 11:00 am. Want more time? Early check-in (12:00) and late check-out (until 12:00) are available as extras above, 399 SEK each. You check in yourselves at your own pace — the code to the tent appears here on this page when it's time to check in."}
             </InfoRow>
 
             <InfoRow icon={<ShowerHead className="h-4 w-4" />} title={isSv ? "Servicehus & servicekort" : "Service house & service card"}>

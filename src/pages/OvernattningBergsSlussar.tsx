@@ -130,7 +130,7 @@ const OvernattningBergsSlussar = () => {
         },
         {
           q: "När sker incheckning och utcheckning?",
-          a: "Incheckning sker tidigast klockan 15:00 och utcheckning senast klockan 10:00 på avresedagen. Sen utcheckning kan bokas som tillval i mån av plats.",
+          a: "Incheckning sker tidigast klockan 15:00 och utcheckning senast klockan 11:00 på avresedagen. Sen utcheckning kan bokas som tillval i mån av plats.",
         },
         {
           q: "Får jag ta med hund?",
