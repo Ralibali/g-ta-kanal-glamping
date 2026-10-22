@@ -56,7 +56,7 @@ const BookingTerms = () => {
           <h2 className="font-serif text-xl font-bold text-foreground mb-3">Incheckning och utcheckning</h2>
           <ul className="space-y-2 text-muted-foreground text-sm leading-relaxed list-disc list-inside">
             <li><strong className="text-foreground">Incheckning:</strong> Från kl. 15:00 på ankomstdagen.</li>
-            <li><strong className="text-foreground">Utcheckning:</strong> Senast kl. 10:00 på avresedagen.</li>
+            <li><strong className="text-foreground">Utcheckning:</strong> Senast kl. 11:00 på avresedagen.</li>
             <li><strong className="text-foreground">Sen utcheckning:</strong> Kan erbjudas till kl. 12:00 mot en avgift på 399 kr (Swish). Meddela oss i förväg.</li>
             <li>Incheckning sker digitalt via länk som skickas med bokningsbekräftelsen.</li>
           </ul>
