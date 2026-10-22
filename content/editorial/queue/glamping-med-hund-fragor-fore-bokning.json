@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "status": "draft",
+  "writtenAt": "2026-10-22T19:25:24.280565+00:00",
+  "repository": "Ralibali/g-ta-kanal-glamping",
+  "publicationGate": "Earliest 2026-10-24, at least two Stockholm calendar days after the last verified original. Recheck current main, full inventory, sources, product paths and Search Console priorities. No publication dates while draft.",
+  "sourceReview": {
+    "checkedAt": "2026-10-22T19:25:24.280565+00:00",
+    "distinctIntent": "Pröva om en glampingvistelse passar en resa med hund genom bekräftade boendevillkor, utan att påstå att Bergs Slussar tillåter hund.",
+    "note": "Original manual guide; linked owned product path checked in this run. Recheck before publication; no customer results, prices, permissions or unsupported features asserted."
+  },
+  "article": {
+    "slug": "glamping-med-hund-fragor-fore-bokning",
+    "title": "Glamping med hund: frågor att få svar på före bokning",
+    "metaDescription": "Kontrollera om hund är tillåten för just ert boende och datum, vilka villkor som gäller och hur vistelsen kan planeras innan ni bokar.",
+    "intro": "En glampingresa med hund börjar med en konkret fråga till boendet: får hund följa med i den boendetyp och under de datum ni överväger? Ett fotografi av en hund eller ett allmänt tips om husdjursvänliga resor räcker inte som bokningsbesked.\n\nDen här guiden är en frågelista. Den innebär inte att hund är tillåten hos Bergs Slussar Glamping eller på alla delar av området. Kontrollera aktuella villkor och invänta ett tydligt svar innan ni gör en bokning som förutsätter att hunden kan följa med.",
+    "sections": [
+      {
+        "heading": "Fråga om den aktuella bokningen",
+        "content": "Ange datum, boendetyp och hur många hundar frågan gäller. Be boendet bekräfta om det går att boka på de förutsättningarna. Fråga också om eventuella avgifter eller begränsningar och var de framgår innan bokningen slutförs.\n\nSpara svaret tillsammans med bokningsunderlaget. Om beskedet säger att hund kan tillåtas efter överenskommelse behöver ni veta om överenskommelsen gäller just er vistelse. Utgå inte från att ett svar för ett tidigare år, ett annat tält eller en annan anläggning fortfarande gäller."
+      },
+      {
+        "heading": "Gå igenom hur boendet får användas",
+        "content": "Fråga vilka regler som gäller inne i boendet och i gemensamma utrymmen. Behöver ni ta med något särskilt för städning eller för att skydda boendets utrustning? Får hunden lämnas ensam, eller måste den följa med er när ni går därifrån?\n\nBe om besked kring det som är avgörande för er planering. Guiden rekommenderar inte en viss lösning för hundens tillsyn eller säkerhet. Om ni inte kan ordna vistelsen enligt bekräftade villkor behöver ni välja ett annat upplägg före bokningen."
+      },
+      {
+        "heading": "Kontrollera aktiviteter separat",
+        "content": "En tillåtelse från boendet gäller inte automatiskt på restauranger, i besöksmål eller längs alla planerade utflykter. Kontrollera varje aktivitet hos den ansvariga aktören. Skriv vilka delar av resan som fungerar med hunden och vilka som fortfarande kräver ett besked.\n\nLämna utrymme att byta aktivitet om förutsättningarna ändras. I guiden om [en eller två nätter på glamping](/blogg/glamping-en-eller-tva-natter) kan ni jämföra hur mycket tid ni faktiskt får på plats. Utgå från er bekräftade plan, inte från att alla utflykter går att kombinera."
+      },
+      {
+        "heading": "Fatta beslut när viktiga svar är klara",
+        "content": "Sammanställ boendets besked, eventuella kostnader och de villkor som styr er vistelse. Markera vad ni själva behöver ordna. Om ett viktigt svar saknas, följ upp det före bokningen i stället för att hoppas att frågan löser sig vid ankomst.\n\nÖppna [Bergs Slussar Glampings bokningssida](/boka) för att kontrollera det aktuella bokningsläget och hitta nästa kontaktväg. En ledig tid är inte i sig ett godkännande att ta med hund. Be om ett specifikt besked när bokningsinformationen inte uttryckligen besvarar frågan."
+      }
+    ],
+    "ctaHref": "/boka",
+    "ctaLabel": "Se boendet och bokningen",
+    "editorial": {
+      "createdWith": "ChatGPT",
+      "aiAssisted": true,
+      "searchIntent": "Pröva om en glampingvistelse passar en resa med hund genom bekräftade boendevillkor, utan att påstå att Bergs Slussar tillåter hund.",
+      "sourceUrls": [
+        "https://goglampingsweden.se/boka"
+      ],
+      "sourceCheckedAt": "2026-10-22T19:25:24.280565+00:00"
+    }
+  }
+}
