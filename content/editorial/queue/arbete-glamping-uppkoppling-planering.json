@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "status": "draft",
+  "writtenAt": "2026-10-24T07:57:02.890182+00:00",
+  "repository": "Ralibali/g-ta-kanal-glamping",
+  "publicationGate": "Tidigast 2026-10-26 och minst två kalenderdagar i Europe/Stockholm efter senaste verkliga originalpublicering. Kontrollera tidigare läsflöde, aktuell main, hela inventeringen, källor och produkt igen. Utkastet har inget publiceringsdatum och får inte importeras i den publika samlingen.",
+  "sourceReview": {
+    "checkedAt": "2026-10-24T07:57:02.890182+00:00",
+    "distinctIntent": "Bedöma om arbetskrav går att kombinera med en glampingvistelse innan bokning utan att påstå wifi, hastigheter, eluttag eller särskilda arbetsutrymmen.",
+    "note": "Egen arbetsmall. Den länkade produktvägen kontrollerad i webbläsare i denna körning; kontrollera på nytt före publicering. Inga påhittade funktioner, resultat eller boendevillkor."
+  },
+  "article": {
+    "slug": "arbete-glamping-uppkoppling-planering",
+    "title": "Jobba under en glampingresa? Kontrollera detta före bokning",
+    "metaDescription": "Pröva om vistelsen fungerar med dina arbetsbehov. Frågor om uppkoppling, samtalsplats och alternativ utan antaganden om boendets utrustning.",
+    "intro": "En vistelse nära naturen kan passa för ledighet även när den inte passar för ett arbetsmöte. Om du behöver arbeta under resan, börja med vad arbetet kräver och be boendet bekräfta de förutsättningar som är avgörande. Guiden är skriven med AI-stöd av ChatGPT och beskriver inga verifierade arbetsfaciliteter på Bergs Slussar.",
+    "sections": [
+      {
+        "heading": "Skilj önskemål från nödvändiga villkor",
+        "contentMarkdown": "Skriv upp vilka delar av vistelsen som innehåller arbete. Ett kort samtal, flera videomöten och arbete som kan göras utan nät ställer olika krav. Markera vad som måste fungera på en bestämd tid och vad som kan flyttas.\n\nGör en separat lista över sådant som vore trevligt, exempelvis en viss utsikt eller möjlighet att sitta utomhus. Då kan du bedöma boendets svar utan att låta ett önskemål ersätta ett avgörande praktiskt villkor."
+      },
+      {
+        "heading": "Fråga om den plats där du ska arbeta",
+        "contentMarkdown": "Fråga om det finns en avsedd plats att sitta, vad som gäller för tillgång till el och om platsen delas med andra. Ett foto av en stol säger inte hur arbetsytan eller omgivningen fungerar under de timmar du behöver använda den.\n\nOm samtal behöver ske ostört, be om besked om vilka möjligheter som finns. Utgå inte från att ett tält dämpar ljud på ett visst sätt eller att närliggande utrymmen får användas för arbete. Svaren behöver avse det boende och datum du överväger."
+      },
+      {
+        "heading": "Gör uppkopplingen till en konkret fråga",
+        "contentMarkdown": "Be boendet beskriva vilken internetanslutning som erbjuds, var den kan användas och om några begränsningar gäller. Guiden anger varken tillgång till wifi eller uppmätta hastigheter på anläggningen. Ett allmänt besked om täckning är inte ett test av ditt arbetsmöte.\n\nKontrollera även med din arbetsgivare vilka krav som gäller för utrustning och anslutning. Gör inga egna antaganden om att boendets nät passar alla arbetsuppgifter. Om uppkopplingen är ett absolut villkor behöver du ett alternativ som du själv har möjlighet att använda."
+      },
+      {
+        "heading": "Bestäm ett alternativ före resan",
+        "contentMarkdown": "Fundera på vad du gör om den planerade arbetsplatsen eller anslutningen inte fungerar när du behöver den. Kan mötet flyttas, arbetet göras före avresa eller en annan arbetsplats användas? Kontrollera det alternativ du tänker förlita dig på.\n\nLåt inte övriga resenärer upptäcka arbetsplanen på plats. Berätta vilka tider som är bundna och vilka delar av resan ni planerar tillsammans. Då går det lättare att avgöra om kombinationen faktiskt passar den här vistelsen."
+      },
+      {
+        "heading": "Boka utifrån bekräftade förutsättningar",
+        "contentMarkdown": "Sammanfatta svaren med datum och vem som lämnat dem. Om något är oklart och avgörande för resan, be om förtydligande före bokningen. En möjlig reservplan ska inte beskrivas som bekräftad förrän du har kontrollerat den.\n\nSe [boendet och bokningsinformationen](/boka) för Bergs Slussar och ställ frågor om just den vistelse du funderar på. Välj sedan om resan ska innehålla arbete eller om arbetsuppgifterna behöver förläggas till en annan tid."
+      }
+    ],
+    "ctaHref": "/boka",
+    "ctaLabel": "Se boendet och bokningen",
+    "editorial": {
+      "createdWith": "ChatGPT",
+      "aiAssisted": true,
+      "searchIntent": "Bedöma om arbetskrav går att kombinera med en glampingvistelse innan bokning utan att påstå wifi, hastigheter, eluttag eller särskilda arbetsutrymmen.",
+      "sourceUrls": [
+        "https://goglampingsweden.se/boka"
+      ],
+      "sourceCheckedAt": "2026-10-24T07:57:02.890182+00:00"
+    }
+  }
+}
