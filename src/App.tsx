@@ -31,6 +31,7 @@ import Unsubscribe from "./pages/Unsubscribe";
 import Cleaning from "./pages/Cleaning";
 import Breakfast from "./pages/Breakfast";
 import Boka from "./pages/Boka";
+import NativeBoka from "./pages/NativeBoka";
 import Stay from "./pages/Stay";
 import UnderVistelsen from "./pages/UnderVistelsen";
 import ShortRedirect from "./pages/ShortRedirect";
@@ -93,6 +94,9 @@ const App = () => (
             <Route path="/en/book" element={<Boka lang="en" />} />
             <Route path="/de/boka" element={<Boka lang="de" />} />
             <Route path="/de/buchen" element={<Boka lang="de" />} />
+            <Route path="/boka-native" element={<NativeBoka lang="sv" />} />
+            <Route path="/en/book-native" element={<NativeBoka lang="en" />} />
+            <Route path="/de/buchen-native" element={<NativeBoka lang="de" />} />
             <Route path="/stay/:token" element={<Stay />} />
             <Route path="/en/stay/:token" element={<Stay initialLang="en" />} />
             <Route path="/de/stay/:token" element={<Stay initialLang="de" />} />
