@@ -1,0 +1,44 @@
+{
+  "slug": "andrade-planer-glampingbokning",
+  "title": "Ändrade planer inför glampingen: samla bokningsfrågorna",
+  "metaDescription": "Samla bokningsreferens, önskad ändring och frågor till boendet. Skilj en förfrågan från en bekräftad ändring innan du planerar om resan.",
+  "intro": "En ändrad resplan behöver inte bli en otydlig kedja av meddelanden. Samla rätt bokningsuppgifter och låt den bekräftade ändringen styra nästa steg. Texten är skriven med AI-stöd av ChatGPT.",
+  "sections": [
+    {
+      "heading": "Utgå från bokningen som faktiskt gäller",
+      "content": "Ta fram bokningsbekräftelsen och kontrollera datum, antal gäster och vem som är bokningspart. Läs villkoren som hör till just den bokningen. Om den gjordes genom en förmedlare, kontrollera vilken kontaktväg som används för ändringar.\n\nSamla bokningsreferensen och formulera vad som behöver ändras. Ett allmänt meddelande om att planerna blivit annorlunda ger mottagaren mindre att arbeta med än en konkret förfrågan om nya datum eller ändrat antal gäster."
+    },
+    {
+      "heading": "Skilj önskat alternativ från fattat beslut",
+      "content": "Skriv vilket alternativ ni helst vill ha och om det finns fler möjligheter som gruppen kan överväga. Gör inte samtidigt nya resköp som förutsätter att ändringen blir godkänd. Vänta tills det finns ett tydligt besked om vad som går att genomföra.\n\nOm flera personer reser tillsammans, bestäm vem som samlar svaren. Den som har gjort bokningen kan behöva vara den som tar kontakten. Guiden om [separata bokningar för en gemensam resa](/blogg/separata-bokningar-gemensam-glampingresa) hjälper er skilja de olika bokningarna åt."
+    },
+    {
+      "heading": "Be om ett samlat besked om konsekvenserna",
+      "content": "Fråga vilka datum och vilket innehåll det erbjudna alternativet gäller, om någon prisskillnad uppstår och vad som händer med den ursprungliga bokningen. Be om svar på oklara punkter innan du accepterar en förändring.\n\nArtikeln lovar inte kostnadsfri ombokning, återbetalning eller en viss sista dag. Sådant måste framgå av tillämpliga villkor och besked för din bokning. Ett önskemål som skickats är fortfarande en förfrågan tills ändringen har bekräftats."
+    },
+    {
+      "heading": "Uppdatera reseplanen efter bekräftelsen",
+      "content": "Spara det nya beskedet och kontrollera att datum, gäster och bokningsreferens går att förstå. Markera äldre information som ersatt i gruppens planering. Kontrollera sedan transport, ankomsttid och andra separata bokningar som påverkas.\n\nPå [bokningssidan](/boka) finns vägen vidare till aktuella bokningsalternativ. Använd den kontaktväg som anges i din befintliga bokning när du vill ändra den. Gör inte en andra bokning som ersättning utan att förstå vad som händer med den första."
+    }
+  ],
+  "ctaHref": "/boka",
+  "ctaLabel": "Se bokningsalternativ",
+  "editorial": {
+    "createdWith": "ChatGPT",
+    "aiAssisted": true,
+    "searchIntent": "Hantera en ändringsförfrågan för en redan gjord glampingbokning, utan att påstå allmänna avbokningsrättigheter eller boendets villkor.",
+    "sourceUrls": [
+      "https://goglampingsweden.se/boka"
+    ],
+    "sourceCheckedAt": null
+  },
+  "status": "draft",
+  "written_at": "2026-11-21T13:52:08.517352+00:00",
+  "publication_gate": {
+    "earliest_date": "2026-11-23",
+    "timezone": "Europe/Stockholm",
+    "requires_fresh_inventory_source_product_and_live_checks": true,
+    "note": "Utkast utan publiceringsdatum. Kontrollera verklig senaste publicering före användning."
+  },
+  "review_notes": "Originalutkast av ChatGPT. Källor och produktväg måste läsas på nytt före publicering; inga externa sakpåståenden eller produktfunktioner ska anses godkända genom detta köutkast."
+}
