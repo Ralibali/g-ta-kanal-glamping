@@ -1,5 +1,44 @@
 [
   {
+    "slug": "jamfora-vad-som-ingar-glamping",
+    "title": "Jämför vad som ingår i två glampingbokningar",
+    "metaDescription": "Gör två glampingalternativ jämförbara med samma datum, antal gäster och frågor om det som ingår. Markera sådant som behöver bekräftas.",
+    "intro": "Två boenden kan beskrivas med samma ord men innehålla olika saker. Innan du väljer behöver du veta vilka delar av vistelsen som ingår i just det alternativ du tittar på. Den här mallen hjälper dig samla besked utan att anta att bilderna visar allt du får. Texten är skriven med AI-stöd av ChatGPT.",
+    "sections": [
+      {
+        "heading": "Jämför samma vistelse",
+        "content": "Skriv samma datum, antal nätter och antal gäster för båda alternativen. Anteckna vilken boendetyp eller enhet uppgifterna gäller. En allmän beskrivning av anläggningen kan inte ensam besvara vad som ingår i en särskild bokning.\n\nSpara när du läste informationen och var den fanns. Om ett alternativ ännu inte visar tillgänglighet för dina datum, markera det som okänt. Jämför inte ett bekräftat bokningsalternativ med ett antagande om vad som brukar finnas."
+      },
+      {
+        "heading": "Dela upp frågorna efter hur ni använder boendet",
+        "content": "Gör fyra rader: sova, måltider, hygien och förvaring. Skriv era praktiska behov under varje rad och notera vad respektive boende uttryckligen anger. Det kan exempelvis vara en fråga om sänglinne, hur en måltid ordnas eller var egna saker kan förvaras.\n\nMarkera separat om något finns i den egna enheten, på en gemensam yta eller genom en annan verksamhet. Att något finns i närheten betyder inte att tillgång eller kostnad ingår i bokningen."
+      },
+      {
+        "heading": "Håll tillval och obesvarade frågor synliga",
+        "content": "Använd fyra enkla beteckningar: ingår, tillval, ordnas själv och behöver bekräftas. Skriv inte ett tomt fält som om det betydde att tjänsten saknas. Ett saknat besked är en fråga att ställa.\n\nOm ett tillval är avgörande, kontrollera att det går att boka för era datum och gäster. Spara den aktuella uppgiften om totalpris och villkor när den finns. Den här mallen anger inga generella priser eller villkor för glampingboenden."
+      },
+      {
+        "heading": "Välj utifrån det som faktiskt spelar roll",
+        "content": "Markera de två eller tre behov som avgör ert val. Ett längre paket med saker ni inte behöver behöver inte vara det alternativ som passar resan bäst. Kontrollera de avgörande frågorna direkt med boendet innan ni bokar.\n\nFör en vistelse vid Bergs slussar kan du gå vidare till [bokningssidan](/boka) och läsa den aktuella informationen där. Använd bara bekräftade uppgifter från just ditt alternativ när du fyller i jämförelsen. Spara därefter underlaget tillsammans med bokningsbekräftelsen.\n\nNär valet är gjort kan du använda [packlistan för glamping](/blogg/packlista-glamping-eget-och-ingar) för det ni faktiskt behöver ta med."
+      }
+    ],
+    "ctaHref": "/boka",
+    "ctaLabel": "Se bokningsalternativ",
+    "editorial": {
+      "createdWith": "ChatGPT",
+      "aiAssisted": true,
+      "searchIntent": "Jämföra innehållet i konkreta glampingbokningar före köp, skilt från packlista och resans längd.",
+      "sourceUrls": [
+        "https://goglampingsweden.se/boka"
+      ],
+      "sourceCheckedAt": "2026-11-21T13:26:51.732111+00:00",
+      "publishedAt": "2026-11-21T13:26:51.732111+00:00"
+    },
+    "status": "ready",
+    "written_at": "2026-11-18T10:15:22.218848+00:00",
+    "publishedDate": "2026-11-21"
+  },
+  {
     "slug": "ljud-och-lugn-glamping-fragor",
     "title": "Vill du ha en lugn glampingvistelse? Fråga om ljud före bokning",
     "metaDescription": "Frågor om omgivning, gemensamma ytor och kvällsrutiner inför glamping. Bedöm vad du behöver för vila utan att anta att ett tält är ljudisolerat.",
